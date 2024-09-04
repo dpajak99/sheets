@@ -14,34 +14,21 @@ class SheetPainterNotifier extends ChangeNotifier {
 
 class SheetPainter extends CustomPainter {
   final SheetController sheetController;
+  final SheetVisibilityConfig visibilityConfig;
 
   SheetPainter({
     required this.sheetController,
+    required this.visibilityConfig,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    SheetVisibilityConfig visibilityConfig = sheetController.getVisibilityConfig(size);
-
-    HeadersPainter headersPainter = HeadersPainter(
-      canvas: canvas,
-      visibilityConfig: visibilityConfig,
-    );
-
     BaseLayoutPainter baseLayoutPainter = BaseLayoutPainter(
       canvas: canvas,
       visibleCells: visibilityConfig.visibleCells,
     );
 
-    SelectionPainter selectionPainter = SelectionPainter(
-      canvas: canvas,
-      sheetController: sheetController,
-      visibilityConfig: visibilityConfig,
-    );
-
     baseLayoutPainter.paint();
-    selectionPainter.paint();
-    headersPainter.paint();
   }
 
   @override
@@ -50,42 +37,48 @@ class SheetPainter extends CustomPainter {
   }
 }
 
-class HeadersPainter {
-  final Canvas canvas;
-  final SheetVisibilityConfig visibilityConfig;
+class HeadersPainter extends CustomPainter {
+  final SheetController sheetController;
 
   HeadersPainter({
-    required this.canvas,
-    required this.visibilityConfig,
+    required this.sheetController,
   });
 
-  void paint() {
+  @override
+  void paint(Canvas canvas, Size size) {
     ColumnHeadersPainter columnHeadersPainter = ColumnHeadersPainter(
       canvas: canvas,
-      visibleColumns: visibilityConfig.visibleColumns,
+      sheetController: sheetController,
     );
     RowHeadersPainter rowHeadersPainter = RowHeadersPainter(
       canvas: canvas,
-      visibleRows: visibilityConfig.visibleRows,
+      sheetController: sheetController,
     );
 
     columnHeadersPainter.paint();
     rowHeadersPainter.paint();
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
 }
 
 class ColumnHeadersPainter {
   final Canvas canvas;
-  final List<ProgramColumnConfig> visibleColumns;
+  final SheetController sheetController;
 
   ColumnHeadersPainter({
     required this.canvas,
-    required this.visibleColumns,
+    required this.sheetController,
   });
 
   void paint() {
-    for (ProgramColumnConfig column in visibleColumns) {
-      if (column.selected) {
+    for (ProgramColumnConfig column in sheetController.visibilityConfig.visibleColumns) {
+      bool columnSelected = sheetController.selection.isColumnSelected(column.columnKey);
+
+      if (columnSelected) {
         Paint backgroundPaint = Paint()
           ..color = const Color(0xffd6e2fb)
           ..style = PaintingStyle.fill;
@@ -112,7 +105,7 @@ class ColumnHeadersPainter {
           text: '${column.columnKey.value}',
           style: TextStyle(
             color: Colors.black,
-            fontWeight: column.selected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: columnSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 12,
           ),
         ),
@@ -127,16 +120,18 @@ class ColumnHeadersPainter {
 
 class RowHeadersPainter {
   final Canvas canvas;
-  final List<ProgramRowConfig> visibleRows;
+  final SheetController sheetController;
 
   RowHeadersPainter({
     required this.canvas,
-    required this.visibleRows,
+    required this.sheetController,
   });
 
   void paint() {
-    for (ProgramRowConfig row in visibleRows) {
-      if (row.selected) {
+    for (ProgramRowConfig row in sheetController.visibilityConfig.visibleRows) {
+      bool rowSelected = sheetController.selection.isRowSelected(row.rowKey);
+
+      if (rowSelected) {
         Paint backgroundPaint = Paint()
           ..color = const Color(0xffd6e2fb)
           ..style = PaintingStyle.fill;
@@ -163,7 +158,7 @@ class RowHeadersPainter {
           text: '${row.rowKey.value}',
           style: TextStyle(
             color: Colors.black,
-            fontWeight: row.selected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: rowSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 12,
           ),
         ),
@@ -176,24 +171,21 @@ class RowHeadersPainter {
   }
 }
 
-class SelectionPainter {
-  final Canvas canvas;
+class SelectionPainter extends CustomPainter{
   final SheetController sheetController;
-  final SheetVisibilityConfig visibilityConfig;
 
   SelectionPainter({
-    required this.canvas,
     required this.sheetController,
-    required this.visibilityConfig,
   });
 
-  void paint() {
+  @override
+  void paint(Canvas canvas, Size size) {
     SheetSelection selection = sheetController.selection;
     if (selection.isEmpty) {
       return;
     }
 
-    List<ProgramCellConfig> selectedCells = visibilityConfig.getSelectedCells(selection);
+    List<ProgramCellConfig> selectedCells = sheetController.getSelectionRange();
 
     Paint mainCellPaint = Paint()
       ..color = const Color(0xff3572e3)
@@ -233,6 +225,11 @@ class SelectionPainter {
 
       canvas.drawCircle(selectedCells.last.rect.bottomRight, 4, selectionDotPaint);
     }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
 

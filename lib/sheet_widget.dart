@@ -3,6 +3,69 @@ import 'package:sheets/sheet_controller.dart';
 import 'package:sheets/sheet_footer.dart';
 import 'package:sheets/sheet_grid.dart';
 
+class MouseListener extends ChangeNotifier {
+  final SheetController sheetController;
+
+  Offset offset = Offset.zero;
+  ProgramElementConfig? hoveredElement;
+
+  ProgramCellConfig? dragStartElement;
+  ProgramCellConfig? previousDragElement;
+
+  MouseListener({
+    required this.sheetController,
+  });
+
+  void dragStart(Offset offset) {
+    this.offset = offset;
+    ProgramElementConfig? hoveredElement = sheetController.getHoveredElement(offset);
+    this.hoveredElement = hoveredElement;
+
+    if( hoveredElement is ProgramCellConfig ) {
+      dragStartElement = hoveredElement;
+      previousDragElement = hoveredElement;
+      sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellKey));
+      notifyListeners();
+    }
+  }
+
+  void dragUpdate(Offset offset) {
+    this.offset = offset;
+    ProgramElementConfig? hoveredElement = sheetController.getHoveredElement(offset);
+    this.hoveredElement = hoveredElement;
+
+    if( hoveredElement is ProgramCellConfig && hoveredElement != previousDragElement) {
+      sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellKey, end: hoveredElement.cellKey));
+      notifyListeners();
+    }
+  }
+
+  void dragEnd(Offset offset) {
+    this.offset = offset;
+    ProgramElementConfig? hoveredElement = sheetController.getHoveredElement(offset);
+    this.hoveredElement = hoveredElement;
+
+    if( hoveredElement is ProgramCellConfig) {
+      sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellKey, end: hoveredElement.cellKey));
+      dragStartElement = null;
+      previousDragElement = null;
+      notifyListeners();
+    }
+  }
+
+  void updateOffset(Offset newOffset) {
+    offset = newOffset;
+    hoveredElement = sheetController.getHoveredElement(offset);
+    notifyListeners();
+  }
+
+  void tap() {
+    if( hoveredElement is ProgramCellConfig ) {
+      sheetController.updateSelection(SheetSingleSelection((hoveredElement as ProgramCellConfig).cellKey));
+    }
+  }
+}
+
 class SheetWidget extends StatefulWidget {
   const SheetWidget({super.key});
 
@@ -12,7 +75,7 @@ class SheetWidget extends StatefulWidget {
 
 class SheetWidgetState extends State<SheetWidget> {
   final SheetController sheetController = SheetController();
-  final ValueNotifier<Offset> mousePosition = ValueNotifier(Offset.zero);
+  late final MouseListener mouseListener = MouseListener(sheetController: sheetController);
 
   CellKey? dragStart;
 
@@ -23,39 +86,25 @@ class SheetWidgetState extends State<SheetWidget> {
         Expanded(
           child: GestureDetector(
             onPanStart: (DragStartDetails details) {
-              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(details.globalPosition);
-              if( selectedElement is ProgramCellConfig ) {
-                dragStart = selectedElement.cellKey;
-                sheetController.updateSelection(SheetSingleSelection(dragStart!));
-              }
+              mouseListener.dragStart(details.globalPosition);
             },
             onPanUpdate: (DragUpdateDetails details) {
-              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(details.globalPosition);
-              if( selectedElement is ProgramCellConfig ) {
-                sheetController.updateSelection(SheetRangeSelection(start: dragStart!, end: selectedElement.cellKey));
-              }
+              mouseListener.dragUpdate(details.globalPosition);
             },
             onPanEnd: (DragEndDetails details) {
-              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(details.globalPosition);
-              if( selectedElement is ProgramCellConfig ) {
-                sheetController.updateSelection(SheetRangeSelection(start: dragStart!, end: selectedElement.cellKey));
-              }
-              dragStart = null;
+              mouseListener.dragEnd(details.globalPosition);
             },
             onTap: () {
-              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(mousePosition.value);
-              if( selectedElement is ProgramCellConfig ) {
-                sheetController.updateSelection(SheetSingleSelection(selectedElement.cellKey));
-              }
+              mouseListener.tap();
             },
             child: MouseRegion(
-              onHover: (event) => mousePosition.value = event.localPosition,
+              onHover: (event) => mouseListener.updateOffset(event.localPosition),
 
               child: SheetGrid(sheetController: sheetController),
             ),
           ),
         ),
-        SheetFooter(sheetController: sheetController, mousePosition: mousePosition),
+        SheetFooter(sheetController: sheetController, mouseListener: mouseListener),
       ],
     );
   }

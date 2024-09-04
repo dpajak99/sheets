@@ -13,18 +13,52 @@ class SheetGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
-      child: RepaintBoundary(
-        child: ListenableBuilder(
-          listenable: sheetController.sheetPainterNotifier,
-          builder: (BuildContext context, _) {
-            return CustomPaint(
-              isComplex: true,
-              painter: SheetPainter(
-                sheetController: sheetController,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          Size size = Size(constraints.maxWidth, constraints.maxHeight);
+          SheetVisibilityConfig visibilityConfig = sheetController.getVisibilityConfig(size);
+
+          return Stack(
+            children: [
+              RepaintBoundary(
+                child: ListenableBuilder(
+                  listenable: sheetController.gridPainterNotifier,
+                  builder: (BuildContext context, _) {
+                    return CustomPaint(
+                      isComplex: true,
+                      painter: SheetPainter(
+                        sheetController: sheetController,
+                        visibilityConfig: visibilityConfig,
+                      ),
+                    );
+                  },
+                ),
               ),
-            );
-          },
-        ),
+              RepaintBoundary(
+                child: ListenableBuilder(
+                  listenable: sheetController.selectionPainterNotifier,
+                  builder: (BuildContext context, _) {
+                    return CustomPaint(
+                      isComplex: true,
+                      painter: HeadersPainter(sheetController: sheetController),
+                    );
+                  },
+                ),
+              ),
+              RepaintBoundary(
+                child: ListenableBuilder(
+                  listenable: sheetController.selectionPainterNotifier,
+                  builder: (BuildContext context, _) {
+                    return CustomPaint(
+                      isComplex: true,
+                      painter: SelectionPainter(sheetController: sheetController),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

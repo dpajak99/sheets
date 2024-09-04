@@ -1,54 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/sheet_controller.dart';
+import 'package:sheets/sheet_widget.dart';
 
-class SheetFooter extends StatefulWidget {
+class SheetFooter extends StatelessWidget {
   final SheetController sheetController;
-  final ValueNotifier<Offset> mousePosition;
+  final MouseListener mouseListener;
 
   const SheetFooter({
     required this.sheetController,
-    required this.mousePosition,
+    required this.mouseListener,
     super.key,
   });
 
   @override
-  State<SheetFooter> createState() => _SheetFooterState();
-}
-
-class _SheetFooterState extends State<SheetFooter> {
-  late Offset mousePosition;
-
-  @override
-  void initState() {
-    super.initState();
-    mousePosition = widget.mousePosition.value;
-    widget.mousePosition.addListener(_handleMousePositionChange);
-  }
-
-  @override
-  void dispose() {
-    widget.mousePosition.removeListener(_handleMousePositionChange);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          Text('Mouse position: $mousePosition'),
-          const SizedBox(width: 16),
-          Text('Hovered element: ${widget.sheetController.getHoveredElement(mousePosition)}'),
-        ],
-      ),
+    return ListenableBuilder(
+      listenable: mouseListener,
+      builder: (BuildContext context, _) {
+        return Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              Text('Mouse position: ${mouseListener.offset}'),
+              const SizedBox(width: 16),
+              Text('Hovered element: ${mouseListener.hoveredElement}'),
+            ],
+          ),
+        );
+      },
     );
-  }
-
-  void _handleMousePositionChange() {
-    setState(() {
-      mousePosition = widget.mousePosition.value;
-    });
   }
 }
