@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/sheet_controller.dart';
+import 'package:sheets/sheet_footer.dart';
+import 'package:sheets/sheet_grid.dart';
 
 class SheetWidget extends StatefulWidget {
   const SheetWidget({super.key});
@@ -10,286 +12,51 @@ class SheetWidget extends StatefulWidget {
 
 class SheetWidgetState extends State<SheetWidget> {
   final SheetController sheetController = SheetController();
+  final ValueNotifier<Offset> mousePosition = ValueNotifier(Offset.zero);
+
+  CellKey? dragStart;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: CustomPaint(
-        painter: SheetPainter(
-          sheetController: sheetController,
-        ),
-      ),
-    );
-  }
-}
+    return Column(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onPanStart: (DragStartDetails details) {
+              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(details.globalPosition);
+              if( selectedElement is ProgramCellConfig ) {
+                dragStart = selectedElement.cellKey;
+                sheetController.updateSelection(SheetSingleSelection(dragStart!));
+              }
+            },
+            onPanUpdate: (DragUpdateDetails details) {
+              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(details.globalPosition);
+              if( selectedElement is ProgramCellConfig ) {
+                sheetController.updateSelection(SheetRangeSelection(start: dragStart!, end: selectedElement.cellKey));
+              }
+            },
+            onPanEnd: (DragEndDetails details) {
+              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(details.globalPosition);
+              if( selectedElement is ProgramCellConfig ) {
+                sheetController.updateSelection(SheetRangeSelection(start: dragStart!, end: selectedElement.cellKey));
+              }
+              dragStart = null;
+            },
+            onTap: () {
+              ProgramElementConfig? selectedElement = sheetController.getHoveredElement(mousePosition.value);
+              if( selectedElement is ProgramCellConfig ) {
+                sheetController.updateSelection(SheetSingleSelection(selectedElement.cellKey));
+              }
+            },
+            child: MouseRegion(
+              onHover: (event) => mousePosition.value = event.localPosition,
 
-double borderWidth = 0.6;
-
-int columnHeadersCount = 1;
-int rowHeadersCount = 1;
-
-class SheetPainter extends CustomPainter {
-  final SheetController sheetController;
-
-  SheetPainter({
-    required this.sheetController,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    SheetVisibilityConfig visibilityConfig = sheetController.getVisibilityConfig(size);
-
-    HeadersPainter headersPainter = HeadersPainter(
-      canvas: canvas,
-      visibilityConfig: visibilityConfig,
-    );
-
-    BaseLayoutPainter baseLayoutPainter = BaseLayoutPainter(
-      canvas: canvas,
-      visibleCells: visibilityConfig.visibleCells,
-    );
-
-    SelectionPainter selectionPainter = SelectionPainter(
-      canvas: canvas,
-      sheetController: sheetController,
-      visibilityConfig: visibilityConfig,
-    );
-
-    baseLayoutPainter.paint();
-    selectionPainter.paint();
-    headersPainter.paint();
-  }
-
-  @override
-  bool shouldRepaint(covariant SheetPainter oldDelegate) {
-    return false;
-  }
-}
-
-class HeadersPainter {
-  final Canvas canvas;
-  final SheetVisibilityConfig visibilityConfig;
-
-  HeadersPainter({
-    required this.canvas,
-    required this.visibilityConfig,
-  });
-
-  void paint() {
-    ColumnHeadersPainter columnHeadersPainter = ColumnHeadersPainter(
-      canvas: canvas,
-      visibleColumns: visibilityConfig.visibleColumns,
-    );
-    RowHeadersPainter rowHeadersPainter = RowHeadersPainter(
-      canvas: canvas,
-      visibleRows: visibilityConfig.visibleRows,
-    );
-
-    columnHeadersPainter.paint();
-    rowHeadersPainter.paint();
-  }
-}
-
-class ColumnHeadersPainter {
-  final Canvas canvas;
-  final List<ProgramColumnConfig> visibleColumns;
-
-  ColumnHeadersPainter({
-    required this.canvas,
-    required this.visibleColumns,
-  });
-
-  void paint() {
-    for (ProgramColumnConfig column in visibleColumns) {
-      if (column.selected) {
-        Paint backgroundPaint = Paint()
-          ..color = const Color(0xffd6e2fb)
-          ..style = PaintingStyle.fill;
-
-        canvas.drawRect(column.headerRect, backgroundPaint);
-      } else {
-        Paint backgroundPaint = Paint()
-          ..color = const Color(0xffffffff)
-          ..style = PaintingStyle.fill;
-
-        canvas.drawRect(column.headerRect, backgroundPaint);
-      }
-
-      Paint borderPaint = Paint()
-        ..color = const Color(0xffc5c7c5)
-        ..strokeWidth = borderWidth
-        ..style = PaintingStyle.stroke;
-
-      canvas.drawRect(column.headerRect, borderPaint);
-
-      TextPainter textPainter = TextPainter(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          text: '${column.columnKey.value}',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: column.selected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 12,
+              child: SheetGrid(sheetController: sheetController),
+            ),
           ),
         ),
-        textDirection: TextDirection.ltr,
-      );
-
-      textPainter.layout(minWidth: cellWidth - 10, maxWidth: cellWidth - 10);
-      textPainter.paint(canvas, column.headerRect.topLeft + const Offset(5, 5));
-    }
-  }
-}
-
-class RowHeadersPainter {
-  final Canvas canvas;
-  final List<ProgramRowConfig> visibleRows;
-
-  RowHeadersPainter({
-    required this.canvas,
-    required this.visibleRows,
-  });
-
-  void paint() {
-    for (ProgramRowConfig row in visibleRows) {
-      if (row.selected) {
-        Paint backgroundPaint = Paint()
-          ..color = const Color(0xffd6e2fb)
-          ..style = PaintingStyle.fill;
-
-        canvas.drawRect(row.sheetRect, backgroundPaint);
-      } else {
-        Paint backgroundPaint = Paint()
-          ..color = const Color(0xffffffff)
-          ..style = PaintingStyle.fill;
-
-        canvas.drawRect(row.sheetRect, backgroundPaint);
-      }
-
-      Paint borderPaint = Paint()
-        ..color = const Color(0xffc5c7c5)
-        ..strokeWidth = borderWidth
-        ..style = PaintingStyle.stroke;
-
-      canvas.drawRect(row.sheetRect, borderPaint);
-
-      TextPainter textPainter = TextPainter(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          text: '${row.rowKey.value}',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: row.selected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 12,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-
-      textPainter.layout(minWidth: rowHeadersWidth - 10, maxWidth: rowHeadersWidth - 10);
-      textPainter.paint(canvas, row.sheetRect.topLeft + const Offset(5, 5));
-    }
-  }
-}
-
-class SelectionPainter {
-  final Canvas canvas;
-  final SheetController sheetController;
-  final SheetVisibilityConfig visibilityConfig;
-
-  SelectionPainter({
-    required this.canvas,
-    required this.sheetController,
-    required this.visibilityConfig,
-  });
-
-  void paint() {
-    SheetSelection selection = sheetController.selection;
-    if (selection.isEmpty) {
-      return;
-    }
-
-    List<ProgramCellConfig> selectedCells = visibilityConfig.getSelectedCells(selection);
-
-    Paint mainCellPaint = Paint()
-      ..color = const Color(0xff3572e3)
-      ..strokeWidth = borderWidth * 2
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawRect(selectedCells.first.rect, mainCellPaint);
-
-    if (selection.length > 1) {
-      Paint backgroundPaint = Paint()
-        ..color = const Color(0x203572e3)
-        ..color = const Color(0x203572e3)
-        ..style = PaintingStyle.fill;
-
-      canvas.drawRect(Rect.fromPoints(selectedCells.first.rect.topLeft, selectedCells.last.rect.bottomRight), backgroundPaint);
-    }
-
-    if (selection.isCompleted) {
-      Paint selectionPaint = Paint()
-        ..color = const Color(0xff3572e3)
-        ..strokeWidth = borderWidth
-        ..style = PaintingStyle.stroke;
-
-      canvas.drawRect(Rect.fromPoints(selectedCells.first.rect.topLeft, selectedCells.last.rect.bottomRight), selectionPaint);
-    }
-
-    if (selection.isCompleted) {
-      Paint selectionDotBorderPaint = Paint()
-        ..color = const Color(0xffffffff)
-        ..style = PaintingStyle.fill;
-
-      canvas.drawCircle(selectedCells.last.rect.bottomRight, 5, selectionDotBorderPaint);
-
-      Paint selectionDotPaint = Paint()
-        ..color = const Color(0xff3572e3)
-        ..style = PaintingStyle.fill;
-
-      canvas.drawCircle(selectedCells.last.rect.bottomRight, 4, selectionDotPaint);
-    }
-  }
-}
-
-class BaseLayoutPainter {
-  final Canvas canvas;
-  final List<ProgramCellConfig> visibleCells;
-
-  BaseLayoutPainter({
-    required this.canvas,
-    required this.visibleCells,
-  });
-
-  void paint() {
-    for (ProgramCellConfig cell in visibleCells) {
-      Paint backgroundPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill;
-
-      canvas.drawRect(cell.rect, backgroundPaint);
-
-      Paint borderPaint = Paint()
-        ..color = const Color(0xffe1e1e1)
-        ..strokeWidth = borderWidth
-        ..style = PaintingStyle.stroke;
-
-      canvas.drawRect(cell.rect, borderPaint);
-
-      // Fill cell with text
-      TextPainter textPainter = TextPainter(
-        text: TextSpan(
-          text: '${cell.programRowConfig.rowKey.value}-${cell.programColumnConfig.columnKey.value}',
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 12,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-
-      textPainter.layout();
-      textPainter.paint(canvas, cell.rect.topLeft + const Offset(5, 5));
-    }
+        SheetFooter(sheetController: sheetController, mousePosition: mousePosition),
+      ],
+    );
   }
 }

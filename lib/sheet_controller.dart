@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/sheet_painter.dart';
 import 'package:sheets/utils.dart';
 
 double columnHeadersHeight = 24;
@@ -51,54 +52,73 @@ class RowKey with EquatableMixin {
   List<Object?> get props => [value];
 }
 
-class ProgramRowConfig with EquatableMixin {
+abstract class ProgramElementConfig with EquatableMixin {
+  final Rect rect;
+
+  ProgramElementConfig({
+    required this.rect,
+  });}
+
+class ProgramRowConfig extends ProgramElementConfig {
   final RowKey rowKey;
   final RowProperties rowProperties;
-  final Rect sheetRect;
   final bool selected;
 
   ProgramRowConfig({
+    required super.rect,
     required this.rowKey,
     required this.rowProperties,
-    required this.sheetRect,
     required this.selected,
   });
 
   @override
-  List<Object?> get props => [rowKey, rowProperties, sheetRect, selected];
+  String toString() {
+    return 'Row(${rowKey.value})';
+  }
+
+  @override
+  List<Object?> get props => [rowKey, rowProperties, rect, selected];
 }
 
-class ProgramColumnConfig with EquatableMixin {
+class ProgramColumnConfig extends ProgramElementConfig {
   final ColumnKey columnKey;
   final ColumnProperties columnProperties;
-  final Rect headerRect;
   final bool selected;
 
   ProgramColumnConfig({
+    required super.rect,
     required this.columnKey,
     required this.columnProperties,
-    required this.headerRect,
     required this.selected,
   });
 
   @override
-  List<Object?> get props => [columnKey, columnProperties, headerRect, selected];
+  String toString() {
+    return 'Column(${columnKey.value})';
+  }
+
+  @override
+  List<Object?> get props => [columnKey, columnProperties, rect, selected];
 }
 
-class ProgramCellConfig with EquatableMixin {
+class ProgramCellConfig extends ProgramElementConfig {
   final CellKey cellKey;
   final ProgramRowConfig programRowConfig;
   final ProgramColumnConfig programColumnConfig;
-  final Rect rect;
 
   ProgramCellConfig({
+    required super.rect,
     required this.cellKey,
     required this.programRowConfig,
     required this.programColumnConfig,
-    required this.rect,
   });
 
   bool get selected => programRowConfig.selected && programColumnConfig.selected;
+
+  @override
+  String toString() {
+    return 'Cell(${cellKey.rowKey.value}, ${cellKey.columnKey.value})';
+  }
 
   @override
   List<Object?> get props => [programRowConfig, programColumnConfig];
@@ -115,8 +135,21 @@ class SheetVisibilityConfig with EquatableMixin {
     required this.visibleCells,
   });
 
+  SheetVisibilityConfig.empty()
+      : visibleRows = [],
+        visibleColumns = [],
+        visibleCells = [];
+
   List<ProgramCellConfig> getSelectedCells(SheetSelection selection) {
     return visibleCells.where((cell) => selection.selectedCells.contains(cell.cellKey)).toList();
+  }
+
+  List<ProgramElementConfig> get visibleElements {
+    List<ProgramElementConfig> elements = [];
+    elements.addAll(visibleRows);
+    elements.addAll(visibleColumns);
+    elements.addAll(visibleCells);
+    return elements;
   }
 
   @override
@@ -136,7 +169,7 @@ class CellKey with EquatableMixin {
   List<Object?> get props => [rowKey, columnKey];
 }
 
-abstract class SheetSelection {
+abstract class SheetSelection with EquatableMixin {
   List<CellKey> get selectedCells;
 
   bool isColumnSelected(ColumnKey columnKey);
@@ -159,6 +192,27 @@ class SheetEmptySelection extends SheetSelection {
 
   @override
   bool isRowSelected(RowKey rowKey) => false;
+
+  @override
+  List<Object?> get props => [];
+}
+
+class SheetSingleSelection extends SheetSelection {
+  final CellKey cellKey;
+
+  SheetSingleSelection(this.cellKey);
+
+  @override
+  List<CellKey> get selectedCells => [cellKey];
+
+  @override
+  bool isColumnSelected(ColumnKey columnKey) => cellKey.columnKey == columnKey;
+
+  @override
+  bool isRowSelected(RowKey rowKey) => cellKey.rowKey == rowKey;
+
+  @override
+  List<Object?> get props => [cellKey];
 }
 
 class SheetRangeSelection extends SheetSelection {
@@ -190,6 +244,9 @@ class SheetRangeSelection extends SheetSelection {
   bool isRowSelected(RowKey rowKey) {
     return rowKey.value >= start.rowKey.value && rowKey.value <= end.rowKey.value;
   }
+
+  @override
+  List<Object?> get props => [start, end];
 }
 
 class SheetController {
@@ -203,21 +260,42 @@ class SheetController {
   );
   IntOffset sheetOffset = IntOffset.zero;
 
+  SheetVisibilityConfig visibilityConfig = SheetVisibilityConfig.empty();
+
+  SheetPainterNotifier sheetPainterNotifier = SheetPainterNotifier();
+
   SheetController({
     this.customColumnProperties = const {},
     this.customRowProperties = const {},
   });
+
+  void updateSelection(SheetSelection sheetSelection) {
+    selection = sheetSelection;
+    sheetPainterNotifier.repaint();
+  }
+
+  ProgramElementConfig? getHoveredElement(Offset mousePosition) {
+    try {
+      return visibilityConfig.visibleElements.firstWhere(
+        (element) => element.rect.contains(mousePosition),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
 
   SheetVisibilityConfig getVisibilityConfig(Size sheetSize) {
     List<ProgramRowConfig> visibleRows = getVisibleRows(sheetSize.height);
     List<ProgramColumnConfig> visibleColumns = getVisibleColumns(sheetSize.width);
     List<ProgramCellConfig> visibleCells = getVisibleCells(visibleRows, visibleColumns);
 
-    return SheetVisibilityConfig(
+    visibilityConfig = SheetVisibilityConfig(
       visibleRows: visibleRows,
       visibleColumns: visibleColumns,
       visibleCells: visibleCells,
     );
+
+    return visibilityConfig;
   }
 
   List<ProgramRowConfig> getVisibleRows(double sheetHeight) {
@@ -232,7 +310,7 @@ class SheetController {
       ProgramRowConfig rowConfig = ProgramRowConfig(
         rowKey: rowKey,
         rowProperties: rowProperties,
-        sheetRect: Rect.fromLTWH(0, cursorSheetHeight + columnHeadersHeight, rowHeadersWidth, rowProperties.height),
+        rect: Rect.fromLTWH(0, cursorSheetHeight + columnHeadersHeight, rowHeadersWidth, rowProperties.height),
         selected: selection.isRowSelected(rowKey),
       );
       visibleRows.add(rowConfig);
@@ -256,7 +334,7 @@ class SheetController {
       ProgramColumnConfig columnConfig = ProgramColumnConfig(
         columnKey: columnKey,
         columnProperties: columnProperties,
-        headerRect: Rect.fromLTWH(cursorSheetWidth + rowHeadersWidth, 0, columnProperties.width, columnHeadersHeight),
+        rect: Rect.fromLTWH(cursorSheetWidth + rowHeadersWidth, 0, columnProperties.width, columnHeadersHeight),
         selected: selection.isColumnSelected(columnKey),
       );
 
@@ -279,8 +357,8 @@ class SheetController {
           programRowConfig: row,
           programColumnConfig: column,
           rect: Rect.fromLTWH(
-            column.headerRect.left,
-            row.sheetRect.top,
+            column.rect.left,
+            row.rect.top,
             column.columnProperties.width,
             row.rowProperties.height,
           ),
