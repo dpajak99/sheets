@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/sheet_painter.dart';
@@ -57,7 +59,8 @@ abstract class ProgramElementConfig with EquatableMixin {
 
   ProgramElementConfig({
     required this.rect,
-  });}
+  });
+}
 
 class ProgramRowConfig extends ProgramElementConfig {
   final RowKey rowKey;
@@ -142,6 +145,14 @@ class SheetVisibilityConfig with EquatableMixin {
     return elements;
   }
 
+  ProgramCellConfig? findCell(CellKey cellKey) {
+    return visibleCells.firstWhere((cell) => cell.cellKey == cellKey);
+  }
+
+  bool containsCell(CellKey cellKey) {
+    return visibleCells.any((cell) => cell.cellKey == cellKey);
+  }
+
   @override
   List<Object?> get props => [visibleRows, visibleColumns];
 }
@@ -157,41 +168,45 @@ class CellKey with EquatableMixin {
 
   @override
   List<Object?> get props => [rowKey, columnKey];
+
+  @override
+  String toString() {
+    return 'Cell(${rowKey.value}, ${columnKey.value})';
+  }
 }
 
 abstract class SheetSelection with EquatableMixin {
-  List<CellKey> get selectedCells;
-  
   CellKey get start;
-  
+
   CellKey get end;
 
   bool isColumnSelected(ColumnKey columnKey);
 
   bool isRowSelected(RowKey rowKey);
 
-  int get length => selectedCells.length;
+  SelectionDirection get selectionDirection;
 
-  bool get isCompleted => length > 0;
-
-  bool get isEmpty => length == 0;
+  bool get isCompleted;
 }
 
 class SheetEmptySelection extends SheetSelection {
   @override
-  List<CellKey> get selectedCells => [CellKey(rowKey: RowKey(0), columnKey: ColumnKey(0))];
+  CellKey get start => CellKey(rowKey: RowKey(0), columnKey: ColumnKey(0));
 
   @override
-  CellKey get start => selectedCells.first;
-
-  @override
-  CellKey get end => selectedCells.first;
+  CellKey get end => CellKey(rowKey: RowKey(0), columnKey: ColumnKey(0));
 
   @override
   bool isColumnSelected(ColumnKey columnKey) => false;
 
   @override
   bool isRowSelected(RowKey rowKey) => false;
+
+  @override
+  SelectionDirection get selectionDirection => SelectionDirection.topRight;
+
+  @override
+  bool get isCompleted => true;
 
   @override
   List<Object?> get props => [];
@@ -204,12 +219,9 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   CellKey get start => cellKey;
-  
+
   @override
   CellKey get end => cellKey;
-  
-  @override
-  List<CellKey> get selectedCells => [cellKey];
 
   @override
   bool isColumnSelected(ColumnKey columnKey) => cellKey.columnKey == columnKey;
@@ -218,17 +230,34 @@ class SheetSingleSelection extends SheetSelection {
   bool isRowSelected(RowKey rowKey) => cellKey.rowKey == rowKey;
 
   @override
+  SelectionDirection get selectionDirection => SelectionDirection.topRight;
+
+  @override
+  bool get isCompleted => true;
+
+  @override
   List<Object?> get props => [cellKey];
+}
+
+enum SelectionDirection {
+  topRight,
+  topLeft,
+  bottomRight,
+  bottomLeft,
 }
 
 class SheetRangeSelection extends SheetSelection {
   final CellKey _start;
   final CellKey _end;
+  final bool _completed;
 
   SheetRangeSelection({
     required CellKey start,
     required CellKey end,
-  }) : _end = end, _start = start;
+    required bool completed,
+  })  : _end = end,
+        _start = start,
+        _completed = completed;
 
   @override
   CellKey get start => _start;
@@ -237,28 +266,153 @@ class SheetRangeSelection extends SheetSelection {
   CellKey get end => _end;
 
   @override
-  List<CellKey> get selectedCells {
-    List<CellKey> selectedCells = [];
-    for (int row = _start.rowKey.value; row <= _end.rowKey.value; row++) {
-      for (int column = _start.columnKey.value; column <= _end.columnKey.value; column++) {
-        selectedCells.add(CellKey(rowKey: RowKey(row), columnKey: ColumnKey(column)));
-      }
-    }
-    return selectedCells;
-  }
-
-  @override
   bool isColumnSelected(ColumnKey columnKey) {
-    return columnKey.value >= _start.columnKey.value && columnKey.value <= _end.columnKey.value;
+    ProgramSelectionKeyBox programSelectionKeyBox = ProgramSelectionKeyBox.fromSheetSelection(this);
+    int startColumnIndex = programSelectionKeyBox.topLeft.columnKey.value;
+    int endColumnIndex = programSelectionKeyBox.topRight.columnKey.value;
+
+    return columnKey.value >= startColumnIndex && columnKey.value <= endColumnIndex;
   }
 
   @override
   bool isRowSelected(RowKey rowKey) {
-    return rowKey.value >= _start.rowKey.value && rowKey.value <= _end.rowKey.value;
+    ProgramSelectionKeyBox programSelectionKeyBox = ProgramSelectionKeyBox.fromSheetSelection(this);
+    int startRowIndex = programSelectionKeyBox.topLeft.rowKey.value;
+    int endRowIndex = programSelectionKeyBox.bottomLeft.rowKey.value;
+
+    return rowKey.value >= startRowIndex && rowKey.value <= endRowIndex;
   }
 
   @override
+  SelectionDirection get selectionDirection {
+    bool startBeforeEndRow = _start.rowKey.value < _end.rowKey.value;
+    bool startBeforeEndColumn = _start.columnKey.value < _end.columnKey.value;
+
+    if (startBeforeEndRow) {
+      return startBeforeEndColumn ? SelectionDirection.bottomRight : SelectionDirection.bottomLeft;
+    } else {
+      return startBeforeEndColumn ? SelectionDirection.topRight : SelectionDirection.topLeft;
+    }
+  }
+
+  @override
+  bool get isCompleted => _completed;
+
+  @override
   List<Object?> get props => [_start, _end];
+}
+
+class ProgramSelectionKeyBox {
+  final CellKey topLeft;
+  final CellKey topRight;
+  final CellKey bottomLeft;
+  final CellKey bottomRight;
+
+  ProgramSelectionKeyBox({
+    required this.topLeft,
+    required this.topRight,
+    required this.bottomLeft,
+    required this.bottomRight,
+  });
+
+  factory ProgramSelectionKeyBox.fromSheetSelection(SheetSelection selection) {
+    SelectionDirection selectionDirection = selection.selectionDirection;
+    CellKey start = selection.start;
+    CellKey end = selection.end;
+
+    switch (selectionDirection) {
+      case SelectionDirection.bottomRight:
+        return ProgramSelectionKeyBox(
+          topLeft: start,
+          topRight: CellKey(rowKey: start.rowKey, columnKey: end.columnKey),
+          bottomLeft: CellKey(rowKey: end.rowKey, columnKey: start.columnKey),
+          bottomRight: end,
+        );
+      case SelectionDirection.bottomLeft:
+        return ProgramSelectionKeyBox(
+          topLeft: CellKey(rowKey: start.rowKey, columnKey: end.columnKey),
+          topRight: start,
+          bottomLeft: end,
+          bottomRight: CellKey(rowKey: end.rowKey, columnKey: start.columnKey),
+        );
+      case SelectionDirection.topRight:
+        return ProgramSelectionKeyBox(
+          topLeft: CellKey(rowKey: end.rowKey, columnKey: start.columnKey),
+          topRight: end,
+          bottomLeft: start,
+          bottomRight: CellKey(rowKey: start.rowKey, columnKey: end.columnKey),
+        );
+      case SelectionDirection.topLeft:
+        return ProgramSelectionKeyBox(
+          topLeft: end,
+          topRight: CellKey(rowKey: end.rowKey, columnKey: start.columnKey),
+          bottomLeft: CellKey(rowKey: start.rowKey, columnKey: end.columnKey),
+          bottomRight: start,
+        );
+    }
+  }
+}
+
+class ProgramSelectionRectBox {
+  final Rect topLeft;
+  final Rect topRight;
+  final Rect bottomLeft;
+  final Rect bottomRight;
+  final Rect startCellRect;
+
+  ProgramSelectionRectBox({
+    required this.topLeft,
+    required this.topRight,
+    required this.bottomLeft,
+    required this.bottomRight,
+    required this.startCellRect,
+  });
+
+  factory ProgramSelectionRectBox.fromProgramCellConfig({
+    required ProgramCellConfig start,
+    required ProgramCellConfig end,
+    required SelectionDirection selectionDirection,
+  }) {
+    late Rect topLeft;
+    late Rect topRight;
+    late Rect bottomLeft;
+    late Rect bottomRight;
+
+    switch (selectionDirection) {
+      case SelectionDirection.bottomRight:
+        topLeft = start.rect;
+        bottomRight = end.rect;
+        topRight = Rect.fromPoints(Offset(end.rect.left, start.rect.top), Offset(end.rect.right, start.rect.bottom));
+        bottomLeft = Rect.fromPoints(Offset(start.rect.left, end.rect.top), Offset(start.rect.right, end.rect.bottom));
+        break;
+      case SelectionDirection.bottomLeft:
+        topLeft = Rect.fromPoints(Offset(end.rect.left, start.rect.top), Offset(end.rect.right, start.rect.bottom));
+        bottomRight = Rect.fromPoints(Offset(start.rect.left, end.rect.top), Offset(start.rect.right, end.rect.bottom));
+        topRight = start.rect;
+        bottomLeft = end.rect;
+        break;
+      case SelectionDirection.topRight:
+        topLeft = Rect.fromPoints(Offset(start.rect.left, end.rect.top), Offset(start.rect.right, end.rect.bottom));
+        bottomRight = Rect.fromPoints(Offset(end.rect.left, start.rect.top), Offset(end.rect.right, start.rect.bottom));
+        topRight = end.rect;
+        bottomLeft = start.rect;
+        break;
+      case SelectionDirection.topLeft:
+        topLeft = end.rect;
+        bottomRight = start.rect;
+        topRight = Rect.fromPoints(Offset(end.rect.left, start.rect.top), Offset(end.rect.right, start.rect.bottom));
+        bottomLeft = Rect.fromPoints(Offset(start.rect.left, end.rect.top), Offset(start.rect.right, end.rect.bottom));
+        break;
+    }
+
+    return ProgramSelectionRectBox(
+      topLeft: topLeft,
+      topRight: topRight,
+      bottomLeft: bottomLeft,
+      bottomRight: bottomRight,
+      startCellRect: start.rect,
+    );
+  }
 }
 
 class SheetController {
@@ -271,26 +425,57 @@ class SheetController {
 
   SheetVisibilityConfig visibilityConfig = SheetVisibilityConfig.empty();
 
-  SheetPainterNotifier gridPainterNotifier = SheetPainterNotifier();
   SheetPainterNotifier selectionPainterNotifier = SheetPainterNotifier();
+  SheetPainterNotifier scrollNotifier = SheetPainterNotifier();
+
+  Size sheetSize = const Size(0, 0);
 
   SheetController({
     this.customColumnProperties = const {},
     this.customRowProperties = const {},
   });
 
+  void setSheetSize(Size size) {
+    sheetSize = size;
+    _calculateVisibilityConfig();
+  }
+
+  void scroll(IntOffset offset) {
+    IntOffset updatedOffset = sheetOffset + offset;
+    updatedOffset = IntOffset(max(0, updatedOffset.dx), max(0, updatedOffset.dy));
+
+    sheetOffset = updatedOffset;
+
+    _calculateVisibilityConfig();
+    scrollNotifier.repaint();
+  }
+
   void updateSelection(SheetSelection sheetSelection) {
     selection = sheetSelection;
     selectionPainterNotifier.repaint();
   }
 
-  List<ProgramCellConfig> getSelectionRange() {
-    List<CellKey> selectedCells = [selection.start, selection.end];
-    List<ProgramCellConfig> selectedCellsConfig = visibilityConfig.visibleCells.where(
-      (cell) => selectedCells.contains(cell.cellKey),
-    ).toList();
+  ProgramSelectionRectBox? getProgramSelectionRectBox() {
+    bool startCellVisible = visibilityConfig.containsCell(selection.start);
+    bool endCellVisible = visibilityConfig.containsCell(selection.end);
 
-    return selectedCellsConfig;
+    if ((startCellVisible || endCellVisible) == false) {
+      return null;
+    }
+
+    ProgramCellConfig? startCell = visibilityConfig.findCell(selection.start);
+    ProgramCellConfig? endCell = visibilityConfig.findCell(selection.end);
+
+
+    if( startCell != null && endCell != null ) {
+      return ProgramSelectionRectBox.fromProgramCellConfig(
+        start: startCell,
+        end: endCell,
+        selectionDirection: selection.selectionDirection,
+      );
+    } else {
+
+    }
   }
 
   ProgramElementConfig? getHoveredElement(Offset mousePosition) {
@@ -303,7 +488,7 @@ class SheetController {
     }
   }
 
-  SheetVisibilityConfig getVisibilityConfig(Size sheetSize) {
+  SheetVisibilityConfig _calculateVisibilityConfig() {
     List<ProgramRowConfig> visibleRows = getVisibleRows(sheetSize.height);
     List<ProgramColumnConfig> visibleColumns = getVisibleColumns(sheetSize.width);
     List<ProgramCellConfig> visibleCells = getVisibleCells(visibleRows, visibleColumns);

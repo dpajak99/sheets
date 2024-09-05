@@ -14,21 +14,43 @@ class SheetPainterNotifier extends ChangeNotifier {
 
 class SheetPainter extends CustomPainter {
   final SheetController sheetController;
-  final SheetVisibilityConfig visibilityConfig;
 
   SheetPainter({
     required this.sheetController,
-    required this.visibilityConfig,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    BaseLayoutPainter baseLayoutPainter = BaseLayoutPainter(
-      canvas: canvas,
-      visibleCells: visibilityConfig.visibleCells,
-    );
+    for (ProgramCellConfig cell in sheetController.visibilityConfig.visibleCells) {
+      Paint backgroundPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
 
-    baseLayoutPainter.paint();
+      canvas.drawRect(cell.rect, backgroundPaint);
+
+      Paint borderPaint = Paint()
+        ..color = const Color(0xffe1e1e1)
+        ..strokeWidth = borderWidth
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawRect(cell.rect, borderPaint);
+
+      // Fill cell with text
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(
+          text: '${cell.programRowConfig.rowKey.value}-${cell.programColumnConfig.columnKey.value}',
+          // text: '',
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+
+      textPainter.layout();
+      textPainter.paint(canvas, cell.rect.topLeft + const Offset(5, 5));
+    }
   }
 
   @override
@@ -37,44 +59,15 @@ class SheetPainter extends CustomPainter {
   }
 }
 
-class HeadersPainter extends CustomPainter {
+class ColumnHeadersPainter extends CustomPainter {
   final SheetController sheetController;
 
-  HeadersPainter({
+  ColumnHeadersPainter({
     required this.sheetController,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    ColumnHeadersPainter columnHeadersPainter = ColumnHeadersPainter(
-      canvas: canvas,
-      sheetController: sheetController,
-    );
-    RowHeadersPainter rowHeadersPainter = RowHeadersPainter(
-      canvas: canvas,
-      sheetController: sheetController,
-    );
-
-    columnHeadersPainter.paint();
-    rowHeadersPainter.paint();
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class ColumnHeadersPainter {
-  final Canvas canvas;
-  final SheetController sheetController;
-
-  ColumnHeadersPainter({
-    required this.canvas,
-    required this.sheetController,
-  });
-
-  void paint() {
     for (ProgramColumnConfig column in sheetController.visibilityConfig.visibleColumns) {
       bool columnSelected = sheetController.selection.isColumnSelected(column.columnKey);
 
@@ -116,18 +109,22 @@ class ColumnHeadersPainter {
       textPainter.paint(canvas, column.rect.topLeft + const Offset(5, 5));
     }
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
 }
 
-class RowHeadersPainter {
-  final Canvas canvas;
+class RowHeadersPainter extends CustomPainter {
   final SheetController sheetController;
 
   RowHeadersPainter({
-    required this.canvas,
     required this.sheetController,
   });
 
-  void paint() {
+  @override
+  void paint(Canvas canvas, Size size) {
     for (ProgramRowConfig row in sheetController.visibilityConfig.visibleRows) {
       bool rowSelected = sheetController.selection.isRowSelected(row.rowKey);
 
@@ -169,9 +166,14 @@ class RowHeadersPainter {
       textPainter.paint(canvas, row.rect.topLeft + const Offset(5, 5));
     }
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
 }
 
-class SelectionPainter extends CustomPainter{
+class SelectionPainter extends CustomPainter {
   final SheetController sheetController;
 
   SelectionPainter({
@@ -181,26 +183,32 @@ class SelectionPainter extends CustomPainter{
   @override
   void paint(Canvas canvas, Size size) {
     SheetSelection selection = sheetController.selection;
-    if (selection.isEmpty) {
+    if (selection is SheetEmptySelection) {
       return;
     }
 
-    List<ProgramCellConfig> selectedCells = sheetController.getSelectionRange();
+    ProgramSelectionRectBox? selectionRectBox = sheetController.getProgramSelectionRectBox();
+    if(selectionRectBox == null) {
+      return;
+    }
 
     Paint mainCellPaint = Paint()
       ..color = const Color(0xff3572e3)
       ..strokeWidth = borderWidth * 2
       ..style = PaintingStyle.stroke;
 
-    canvas.drawRect(selectedCells.first.rect, mainCellPaint);
+    canvas.drawRect(selectionRectBox.startCellRect, mainCellPaint);
 
-    if (selection.length > 1) {
+    if (selection is SheetRangeSelection) {
       Paint backgroundPaint = Paint()
         ..color = const Color(0x203572e3)
         ..color = const Color(0x203572e3)
         ..style = PaintingStyle.fill;
 
-      canvas.drawRect(Rect.fromPoints(selectedCells.first.rect.topLeft, selectedCells.last.rect.bottomRight), backgroundPaint);
+      canvas.drawRect(
+        Rect.fromPoints(selectionRectBox.topLeft.topLeft, selectionRectBox.bottomRight.bottomRight),
+        backgroundPaint,
+      );
     }
 
     if (selection.isCompleted) {
@@ -209,7 +217,10 @@ class SelectionPainter extends CustomPainter{
         ..strokeWidth = borderWidth
         ..style = PaintingStyle.stroke;
 
-      canvas.drawRect(Rect.fromPoints(selectedCells.first.rect.topLeft, selectedCells.last.rect.bottomRight), selectionPaint);
+      canvas.drawRect(
+        Rect.fromPoints(selectionRectBox.topLeft.topLeft, selectionRectBox.bottomRight.bottomRight),
+        selectionPaint,
+      );
     }
 
     if (selection.isCompleted) {
@@ -217,61 +228,18 @@ class SelectionPainter extends CustomPainter{
         ..color = const Color(0xffffffff)
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(selectedCells.last.rect.bottomRight, 5, selectionDotBorderPaint);
+      canvas.drawCircle(selectionRectBox.bottomRight.bottomRight, 5, selectionDotBorderPaint);
 
       Paint selectionDotPaint = Paint()
         ..color = const Color(0xff3572e3)
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(selectedCells.last.rect.bottomRight, 4, selectionDotPaint);
+      canvas.drawCircle(selectionRectBox.bottomRight.bottomRight, 4, selectionDotPaint);
     }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
-  }
-}
-
-class BaseLayoutPainter {
-  final Canvas canvas;
-  final List<ProgramCellConfig> visibleCells;
-
-  BaseLayoutPainter({
-    required this.canvas,
-    required this.visibleCells,
-  });
-
-  void paint() {
-    for (ProgramCellConfig cell in visibleCells) {
-      Paint backgroundPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill;
-
-      canvas.drawRect(cell.rect, backgroundPaint);
-
-      Paint borderPaint = Paint()
-        ..color = const Color(0xffe1e1e1)
-        ..strokeWidth = borderWidth
-        ..style = PaintingStyle.stroke;
-
-      canvas.drawRect(cell.rect, borderPaint);
-
-      // Fill cell with text
-      // TextPainter textPainter = TextPainter(
-      //   text: const TextSpan(
-      //     // text: '${cell.programRowConfig.rowKey.value}-${cell.programColumnConfig.columnKey.value}',
-      //     text: '',
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontSize: 12,
-      //     ),
-      //   ),
-      //   textDirection: TextDirection.ltr,
-      // );
-      //
-      // textPainter.layout();
-      // textPainter.paint(canvas, cell.rect.topLeft + const Offset(5, 5));
-    }
   }
 }

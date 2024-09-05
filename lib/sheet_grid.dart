@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/multi_listenable_builder.dart';
 import 'package:sheets/sheet_controller.dart';
 import 'package:sheets/sheet_painter.dart';
 
@@ -15,40 +16,57 @@ class SheetGrid extends StatelessWidget {
     return SizedBox.expand(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          Size size = Size(constraints.maxWidth, constraints.maxHeight);
-          SheetVisibilityConfig visibilityConfig = sheetController.getVisibilityConfig(size);
+          sheetController.setSheetSize(Size(constraints.maxWidth, constraints.maxHeight));
 
           return Stack(
             children: [
               RepaintBoundary(
-                child: ListenableBuilder(
-                  listenable: sheetController.gridPainterNotifier,
-                  builder: (BuildContext context, _) {
+                child: MultiListenableBuilder(
+                  listenables: [
+                    sheetController.scrollNotifier,
+                  ],
+                  builder: (BuildContext context) {
                     return CustomPaint(
-                      isComplex: true,
-                      painter: SheetPainter(
-                        sheetController: sheetController,
-                        visibilityConfig: visibilityConfig,
-                      ),
+                      painter: SheetPainter(sheetController: sheetController),
                     );
                   },
                 ),
               ),
               RepaintBoundary(
-                child: ListenableBuilder(
-                  listenable: sheetController.selectionPainterNotifier,
-                  builder: (BuildContext context, _) {
+                child: MultiListenableBuilder(
+                  listenables: [
+                    sheetController.selectionPainterNotifier,
+                    sheetController.scrollNotifier,
+                  ],
+                  builder: (BuildContext context) {
                     return CustomPaint(
                       isComplex: true,
-                      painter: HeadersPainter(sheetController: sheetController),
+                      painter: ColumnHeadersPainter(sheetController: sheetController),
                     );
                   },
                 ),
               ),
               RepaintBoundary(
-                child: ListenableBuilder(
-                  listenable: sheetController.selectionPainterNotifier,
-                  builder: (BuildContext context, _) {
+                child: MultiListenableBuilder(
+                  listenables: [
+                    sheetController.selectionPainterNotifier,
+                    sheetController.scrollNotifier,
+                  ],
+                  builder: (BuildContext context) {
+                    return CustomPaint(
+                      isComplex: true,
+                      painter: RowHeadersPainter(sheetController: sheetController),
+                    );
+                  },
+                ),
+              ),
+              RepaintBoundary(
+                child: MultiListenableBuilder(
+                  listenables: [
+                    sheetController.selectionPainterNotifier,
+                    sheetController.scrollNotifier,
+                  ],
+                  builder: (BuildContext context) {
                     return CustomPaint(
                       isComplex: true,
                       painter: SelectionPainter(sheetController: sheetController),
