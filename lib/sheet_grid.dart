@@ -19,14 +19,14 @@ class SheetGrid extends StatelessWidget {
     return SizedBox.expand(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          sheetController.setSheetSize(Size(constraints.maxWidth, constraints.maxHeight));
+          sheetController.resize(Size(constraints.maxWidth, constraints.maxHeight));
 
           return Stack(
             children: [
               RepaintBoundary(
                 child: MultiListenableBuilder(
                   listenables: [
-                    sheetController.scrollNotifier,
+                    sheetController.paintConfig,
                   ],
                   builder: (BuildContext context) {
                     return CustomPaint(
@@ -39,7 +39,7 @@ class SheetGrid extends StatelessWidget {
                 child: MultiListenableBuilder(
                   listenables: [
                     sheetController.selectionPainterNotifier,
-                    sheetController.scrollNotifier,
+                    sheetController.paintConfig,
                   ],
                   builder: (BuildContext context) {
                     return CustomPaint(
@@ -53,7 +53,7 @@ class SheetGrid extends StatelessWidget {
                 child: MultiListenableBuilder(
                   listenables: [
                     sheetController.selectionPainterNotifier,
-                    sheetController.scrollNotifier,
+                    sheetController.paintConfig,
                   ],
                   builder: (BuildContext context) {
                     return CustomPaint(
@@ -67,7 +67,7 @@ class SheetGrid extends StatelessWidget {
                 child: MultiListenableBuilder(
                   listenables: [
                     sheetController.selectionPainterNotifier,
-                    sheetController.scrollNotifier,
+                    sheetController.paintConfig,
                   ],
                   builder: (BuildContext context) {
                     return CustomPaint(

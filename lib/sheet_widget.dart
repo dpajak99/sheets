@@ -1,8 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/cell_keys.dart';
-import 'package:sheets/controller/properties.dart';
+import 'package:sheets/controller/index.dart';
+import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/style.dart';
+import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_footer.dart';
 import 'package:sheets/sheet_grid.dart';
@@ -12,10 +14,10 @@ class MouseListener extends ChangeNotifier {
   final SheetController sheetController;
 
   Offset offset = Offset.zero;
-  ProgramElementConfig? hoveredElement;
+  SheetItemConfig? hoveredElement;
 
-  ProgramCellConfig? dragStartElement;
-  ProgramCellConfig? previousDragElement;
+  CellConfig? dragStartElement;
+  CellConfig? previousDragElement;
 
   MouseListener({
     required this.sheetController,
@@ -23,13 +25,13 @@ class MouseListener extends ChangeNotifier {
 
   void dragStart(Offset offset) {
     this.offset = offset;
-    ProgramElementConfig? hoveredElement = sheetController.getHoveredElement(offset);
+    SheetItemConfig? hoveredElement = sheetController.getHoveredElement(offset);
     this.hoveredElement = hoveredElement;
 
-    if (hoveredElement is ProgramCellConfig) {
+    if (hoveredElement is CellConfig) {
       dragStartElement = hoveredElement;
       previousDragElement = hoveredElement;
-      sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellKey));
+      sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellIndex));
       notifyListeners();
     }
   }
@@ -39,14 +41,14 @@ class MouseListener extends ChangeNotifier {
       return;
     }
     this.offset = offset;
-    ProgramElementConfig? hoveredElement = sheetController.getHoveredElement(offset);
+    SheetItemConfig? hoveredElement = sheetController.getHoveredElement(offset);
     this.hoveredElement = hoveredElement;
 
-    if (hoveredElement is ProgramCellConfig) {
+    if (hoveredElement is CellConfig) {
       if (hoveredElement == dragStartElement) {
-        sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellKey));
+        sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellIndex));
       } else if (hoveredElement != previousDragElement) {
-        sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellKey, end: hoveredElement.cellKey, completed: false));
+        sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellIndex, end: hoveredElement.cellIndex, completed: false));
       }
     }
     notifyListeners();
@@ -57,12 +59,12 @@ class MouseListener extends ChangeNotifier {
       return;
     }
     this.offset = offset;
-    ProgramElementConfig? hoveredElement = sheetController.getHoveredElement(offset);
-    if (hoveredElement is ProgramCellConfig) {
+    SheetItemConfig? hoveredElement = sheetController.getHoveredElement(offset);
+    if (hoveredElement is CellConfig) {
       if (hoveredElement == dragStartElement) {
-        sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellKey));
+        sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellIndex));
       } else if (hoveredElement != previousDragElement) {
-        sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellKey, end: hoveredElement.cellKey, completed: true));
+        sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellIndex, end: hoveredElement.cellIndex, completed: true));
       }
     }
 
@@ -78,8 +80,8 @@ class MouseListener extends ChangeNotifier {
   }
 
   void tap() {
-    if (hoveredElement is ProgramCellConfig) {
-      sheetController.updateSelection(SheetSingleSelection((hoveredElement as ProgramCellConfig).cellKey));
+    if (hoveredElement is CellConfig) {
+      sheetController.updateSelection(SheetSingleSelection((hoveredElement as CellConfig).cellIndex));
     }
   }
 }
@@ -94,15 +96,15 @@ class SheetWidget extends StatefulWidget {
 class SheetWidgetState extends State<SheetWidget> {
   final SheetController sheetController = SheetController(
     customColumnProperties: {
-      ColumnKey(3): ColumnProperties(width: 200),
+      ColumnIndex(3): ColumnStyle(width: 200),
     },
     customRowProperties: {
-      RowKey(3): RowProperties(height: 100),
+      RowIndex(3): RowStyle(height: 100),
     },
   );
   late final MouseListener mouseListener = MouseListener(sheetController: sheetController);
 
-  CellKey? dragStart;
+  CellIndex? dragStart;
 
   bool shiftPressed = false;
 

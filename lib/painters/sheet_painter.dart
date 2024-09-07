@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
@@ -11,7 +12,7 @@ class SheetPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (ProgramCellConfig cell in sheetController.visibilityConfig.visibleCells) {
+    for (CellConfig cell in sheetController.paintConfig.visibleCells) {
       Paint backgroundPaint = Paint()
         ..color = Colors.white
         ..style = PaintingStyle.fill;
@@ -28,7 +29,7 @@ class SheetPainter extends CustomPainter {
       // Fill cell with text
       TextPainter textPainter = TextPainter(
         text: TextSpan(
-          text: '${cell.programRowConfig.rowKey.value}-${cell.programColumnConfig.columnKey.value}',
+          text: '${cell.rowConfig.rowIndex.value}-${cell.columnConfig.columnIndex.value}',
           // text: '',
           style: const TextStyle(
             color: Colors.black,

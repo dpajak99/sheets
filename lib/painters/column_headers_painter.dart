@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
@@ -11,8 +12,8 @@ class ColumnHeadersPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (ProgramColumnConfig column in sheetController.visibilityConfig.visibleColumns) {
-      bool columnSelected = sheetController.selection.isColumnSelected(column.columnKey);
+    for (ColumnConfig column in sheetController.paintConfig.visibleColumns) {
+      bool columnSelected = sheetController.selection.isColumnSelected(column.columnIndex);
 
       if (columnSelected) {
         Paint backgroundPaint = Paint()
@@ -38,7 +39,7 @@ class ColumnHeadersPainter extends CustomPainter {
       TextPainter textPainter = TextPainter(
         textAlign: TextAlign.center,
         text: TextSpan(
-          text: '${column.columnKey.value}',
+          text: '${column.columnIndex.value}',
           style: TextStyle(
             color: Colors.black,
             fontWeight: columnSelected ? FontWeight.bold : FontWeight.normal,

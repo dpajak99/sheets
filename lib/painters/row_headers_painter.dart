@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
@@ -11,8 +12,8 @@ class RowHeadersPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (ProgramRowConfig row in sheetController.visibilityConfig.visibleRows) {
-      bool rowSelected = sheetController.selection.isRowSelected(row.rowKey);
+    for (RowConfig row in sheetController.paintConfig.visibleRows) {
+      bool rowSelected = sheetController.selection.isRowSelected(row.rowIndex);
 
       if (rowSelected) {
         Paint backgroundPaint = Paint()
@@ -38,7 +39,7 @@ class RowHeadersPainter extends CustomPainter {
       TextPainter textPainter = TextPainter(
         textAlign: TextAlign.center,
         text: TextSpan(
-          text: '${row.rowKey.value}',
+          text: '${row.rowIndex.value}',
           style: TextStyle(
             color: Colors.black,
             fontWeight: rowSelected ? FontWeight.bold : FontWeight.normal,
