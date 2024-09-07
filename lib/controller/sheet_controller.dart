@@ -2,57 +2,12 @@ import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/sheet_painter.dart';
+import 'package:sheets/controller/cell_keys.dart';
+import 'package:sheets/controller/properties.dart';
+import 'package:sheets/painters/sheet_painter_notifier.dart';
+import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils.dart';
 
-double columnHeadersHeight = 24;
-double rowHeadersWidth = 46;
-double cellHeight = 22;
-double cellWidth = 100;
-
-class ColumnProperties with EquatableMixin {
-  final double width;
-
-  ColumnProperties({
-    required this.width,
-  });
-
-  ColumnProperties.defaults() : width = 100;
-
-  @override
-  List<Object?> get props => [width];
-}
-
-class ColumnKey with EquatableMixin {
-  final int value;
-
-  ColumnKey(this.value);
-
-  @override
-  List<Object?> get props => [value];
-}
-
-class RowProperties with EquatableMixin {
-  final double height;
-
-  RowProperties({
-    required this.height,
-  });
-
-  RowProperties.defaults() : height = 22;
-
-  @override
-  List<Object?> get props => [height];
-}
-
-class RowKey with EquatableMixin {
-  final int value;
-
-  RowKey(this.value);
-
-  @override
-  List<Object?> get props => [value];
-}
 
 abstract class ProgramElementConfig with EquatableMixin {
   final Rect rect;
@@ -145,8 +100,58 @@ class SheetVisibilityConfig with EquatableMixin {
     return elements;
   }
 
+  (Direction, Direction, ProgramCellConfig) findClosestVisible(CellKey cellKey) {
+    Direction verticalDirection;
+    Direction horizontalDirection;
+    RowKey rowKey;
+    ColumnKey columnKey;
+
+    (verticalDirection, rowKey) = _findVisibleRowKey(cellKey);
+    (horizontalDirection, columnKey) = _findVisibleColumnKey(cellKey);
+
+    CellKey closestCellKey = CellKey(
+      rowKey: rowKey,
+      columnKey: columnKey,
+    );
+    return (verticalDirection, horizontalDirection, findCell(closestCellKey)!);
+  }
+
+  (Direction, RowKey) _findVisibleRowKey(CellKey cellKey) {
+    RowKey firstVisibleRow = visibleRows.first.rowKey;
+    RowKey lastVisibleRow = visibleRows.last.rowKey;
+    RowKey cellRow = cellKey.rowKey;
+
+    bool visible = cellRow >= firstVisibleRow && cellRow <= lastVisibleRow;
+    bool missingTop = cellRow < firstVisibleRow;
+
+    if (visible) {
+      return (Direction.center, cellRow);
+    } else if (missingTop) {
+      return (Direction.top, firstVisibleRow);
+    } else {
+      return (Direction.bottom, lastVisibleRow);
+    }
+  }
+
+  (Direction, ColumnKey) _findVisibleColumnKey(CellKey cellKey) {
+    ColumnKey firstVisibleColumn = visibleColumns.first.columnKey;
+    ColumnKey lastVisibleColumn = visibleColumns.last.columnKey;
+    ColumnKey cellColumn = cellKey.columnKey;
+
+    bool visible = cellColumn >= firstVisibleColumn && cellColumn <= lastVisibleColumn;
+    bool missingLeft = cellColumn < firstVisibleColumn;
+
+    if (visible) {
+      return (Direction.center, cellColumn);
+    } else if (missingLeft) {
+      return (Direction.left, firstVisibleColumn);
+    } else {
+      return (Direction.right, lastVisibleColumn);
+    }
+  }
+
   ProgramCellConfig? findCell(CellKey cellKey) {
-    return visibleCells.firstWhere((cell) => cell.cellKey == cellKey);
+    return visibleCells.where((cell) => cell.cellKey == cellKey).firstOrNull;
   }
 
   bool containsCell(CellKey cellKey) {
@@ -157,23 +162,14 @@ class SheetVisibilityConfig with EquatableMixin {
   List<Object?> get props => [visibleRows, visibleColumns];
 }
 
-class CellKey with EquatableMixin {
-  final RowKey rowKey;
-  final ColumnKey columnKey;
-
-  CellKey({
-    required this.rowKey,
-    required this.columnKey,
-  });
-
-  @override
-  List<Object?> get props => [rowKey, columnKey];
-
-  @override
-  String toString() {
-    return 'Cell(${rowKey.value}, ${columnKey.value})';
-  }
+enum Direction {
+  top,
+  right,
+  bottom,
+  left,
+  center,
 }
+
 
 abstract class SheetSelection with EquatableMixin {
   CellKey get start;
@@ -360,18 +356,38 @@ class ProgramSelectionRectBox {
   final Rect bottomRight;
   final Rect startCellRect;
 
+  final bool hideTopBorder;
+  final bool hideRightBorder;
+  final bool hideBottomBorder;
+  final bool hideLeftBorder;
+
+  final bool startCellVisible;
+  final bool lastCellVisible;
+
   ProgramSelectionRectBox({
     required this.topLeft,
     required this.topRight,
     required this.bottomLeft,
     required this.bottomRight,
     required this.startCellRect,
+    this.hideTopBorder = false,
+    this.hideRightBorder = false,
+    this.hideBottomBorder = false,
+    this.hideLeftBorder = false,
+    this.startCellVisible = true,
+    this.lastCellVisible = true,
   });
 
   factory ProgramSelectionRectBox.fromProgramCellConfig({
     required ProgramCellConfig start,
     required ProgramCellConfig end,
     required SelectionDirection selectionDirection,
+    bool startCellVisible = true,
+    bool lastCellVisible = true,
+    bool hideTopBorder = false,
+    bool hideRightBorder = false,
+    bool hideBottomBorder = false,
+    bool hideLeftBorder = false,
   }) {
     late Rect topLeft;
     late Rect topRight;
@@ -411,6 +427,12 @@ class ProgramSelectionRectBox {
       bottomLeft: bottomLeft,
       bottomRight: bottomRight,
       startCellRect: start.rect,
+      hideTopBorder: hideTopBorder,
+      hideRightBorder: hideRightBorder,
+      hideBottomBorder: hideBottomBorder,
+      hideLeftBorder: hideLeftBorder,
+      startCellVisible: startCellVisible,
+      lastCellVisible: lastCellVisible,
     );
   }
 }
@@ -419,7 +441,6 @@ class SheetController {
   final Map<ColumnKey, ColumnProperties> customColumnProperties;
   final Map<RowKey, RowProperties> customRowProperties;
 
-  // SheetSelection selection = SheetEmptySelection();
   SheetSelection selection = SheetEmptySelection();
   IntOffset sheetOffset = IntOffset.zero;
 
@@ -466,15 +487,48 @@ class SheetController {
     ProgramCellConfig? startCell = visibilityConfig.findCell(selection.start);
     ProgramCellConfig? endCell = visibilityConfig.findCell(selection.end);
 
-
-    if( startCell != null && endCell != null ) {
+    if (startCell != null && endCell != null) {
       return ProgramSelectionRectBox.fromProgramCellConfig(
         start: startCell,
         end: endCell,
         selectionDirection: selection.selectionDirection,
       );
-    } else {
+    } else if (startCell == null && endCell != null) {
+      Direction verticalDirection;
+      Direction horizontalDirection;
+      ProgramCellConfig closestCell;
 
+      (verticalDirection, horizontalDirection, closestCell) = visibilityConfig.findClosestVisible(selection.start);
+
+      return ProgramSelectionRectBox.fromProgramCellConfig(
+        start: closestCell,
+        end: endCell,
+        selectionDirection: selection.selectionDirection,
+        hideTopBorder: verticalDirection == Direction.top,
+        hideRightBorder: horizontalDirection == Direction.right,
+        hideBottomBorder: verticalDirection == Direction.bottom,
+        hideLeftBorder: horizontalDirection == Direction.left,
+        startCellVisible: false,
+      );
+    } else if (startCell != null && endCell == null) {
+      Direction verticalDirection;
+      Direction horizontalDirection;
+      ProgramCellConfig closestCell;
+
+      (verticalDirection, horizontalDirection, closestCell) = visibilityConfig.findClosestVisible(selection.end);
+
+      return ProgramSelectionRectBox.fromProgramCellConfig(
+        start: startCell,
+        end: closestCell,
+        selectionDirection: selection.selectionDirection,
+        hideTopBorder: verticalDirection == Direction.top,
+        hideRightBorder: horizontalDirection == Direction.right,
+        hideBottomBorder: verticalDirection == Direction.bottom,
+        hideLeftBorder: horizontalDirection == Direction.left,
+        lastCellVisible: false,
+      );
+    } else {
+      return null;
     }
   }
 

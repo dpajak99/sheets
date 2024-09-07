@@ -1,6 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/sheet_controller.dart';
+import 'package:flutter/services.dart';
+import 'package:sheets/controller/cell_keys.dart';
+import 'package:sheets/controller/properties.dart';
+import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_footer.dart';
 import 'package:sheets/sheet_grid.dart';
 import 'package:sheets/utils.dart';
@@ -101,6 +104,14 @@ class SheetWidgetState extends State<SheetWidget> {
 
   CellKey? dragStart;
 
+  bool shiftPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -125,7 +136,11 @@ class SheetWidgetState extends State<SheetWidget> {
                   int scrolledColumns = event.scrollDelta.dx ~/ 50;
                   int scrolledRows = event.scrollDelta.dy ~/ 50;
 
-                  sheetController.scroll(IntOffset(scrolledColumns, scrolledRows));
+                  if (shiftPressed) {
+                    sheetController.scroll(IntOffset(scrolledRows, scrolledColumns));
+                  } else {
+                    sheetController.scroll(IntOffset(scrolledColumns, scrolledRows));
+                  }
                 }
               },
               child: MouseRegion(
@@ -138,5 +153,25 @@ class SheetWidgetState extends State<SheetWidget> {
         SheetFooter(sheetController: sheetController, mouseListener: mouseListener),
       ],
     );
+  }
+
+  bool _onKey(KeyEvent event) {
+    int key = event.logicalKey.keyId;
+
+    if (event is KeyDownEvent) {
+      if (key == 8589934850) {
+        shiftPressed = true;
+      }
+    } else if (event is KeyUpEvent) {
+      if (key == 8589934850) {
+        shiftPressed = false;
+      }
+    } else if (event is KeyRepeatEvent) {
+      if (key == 8589934850) {
+        shiftPressed = true;
+      }
+    }
+
+    return false;
   }
 }
