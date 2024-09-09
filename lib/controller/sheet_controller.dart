@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
@@ -9,7 +8,6 @@ import 'package:sheets/controller/selection.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/painters/sheet_painter_notifier.dart';
 import 'package:sheets/utils.dart';
-import 'package:sheets/utils/direction.dart';
 
 class SheetController {
   late final SheetPaintConfig paintConfig;

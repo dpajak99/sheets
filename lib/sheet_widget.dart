@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/style.dart';
-import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_footer.dart';
 import 'package:sheets/sheet_grid.dart';

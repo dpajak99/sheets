@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -193,23 +192,17 @@ class SelectionCorners<T> with EquatableMixin {
 class SelectionBounds {
   final SelectionCorners<Rect> _corners;
   final CellConfig _startCell;
-  final CellConfig _endCell;
   final bool _startCellVisible;
-  final bool _lastCellVisible;
   final List<Direction> _hiddenBorders;
 
   SelectionBounds._({
     required SelectionCorners<Rect> corners,
     required CellConfig startCell,
-    required CellConfig endCell,
     required bool startCellVisible,
-    required bool lastCellVisible,
     required List<Direction> hiddenBorders,
   })  : _corners = corners,
         _startCell = startCell,
-        _endCell = endCell,
         _startCellVisible = startCellVisible,
-        _lastCellVisible = lastCellVisible,
         _hiddenBorders = hiddenBorders;
 
   factory SelectionBounds(
@@ -237,9 +230,7 @@ class SelectionBounds {
     return SelectionBounds._(
       corners: corners,
       startCell: startCell,
-      endCell: endCell,
       startCellVisible: startCellVisible,
-      lastCellVisible: lastCellVisible,
       hiddenBorders: hiddenBorders ?? [],
     );
   }
