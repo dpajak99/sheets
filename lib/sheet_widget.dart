@@ -16,60 +16,43 @@ class MouseListener extends ChangeNotifier {
   Offset offset = Offset.zero;
   SheetItemConfig? hoveredElement;
 
-  CellConfig? dragStartElement;
-  CellConfig? previousDragElement;
-
   MouseListener({
     required this.sheetController,
   });
 
   void dragStart(Offset offset) {
     this.offset = offset;
-    SheetItemConfig? hoveredElement = sheetController.getHoveredElement(offset);
-    this.hoveredElement = hoveredElement;
+    hoveredElement = sheetController.getHoveredElement(offset);
 
-    if (hoveredElement is CellConfig) {
-      dragStartElement = hoveredElement;
-      previousDragElement = hoveredElement;
-      sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellIndex));
-      notifyListeners();
+    switch (hoveredElement) {
+      case CellConfig cellConfig:
+        sheetController.selectSingle(cellConfig.cellIndex);
     }
+
+    notifyListeners();
   }
 
   void dragUpdate(Offset offset) {
-    if (dragStartElement == null) {
-      return;
-    }
     this.offset = offset;
-    SheetItemConfig? hoveredElement = sheetController.getHoveredElement(offset);
-    this.hoveredElement = hoveredElement;
+    hoveredElement = sheetController.getHoveredElement(offset);
 
-    if (hoveredElement is CellConfig) {
-      if (hoveredElement == dragStartElement) {
-        sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellIndex));
-      } else if (hoveredElement != previousDragElement) {
-        sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellIndex, end: hoveredElement.cellIndex, completed: false));
-      }
+    switch (hoveredElement) {
+      case CellConfig cellConfig:
+        sheetController.selectRange(end: cellConfig.cellIndex, completed: false);
     }
+
     notifyListeners();
   }
 
   void dragEnd(Offset offset) {
-    if (dragStartElement == null) {
-      return;
-    }
     this.offset = offset;
-    SheetItemConfig? hoveredElement = sheetController.getHoveredElement(offset);
-    if (hoveredElement is CellConfig) {
-      if (hoveredElement == dragStartElement) {
-        sheetController.updateSelection(SheetSingleSelection(hoveredElement.cellIndex));
-      } else if (hoveredElement != previousDragElement) {
-        sheetController.updateSelection(SheetRangeSelection(start: dragStartElement!.cellIndex, end: hoveredElement.cellIndex, completed: true));
-      }
+    hoveredElement = sheetController.getHoveredElement(offset);
+
+    switch (hoveredElement) {
+      case CellConfig cellConfig:
+        sheetController.selectRange(end: cellConfig.cellIndex, completed: true);
     }
 
-    dragStartElement = null;
-    previousDragElement = null;
     notifyListeners();
   }
 
@@ -80,8 +63,9 @@ class MouseListener extends ChangeNotifier {
   }
 
   void tap() {
-    if (hoveredElement is CellConfig) {
-      sheetController.updateSelection(SheetSingleSelection((hoveredElement as CellConfig).cellIndex));
+    switch (hoveredElement) {
+      case CellConfig cellConfig:
+        sheetController.selectSingle(cellConfig.cellIndex);
     }
   }
 }

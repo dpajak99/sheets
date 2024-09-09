@@ -49,8 +49,7 @@ class SheetPaintConfig extends ChangeNotifier {
   }
 
   (Direction, Direction, CellConfig) findClosestVisible(CellIndex cellIndex) {
-    Direction verticalDirection;
-    Direction horizontalDirection;
+    Direction verticalDirection, horizontalDirection;
     RowIndex rowIndex;
     ColumnIndex columnIndex;
 

@@ -13,48 +13,40 @@ class SelectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     SheetSelection selection = sheetController.selection;
-    if (selection is SheetEmptySelection) {
+
+    SelectionBounds? selectionBounds = selection.getSelectionBounds();
+    if (selectionBounds == null) {
       return;
     }
 
-    ProgramSelectionRectBox? selectionRectBox = sheetController.getProgramSelectionRectBox();
-    if (selectionRectBox == null) {
-      return;
-    }
-
-    if (selectionRectBox.startCellVisible) {
+    if (selectionBounds.isStartCellVisible) {
       Paint mainCellPaint = Paint()
         ..color = const Color(0xff3572e3)
         ..strokeWidth = borderWidth * 2
         ..style = PaintingStyle.stroke;
 
-      canvas.drawRect(selectionRectBox.startCellRect, mainCellPaint);
+      canvas.drawRect(selectionBounds.startCellRect, mainCellPaint);
     }
 
-    if (selection is SheetRangeSelection) {
+    if (selection.hasBackground) {
       Paint backgroundPaint = Paint()
         ..color = const Color(0x203572e3)
         ..color = const Color(0x203572e3)
         ..style = PaintingStyle.fill;
 
-      canvas.drawRect(
-        Rect.fromPoints(selectionRectBox.topLeft.topLeft, selectionRectBox.bottomRight.bottomRight),
-        backgroundPaint,
-      );
+      canvas.drawRect(selectionBounds.selectionRect, backgroundPaint);
     }
 
     if (selection.isCompleted) {
-      Rect borderRect = Rect.fromPoints(selectionRectBox.topLeft.topLeft, selectionRectBox.bottomRight.bottomRight);
-
       Paint selectionPaint = Paint()
         ..color = const Color(0xff3572e3)
         ..strokeWidth = borderWidth
         ..style = PaintingStyle.stroke;
 
-      if (selectionRectBox.hideTopBorder == false) canvas.drawLine(borderRect.topLeft, borderRect.topRight, selectionPaint);
-      if (selectionRectBox.hideLeftBorder == false) canvas.drawLine(borderRect.topLeft, borderRect.bottomLeft, selectionPaint);
-      if (selectionRectBox.hideBottomBorder == false) canvas.drawLine(borderRect.bottomLeft, borderRect.bottomRight, selectionPaint);
-      if (selectionRectBox.hideRightBorder == false) canvas.drawLine(borderRect.topRight, borderRect.bottomRight, selectionPaint);
+      if (selectionBounds.isTopBorderVisible) canvas.drawLine(selectionBounds.topBorderStart, selectionBounds.topBorderEnd, selectionPaint);
+      if (selectionBounds.isRightBorderVisible) canvas.drawLine(selectionBounds.rightBorderStart, selectionBounds.rightBorderEnd, selectionPaint);
+      if (selectionBounds.isBottomBorderVisible) canvas.drawLine(selectionBounds.bottomBorderStart, selectionBounds.bottomBorderEnd, selectionPaint);
+      if (selectionBounds.isLeftBorderVisible) canvas.drawLine(selectionBounds.leftBorderStart, selectionBounds.leftBorderEnd, selectionPaint);
     }
 
     if (selection.isCompleted) {
@@ -62,13 +54,13 @@ class SelectionPainter extends CustomPainter {
         ..color = const Color(0xffffffff)
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(selectionRectBox.bottomRight.bottomRight, 5, selectionDotBorderPaint);
+      canvas.drawCircle(selectionBounds.corners.bottomRight.bottomRight, 5, selectionDotBorderPaint);
 
       Paint selectionDotPaint = Paint()
         ..color = const Color(0xff3572e3)
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(selectionRectBox.bottomRight.bottomRight, 4, selectionDotPaint);
+      canvas.drawCircle(selectionBounds.corners.bottomRight.bottomRight, 4, selectionDotPaint);
     }
   }
 

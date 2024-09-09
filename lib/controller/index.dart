@@ -9,6 +9,8 @@ class CellIndex with EquatableMixin {
     required this.columnIndex,
   });
 
+  static CellIndex zero = CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0));
+
   @override
   String toString() {
     return 'Cell(${rowIndex.value}, ${columnIndex.value})';

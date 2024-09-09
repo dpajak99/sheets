@@ -1,48 +1,71 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
+import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/utils/direction.dart';
 
 abstract class SheetSelection with EquatableMixin {
+  final SheetPaintConfig paintConfig;
+
+  SheetSelection({required this.paintConfig});
+
+  SelectionBounds? getSelectionBounds() {
+    bool startCellVisible = paintConfig.containsCell(start);
+    bool endCellVisible = paintConfig.containsCell(end);
+
+    if ((startCellVisible || endCellVisible) == false) {
+      return null;
+    }
+
+    CellConfig? startCell = paintConfig.findCell(start);
+    CellConfig? endCell = paintConfig.findCell(end);
+
+    if (startCell != null && endCell != null) {
+      return SelectionBounds(startCell, endCell, direction);
+    } else if (startCell == null && endCell != null) {
+      Direction verticalDirection, horizontalDirection;
+      CellConfig startClosestCell;
+
+      (verticalDirection, horizontalDirection, startClosestCell) = paintConfig.findClosestVisible(start);
+
+      List<Direction> hiddenBorders = [verticalDirection, horizontalDirection];
+      return SelectionBounds(startClosestCell, endCell, direction, hiddenBorders: hiddenBorders, startCellVisible: false);
+    } else if (startCell != null && endCell == null) {
+      Direction verticalDirection, horizontalDirection;
+      CellConfig closestCell;
+
+      (verticalDirection, horizontalDirection, closestCell) = paintConfig.findClosestVisible(end);
+
+      List<Direction> hiddenBorders = [verticalDirection, horizontalDirection];
+      return SelectionBounds(startCell, closestCell, direction, hiddenBorders: hiddenBorders, lastCellVisible: false);
+    } else {
+      return null;
+    }
+  }
+
   CellIndex get start;
 
   CellIndex get end;
+
+  bool get hasBackground => false;
 
   bool isColumnSelected(ColumnIndex columnIndex);
 
   bool isRowSelected(RowIndex rowIndex);
 
-  SelectionDirection get selectionDirection;
+  SelectionDirection get direction;
 
   bool get isCompleted;
-}
-
-class SheetEmptySelection extends SheetSelection {
-  @override
-  CellIndex get start => CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0));
-
-  @override
-  CellIndex get end => CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0));
-
-  @override
-  bool isColumnSelected(ColumnIndex columnIndex) => false;
-
-  @override
-  bool isRowSelected(RowIndex rowIndex) => false;
-
-  @override
-  SelectionDirection get selectionDirection => SelectionDirection.topRight;
-
-  @override
-  bool get isCompleted => true;
-
-  @override
-  List<Object?> get props => [];
 }
 
 class SheetSingleSelection extends SheetSelection {
   final CellIndex cellIndex;
 
-  SheetSingleSelection(this.cellIndex);
+  SheetSingleSelection({required super.paintConfig, required this.cellIndex});
+
+  SheetSingleSelection.defaultSelection({required super.paintConfig}) : cellIndex = CellIndex.zero;
 
   @override
   CellIndex get start => cellIndex;
@@ -57,7 +80,7 @@ class SheetSingleSelection extends SheetSelection {
   bool isRowSelected(RowIndex rowIndex) => cellIndex.rowIndex == rowIndex;
 
   @override
-  SelectionDirection get selectionDirection => SelectionDirection.topRight;
+  SelectionDirection get direction => SelectionDirection.topRight;
 
   @override
   bool get isCompleted => true;
@@ -66,13 +89,13 @@ class SheetSingleSelection extends SheetSelection {
   List<Object?> get props => [cellIndex];
 }
 
-
 class SheetRangeSelection extends SheetSelection {
   final CellIndex _start;
   final CellIndex _end;
   final bool _completed;
 
   SheetRangeSelection({
+    required super.paintConfig,
     required CellIndex start,
     required CellIndex end,
     required bool completed,
@@ -88,24 +111,22 @@ class SheetRangeSelection extends SheetSelection {
 
   @override
   bool isColumnSelected(ColumnIndex columnIndex) {
-    ProgramSelectionKeyBox programSelectionKeyBox = ProgramSelectionKeyBox.fromSheetSelection(this);
-    int startColumnIndex = programSelectionKeyBox.topLeft.columnIndex.value;
-    int endColumnIndex = programSelectionKeyBox.topRight.columnIndex.value;
+    int startColumnIndex = selectionCorners.topLeft.columnIndex.value;
+    int endColumnIndex = selectionCorners.topRight.columnIndex.value;
 
     return columnIndex.value >= startColumnIndex && columnIndex.value <= endColumnIndex;
   }
 
   @override
   bool isRowSelected(RowIndex rowIndex) {
-    ProgramSelectionKeyBox programSelectionKeyBox = ProgramSelectionKeyBox.fromSheetSelection(this);
-    int startRowIndex = programSelectionKeyBox.topLeft.rowIndex.value;
-    int endRowIndex = programSelectionKeyBox.bottomLeft.rowIndex.value;
+    int startRowIndex = selectionCorners.topLeft.rowIndex.value;
+    int endRowIndex = selectionCorners.bottomLeft.rowIndex.value;
 
     return rowIndex.value >= startRowIndex && rowIndex.value <= endRowIndex;
   }
 
   @override
-  SelectionDirection get selectionDirection {
+  SelectionDirection get direction {
     bool startBeforeEndRow = _start.rowIndex.value < _end.rowIndex.value;
     bool startBeforeEndColumn = _start.columnIndex.value < _end.columnIndex.value;
 
@@ -117,8 +138,136 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
+  bool get hasBackground => true;
+
+  @override
   bool get isCompleted => _completed;
+
+  SelectionCorners<CellIndex> get selectionCorners {
+    return SelectionCorners.fromDirection(
+      topLeft: start,
+      topRight: CellIndex(rowIndex: start.rowIndex, columnIndex: end.columnIndex),
+      bottomLeft: CellIndex(rowIndex: end.rowIndex, columnIndex: start.columnIndex),
+      bottomRight: end,
+      direction: direction,
+    );
+  }
 
   @override
   List<Object?> get props => [_start, _end];
+}
+
+enum SelectionDirection { topRight, topLeft, bottomRight, bottomLeft }
+
+class SelectionCorners<T> with EquatableMixin {
+  final T topLeft;
+  final T topRight;
+  final T bottomLeft;
+  final T bottomRight;
+
+  SelectionCorners(this.topLeft, this.topRight, this.bottomLeft, this.bottomRight);
+
+  factory SelectionCorners.fromDirection({
+    required T topLeft,
+    required T topRight,
+    required T bottomLeft,
+    required T bottomRight,
+    required SelectionDirection direction,
+  }) {
+    switch (direction) {
+      case SelectionDirection.bottomRight:
+        return SelectionCorners(topLeft, topRight, bottomLeft, bottomRight);
+      case SelectionDirection.bottomLeft:
+        return SelectionCorners(topRight, topLeft, bottomRight, bottomLeft);
+      case SelectionDirection.topRight:
+        return SelectionCorners(bottomLeft, bottomRight, topLeft, topRight);
+      case SelectionDirection.topLeft:
+        return SelectionCorners(bottomRight, bottomLeft, topRight, topLeft);
+    }
+  }
+
+  @override
+  List<Object?> get props => <Object?>[topLeft, topRight, bottomLeft, bottomRight];
+}
+
+class SelectionBounds {
+  final SelectionCorners<Rect> _corners;
+  final CellConfig _startCell;
+  final CellConfig _endCell;
+  final bool _startCellVisible;
+  final bool _lastCellVisible;
+  final List<Direction> _hiddenBorders;
+
+  SelectionBounds._({
+    required SelectionCorners<Rect> corners,
+    required CellConfig startCell,
+    required CellConfig endCell,
+    required bool startCellVisible,
+    required bool lastCellVisible,
+    required List<Direction> hiddenBorders,
+  })  : _corners = corners,
+        _startCell = startCell,
+        _endCell = endCell,
+        _startCellVisible = startCellVisible,
+        _lastCellVisible = lastCellVisible,
+        _hiddenBorders = hiddenBorders;
+
+  factory SelectionBounds(
+      CellConfig startCell,
+      CellConfig endCell,
+      SelectionDirection direction, {
+        List<Direction>? hiddenBorders,
+        bool startCellVisible = true,
+        bool lastCellVisible = true,
+      }) {
+    SelectionCorners<Rect> corners = SelectionCorners<Rect>.fromDirection(
+      topLeft: startCell.rect,
+      bottomRight: endCell.rect,
+      topRight: Rect.fromPoints(
+        Offset(endCell.rect.left, startCell.rect.top),
+        Offset(endCell.rect.right, startCell.rect.bottom),
+      ),
+      bottomLeft: Rect.fromPoints(
+        Offset(startCell.rect.left, endCell.rect.top),
+        Offset(startCell.rect.right, endCell.rect.bottom),
+      ),
+      direction: direction,
+    );
+
+    return SelectionBounds._(
+      corners: corners,
+      startCell: startCell,
+      endCell: endCell,
+      startCellVisible: startCellVisible,
+      lastCellVisible: lastCellVisible,
+      hiddenBorders: hiddenBorders ?? [],
+    );
+  }
+
+  bool get isStartCellVisible => _startCellVisible;
+
+  Rect get startCellRect => _startCell.rect;
+
+  Rect get selectionRect {
+    return Rect.fromPoints(_corners.topLeft.topLeft, _corners.bottomRight.bottomRight);
+  }
+
+
+  bool get isLeftBorderVisible => !_hiddenBorders.contains(Direction.left);
+  Offset get leftBorderStart => _corners.topLeft.topLeft;
+  Offset get leftBorderEnd => _corners.bottomLeft.bottomLeft;
+
+  bool get isTopBorderVisible => !_hiddenBorders.contains(Direction.top);
+  Offset get topBorderStart => _corners.topLeft.topLeft;
+  Offset get topBorderEnd => _corners.topRight.topRight;
+
+  bool get isRightBorderVisible => !_hiddenBorders.contains(Direction.right);
+  Offset get rightBorderStart => _corners.topRight.topRight;
+  Offset get rightBorderEnd => _corners.bottomRight.bottomRight;
+
+  bool get isBottomBorderVisible => !_hiddenBorders.contains(Direction.bottom);
+  Offset get bottomBorderStart => _corners.bottomLeft.bottomLeft;
+  Offset get bottomBorderEnd => _corners.bottomRight.bottomRight;
+
+  SelectionCorners<Rect> get corners => _corners;
 }
