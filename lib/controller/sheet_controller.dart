@@ -16,6 +16,7 @@ class SheetController {
   IntOffset scrollOffset = IntOffset.zero;
 
   SheetPainterNotifier selectionPainterNotifier = SheetPainterNotifier();
+  ValueNotifier<CellConfig?> editNotifier = ValueNotifier(null);
 
   SheetController({
     required Map<ColumnIndex, ColumnStyle> customColumnProperties,
@@ -40,8 +41,8 @@ class SheetController {
     paintConfig.refresh();
   }
 
-  void selectSingle(CellIndex cellIndex) {
-    selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex);
+  void selectSingle(CellIndex cellIndex, {bool editingEnabled = false}) {
+    selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex, editingEnabled: editingEnabled);
     selectionPainterNotifier.repaint();
   }
 
@@ -54,6 +55,17 @@ class SheetController {
       selectionPainterNotifier.repaint();
     }
   }
+
+  void edit(CellConfig cellConfig) {
+    selectSingle(cellConfig.cellIndex, editingEnabled: true);
+    editNotifier.value = cellConfig;
+  }
+
+  void cancelEdit() {
+    editNotifier.value = null;
+  }
+
+
 
   SheetItemConfig? getHoveredElement(Offset mousePosition) {
     try {

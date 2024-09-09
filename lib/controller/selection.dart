@@ -50,6 +50,8 @@ abstract class SheetSelection with EquatableMixin {
 
   bool get hasBackground => false;
 
+  bool get circleVisible => true;
+
   bool isColumnSelected(ColumnIndex columnIndex);
 
   bool isRowSelected(RowIndex rowIndex);
@@ -61,10 +63,15 @@ abstract class SheetSelection with EquatableMixin {
 
 class SheetSingleSelection extends SheetSelection {
   final CellIndex cellIndex;
+  final bool editingEnabled;
 
-  SheetSingleSelection({required super.paintConfig, required this.cellIndex});
+  SheetSingleSelection({
+    required super.paintConfig,
+    required this.cellIndex,
+    this.editingEnabled = false,
+  });
 
-  SheetSingleSelection.defaultSelection({required super.paintConfig}) : cellIndex = CellIndex.zero;
+  SheetSingleSelection.defaultSelection({required super.paintConfig}) : cellIndex = CellIndex.zero, editingEnabled = false;
 
   @override
   CellIndex get start => cellIndex;
@@ -83,6 +90,9 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   bool get isCompleted => true;
+
+  @override
+  bool get circleVisible => !editingEnabled;
 
   @override
   List<Object?> get props => [cellIndex];
@@ -206,13 +216,13 @@ class SelectionBounds {
         _hiddenBorders = hiddenBorders;
 
   factory SelectionBounds(
-      CellConfig startCell,
-      CellConfig endCell,
-      SelectionDirection direction, {
-        List<Direction>? hiddenBorders,
-        bool startCellVisible = true,
-        bool lastCellVisible = true,
-      }) {
+    CellConfig startCell,
+    CellConfig endCell,
+    SelectionDirection direction, {
+    List<Direction>? hiddenBorders,
+    bool startCellVisible = true,
+    bool lastCellVisible = true,
+  }) {
     SelectionCorners<Rect> corners = SelectionCorners<Rect>.fromDirection(
       topLeft: startCell.rect,
       bottomRight: endCell.rect,
@@ -243,21 +253,28 @@ class SelectionBounds {
     return Rect.fromPoints(_corners.topLeft.topLeft, _corners.bottomRight.bottomRight);
   }
 
-
   bool get isLeftBorderVisible => !_hiddenBorders.contains(Direction.left);
+
   Offset get leftBorderStart => _corners.topLeft.topLeft;
+
   Offset get leftBorderEnd => _corners.bottomLeft.bottomLeft;
 
   bool get isTopBorderVisible => !_hiddenBorders.contains(Direction.top);
+
   Offset get topBorderStart => _corners.topLeft.topLeft;
+
   Offset get topBorderEnd => _corners.topRight.topRight;
 
   bool get isRightBorderVisible => !_hiddenBorders.contains(Direction.right);
+
   Offset get rightBorderStart => _corners.topRight.topRight;
+
   Offset get rightBorderEnd => _corners.bottomRight.bottomRight;
 
   bool get isBottomBorderVisible => !_hiddenBorders.contains(Direction.bottom);
+
   Offset get bottomBorderStart => _corners.bottomLeft.bottomLeft;
+
   Offset get bottomBorderEnd => _corners.bottomRight.bottomRight;
 
   SelectionCorners<Rect> get corners => _corners;

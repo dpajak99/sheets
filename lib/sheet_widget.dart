@@ -15,6 +15,8 @@ class MouseListener extends ChangeNotifier {
   Offset offset = Offset.zero;
   SheetItemConfig? hoveredElement;
 
+  DateTime? lastTap;
+
   MouseListener({
     required this.sheetController,
   });
@@ -62,9 +64,23 @@ class MouseListener extends ChangeNotifier {
   }
 
   void tap() {
+    DateTime tapTime = DateTime.now();
+    if (lastTap != null && tapTime.difference(lastTap!) < const Duration(milliseconds: 300)) {
+      doubleTap();
+    } else {
+      sheetController.cancelEdit();
+      switch (hoveredElement) {
+        case CellConfig cellConfig:
+          sheetController.selectSingle(cellConfig.cellIndex);
+      }
+    }
+    lastTap = tapTime;
+  }
+
+  void doubleTap() {
     switch (hoveredElement) {
       case CellConfig cellConfig:
-        sheetController.selectSingle(cellConfig.cellIndex);
+        sheetController.edit(cellConfig);
     }
   }
 }
@@ -115,6 +131,7 @@ class SheetWidgetState extends State<SheetWidget> {
             onTap: () {
               mouseListener.tap();
             },
+            behavior: HitTestBehavior.opaque,
             child: Listener(
               onPointerSignal: (PointerSignalEvent event) {
                 if (event is PointerScrollEvent) {

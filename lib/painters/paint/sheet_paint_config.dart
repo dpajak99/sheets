@@ -157,7 +157,7 @@ class SheetPaintConfig extends ChangeNotifier {
 
     for (RowConfig row in visibleRows) {
       for (ColumnConfig column in visibleColumns) {
-        CellConfig cellConfig = CellConfig.fromColumnRow(column, row);
+        CellConfig cellConfig = CellConfig.fromColumnRow(column, row, value: '');
         visibleCells.add(cellConfig);
       }
     }

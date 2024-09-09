@@ -29,7 +29,7 @@ class SheetPainter extends CustomPainter {
       // Fill cell with text
       TextPainter textPainter = TextPainter(
         text: TextSpan(
-          text: '${cell.rowConfig.rowIndex.value}-${cell.columnConfig.columnIndex.value}',
+          text: cell.value,
           // text: '',
           style: const TextStyle(
             color: Colors.black,

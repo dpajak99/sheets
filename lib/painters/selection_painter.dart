@@ -49,7 +49,7 @@ class SelectionPainter extends CustomPainter {
       if (selectionBounds.isLeftBorderVisible) canvas.drawLine(selectionBounds.leftBorderStart, selectionBounds.leftBorderEnd, selectionPaint);
     }
 
-    if (selection.isCompleted) {
+    if (selection.isCompleted && selection.circleVisible) {
       Paint selectionDotBorderPaint = Paint()
         ..color = const Color(0xffffffff)
         ..style = PaintingStyle.fill;
