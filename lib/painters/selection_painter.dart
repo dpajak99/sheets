@@ -34,13 +34,14 @@ class SelectionPainter extends CustomPainter {
         ..color = const Color(0x203572e3)
         ..style = PaintingStyle.fill;
 
-      canvas.drawRect(selectionBounds.selectionRect, backgroundPaint);
+      canvas.drawRect(selectionBounds.selectionRect.deflate(borderWidth), backgroundPaint);
     }
 
     if (selection.isCompleted) {
       Paint selectionPaint = Paint()
         ..color = const Color(0xff3572e3)
         ..strokeWidth = borderWidth
+        ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
 
       if (selectionBounds.isTopBorderVisible) canvas.drawLine(selectionBounds.topBorderStart, selectionBounds.topBorderEnd, selectionPaint);

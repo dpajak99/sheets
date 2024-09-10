@@ -95,27 +95,21 @@ class SheetGrid extends StatelessWidget {
                       height: cellConfig.rect.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(color: const Color(0xff3572e3), width: 1),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x33000000),
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                        border: Border.all(color: const Color(0xffa8c7fa), width: 2, strokeAlign: BorderSide.strokeAlignOutside),
                       ),
-                      child: TextField(
-                        autofocus: true,
-                        controller: TextEditingController(text: cellConfig.value),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                          height: 1
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xff3572e3), width: 2),
                         ),
-                        decoration: const InputDecoration(
-                          isDense: true,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                        child: TextField(
+                          autofocus: true,
+                          controller: TextEditingController(text: cellConfig.value),
+                          style: const TextStyle(color: Colors.black, fontSize: 12, height: 1),
+                          decoration: const InputDecoration(
+                            isDense: true,
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                          ),
                         ),
                       ),
                     ),

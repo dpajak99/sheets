@@ -30,7 +30,7 @@ class ColumnHeadersPainter extends CustomPainter {
       }
 
       Paint borderPaint = Paint()
-        ..color = const Color(0xffc5c7c5)
+        ..color = const Color(0xffc4c7c5)
         ..strokeWidth = borderWidth
         ..style = PaintingStyle.stroke;
 

@@ -1,4 +1,4 @@
-double borderWidth = 0.6;
+double borderWidth = 0.5;
 
 int columnHeadersCount = 1;
 int rowHeadersCount = 1;
