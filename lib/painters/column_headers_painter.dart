@@ -40,7 +40,7 @@ class ColumnHeadersPainter extends CustomPainter {
       TextPainter textPainter = TextPainter(
         textAlign: TextAlign.center,
         text: TextSpan(
-          text: '${column.columnIndex.value}',
+          text: column.value,
           style: TextStyle(
             color: Colors.black,
             fontWeight: columnSelected ? FontWeight.bold : FontWeight.normal,
@@ -50,7 +50,7 @@ class ColumnHeadersPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       );
 
-      textPainter.layout(minWidth: columnHeadersHeight - 10, maxWidth: columnHeadersHeight - 10);
+      textPainter.layout(minWidth: column.columnStyle.width - 10, maxWidth: column.columnStyle.width - 10);
       textPainter.paint(canvas, column.rect.topLeft + const Offset(5, 5));
     }
   }

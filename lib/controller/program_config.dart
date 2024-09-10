@@ -26,6 +26,10 @@ class RowConfig extends SheetItemConfig {
     return 'Row(${rowIndex.value})';
   }
 
+  String get value {
+    return '${rowIndex.value + 1}';
+  }
+
   @override
   List<Object?> get props => [rowIndex, rowStyle, rect];
 }
@@ -43,6 +47,22 @@ class ColumnConfig extends SheetItemConfig {
   @override
   String toString() {
     return 'Column(${columnIndex.value})';
+  }
+
+  String get value {
+    return numberToExcelColumn(columnIndex.value + 1);
+  }
+
+  String numberToExcelColumn(int number) {
+    String result = '';
+
+    while (number > 0) {
+      number--; // Excel columns start from 1, not 0, hence this adjustment
+      result = String.fromCharCode(65 + (number % 26)) + result;
+      number = (number ~/ 26);
+    }
+
+    return result;
   }
 
   @override
@@ -75,7 +95,7 @@ class CellConfig extends SheetItemConfig {
         );
 
   String get value {
-    return '${cellIndex.rowIndex.value} ${cellIndex.columnIndex.value}';
+    return _value.isEmpty ? '${columnConfig.value}${rowConfig.value}' : _value;
   }
 
   @override

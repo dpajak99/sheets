@@ -40,7 +40,7 @@ class RowHeadersPainter extends CustomPainter {
       TextPainter textPainter = TextPainter(
         textAlign: TextAlign.center,
         text: TextSpan(
-          text: '${row.rowIndex.value}',
+          text: row.value,
           style: TextStyle(
             color: Colors.black,
             fontWeight: rowSelected ? FontWeight.bold : FontWeight.normal,

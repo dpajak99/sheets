@@ -6,8 +6,6 @@ import 'package:sheets/painters/row_headers_painter.dart';
 import 'package:sheets/painters/selection_painter.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/painters/sheet_painter.dart';
-import 'package:sheets/sheet_constants.dart';
-import 'package:sheets/sheet_widget.dart';
 
 class SheetGrid extends StatelessWidget {
   final SheetController sheetController;

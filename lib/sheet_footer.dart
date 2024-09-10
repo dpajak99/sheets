@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/sheet_widget.dart';
 
 class SheetFooter extends StatelessWidget {
   final SheetController sheetController;
