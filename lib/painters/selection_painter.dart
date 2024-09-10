@@ -23,9 +23,15 @@ class SelectionPainter extends CustomPainter {
       Paint mainCellPaint = Paint()
         ..color = const Color(0xff3572e3)
         ..strokeWidth = borderWidth * 2
+        ..isAntiAlias = false
         ..style = PaintingStyle.stroke;
 
-      canvas.drawRect(selectionBounds.startCellRect, mainCellPaint);
+      canvas.drawRect(Rect.fromLTWH(
+          selectionBounds.startCellRect.left,
+          selectionBounds.startCellRect.top,
+          selectionBounds.startCellRect.width ,
+          selectionBounds.startCellRect.height,
+      ), mainCellPaint);
     }
 
     if (selection.hasBackground) {
@@ -34,20 +40,23 @@ class SelectionPainter extends CustomPainter {
         ..color = const Color(0x203572e3)
         ..style = PaintingStyle.fill;
 
-      canvas.drawRect(selectionBounds.selectionRect.deflate(borderWidth), backgroundPaint);
+      canvas.drawRect(selectionBounds.selectionRect, backgroundPaint);
     }
 
     if (selection.isCompleted) {
       Paint selectionPaint = Paint()
         ..color = const Color(0xff3572e3)
         ..strokeWidth = borderWidth
-        ..strokeCap = StrokeCap.round
+        ..isAntiAlias = false
+        ..strokeCap = StrokeCap.square
         ..style = PaintingStyle.stroke;
 
-      if (selectionBounds.isTopBorderVisible) canvas.drawLine(selectionBounds.topBorderStart, selectionBounds.topBorderEnd, selectionPaint);
-      if (selectionBounds.isRightBorderVisible) canvas.drawLine(selectionBounds.rightBorderStart, selectionBounds.rightBorderEnd, selectionPaint);
-      if (selectionBounds.isBottomBorderVisible) canvas.drawLine(selectionBounds.bottomBorderStart, selectionBounds.bottomBorderEnd, selectionPaint);
-      if (selectionBounds.isLeftBorderVisible) canvas.drawLine(selectionBounds.leftBorderStart, selectionBounds.leftBorderEnd, selectionPaint);
+      Rect selectionRect = selectionBounds.selectionRect;
+
+      if (selectionBounds.isTopBorderVisible) canvas.drawLine(selectionRect.topLeft, selectionRect.topRight, selectionPaint);
+      if (selectionBounds.isRightBorderVisible) canvas.drawLine(selectionRect.topRight, selectionRect.bottomRight, selectionPaint);
+      if (selectionBounds.isBottomBorderVisible) canvas.drawLine(selectionRect.bottomLeft, selectionRect.bottomRight, selectionPaint);
+      if (selectionBounds.isLeftBorderVisible) canvas.drawLine(selectionRect.topLeft, selectionRect.bottomLeft, selectionPaint);
     }
 
     if (selection.isCompleted && selection.circleVisible) {

@@ -9,6 +9,14 @@ class ColumnStyle with EquatableMixin {
 
   ColumnStyle.defaults() : width = 100;
 
+  ColumnStyle copyWith({
+    double? width,
+  }) {
+    return ColumnStyle(
+      width: width ?? this.width,
+    );
+  }
+
   @override
   List<Object?> get props => [width];
 }
@@ -21,6 +29,14 @@ class RowStyle with EquatableMixin {
   });
 
   RowStyle.defaults() : height = 22;
+
+  RowStyle copyWith({
+    double? height,
+  }) {
+    return RowStyle(
+      height: height ?? this.height,
+    );
+  }
 
   @override
   List<Object?> get props => [height];

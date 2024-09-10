@@ -255,27 +255,11 @@ class SelectionBounds {
 
   bool get isLeftBorderVisible => !_hiddenBorders.contains(Direction.left);
 
-  Offset get leftBorderStart => selectionRect.topLeft;
-
-  Offset get leftBorderEnd => selectionRect.bottomLeft;
-
   bool get isTopBorderVisible => !_hiddenBorders.contains(Direction.top);
-
-  Offset get topBorderStart => selectionRect.topLeft;
-
-  Offset get topBorderEnd => selectionRect.topRight;
 
   bool get isRightBorderVisible => !_hiddenBorders.contains(Direction.right);
 
-  Offset get rightBorderStart => selectionRect.topRight;
-
-  Offset get rightBorderEnd => selectionRect.bottomRight;
-
   bool get isBottomBorderVisible => !_hiddenBorders.contains(Direction.bottom);
-
-  Offset get bottomBorderStart => selectionRect.bottomLeft;
-
-  Offset get bottomBorderEnd => selectionRect.bottomRight;
 
   SelectionCorners<Rect> get corners => _corners;
 }

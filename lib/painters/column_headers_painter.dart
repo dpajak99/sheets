@@ -32,6 +32,7 @@ class ColumnHeadersPainter extends CustomPainter {
       Paint borderPaint = Paint()
         ..color = const Color(0xffc4c7c5)
         ..strokeWidth = borderWidth
+        ..isAntiAlias = false
         ..style = PaintingStyle.stroke;
 
       canvas.drawRect(column.rect, borderPaint);
