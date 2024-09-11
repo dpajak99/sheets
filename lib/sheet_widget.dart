@@ -6,6 +6,7 @@ import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/controller/style.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/scroll_wrapper.dart';
 import 'package:sheets/sheet_footer.dart';
 import 'package:sheets/sheet_grid.dart';
 
@@ -41,57 +42,60 @@ class SheetWidgetState extends State<SheetWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        Positioned.fill(
-          child: Column(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onPanStart: (DragStartDetails details) {
-                    sheetController.mouseListener.dragStart(details);
-                  },
-                  onPanUpdate: (DragUpdateDetails details) {
-                    sheetController.mouseListener.dragUpdate(details);
-                  },
-                  onPanEnd: (DragEndDetails details) {
-                    sheetController.mouseListener.dragEnd(details);
-                  },
-                  onTap: () {
-                    sheetController.mouseListener.tap();
-                  },
-                  behavior: HitTestBehavior.opaque,
-                  child: Listener(
-                    behavior: HitTestBehavior.opaque,
-                    onPointerSignal: (PointerSignalEvent event) {
-                      if (event is PointerScrollEvent) {
-                        if (shiftPressed) {
-                          sheetController.mouseListener.scrollBy(Offset(event.scrollDelta.dy, event.scrollDelta.dx));
-                        } else {
-                          sheetController.mouseListener.scrollBy(event.scrollDelta);
-                        }
-                      }
+        Expanded(
+          child: ScrollWrapper(
+            sheetController: sheetController,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: GestureDetector(
+                    onPanStart: (DragStartDetails details) {
+                      sheetController.mouseListener.dragStart(details);
                     },
-                    child: SheetGrid(sheetController: sheetController, mouseListener: sheetController.mouseListener),
+                    onPanUpdate: (DragUpdateDetails details) {
+                      sheetController.mouseListener.dragUpdate(details);
+                    },
+                    onPanEnd: (DragEndDetails details) {
+                      sheetController.mouseListener.dragEnd(details);
+                    },
+                    onTap: () {
+                      sheetController.mouseListener.tap();
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Listener(
+                      behavior: HitTestBehavior.opaque,
+                      onPointerSignal: (PointerSignalEvent event) {
+                        if (event is PointerScrollEvent) {
+                          if (shiftPressed) {
+                            sheetController.mouseListener.scrollBy(Offset(event.scrollDelta.dy, event.scrollDelta.dx));
+                          } else {
+                            sheetController.mouseListener.scrollBy(event.scrollDelta);
+                          }
+                        }
+                      },
+                      child: SheetGrid(sheetController: sheetController, mouseListener: sheetController.mouseListener),
+                    ),
                   ),
                 ),
-              ),
-              SheetFooter(sheetController: sheetController, mouseListener: sheetController.mouseListener),
-            ],
+                ValueListenableBuilder(
+                  valueListenable: sheetController.mouseListener.cursorListener,
+                  builder: (BuildContext context, SystemMouseCursor cursor, _) {
+                    return Positioned.fill(
+                      child: MouseRegion(
+                        opaque: false,
+                        cursor: cursor,
+                        onHover: (event) => sheetController.mouseListener.updateOffset(event.localPosition),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-        ValueListenableBuilder(
-          valueListenable: sheetController.mouseListener.cursorListener,
-          builder: (BuildContext context, SystemMouseCursor cursor, _) {
-            return Positioned.fill(
-              child: MouseRegion(
-                opaque: false,
-                cursor: cursor,
-                onHover: (event) => sheetController.mouseListener.updateOffset(event.localPosition),
-              ),
-            );
-          },
-        ),
+        SheetFooter(sheetController: sheetController, mouseListener: sheetController.mouseListener),
       ],
     );
   }

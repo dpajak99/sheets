@@ -148,6 +148,7 @@ class SheetController {
   }
 
   void resize(Size size) {
+    scrollController.viewportSize = size;
     paintConfig.resize(size);
   }
 

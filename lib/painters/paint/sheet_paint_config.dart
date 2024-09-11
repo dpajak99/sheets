@@ -141,7 +141,7 @@ class SheetPaintConfig extends ChangeNotifier {
 
     int index = 0;
 
-    while (cursorSheetHeight < canvasSize.height) {
+    while (cursorSheetHeight < canvasSize.height && firstVisibleRow.value + index < defaultRowCount) {
       RowIndex rowIndex = RowIndex(firstVisibleRow.value + index);
       RowStyle rowStyle = sheetController.sheetProperties.getRowStyle(rowIndex);
 
@@ -168,7 +168,7 @@ class SheetPaintConfig extends ChangeNotifier {
     double cursorSheetWidth = hiddenWidth;
     int index = 0;
 
-    while (cursorSheetWidth < canvasSize.width) {
+    while (cursorSheetWidth < canvasSize.width && firstVisibleColumn.value + index < defaultColumnCount) {
       ColumnIndex columnIndex = ColumnIndex(firstVisibleColumn.value + index);
       ColumnStyle columnStyle = sheetController.sheetProperties.getColumnStyle(columnIndex);
 
