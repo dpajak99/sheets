@@ -31,15 +31,9 @@ class SheetPainter extends CustomPainter {
 
       // Fill cell with text
       TextPainter textPainter = TextPainter(
-        text: TextSpan(
-          text: cell.value,
-          // text: '',
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 12,
-          ),
-        ),
+        text: TextSpan(text: cell.value, style: defaultTextStyle),
         textDirection: TextDirection.ltr,
+        maxLines: 3,
       );
 
       textPainter.layout();

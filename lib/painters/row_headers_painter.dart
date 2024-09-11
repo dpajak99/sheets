@@ -16,6 +16,7 @@ class RowHeadersPainter extends CustomPainter {
 
     for (RowConfig row in sheetController.paintConfig.visibleRows) {
       bool rowSelected = sheetController.selection.isRowSelected(row.rowIndex);
+      TextStyle textStyle = rowSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
 
       if (rowSelected) {
         Paint backgroundPaint = Paint()
@@ -41,19 +42,12 @@ class RowHeadersPainter extends CustomPainter {
 
       TextPainter textPainter = TextPainter(
         textAlign: TextAlign.center,
-        text: TextSpan(
-          text: row.value,
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: rowSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 12,
-          ),
-        ),
+        text: TextSpan(text: row.value, style: textStyle),
         textDirection: TextDirection.ltr,
       );
 
-      textPainter.layout(minWidth: rowHeadersWidth - 10, maxWidth: rowHeadersWidth - 10);
-      textPainter.paint(canvas, row.rect.topLeft + const Offset(5, 5));
+      textPainter.layout(minWidth: rowHeadersWidth, maxWidth: rowHeadersWidth);
+      textPainter.paint(canvas, row.rect.centerLeft - Offset(0, textPainter.height / 2));
     }
   }
 

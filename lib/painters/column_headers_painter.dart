@@ -16,6 +16,7 @@ class ColumnHeadersPainter extends CustomPainter {
 
     for (ColumnConfig column in sheetController.paintConfig.visibleColumns) {
       bool columnSelected = sheetController.selection.isColumnSelected(column.columnIndex);
+      TextStyle textStyle = columnSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
 
       if (columnSelected) {
         Paint backgroundPaint = Paint()
@@ -41,19 +42,12 @@ class ColumnHeadersPainter extends CustomPainter {
 
       TextPainter textPainter = TextPainter(
         textAlign: TextAlign.center,
-        text: TextSpan(
-          text: column.value,
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: columnSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 12,
-          ),
-        ),
+        text: TextSpan(text: column.value, style: textStyle),
         textDirection: TextDirection.ltr,
       );
 
-      textPainter.layout(minWidth: column.columnStyle.width - 10, maxWidth: column.columnStyle.width - 10);
-      textPainter.paint(canvas, column.rect.topLeft + const Offset(5, 5));
+      textPainter.layout(minWidth: column.columnStyle.width, maxWidth: column.columnStyle.width);
+      textPainter.paint(canvas, column.rect.center - Offset(textPainter.width / 2, textPainter.height / 2));
     }
   }
 
