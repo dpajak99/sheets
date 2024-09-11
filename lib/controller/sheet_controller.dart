@@ -124,9 +124,7 @@ class SheetController {
   late final SheetPaintConfig paintConfig;
   late final MouseListener mouseListener = MouseListener(sheetController: this);
   late SheetSelection selection = SheetSingleSelection.defaultSelection(paintConfig: paintConfig);
-
-  IntOffset scrollOffset = IntOffset.zero;
-
+  
   SheetPainterNotifier selectionPainterNotifier = SheetPainterNotifier();
   ValueNotifier<CellConfig?> editNotifier = ValueNotifier(null);
 
@@ -145,12 +143,8 @@ class SheetController {
     paintConfig.resize(size);
   }
 
-  void scroll(IntOffset offset) {
-    IntOffset updatedOffset = scrollOffset + offset;
-    updatedOffset = IntOffset(max(0, updatedOffset.dx), max(0, updatedOffset.dy));
-
-    scrollOffset = updatedOffset;
-    paintConfig.refresh();
+  void scroll(Offset delta) {
+    paintConfig.scroll(delta);
   }
 
   void resizeColumnBy(ColumnConfig column, double delta) {

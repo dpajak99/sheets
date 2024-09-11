@@ -8,8 +8,6 @@ import 'package:sheets/sheet_footer.dart';
 import 'package:sheets/sheet_grid.dart';
 import 'package:sheets/utils.dart';
 
-
-
 class SheetWidget extends StatefulWidget {
   const SheetWidget({super.key});
 
@@ -63,13 +61,10 @@ class SheetWidgetState extends State<SheetWidget> {
                     behavior: HitTestBehavior.opaque,
                     onPointerSignal: (PointerSignalEvent event) {
                       if (event is PointerScrollEvent) {
-                        int scrolledColumns = event.scrollDelta.dx ~/ 50;
-                        int scrolledRows = event.scrollDelta.dy ~/ 50;
-
                         if (shiftPressed) {
-                          sheetController.scroll(IntOffset(scrolledRows, scrolledColumns));
+                          sheetController.scroll(Offset(event.scrollDelta.dy, event.scrollDelta.dx));
                         } else {
-                          sheetController.scroll(IntOffset(scrolledColumns, scrolledRows));
+                          sheetController.scroll(event.scrollDelta);
                         }
                       }
                     },
