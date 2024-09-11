@@ -9,6 +9,8 @@ abstract class SheetItemConfig with EquatableMixin {
   SheetItemConfig({
     required this.rect,
   });
+
+  String get value;
 }
 
 class RowConfig extends SheetItemConfig {
@@ -26,6 +28,7 @@ class RowConfig extends SheetItemConfig {
     return 'Row(${rowIndex.value})';
   }
 
+  @override
   String get value {
     return '${rowIndex.value + 1}';
   }
@@ -49,6 +52,7 @@ class ColumnConfig extends SheetItemConfig {
     return 'Column(${columnIndex.value})';
   }
 
+  @override
   String get value {
     return numberToExcelColumn(columnIndex.value + 1);
   }
@@ -94,6 +98,7 @@ class CellConfig extends SheetItemConfig {
           ),
         );
 
+  @override
   String get value {
     return _value.isEmpty ? '${columnConfig.value}${rowConfig.value}' : _value;
   }

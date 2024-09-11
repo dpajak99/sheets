@@ -12,6 +12,8 @@ class SelectionPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.clipRect(Rect.fromLTWH(-borderWidth, -borderWidth, size.width, size.height));
+
     SheetSelection selection = sheetController.selection;
 
     SelectionBounds? selectionBounds = selection.getSelectionBounds();

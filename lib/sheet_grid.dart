@@ -6,6 +6,7 @@ import 'package:sheets/painters/row_headers_painter.dart';
 import 'package:sheets/painters/selection_painter.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/painters/sheet_painter.dart';
+import 'package:sheets/sheet_constants.dart';
 
 class SheetGrid extends StatelessWidget {
   final SheetController sheetController;
@@ -26,97 +27,141 @@ class SheetGrid extends StatelessWidget {
 
           return Stack(
             children: [
-              RepaintBoundary(
-                child: MultiListenableBuilder(
-                  listenables: [
-                    sheetController.paintConfig,
-                  ],
-                  builder: (BuildContext context) {
-                    return CustomPaint(
-                      painter: SheetPainter(sheetController: sheetController),
-                    );
-                  },
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          painter: SheetPainter(sheetController: sheetController),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
-              RepaintBoundary(
-                child: MultiListenableBuilder(
-                  listenables: [
-                    sheetController.selectionPainterNotifier,
-                    sheetController.paintConfig,
-                  ],
-                  builder: (BuildContext context) {
-                    return CustomPaint(
-                      isComplex: true,
-                      painter: ColumnHeadersPainter(sheetController: sheetController),
-                    );
-                  },
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(left: rowHeadersWidth),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          isComplex: true,
+                          painter: ColumnHeadersPainter(sheetController: sheetController),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
-              RepaintBoundary(
-                child: MultiListenableBuilder(
-                  listenables: [
-                    sheetController.selectionPainterNotifier,
-                    sheetController.paintConfig,
-                  ],
-                  builder: (BuildContext context) {
-                    return CustomPaint(
-                      isComplex: true,
-                      painter: RowHeadersPainter(sheetController: sheetController),
-                    );
-                  },
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(top: columnHeadersHeight),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          isComplex: true,
+                          painter: RowHeadersPainter(sheetController: sheetController),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
-              RepaintBoundary(
-                child: MultiListenableBuilder(
-                  listenables: [
-                    sheetController.selectionPainterNotifier,
-                    sheetController.paintConfig,
-                  ],
-                  builder: (BuildContext context) {
-                    return CustomPaint(
-                      isComplex: true,
-                      painter: SelectionPainter(sheetController: sheetController),
-                    );
-                  },
+              // Padding(
+              //   padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
+              //   child: ValueListenableBuilder<CellConfig?>(
+              //     valueListenable: sheetController.editNotifier,
+              //     builder: (BuildContext context, CellConfig? cellConfig, _) {
+              //       if (cellConfig == null) {
+              //         return const SizedBox();
+              //       }
+              //       return SheetTextField(cellConfig: cellConfig);
+              //     },
+              //   ),
+              // ),
+              // Padding(
+              //   padding: EdgeInsets.only(left: rowHeadersWidth),
+              //   child: RepaintBoundary(
+              //     child: MultiListenableBuilder(
+              //       listenables: [
+              //         sheetController.selectionPainterNotifier,
+              //         sheetController.paintConfig,
+              //       ],
+              //       builder: (BuildContext context) {
+              //         return Stack(
+              //           children: sheetController.paintConfig.visibleColumns.map((ColumnConfig columnConfig) {
+              //             return VerticalResizeDivider(columnConfig: columnConfig, mouseListener: mouseListener);
+              //           }).toList(),
+              //         );
+              //       },
+              //     ),
+              //   ),
+              // ),
+              // Padding(
+              //   padding: EdgeInsets.only(top: columnHeadersHeight),
+              //   child: RepaintBoundary(
+              //     child: MultiListenableBuilder(
+              //       listenables: [
+              //         sheetController.selectionPainterNotifier,
+              //         sheetController.paintConfig,
+              //       ],
+              //       builder: (BuildContext context) {
+              //         return Stack(
+              //           children: sheetController.paintConfig.visibleRows.map((RowConfig rowConfig) {
+              //             return HorizontalResizeDivider(rowConfig: rowConfig, mouseListener: mouseListener);
+              //           }).toList(),
+              //         );
+              //       },
+              //     ),
+              //   ),
+              // ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Container(
+                  width: rowHeadersWidth,
+                  height: columnHeadersHeight,
+                  decoration: const BoxDecoration(
+                    color: Color(0xfff8f9fa),
+                    border: Border(
+                      right: BorderSide(color: Color(0xffc7c7c7), width: 4),
+                      bottom: BorderSide(color: Color(0xffc7c7c7), width: 4),
+                    ),
+                  ),
                 ),
               ),
-              ValueListenableBuilder<CellConfig?>(
-                valueListenable: sheetController.editNotifier,
-                builder: (BuildContext context, CellConfig? cellConfig, _) {
-                  if (cellConfig == null) {
-                    return const SizedBox();
-                  }
-                  return SheetTextField(cellConfig: cellConfig);
-                },
-              ),
-              RepaintBoundary(
-                child: MultiListenableBuilder(
-                  listenables: [
-                    sheetController.selectionPainterNotifier,
-                    sheetController.paintConfig,
-                  ],
-                  builder: (BuildContext context) {
-                    return Stack(
-                      children: sheetController.paintConfig.visibleColumns.map((ColumnConfig columnConfig) {
-                        return VerticalResizeDivider(columnConfig: columnConfig, mouseListener: mouseListener);
-                      }).toList(),
-                    );
-                  },
-                ),
-              ),
-              RepaintBoundary(
-                child: MultiListenableBuilder(
-                  listenables: [
-                    sheetController.selectionPainterNotifier,
-                    sheetController.paintConfig,
-                  ],
-                  builder: (BuildContext context) {
-                    return Stack(
-                      children: sheetController.paintConfig.visibleRows.map((RowConfig rowConfig) {
-                        return HorizontalResizeDivider(rowConfig: rowConfig, mouseListener: mouseListener);
-                      }).toList(),
-                    );
-                  },
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          isComplex: true,
+                          painter: SelectionPainter(sheetController: sheetController),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -187,10 +232,10 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
             },
             onPanUpdate: (details) {
               if (details.globalPosition.dy >= widget.rowConfig.rect.top + 10) {
-                widget.mouseListener.cursorListener.value =  SystemMouseCursors.resizeRow;
+                widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeRow;
                 setState(() => delta += details.delta.dy);
               } else {
-                widget.mouseListener.cursorListener.value =  SystemMouseCursors.basic;
+                widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
               }
             },
             onPanEnd: (_) {
@@ -201,8 +246,7 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
                 hoverVisible = hovered;
                 delta = 0;
               });
-              widget.mouseListener.cursorListener.value =  hovered ? SystemMouseCursors.resizeRow : SystemMouseCursors.basic;
-
+              widget.mouseListener.cursorListener.value = hovered ? SystemMouseCursors.resizeRow : SystemMouseCursors.basic;
             },
             child: MouseRegion(
               onEnter: (_) {
@@ -288,10 +332,10 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
             },
             onPanUpdate: (details) {
               if (details.globalPosition.dx >= widget.columnConfig.rect.left + 10) {
-                widget.mouseListener.cursorListener.value =  SystemMouseCursors.resizeColumn;
+                widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeColumn;
                 setState(() => delta += details.delta.dx);
               } else {
-                widget.mouseListener.cursorListener.value =  SystemMouseCursors.basic;
+                widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
               }
             },
             onPanEnd: (_) {
@@ -302,7 +346,7 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
                 hoverVisible = hovered;
                 delta = 0;
               });
-              widget.mouseListener.cursorListener.value =  hovered ? SystemMouseCursors.resizeColumn : SystemMouseCursors.basic;
+              widget.mouseListener.cursorListener.value = hovered ? SystemMouseCursors.resizeColumn : SystemMouseCursors.basic;
             },
             child: MouseRegion(
               onEnter: (_) {

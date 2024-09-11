@@ -1,12 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/controller/custom_scroll_controller.dart';
 import 'package:sheets/controller/index.dart';
-import 'package:sheets/controller/style.dart';
 import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/controller/style.dart';
+import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/sheet_footer.dart';
 import 'package:sheets/sheet_grid.dart';
-import 'package:sheets/utils.dart';
 
 class SheetWidget extends StatefulWidget {
   const SheetWidget({super.key});
@@ -17,12 +18,15 @@ class SheetWidget extends StatefulWidget {
 
 class SheetWidgetState extends State<SheetWidget> {
   final SheetController sheetController = SheetController(
-    customColumnProperties: {
-      ColumnIndex(3): ColumnStyle(width: 200),
-    },
-    customRowProperties: {
-      RowIndex(3): RowStyle(height: 100),
-    },
+    scrollController: SheetScrollController(),
+    sheetProperties: SheetProperties(
+      customColumnProperties: {
+        // ColumnIndex(3): ColumnStyle(width: 200),
+      },
+      customRowProperties: {
+        RowIndex(8): RowStyle(height: 100),
+      },
+    ),
   );
 
   CellIndex? dragStart;
@@ -62,9 +66,9 @@ class SheetWidgetState extends State<SheetWidget> {
                     onPointerSignal: (PointerSignalEvent event) {
                       if (event is PointerScrollEvent) {
                         if (shiftPressed) {
-                          sheetController.scroll(Offset(event.scrollDelta.dy, event.scrollDelta.dx));
+                          sheetController.mouseListener.scrollBy(Offset(event.scrollDelta.dy, event.scrollDelta.dx));
                         } else {
-                          sheetController.scroll(event.scrollDelta);
+                          sheetController.mouseListener.scrollBy(event.scrollDelta);
                         }
                       }
                     },

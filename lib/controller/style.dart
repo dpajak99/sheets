@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sheets/sheet_constants.dart';
 
 class ColumnStyle with EquatableMixin {
   final double width;
@@ -7,7 +8,7 @@ class ColumnStyle with EquatableMixin {
     required this.width,
   });
 
-  ColumnStyle.defaults() : width = 100;
+  ColumnStyle.defaults() : width = defaultColumnWidth;
 
   ColumnStyle copyWith({
     double? width,
@@ -28,7 +29,7 @@ class RowStyle with EquatableMixin {
     required this.height,
   });
 
-  RowStyle.defaults() : height = 22;
+  RowStyle.defaults() : height = defaultRowHeight;
 
   RowStyle copyWith({
     double? height,

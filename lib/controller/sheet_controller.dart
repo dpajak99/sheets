@@ -2,13 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/controller/custom_scroll_controller.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/style.dart';
 import 'package:sheets/controller/selection.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/painters/sheet_painter_notifier.dart';
-import 'package:sheets/utils.dart';
+import 'package:sheets/sheet_constants.dart';
 
 class MouseListener extends ChangeNotifier {
   final SheetController sheetController;
@@ -37,6 +38,12 @@ class MouseListener extends ChangeNotifier {
       _resizedRow = resizedRow;
       cursorListener.value = resizedRow != null ? SystemMouseCursors.resizeRow : SystemMouseCursors.basic;
     }
+  }
+
+  void scrollBy(Offset delta) {
+    sheetController.scrollBy(delta);
+    hoveredElement = sheetController.getHoveredElement(offset);
+    notifyListeners();
   }
 
   bool get isResizing => _resizedRow != null || _resizedColumn != null;
@@ -121,45 +128,51 @@ class MouseListener extends ChangeNotifier {
 }
 
 class SheetController {
+  final SheetProperties sheetProperties;
+  final SheetScrollController scrollController;
+
   late final SheetPaintConfig paintConfig;
   late final MouseListener mouseListener = MouseListener(sheetController: this);
   late SheetSelection selection = SheetSingleSelection.defaultSelection(paintConfig: paintConfig);
-  
+
   SheetPainterNotifier selectionPainterNotifier = SheetPainterNotifier();
   ValueNotifier<CellConfig?> editNotifier = ValueNotifier(null);
 
   SheetController({
-    required Map<ColumnIndex, ColumnStyle> customColumnProperties,
-    required Map<RowIndex, RowStyle> customRowProperties,
+    required this.sheetProperties,
+    required this.scrollController,
   }) {
-    paintConfig = SheetPaintConfig(
-      sheetController: this,
-      customRowProperties: customRowProperties,
-      customColumnProperties: customColumnProperties,
-    );
+    paintConfig = SheetPaintConfig(sheetController: this);
+    scrollController.customColumnExtents = sheetProperties.customColumnExtents;
+    scrollController.customRowExtents = sheetProperties.customRowExtents;
   }
 
   void resize(Size size) {
     paintConfig.resize(size);
   }
 
-  void scroll(Offset delta) {
-    paintConfig.scroll(delta);
+  void scrollBy(Offset delta) {
+    scrollController.scrollBy(delta);
+    paintConfig.refresh();
   }
 
   void resizeColumnBy(ColumnConfig column, double delta) {
-    ColumnStyle columnStyle = paintConfig.customColumnProperties[column.columnIndex] ?? ColumnStyle.defaults();
-    paintConfig.customColumnProperties[column.columnIndex] = columnStyle.copyWith(
-      width: max(10, columnStyle.width + delta),
+    ColumnStyle columnStyle = sheetProperties.getColumnStyle(column.columnIndex);
+    sheetProperties.setColumnStyle(
+      column.columnIndex,
+      columnStyle.copyWith(width: max(10, columnStyle.width + delta)),
     );
+    scrollController.customColumnExtents = sheetProperties.customColumnExtents;
     paintConfig.refresh();
   }
 
   void resizeRowBy(RowConfig row, double delta) {
-    RowStyle rowStyle = paintConfig.customRowProperties[row.rowIndex] ?? RowStyle.defaults();
-    paintConfig.customRowProperties[row.rowIndex] = rowStyle.copyWith(
-      height: max(10, rowStyle.height + delta),
+    RowStyle rowStyle = sheetProperties.getRowStyle(row.rowIndex);
+    sheetProperties.setRowStyle(
+      row.rowIndex,
+      rowStyle.copyWith(height: max(10, rowStyle.height + delta)),
     );
+    scrollController.customRowExtents = sheetProperties.customRowExtents;
     paintConfig.refresh();
   }
 
@@ -189,9 +202,24 @@ class SheetController {
 
   SheetItemConfig? getHoveredElement(Offset mousePosition) {
     try {
-      return paintConfig.visibleItems.firstWhere(
-        (element) => element.rect.contains(mousePosition),
-      );
+      if (mousePosition.dy < columnHeadersHeight) {
+        SheetItemConfig sheetItemConfig = paintConfig.visibleColumns.firstWhere(
+          (element) => element.rect.contains(mousePosition),
+        );
+        return sheetItemConfig;
+      } else if (mousePosition.dx < rowHeadersWidth) {
+        SheetItemConfig sheetItemConfig = paintConfig.visibleRows.firstWhere(
+          (element) => element.rect.contains(mousePosition),
+        );
+        return sheetItemConfig;
+      } else if (mousePosition.dy > columnHeadersHeight && mousePosition.dx > rowHeadersWidth) {
+        SheetItemConfig sheetItemConfig = paintConfig.visibleCells.firstWhere(
+          (element) => element.rect.translate(rowHeadersWidth, columnHeadersHeight).contains(mousePosition),
+        );
+        return sheetItemConfig;
+      } else {
+        return null;
+      }
     } catch (e) {
       return null;
     }

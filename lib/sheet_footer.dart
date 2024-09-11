@@ -23,7 +23,7 @@ class SheetFooter extends StatelessWidget {
             children: [
               Text('Mouse position: ${mouseListener.offset}'),
               const SizedBox(width: 16),
-              Text('Hovered element: ${mouseListener.hoveredElement}'),
+              Text('Hovered element: ${mouseListener.hoveredElement?.value}'),
             ],
           ),
         );

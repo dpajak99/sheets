@@ -12,6 +12,8 @@ class RowHeadersPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+
     for (RowConfig row in sheetController.paintConfig.visibleRows) {
       bool rowSelected = sheetController.selection.isRowSelected(row.rowIndex);
 

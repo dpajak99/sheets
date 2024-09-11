@@ -12,6 +12,8 @@ class ColumnHeadersPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+
     for (ColumnConfig column in sheetController.paintConfig.visibleColumns) {
       bool columnSelected = sheetController.selection.isColumnSelected(column.columnIndex);
 

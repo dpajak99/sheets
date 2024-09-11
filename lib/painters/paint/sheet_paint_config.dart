@@ -1,37 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/controller/custom_scroll_controller.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/controller/style.dart';
 import 'package:sheets/sheet_constants.dart';
-import 'package:sheets/utils.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SheetPaintConfig extends ChangeNotifier {
+class SheetProperties {
   final Map<ColumnIndex, ColumnStyle> customColumnProperties;
   final Map<RowIndex, RowStyle> customRowProperties;
+
+  SheetProperties({
+    required this.customColumnProperties,
+    required this.customRowProperties,
+  });
+
+  RowStyle getRowStyle(RowIndex rowIndex) {
+    return customRowProperties[rowIndex] ?? RowStyle.defaults();
+  }
+
+  void setRowStyle(RowIndex rowIndex, RowStyle rowStyle) {
+    customRowProperties[rowIndex] = rowStyle;
+  }
+
+  ColumnStyle getColumnStyle(ColumnIndex columnIndex) {
+    return customColumnProperties[columnIndex] ?? ColumnStyle.defaults();
+  }
+
+  void setColumnStyle(ColumnIndex columnIndex, ColumnStyle columnStyle) {
+    customColumnProperties[columnIndex] = columnStyle;
+  }
+
+
+  Map<int, double> get customRowExtents {
+    return customRowProperties.map((key, value) => MapEntry(key.value, value.height));
+  }
+
+  Map<int, double> get customColumnExtents {
+    return customColumnProperties.map((key, value) => MapEntry(key.value, value.width));
+  }
+}
+
+class SheetPaintConfig extends ChangeNotifier {
   final SheetController sheetController;
 
   Size canvasSize = Size.zero;
-  Offset scrollOffset = Offset.zero;
-
-  int lastVisibleColumnIndex = 0;
-  int lastVisibleRowIndex = 0;
 
   List<RowConfig> visibleRows = <RowConfig>[];
   List<ColumnConfig> visibleColumns = <ColumnConfig>[];
   List<CellConfig> visibleCells = <CellConfig>[];
 
+
   SheetPaintConfig({
-    required this.customColumnProperties,
-    required this.customRowProperties,
     required this.sheetController,
   });
-
-  void scroll(Offset delta) {
-    // scrollOffset += delta;
-    // refresh();
-  }
 
   void resize(Size size) {
     canvasSize = size;
@@ -48,14 +71,6 @@ class SheetPaintConfig extends ChangeNotifier {
     visibleCells = _calculateVisibleCells(visibleRows, visibleColumns);
 
     notifyListeners();
-  }
-
-  List<SheetItemConfig> get visibleItems {
-    List<SheetItemConfig> elements = [];
-    elements.addAll(visibleRows);
-    elements.addAll(visibleColumns);
-    elements.addAll(visibleCells);
-    return elements;
   }
 
   (Direction, Direction, CellConfig) findClosestVisible(CellIndex cellIndex) {
@@ -117,44 +132,56 @@ class SheetPaintConfig extends ChangeNotifier {
 
   List<RowConfig> _calculateVisibleRows() {
     List<RowConfig> visibleRows = [];
-    double cursorSheetHeight = 0;
+
+    RowIndex firstVisibleRow;
+    double hiddenHeight;
+    (hiddenHeight, firstVisibleRow) = sheetController.scrollController.firstVisibleRow;
+
+    double cursorSheetHeight = hiddenHeight;
+
+    int index = 0;
 
     while (cursorSheetHeight < canvasSize.height) {
-      RowIndex rowIndex = RowIndex(lastVisibleRowIndex);
-      RowStyle rowStyle = customRowProperties[rowIndex] ?? RowStyle.defaults();
+      RowIndex rowIndex = RowIndex(firstVisibleRow.value + index);
+      RowStyle rowStyle = sheetController.sheetProperties.getRowStyle(rowIndex);
 
       RowConfig rowConfig = RowConfig(
         rowIndex: rowIndex,
         rowStyle: rowStyle,
-        rect: Rect.fromLTWH(0, cursorSheetHeight + columnHeadersHeight, rowHeadersWidth, rowStyle.height),
+        rect: Rect.fromLTWH(0, cursorSheetHeight, rowHeadersWidth, rowStyle.height),
       );
       visibleRows.add(rowConfig);
 
-      lastVisibleRowIndex++;
+      index++;
       cursorSheetHeight += rowConfig.rowStyle.height;
     }
-
     return visibleRows;
   }
 
   List<ColumnConfig> _calculateVisibleColumns() {
     List<ColumnConfig> visibleColumns = [];
-    double cursorSheetWidth = 0;
+
+    ColumnIndex firstVisibleColumn;
+    double hiddenWidth;
+    (hiddenWidth, firstVisibleColumn) = sheetController.scrollController.firstVisibleColumn;
+
+    double cursorSheetWidth = hiddenWidth;
+    int index = 0;
 
     while (cursorSheetWidth < canvasSize.width) {
-      ColumnIndex columnIndex = ColumnIndex(lastVisibleColumnIndex);
-      ColumnStyle columnStyle = customColumnProperties[columnIndex] ?? ColumnStyle.defaults();
+      ColumnIndex columnIndex = ColumnIndex(firstVisibleColumn.value + index);
+      ColumnStyle columnStyle = sheetController.sheetProperties.getColumnStyle(columnIndex);
 
       ColumnConfig columnConfig = ColumnConfig(
         columnIndex: columnIndex,
         columnStyle: columnStyle,
-        rect: Rect.fromLTWH(cursorSheetWidth + rowHeadersWidth, 0, columnStyle.width, columnHeadersHeight),
+        rect: Rect.fromLTWH(cursorSheetWidth, 0, columnStyle.width, columnHeadersHeight),
       );
 
       visibleColumns.add(columnConfig);
 
       cursorSheetWidth += columnConfig.columnStyle.width;
-      lastVisibleColumnIndex++;
+      index++;
     }
 
     return visibleColumns;
