@@ -14,7 +14,6 @@ class SheetScrollController {
 
   void scrollBy(Offset delta) {
     offset = Offset(max(0, offset.dx + delta.dx), max(0, offset.dy + delta.dy));
-    // offset = Offset(0, max(0, offset.dy + (delta.dy < 0 ? -20 : 20)));
   }
 
   (double, RowIndex) get firstVisibleRow {
@@ -56,17 +55,17 @@ class SheetScrollController {
   (int, double) calculateScrolledColumns() {
     double scrolledX = offset.dx;
     double contentWidth = 0;
-    int scrolledColumns = 0;
+    int hiddenColumns = -1;
 
     while (contentWidth < scrolledX) {
-      contentWidth += customColumnExtents[scrolledColumns] ?? defaultColumnWidth;
-      if (contentWidth < scrolledX) {
-        scrolledColumns++;
-      }
+      hiddenColumns++;
+      double columnWidth = customColumnExtents[hiddenColumns] ?? defaultColumnWidth;
+      contentWidth += columnWidth;
     }
 
-    double firstItemWidth = customColumnExtents[scrolledColumns + 1] ?? defaultColumnWidth;
-    double hiddenWidth = scrolledX - contentWidth;
-    return (scrolledColumns, hiddenWidth);
+    double columnWidth = customColumnExtents[hiddenColumns] ?? defaultColumnWidth;
+    double horizontalOverscroll = scrolledX - contentWidth;
+    double hiddenWidth = ((-columnWidth) - horizontalOverscroll);
+    return (hiddenColumns, hiddenWidth);
   }
 }

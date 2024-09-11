@@ -82,54 +82,46 @@ class SheetGrid extends StatelessWidget {
                   ),
                 ),
               ),
-              // Padding(
-              //   padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
-              //   child: ValueListenableBuilder<CellConfig?>(
-              //     valueListenable: sheetController.editNotifier,
-              //     builder: (BuildContext context, CellConfig? cellConfig, _) {
-              //       if (cellConfig == null) {
-              //         return const SizedBox();
-              //       }
-              //       return SheetTextField(cellConfig: cellConfig);
-              //     },
-              //   ),
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.only(left: rowHeadersWidth),
-              //   child: RepaintBoundary(
-              //     child: MultiListenableBuilder(
-              //       listenables: [
-              //         sheetController.selectionPainterNotifier,
-              //         sheetController.paintConfig,
-              //       ],
-              //       builder: (BuildContext context) {
-              //         return Stack(
-              //           children: sheetController.paintConfig.visibleColumns.map((ColumnConfig columnConfig) {
-              //             return VerticalResizeDivider(columnConfig: columnConfig, mouseListener: mouseListener);
-              //           }).toList(),
-              //         );
-              //       },
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.only(top: columnHeadersHeight),
-              //   child: RepaintBoundary(
-              //     child: MultiListenableBuilder(
-              //       listenables: [
-              //         sheetController.selectionPainterNotifier,
-              //         sheetController.paintConfig,
-              //       ],
-              //       builder: (BuildContext context) {
-              //         return Stack(
-              //           children: sheetController.paintConfig.visibleRows.map((RowConfig rowConfig) {
-              //             return HorizontalResizeDivider(rowConfig: rowConfig, mouseListener: mouseListener);
-              //           }).toList(),
-              //         );
-              //       },
-              //     ),
-              //   ),
-              // ),
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(left: rowHeadersWidth),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return Stack(
+                          children: sheetController.paintConfig.visibleColumns.map((ColumnConfig columnConfig) {
+                            return VerticalResizeDivider(columnConfig: columnConfig, mouseListener: mouseListener);
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(top: columnHeadersHeight),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return Stack(
+                          children: sheetController.paintConfig.visibleRows.map((RowConfig rowConfig) {
+                            return HorizontalResizeDivider(rowConfig: rowConfig, mouseListener: mouseListener);
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 top: 0,
                 left: 0,
@@ -162,6 +154,29 @@ class SheetGrid extends StatelessWidget {
                       },
                     ),
                   ),
+                ),
+              ),
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
+                  child: ValueListenableBuilder<CellConfig?>(
+                      valueListenable: sheetController.editNotifier,
+                      builder: (BuildContext context, CellConfig? cellConfig, _) {
+                        return Stack(
+                          children: [
+                            if (cellConfig != null)
+                              Positioned(
+                                left: cellConfig.rect.left,
+                                top: cellConfig.rect.top,
+                                child: Container(
+                                  height: cellConfig.rect.height,
+                                  constraints: BoxConstraints(minWidth: cellConfig.rect.width),
+                                  child: SheetTextField(cellConfig: cellConfig),
+                                ),
+                              )
+                          ],
+                        );
+                      }),
                 ),
               ),
             ],
@@ -225,10 +240,14 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanStart: (_) {
-              if (widget.mouseListener.isResizing) return;
-              setState(() => dragging = true);
-              delta = 0;
-              widget.mouseListener.resizedRow = widget.rowConfig;
+              if (widget.mouseListener.isResizing == false) {
+                setState(() {
+                  dragging = true;
+                  hoverVisible = true;
+                });
+                delta = 0;
+                widget.mouseListener.resizedRow = widget.rowConfig;
+              }
             },
             onPanUpdate: (details) {
               if (details.globalPosition.dy >= widget.rowConfig.rect.top + 10) {
@@ -251,14 +270,17 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
             child: MouseRegion(
               onEnter: (_) {
                 hovered = true;
-                if (widget.mouseListener.isResizing) return;
-                setState(() => hoverVisible = true);
-                widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeRow;
+                if (widget.mouseListener.isResizing == false) {
+                  setState(() => hoverVisible = true);
+                  widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeRow;
+                }
               },
               onExit: (_) {
                 hovered = false;
-                if (widget.mouseListener.isResizing) return;
-                setState(() => hoverVisible = false);
+                if (widget.mouseListener.isResizing == false) {
+                  setState(() => hoverVisible = false);
+                  widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
+                }
               },
               child: SizedBox(
                 width: widget.rowConfig.rect.width,
@@ -325,10 +347,14 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanStart: (_) {
-              if (widget.mouseListener.isResizing) return;
-              setState(() => dragging = true);
-              delta = 0;
-              widget.mouseListener.resizedColumn = widget.columnConfig;
+              if (widget.mouseListener.isResizing == false) {
+                setState(() {
+                  dragging = true;
+                  hoverVisible = true;
+                });
+                delta = 0;
+                widget.mouseListener.resizedColumn = widget.columnConfig;
+              }
             },
             onPanUpdate: (details) {
               if (details.globalPosition.dx >= widget.columnConfig.rect.left + 10) {
@@ -351,14 +377,17 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
             child: MouseRegion(
               onEnter: (_) {
                 hovered = true;
-                if (widget.mouseListener.isResizing) return;
-                setState(() => hoverVisible = true);
-                widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeColumn;
+                if (widget.mouseListener.isResizing == false) {
+                  setState(() => hoverVisible = true);
+                  widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeColumn;
+                }
               },
               onExit: (_) {
                 hovered = false;
-                if (widget.mouseListener.isResizing) return;
-                setState(() => hoverVisible = false);
+                if (widget.mouseListener.isResizing == false) {
+                  setState(() => hoverVisible = false);
+                  widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
+                }
               },
               child: SizedBox(
                 width: 11,
@@ -379,22 +408,17 @@ class SheetTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: cellConfig.rect.left,
-      top: cellConfig.rect.top,
-      width: cellConfig.rect.width,
-      height: cellConfig.rect.height,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xffa8c7fa), width: 2, strokeAlign: BorderSide.strokeAlignOutside),
+      ),
       child: Container(
-        width: cellConfig.rect.width,
-        height: cellConfig.rect.height,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: const Color(0xffa8c7fa), width: 2, strokeAlign: BorderSide.strokeAlignOutside),
+          border: Border.all(color: const Color(0xff3572e3), width: 2),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xff3572e3), width: 2),
-          ),
+        child: IntrinsicWidth(
           child: TextField(
             autofocus: true,
             controller: TextEditingController(text: cellConfig.value),
