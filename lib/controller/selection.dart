@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils/direction.dart';
 
 abstract class SheetSelection with EquatableMixin {
@@ -54,7 +55,11 @@ abstract class SheetSelection with EquatableMixin {
 
   bool isColumnSelected(ColumnIndex columnIndex);
 
+  bool isAllColumnSelected(ColumnIndex columnIndex);
+
   bool isRowSelected(RowIndex rowIndex);
+
+  bool isAllRowSelected(RowIndex rowIndex);
 
   SelectionDirection get direction;
 
@@ -84,6 +89,12 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   bool isRowSelected(RowIndex rowIndex) => cellIndex.rowIndex == rowIndex;
+
+  @override
+  bool isAllColumnSelected(ColumnIndex columnIndex) => false;
+
+  @override
+  bool isAllRowSelected(RowIndex rowIndex) => false;
 
   @override
   SelectionDirection get direction => SelectionDirection.topRight;
@@ -127,11 +138,27 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
+  bool isAllColumnSelected(ColumnIndex columnIndex) {
+    int lastRowIndex = defaultRowCount - 1;
+    bool columnSelected = isColumnSelected(columnIndex);
+
+    return columnSelected && isRowSelected(RowIndex(lastRowIndex));
+  }
+
+  @override
   bool isRowSelected(RowIndex rowIndex) {
     int startRowIndex = selectionCorners.topLeft.rowIndex.value;
     int endRowIndex = selectionCorners.bottomLeft.rowIndex.value;
 
     return rowIndex.value >= startRowIndex && rowIndex.value <= endRowIndex;
+  }
+
+  @override
+  bool isAllRowSelected(RowIndex rowIndex) {
+    int lastColumnIndex = defaultColumnCount - 1;
+    bool rowSelected = isRowSelected(rowIndex);
+
+    return rowSelected && isColumnSelected(ColumnIndex(lastColumnIndex));
   }
 
   @override

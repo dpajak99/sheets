@@ -35,3 +35,10 @@ TextStyle defaultHeaderTextStyleSelected = const TextStyle(
   fontWeight: FontWeight.bold,
   height: 1,
 );
+
+TextStyle defaultHeaderTextStyleSelectedAll = const TextStyle(
+  color: Color(0xffffffff),
+  fontSize: 12,
+  fontWeight: FontWeight.bold,
+  height: 1,
+);

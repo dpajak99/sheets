@@ -16,9 +16,17 @@ class ColumnHeadersPainter extends CustomPainter {
 
     for (ColumnConfig column in sheetController.paintConfig.visibleColumns) {
       bool columnSelected = sheetController.selection.isColumnSelected(column.columnIndex);
+      bool allColumnSelected = sheetController.selection.isAllColumnSelected(column.columnIndex);
+
       TextStyle textStyle = columnSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
 
-      if (columnSelected) {
+      if(allColumnSelected) {
+        Paint backgroundPaint = Paint()
+          ..color = const Color(0xff2456cb)
+          ..style = PaintingStyle.fill;
+
+        canvas.drawRect(column.rect, backgroundPaint);
+      } else if (columnSelected) {
         Paint backgroundPaint = Paint()
           ..color = const Color(0xffd6e2fb)
           ..style = PaintingStyle.fill;

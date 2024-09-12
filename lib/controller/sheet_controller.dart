@@ -114,6 +114,18 @@ class MouseListener extends ChangeNotifier {
       switch (hoveredElement) {
         case CellConfig cellConfig:
           sheetController.selectSingle(cellConfig.cellIndex);
+        case ColumnConfig columnConfig:
+          sheetController.selectRange(
+            start: CellIndex(rowIndex: RowIndex(0), columnIndex: columnConfig.columnIndex),
+            end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: columnConfig.columnIndex),
+            completed: true,
+          );
+        case RowConfig rowConfig:
+          sheetController.selectRange(
+            start: CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: ColumnIndex(0)),
+            end: CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: ColumnIndex(defaultColumnCount)),
+            completed: true,
+          );
       }
     }
     lastTap = tapTime;
@@ -187,7 +199,7 @@ class SheetController {
     if (computedStart == end) {
       selectSingle(computedStart);
     } else {
-      selection = SheetRangeSelection(paintConfig: paintConfig, start: selection.start, end: end, completed: completed);
+      selection = SheetRangeSelection(paintConfig: paintConfig, start: computedStart, end: end, completed: completed);
       selectionPainterNotifier.repaint();
     }
   }
@@ -203,24 +215,10 @@ class SheetController {
 
   SheetItemConfig? getHoveredElement(Offset mousePosition) {
     try {
-      if (mousePosition.dy < columnHeadersHeight) {
-        SheetItemConfig sheetItemConfig = paintConfig.visibleColumns.firstWhere(
-          (element) => element.rect.contains(mousePosition),
-        );
-        return sheetItemConfig;
-      } else if (mousePosition.dx < rowHeadersWidth) {
-        SheetItemConfig sheetItemConfig = paintConfig.visibleRows.firstWhere(
-          (element) => element.rect.contains(mousePosition),
-        );
-        return sheetItemConfig;
-      } else if (mousePosition.dy > columnHeadersHeight && mousePosition.dx > rowHeadersWidth) {
-        SheetItemConfig sheetItemConfig = paintConfig.visibleCells.firstWhere(
-          (element) => element.rect.translate(rowHeadersWidth, columnHeadersHeight).contains(mousePosition),
-        );
-        return sheetItemConfig;
-      } else {
-        return null;
-      }
+      SheetItemConfig sheetItemConfig = paintConfig.visibleItems.firstWhere(
+        (element) => element.rect.contains(mousePosition),
+      );
+      return sheetItemConfig;
     } catch (e) {
       return null;
     }

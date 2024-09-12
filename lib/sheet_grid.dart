@@ -42,57 +42,48 @@ class SheetGrid extends StatelessWidget {
                   ),
                 ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
-                    child: RepaintBoundary(
-                      child: MultiListenableBuilder(
-                        listenables: [
-                          sheetController.paintConfig,
-                        ],
-                        builder: (BuildContext context) {
-                          return CustomPaint(
-                            painter: SheetPainter(sheetController: sheetController),
-                          );
-                        },
-                      ),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          painter: SheetPainter(sheetController: sheetController),
+                        );
+                      },
                     ),
                   ),
                 ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: rowHeadersWidth),
-                    child: RepaintBoundary(
-                      child: MultiListenableBuilder(
-                        listenables: [
-                          sheetController.selectionPainterNotifier,
-                          sheetController.paintConfig,
-                        ],
-                        builder: (BuildContext context) {
-                          return CustomPaint(
-                            isComplex: true,
-                            painter: ColumnHeadersPainter(sheetController: sheetController),
-                          );
-                        },
-                      ),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          isComplex: true,
+                          painter: ColumnHeadersPainter(sheetController: sheetController),
+                        );
+                      },
                     ),
                   ),
                 ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: columnHeadersHeight),
-                    child: RepaintBoundary(
-                      child: MultiListenableBuilder(
-                        listenables: [
-                          sheetController.selectionPainterNotifier,
-                          sheetController.paintConfig,
-                        ],
-                        builder: (BuildContext context) {
-                          return CustomPaint(
-                            isComplex: true,
-                            painter: RowHeadersPainter(sheetController: sheetController),
-                          );
-                        },
-                      ),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          isComplex: true,
+                          painter: RowHeadersPainter(sheetController: sheetController),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -152,45 +143,40 @@ class SheetGrid extends StatelessWidget {
                   ),
                 ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
-                    child: RepaintBoundary(
-                      child: MultiListenableBuilder(
-                        listenables: [
-                          sheetController.selectionPainterNotifier,
-                          sheetController.paintConfig,
-                        ],
-                        builder: (BuildContext context) {
-                          return CustomPaint(
-                            isComplex: true,
-                            painter: SelectionPainter(sheetController: sheetController),
-                          );
-                        },
-                      ),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionPainterNotifier,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return CustomPaint(
+                          isComplex: true,
+                          painter: SelectionPainter(sheetController: sheetController),
+                        );
+                      },
                     ),
                   ),
                 ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: columnHeadersHeight, left: rowHeadersWidth),
-                    child: ValueListenableBuilder<CellConfig?>(
-                        valueListenable: sheetController.editNotifier,
-                        builder: (BuildContext context, CellConfig? cellConfig, _) {
-                          return Stack(
-                            children: [
-                              if (cellConfig != null)
-                                Positioned(
-                                  left: cellConfig.rect.left,
-                                  top: cellConfig.rect.top,
-                                  child: Container(
-                                    height: cellConfig.rect.height,
-                                    constraints: BoxConstraints(minWidth: cellConfig.rect.width),
-                                    child: SheetTextField(cellConfig: cellConfig),
-                                  ),
-                                )
-                            ],
-                          );
-                        }),
+                  child: ValueListenableBuilder<CellConfig?>(
+                    valueListenable: sheetController.editNotifier,
+                    builder: (BuildContext context, CellConfig? cellConfig, _) {
+                      return Stack(
+                        children: [
+                          if (cellConfig != null)
+                            Positioned(
+                              left: cellConfig.rect.left,
+                              top: cellConfig.rect.top,
+                              child: Container(
+                                height: cellConfig.rect.height,
+                                constraints: BoxConstraints(minWidth: cellConfig.rect.width),
+                                child: SheetTextField(cellConfig: cellConfig),
+                              ),
+                            )
+                        ],
+                      );
+                    },
                   ),
                 ),
               ],
@@ -338,7 +324,7 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
       bottom: 0,
       child: Stack(
         children: [
-          if (hoverVisible) ...<Widget>[
+          if (true) ...<Widget>[
             SizedBox(
               width: 11,
               height: widget.columnConfig.rect.height,
@@ -374,7 +360,7 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
               }
             },
             onPanUpdate: (details) {
-              if (details.globalPosition.dx >= widget.columnConfig.rect.left + 10 + rowHeadersWidth) {
+              if (details.globalPosition.dx >= widget.columnConfig.rect.left + 10) {
                 widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeColumn;
                 setState(() => delta += details.delta.dx);
               } else {

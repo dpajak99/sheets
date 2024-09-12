@@ -33,6 +33,10 @@ class ColumnIndex with EquatableMixin {
     return value <= other.value;
   }
 
+  ColumnIndex operator -(int number) {
+    return ColumnIndex(value - number);
+  }
+
   bool operator >(ColumnIndex other) {
     return value > other.value;
   }

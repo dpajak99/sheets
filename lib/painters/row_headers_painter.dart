@@ -16,9 +16,17 @@ class RowHeadersPainter extends CustomPainter {
 
     for (RowConfig row in sheetController.paintConfig.visibleRows) {
       bool rowSelected = sheetController.selection.isRowSelected(row.rowIndex);
+      bool allRowSelected = sheetController.selection.isAllRowSelected(row.rowIndex);
+
       TextStyle textStyle = rowSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
 
-      if (rowSelected) {
+      if(allRowSelected) {
+        Paint backgroundPaint = Paint()
+          ..color = const Color(0xff2456cb)
+          ..style = PaintingStyle.fill;
+
+        canvas.drawRect(row.rect, backgroundPaint);
+      } else if (rowSelected) {
         Paint backgroundPaint = Paint()
           ..color = const Color(0xffd6e2fb)
           ..style = PaintingStyle.fill;

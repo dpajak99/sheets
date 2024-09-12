@@ -52,6 +52,8 @@ class SheetPaintConfig extends ChangeNotifier {
   List<CellConfig> visibleCells = <CellConfig>[];
 
 
+  List<SheetItemConfig> get visibleItems => [...visibleRows, ...visibleColumns, ...visibleCells];
+
   SheetPaintConfig({
     required this.sheetController,
   });
@@ -148,7 +150,7 @@ class SheetPaintConfig extends ChangeNotifier {
       RowConfig rowConfig = RowConfig(
         rowIndex: rowIndex,
         rowStyle: rowStyle,
-        rect: Rect.fromLTWH(0, cursorSheetHeight, rowHeadersWidth, rowStyle.height),
+        rect: Rect.fromLTWH(0, cursorSheetHeight + columnHeadersHeight, rowHeadersWidth, rowStyle.height),
       );
       visibleRows.add(rowConfig);
 
@@ -175,7 +177,7 @@ class SheetPaintConfig extends ChangeNotifier {
       ColumnConfig columnConfig = ColumnConfig(
         columnIndex: columnIndex,
         columnStyle: columnStyle,
-        rect: Rect.fromLTWH(cursorSheetWidth, 0, columnStyle.width, columnHeadersHeight),
+        rect: Rect.fromLTWH(cursorSheetWidth + rowHeadersWidth, 0, columnStyle.width, columnHeadersHeight),
       );
 
       visibleColumns.add(columnConfig);
