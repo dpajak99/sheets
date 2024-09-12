@@ -25,7 +25,7 @@ class SheetWidgetState extends State<SheetWidget> {
         // ColumnIndex(3): ColumnStyle(width: 200),
       },
       customRowProperties: {
-        RowIndex(8): RowStyle(height: 100),
+        // RowIndex(8): RowStyle(height: 100),
       },
     ),
   );

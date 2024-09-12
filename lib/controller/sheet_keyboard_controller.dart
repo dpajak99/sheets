@@ -16,7 +16,6 @@ class SheetKeyboardController {
   }
 
   void removeKey(LogicalKeyboardKey logicalKeyboardKey) {
-    print('Released key: $logicalKeyboardKey');
     activeKeys.remove(logicalKeyboardKey);
   }
 

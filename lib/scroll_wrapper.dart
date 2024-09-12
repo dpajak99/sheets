@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/custom_scroll_controller.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils/mouse_state_listener.dart';
@@ -195,7 +194,7 @@ class VerticalScrollbarState extends State<VerticalScrollbar> {
                 fit: StackFit.expand,
                 children: [
                   ValueListenableBuilder(
-                    valueListenable: widget.sheetController.scrollController.verticalScrollListener,
+                    valueListenable: widget.sheetController.scrollController.position.verticalScrollListener,
                     builder: (BuildContext context, double value, _) {
                       double scrollbarHeight = viewportSize.height * (viewportSize.height / (widget.sheetController.scrollController.contentHeight + 60));
                       double marginTop = value / (widget.sheetController.scrollController.contentHeight + 60) * viewportSize.height;
@@ -257,7 +256,7 @@ class HorizontalScrollbarState extends State<HorizontalScrollbar> {
                 fit: StackFit.expand,
                 children: [
                   ValueListenableBuilder(
-                    valueListenable: widget.sheetController.scrollController.horizontalScrollListener,
+                    valueListenable: widget.sheetController.scrollController.position.horizontalScrollListener,
                     builder: (BuildContext context, double value, _) {
                       double scrollbarWidth = viewportSize.width * (viewportSize.width / (widget.sheetController.scrollController.contentWidth - 24));
                       double marginLeft = value / (widget.sheetController.scrollController.contentWidth - 24) * viewportSize.width;

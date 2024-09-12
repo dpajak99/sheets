@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/custom_scroll_controller.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
@@ -147,9 +146,7 @@ class SheetPaintConfig extends ChangeNotifier {
 
     RowIndex firstVisibleRow;
     double hiddenHeight;
-    (hiddenHeight, firstVisibleRow) = sheetController.scrollController.firstVisibleRow;
-
-    print('hiddenHeight: $hiddenHeight, firstVisibleRow: $firstVisibleRow');
+    (firstVisibleRow, hiddenHeight) = sheetController.scrollController.firstVisibleRow;
 
     double cursorSheetHeight = hiddenHeight;
 
@@ -177,7 +174,7 @@ class SheetPaintConfig extends ChangeNotifier {
 
     ColumnIndex firstVisibleColumn;
     double hiddenWidth;
-    (hiddenWidth, firstVisibleColumn) = sheetController.scrollController.firstVisibleColumn;
+    (firstVisibleColumn, hiddenWidth) = sheetController.scrollController.firstVisibleColumn;
 
     double cursorSheetWidth = hiddenWidth;
     int index = 0;
