@@ -132,12 +132,24 @@ class SheetPaintConfig extends ChangeNotifier {
     return visibleCells.any((cell) => cell.cellIndex == cellIndex);
   }
 
+  bool shouldHideSelection(CellIndex start, CellIndex end) {
+    bool vertical1 = start.rowIndex < visibleRows.first.rowIndex && end.rowIndex > visibleRows.last.rowIndex ;
+    bool vertical2 = end.rowIndex < visibleRows.first.rowIndex && start.rowIndex > visibleRows.last.rowIndex ;
+    bool horizontal1 = start.columnIndex < visibleColumns.first.columnIndex && end.columnIndex > visibleColumns.last.columnIndex ;
+    bool horizontal2 = end.columnIndex < visibleColumns.first.columnIndex && start.columnIndex > visibleColumns.last.columnIndex ;
+
+    return !(horizontal1 || horizontal2 || vertical1 || vertical2);
+
+  }
+
   List<RowConfig> _calculateVisibleRows() {
     List<RowConfig> visibleRows = [];
 
     RowIndex firstVisibleRow;
     double hiddenHeight;
     (hiddenHeight, firstVisibleRow) = sheetController.scrollController.firstVisibleRow;
+
+    print('hiddenHeight: $hiddenHeight, firstVisibleRow: $firstVisibleRow');
 
     double cursorSheetHeight = hiddenHeight;
 

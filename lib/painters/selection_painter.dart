@@ -12,7 +12,7 @@ class SelectionPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.clipRect(Rect.fromLTWH(-borderWidth, -borderWidth, size.width, size.height));
+    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth-borderWidth, columnHeadersHeight-borderWidth, size.width, size.height));
 
     SheetSelection selection = sheetController.selection;
 
@@ -79,5 +79,10 @@ class SelectionPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
+  }
+
+  @override
+  bool? hitTest(Offset position) {
+    return false;
   }
 }

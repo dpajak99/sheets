@@ -18,7 +18,7 @@ class ColumnHeadersPainter extends CustomPainter {
       bool columnSelected = sheetController.selection.isColumnSelected(column.columnIndex);
       bool allColumnSelected = sheetController.selection.isAllColumnSelected(column.columnIndex);
 
-      TextStyle textStyle = columnSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
+      TextStyle textStyle = allColumnSelected ? defaultHeaderTextStyleSelectedAll : columnSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
 
       if(allColumnSelected) {
         Paint backgroundPaint = Paint()

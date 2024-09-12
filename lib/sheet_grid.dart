@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/multi_listenable_builder.dart';
 import 'package:sheets/painters/column_headers_painter.dart';
 import 'package:sheets/painters/row_headers_painter.dart';
 import 'package:sheets/painters/selection_painter.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/painters/sheet_painter.dart';
-import 'package:sheets/scroll_wrapper.dart';
 import 'package:sheets/sheet_constants.dart';
 
 class SheetGrid extends StatelessWidget {
   final SheetController sheetController;
-  final MouseListener mouseListener;
+  final SheetCursorController cursorController;
 
   const SheetGrid({
     required this.sheetController,
-    required this.mouseListener,
+    required this.cursorController,
     super.key,
   });
 
@@ -88,9 +88,7 @@ class SheetGrid extends StatelessWidget {
                   ),
                 ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: rowHeadersWidth),
-                    child: RepaintBoundary(
+                  child: RepaintBoundary(
                       child: MultiListenableBuilder(
                         listenables: [
                           sheetController.selectionPainterNotifier,
@@ -99,18 +97,15 @@ class SheetGrid extends StatelessWidget {
                         builder: (BuildContext context) {
                           return Stack(
                             children: sheetController.paintConfig.visibleColumns.map((ColumnConfig columnConfig) {
-                              return VerticalResizeDivider(columnConfig: columnConfig, mouseListener: mouseListener);
+                              return VerticalResizeDivider(columnConfig: columnConfig, cursorController: cursorController);
                             }).toList(),
                           );
                         },
                       ),
                     ),
-                  ),
                 ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: columnHeadersHeight),
-                    child: RepaintBoundary(
+                  child:  RepaintBoundary(
                       child: MultiListenableBuilder(
                         listenables: [
                           sheetController.selectionPainterNotifier,
@@ -119,13 +114,12 @@ class SheetGrid extends StatelessWidget {
                         builder: (BuildContext context) {
                           return Stack(
                             children: sheetController.paintConfig.visibleRows.map((RowConfig rowConfig) {
-                              return HorizontalResizeDivider(rowConfig: rowConfig, mouseListener: mouseListener);
+                              return HorizontalResizeDivider(rowConfig: rowConfig, cursorController: cursorController);
                             }).toList(),
                           );
                         },
                       ),
                     ),
-                  ),
                 ),
                 Positioned(
                   top: 0,
@@ -190,11 +184,11 @@ class SheetGrid extends StatelessWidget {
 
 class HorizontalResizeDivider extends StatefulWidget {
   final RowConfig rowConfig;
-  final MouseListener mouseListener;
+  final SheetCursorController cursorController;
 
   const HorizontalResizeDivider({
     required this.rowConfig,
-    required this.mouseListener,
+    required this.cursorController,
     super.key,
   });
 
@@ -242,46 +236,47 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanStart: (_) {
-              if (widget.mouseListener.isResizing == false) {
+              if (widget.cursorController.isResizing == false) {
                 setState(() {
                   dragging = true;
                   hoverVisible = true;
                 });
                 delta = 0;
-                widget.mouseListener.resizedRow = widget.rowConfig;
+                widget.cursorController.resizedRow = widget.rowConfig;
               }
             },
             onPanUpdate: (details) {
               if (details.globalPosition.dy >= widget.rowConfig.rect.top + 10 + columnHeadersHeight) {
-                widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeRow;
+                widget.cursorController.cursorListener.value = SystemMouseCursors.resizeRow;
                 setState(() => delta += details.delta.dy);
               } else {
-                widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
+                widget.cursorController.cursorListener.value = SystemMouseCursors.basic;
               }
             },
             onPanEnd: (_) {
-              widget.mouseListener.resizedRow = null;
-              widget.mouseListener.sheetController.resizeRowBy(widget.rowConfig, delta);
+              widget.cursorController.resizedRow = null;
+              widget.cursorController.sheetController.resizeRowBy(widget.rowConfig, delta);
               setState(() {
                 dragging = false;
                 hoverVisible = hovered;
                 delta = 0;
               });
-              widget.mouseListener.cursorListener.value = hovered ? SystemMouseCursors.resizeRow : SystemMouseCursors.basic;
+              widget.cursorController.cursorListener.value = hovered ? SystemMouseCursors.resizeRow : SystemMouseCursors.basic;
             },
             child: MouseRegion(
+              opaque: true,
               onEnter: (_) {
                 hovered = true;
-                if (widget.mouseListener.isResizing == false) {
+                if (widget.cursorController.isResizing == false) {
                   setState(() => hoverVisible = true);
-                  widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeRow;
+                  widget.cursorController.cursorListener.value = SystemMouseCursors.resizeRow;
                 }
               },
               onExit: (_) {
                 hovered = false;
-                if (widget.mouseListener.isResizing == false) {
+                if (widget.cursorController.isResizing == false) {
                   setState(() => hoverVisible = false);
-                  widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
+                  widget.cursorController.cursorListener.value = SystemMouseCursors.basic;
                 }
               },
               child: SizedBox(
@@ -298,11 +293,11 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
 
 class VerticalResizeDivider extends StatefulWidget {
   final ColumnConfig columnConfig;
-  final MouseListener mouseListener;
+  final SheetCursorController cursorController;
 
   const VerticalResizeDivider({
     required this.columnConfig,
-    required this.mouseListener,
+    required this.cursorController,
     super.key,
   });
 
@@ -324,7 +319,7 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
       bottom: 0,
       child: Stack(
         children: [
-          if (true) ...<Widget>[
+          if (hoverVisible) ...<Widget>[
             SizedBox(
               width: 11,
               height: widget.columnConfig.rect.height,
@@ -350,46 +345,47 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanStart: (_) {
-              if (widget.mouseListener.isResizing == false) {
+              if (widget.cursorController.isResizing == false) {
                 setState(() {
                   dragging = true;
                   hoverVisible = true;
                 });
                 delta = 0;
-                widget.mouseListener.resizedColumn = widget.columnConfig;
+                widget.cursorController.resizedColumn = widget.columnConfig;
               }
             },
             onPanUpdate: (details) {
               if (details.globalPosition.dx >= widget.columnConfig.rect.left + 10) {
-                widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeColumn;
+                widget.cursorController.cursorListener.value = SystemMouseCursors.resizeColumn;
                 setState(() => delta += details.delta.dx);
               } else {
-                widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
+                widget.cursorController.cursorListener.value = SystemMouseCursors.basic;
               }
             },
             onPanEnd: (_) {
-              widget.mouseListener.resizedColumn = null;
-              widget.mouseListener.sheetController.resizeColumnBy(widget.columnConfig, delta);
+              widget.cursorController.resizedColumn = null;
+              widget.cursorController.sheetController.resizeColumnBy(widget.columnConfig, delta);
               setState(() {
                 dragging = false;
                 hoverVisible = hovered;
                 delta = 0;
               });
-              widget.mouseListener.cursorListener.value = hovered ? SystemMouseCursors.resizeColumn : SystemMouseCursors.basic;
+              widget.cursorController.cursorListener.value = hovered ? SystemMouseCursors.resizeColumn : SystemMouseCursors.basic;
             },
             child: MouseRegion(
+              opaque: true,
               onEnter: (_) {
                 hovered = true;
-                if (widget.mouseListener.isResizing == false) {
+                if (widget.cursorController.isResizing == false) {
                   setState(() => hoverVisible = true);
-                  widget.mouseListener.cursorListener.value = SystemMouseCursors.resizeColumn;
+                  widget.cursorController.cursorListener.value = SystemMouseCursors.resizeColumn;
                 }
               },
               onExit: (_) {
                 hovered = false;
-                if (widget.mouseListener.isResizing == false) {
+                if (widget.cursorController.isResizing == false) {
                   setState(() => hoverVisible = false);
-                  widget.mouseListener.cursorListener.value = SystemMouseCursors.basic;
+                  widget.cursorController.cursorListener.value = SystemMouseCursors.basic;
                 }
               },
               child: SizedBox(

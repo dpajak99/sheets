@@ -30,14 +30,14 @@ class SheetPainter extends CustomPainter {
       canvas.drawRect(cell.rect, borderPaint);
 
       // Fill cell with text
-      TextPainter textPainter = TextPainter(
-        text: TextSpan(text: cell.value, style: defaultTextStyle),
-        textDirection: TextDirection.ltr,
-        maxLines: 3,
-      );
-
-      textPainter.layout();
-      textPainter.paint(canvas, cell.rect.topLeft + const Offset(5, 5));
+      // TextPainter textPainter = TextPainter(
+      //   text: TextSpan(text: cell.value, style: defaultTextStyle),
+      //   textDirection: TextDirection.ltr,
+      //   maxLines: 3,
+      // );
+      //
+      // textPainter.layout();
+      // textPainter.paint(canvas, cell.rect.topLeft + const Offset(5, 5));
     }
   }
 

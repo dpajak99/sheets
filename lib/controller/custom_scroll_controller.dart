@@ -6,7 +6,9 @@ import 'package:sheets/sheet_constants.dart';
 
 class SheetScrollController {
   Offset _localOffset = Offset.zero;
+
   Offset get _offset => _localOffset;
+
   set _offset(Offset offset) {
     _localOffset = offset;
     verticalScrollListener.value = offset.dy;
@@ -17,7 +19,7 @@ class SheetScrollController {
 
   Map<int, double> customRowExtents = {};
   Map<int, double> customColumnExtents = {};
-  
+
   late final ValueNotifier<double> verticalScrollListener = ValueNotifier<double>(_offset.dy);
   late final ValueNotifier<double> horizontalScrollListener = ValueNotifier<double>(_offset.dx);
 
@@ -78,7 +80,7 @@ class SheetScrollController {
   (int, double) calculateScrolledRows() {
     double scrolledY = _offset.dy;
     double contentHeight = 0;
-    int hiddenRows = -1;
+    int hiddenRows = 0;
 
     while (contentHeight < scrolledY) {
       hiddenRows++;
@@ -88,14 +90,18 @@ class SheetScrollController {
 
     double rowHeight = customRowExtents[hiddenRows] ?? defaultRowHeight;
     double verticalOverscroll = scrolledY - contentHeight;
-    double hiddenHeight = ((-rowHeight) - verticalOverscroll);
-    return (hiddenRows, hiddenHeight);
+    if (verticalOverscroll != 0) {
+      double hiddenHeight = ((-rowHeight) - verticalOverscroll);
+      return (hiddenRows, hiddenHeight);
+    } else {
+      return (hiddenRows, 0);
+    }
   }
 
   (int, double) calculateScrolledColumns() {
     double scrolledX = _offset.dx;
     double contentWidth = 0;
-    int hiddenColumns = -1;
+    int hiddenColumns = 0;
 
     while (contentWidth < scrolledX) {
       hiddenColumns++;
@@ -105,7 +111,12 @@ class SheetScrollController {
 
     double columnWidth = customColumnExtents[hiddenColumns] ?? defaultColumnWidth;
     double horizontalOverscroll = scrolledX - contentWidth;
-    double hiddenWidth = ((-columnWidth) - horizontalOverscroll);
-    return (hiddenColumns, hiddenWidth);
+
+    if (horizontalOverscroll != 0) {
+      double hiddenWidth = ((-columnWidth) - horizontalOverscroll);
+      return (hiddenColumns, hiddenWidth);
+    } else {
+      return (hiddenColumns, 0);
+    }
   }
 }

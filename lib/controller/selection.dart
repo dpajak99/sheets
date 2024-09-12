@@ -16,7 +16,9 @@ abstract class SheetSelection with EquatableMixin {
     bool endCellVisible = paintConfig.containsCell(end);
 
     if ((startCellVisible || endCellVisible) == false) {
-      return null;
+      if (paintConfig.shouldHideSelection(start, end)) {
+        return null;
+      }
     }
 
     CellConfig? startCell = paintConfig.findCell(start);
@@ -24,6 +26,24 @@ abstract class SheetSelection with EquatableMixin {
 
     if (startCell != null && endCell != null) {
       return SelectionBounds(startCell, endCell, direction);
+    } else if (startCell == null && endCell == null) {
+      Direction startVerticalDirection, startHorizontalDirection;
+      CellConfig startClosestCell;
+      (startVerticalDirection, startHorizontalDirection, startClosestCell) = paintConfig.findClosestVisible(start);
+      List<Direction> startHiddenBorders = [startVerticalDirection, startHorizontalDirection];
+
+      Direction endVerticalDirection, endHorizontalDirection;
+      CellConfig endClosestCell;
+      (endVerticalDirection, endHorizontalDirection, endClosestCell) = paintConfig.findClosestVisible(end);
+      List<Direction> endHiddenBorders = [endVerticalDirection, endHorizontalDirection];
+
+      return SelectionBounds(
+        startClosestCell,
+        endClosestCell,
+        direction,
+        hiddenBorders: [...startHiddenBorders, ...endHiddenBorders],
+        startCellVisible: false,
+      );
     } else if (startCell == null && endCell != null) {
       Direction verticalDirection, horizontalDirection;
       CellConfig startClosestCell;
@@ -76,7 +96,9 @@ class SheetSingleSelection extends SheetSelection {
     this.editingEnabled = false,
   });
 
-  SheetSingleSelection.defaultSelection({required super.paintConfig}) : cellIndex = CellIndex.zero, editingEnabled = false;
+  SheetSingleSelection.defaultSelection({required super.paintConfig})
+      : cellIndex = CellIndex.zero,
+        editingEnabled = false;
 
   @override
   CellIndex get start => cellIndex;
@@ -192,6 +214,51 @@ class SheetRangeSelection extends SheetSelection {
   @override
   List<Object?> get props => [_start, _end];
 }
+
+class SheetMultiSelection extends SheetSelection {
+  final List<CellIndex> cells;
+
+  SheetMultiSelection({
+    required super.paintConfig,
+    required this.cells,
+  });
+
+  @override
+  SelectionDirection get direction => SelectionDirection.topRight;
+
+  @override
+  CellIndex get end => cells.first;
+
+  @override
+  CellIndex get start => cells.last;
+
+  @override
+  bool isAllColumnSelected(ColumnIndex columnIndex) {
+    return false;
+  }
+
+  @override
+  bool isAllRowSelected(RowIndex rowIndex) {
+    return false;
+  }
+
+  @override
+  bool isColumnSelected(ColumnIndex columnIndex) {
+    return cells.any((CellIndex cellIndex) => cellIndex.columnIndex == columnIndex);
+  }
+
+  @override
+  bool get isCompleted => true;
+
+  @override
+  bool isRowSelected(RowIndex rowIndex) {
+    return cells.any((CellIndex cellIndex) => cellIndex.rowIndex == rowIndex);
+  }
+
+  @override
+  List<Object?> get props => [cells];
+}
+
 
 enum SelectionDirection { topRight, topLeft, bottomRight, bottomLeft }
 

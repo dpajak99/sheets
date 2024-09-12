@@ -18,7 +18,7 @@ class RowHeadersPainter extends CustomPainter {
       bool rowSelected = sheetController.selection.isRowSelected(row.rowIndex);
       bool allRowSelected = sheetController.selection.isAllRowSelected(row.rowIndex);
 
-      TextStyle textStyle = rowSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
+      TextStyle textStyle = allRowSelected ? defaultHeaderTextStyleSelectedAll : rowSelected ? defaultHeaderTextStyleSelected : defaultHeaderTextStyle;
 
       if(allRowSelected) {
         Paint backgroundPaint = Paint()

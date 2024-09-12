@@ -23,7 +23,9 @@ class CellIndex with EquatableMixin {
 class ColumnIndex with EquatableMixin {
   final int value;
 
-  ColumnIndex(this.value);
+  ColumnIndex(this.value) : assert(value >= 0);
+
+  static ColumnIndex zero = ColumnIndex(0);
 
   bool operator <(ColumnIndex other) {
     return value < other.value;
@@ -52,7 +54,9 @@ class ColumnIndex with EquatableMixin {
 class RowIndex with EquatableMixin {
   final int value;
 
-  RowIndex(this.value);
+  RowIndex(int value) : value = value < 0 ? 0 : value;
+
+  static RowIndex zero = RowIndex(0);
 
   bool operator <(RowIndex other) {
     return value < other.value;

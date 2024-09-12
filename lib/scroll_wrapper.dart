@@ -48,7 +48,7 @@ class ScrollWrapper extends StatelessWidget {
                       size: innerHeight,
                       icon: Icons.arrow_drop_up,
                       onPressed: () {
-                        sheetController.mouseListener.scrollBy(const Offset(0, -20));
+                        sheetController.cursorController.scrollBy(const Offset(0, -20));
                       },
                     ),
                     Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -56,7 +56,7 @@ class ScrollWrapper extends StatelessWidget {
                       size: innerHeight,
                       icon: Icons.arrow_drop_down,
                       onPressed: () {
-                        sheetController.mouseListener.scrollBy(const Offset(0, 20));
+                        sheetController.cursorController.scrollBy(const Offset(0, 20));
                       },
                     ),
                   ],
@@ -89,7 +89,7 @@ class ScrollWrapper extends StatelessWidget {
                 size: innerHeight,
                 icon: Icons.arrow_left,
                 onPressed: () {
-                  sheetController.mouseListener.scrollBy(const Offset(-20, 0));
+                  sheetController.cursorController.scrollBy(const Offset(-20, 0));
                 },
               ),
               VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -97,7 +97,7 @@ class ScrollWrapper extends StatelessWidget {
                 size: innerHeight,
                 icon: Icons.arrow_right,
                 onPressed: () {
-                  sheetController.mouseListener.scrollBy(const Offset(20, 0));
+                  sheetController.cursorController.scrollBy(const Offset(20, 0));
                 },
               ),
               VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -181,7 +181,7 @@ class VerticalScrollbarState extends State<VerticalScrollbar> {
     return GestureDetector(
       onVerticalDragUpdate: (DragUpdateDetails details) {
         double delta = (details.primaryDelta ?? 0) * 3;
-        widget.sheetController.mouseListener.scrollBy(Offset(0, delta));
+        widget.sheetController.cursorController.scrollBy(Offset(0, delta));
       },
       child: MouseRegion(
         onEnter: (_) => setState(() => hovered = true),
@@ -243,7 +243,7 @@ class HorizontalScrollbarState extends State<HorizontalScrollbar> {
     return GestureDetector(
       onHorizontalDragUpdate: (DragUpdateDetails details) {
         double delta = (details.primaryDelta ?? 0) * 2;
-        widget.sheetController.mouseListener.scrollBy(Offset(delta, 0));
+        widget.sheetController.cursorController.scrollBy(Offset(delta, 0));
       },
       child: MouseRegion(
         onEnter: (_) => setState(() => hovered = true),

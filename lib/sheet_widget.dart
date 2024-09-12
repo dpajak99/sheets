@@ -32,8 +32,6 @@ class SheetWidgetState extends State<SheetWidget> {
 
   CellIndex? dragStart;
 
-  bool shiftPressed = false;
-
   @override
   void initState() {
     super.initState();
@@ -51,42 +49,34 @@ class SheetWidgetState extends State<SheetWidget> {
               children: [
                 Positioned.fill(
                   child: GestureDetector(
-                    onPanStart: (DragStartDetails details) {
-                      sheetController.mouseListener.dragStart(details);
-                    },
-                    onPanUpdate: (DragUpdateDetails details) {
-                      sheetController.mouseListener.dragUpdate(details);
-                    },
-                    onPanEnd: (DragEndDetails details) {
-                      sheetController.mouseListener.dragEnd(details);
-                    },
-                    onTap: () {
-                      sheetController.mouseListener.tap();
-                    },
+                    onPanStart: sheetController.cursorController.dragStart,
+                    onPanUpdate: sheetController.cursorController.dragUpdate,
+                    onPanEnd: sheetController.cursorController.dragEnd,
+                    onTap: sheetController.cursorController.tap,
                     behavior: HitTestBehavior.opaque,
                     child: Listener(
                       behavior: HitTestBehavior.opaque,
                       onPointerSignal: (PointerSignalEvent event) {
                         if (event is PointerScrollEvent) {
-                          if (shiftPressed) {
-                            sheetController.mouseListener.scrollBy(Offset(event.scrollDelta.dy, event.scrollDelta.dx));
+                          if (sheetController.keyboardController.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
+                            sheetController.cursorController.scrollBy(Offset(event.scrollDelta.dy, event.scrollDelta.dx));
                           } else {
-                            sheetController.mouseListener.scrollBy(event.scrollDelta);
+                            sheetController.cursorController.scrollBy(event.scrollDelta);
                           }
                         }
                       },
-                      child: SheetGrid(sheetController: sheetController, mouseListener: sheetController.mouseListener),
+                      child: SheetGrid(sheetController: sheetController, cursorController: sheetController.cursorController),
                     ),
                   ),
                 ),
                 ValueListenableBuilder(
-                  valueListenable: sheetController.mouseListener.cursorListener,
+                  valueListenable: sheetController.cursorController.cursorListener,
                   builder: (BuildContext context, SystemMouseCursor cursor, _) {
                     return Positioned.fill(
                       child: MouseRegion(
                         opaque: false,
                         cursor: cursor,
-                        onHover: (event) => sheetController.mouseListener.updateOffset(event.localPosition),
+                        onHover: (event) => sheetController.cursorController.updateOffset(event.localPosition),
                       ),
                     );
                   },
@@ -95,28 +85,17 @@ class SheetWidgetState extends State<SheetWidget> {
             ),
           ),
         ),
-        SheetFooter(sheetController: sheetController, mouseListener: sheetController.mouseListener),
+        SheetFooter(sheetController: sheetController),
       ],
     );
   }
 
   bool _onKey(KeyEvent event) {
-    int key = event.logicalKey.keyId;
-
     if (event is KeyDownEvent) {
-      if (key == 8589934850) {
-        shiftPressed = true;
-      }
+      sheetController.keyboardController.addKey(event.logicalKey);
     } else if (event is KeyUpEvent) {
-      if (key == 8589934850) {
-        shiftPressed = false;
-      }
-    } else if (event is KeyRepeatEvent) {
-      if (key == 8589934850) {
-        shiftPressed = true;
-      }
+      sheetController.keyboardController.removeKey(event.logicalKey);
     }
-
     return false;
   }
 }
