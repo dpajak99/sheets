@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
@@ -31,7 +32,6 @@ class SheetProperties {
     customColumnProperties[columnIndex] = columnStyle;
   }
 
-
   Map<int, double> get customRowExtents {
     return customRowProperties.map((key, value) => MapEntry(key.value, value.height));
   }
@@ -49,7 +49,6 @@ class SheetPaintConfig extends ChangeNotifier {
   List<RowConfig> visibleRows = <RowConfig>[];
   List<ColumnConfig> visibleColumns = <ColumnConfig>[];
   List<CellConfig> visibleCells = <CellConfig>[];
-
 
   List<SheetItemConfig> get visibleItems => [...visibleRows, ...visibleColumns, ...visibleCells];
 
@@ -74,22 +73,14 @@ class SheetPaintConfig extends ChangeNotifier {
     notifyListeners();
   }
 
-  (Direction, Direction, CellConfig) findClosestVisible(CellIndex cellIndex) {
-    Direction verticalDirection, horizontalDirection;
-    RowIndex rowIndex;
-    ColumnIndex columnIndex;
+  ClosestVisible<CellIndex> findClosestVisible(CellIndex cellIndex) {
+    ClosestVisible<RowIndex> closestVisibleRowIndex = _findClosestVisibleRowIndex(cellIndex);
+    ClosestVisible<ColumnIndex> closestVisibleColumnIndex = _findVisibleColumnIndex(cellIndex);
 
-    (verticalDirection, rowIndex) = _findVisibleRowIndex(cellIndex);
-    (horizontalDirection, columnIndex) = _findVisibleColumnIndex(cellIndex);
-
-    CellIndex closestCellIndex = CellIndex(
-      rowIndex: rowIndex,
-      columnIndex: columnIndex,
-    );
-    return (verticalDirection, horizontalDirection, findCell(closestCellIndex)!);
+    return ClosestVisible.combineCellIndex(closestVisibleRowIndex, closestVisibleColumnIndex);
   }
 
-  (Direction, RowIndex) _findVisibleRowIndex(CellIndex cellIndex) {
+  ClosestVisible<RowIndex> _findClosestVisibleRowIndex(CellIndex cellIndex) {
     RowIndex firstVisibleRow = visibleRows.first.rowIndex;
     RowIndex lastVisibleRow = visibleRows.last.rowIndex;
     RowIndex cellRow = cellIndex.rowIndex;
@@ -98,15 +89,15 @@ class SheetPaintConfig extends ChangeNotifier {
     bool missingTop = cellRow < firstVisibleRow;
 
     if (visible) {
-      return (Direction.center, cellRow);
+      return ClosestVisible<RowIndex>.fullyVisible(cellRow);
     } else if (missingTop) {
-      return (Direction.top, firstVisibleRow);
+      return ClosestVisible<RowIndex>.partiallyVisible(hiddenBorders: [Direction.top], item: firstVisibleRow);
     } else {
-      return (Direction.bottom, lastVisibleRow);
+      return ClosestVisible<RowIndex>.partiallyVisible(hiddenBorders: [Direction.bottom], item: lastVisibleRow);
     }
   }
 
-  (Direction, ColumnIndex) _findVisibleColumnIndex(CellIndex cellIndex) {
+  ClosestVisible<ColumnIndex> _findVisibleColumnIndex(CellIndex cellIndex) {
     ColumnIndex firstVisibleColumn = visibleColumns.first.columnIndex;
     ColumnIndex lastVisibleColumn = visibleColumns.last.columnIndex;
     ColumnIndex cellColumn = cellIndex.columnIndex;
@@ -115,11 +106,11 @@ class SheetPaintConfig extends ChangeNotifier {
     bool missingLeft = cellColumn < firstVisibleColumn;
 
     if (visible) {
-      return (Direction.center, cellColumn);
+      return ClosestVisible<ColumnIndex>.fullyVisible(cellColumn);
     } else if (missingLeft) {
-      return (Direction.left, firstVisibleColumn);
+      return ClosestVisible<ColumnIndex>.partiallyVisible(hiddenBorders: [Direction.left], item: firstVisibleColumn);
     } else {
-      return (Direction.right, lastVisibleColumn);
+      return ClosestVisible<ColumnIndex>.partiallyVisible(hiddenBorders: [Direction.right], item: lastVisibleColumn);
     }
   }
 
@@ -129,16 +120,6 @@ class SheetPaintConfig extends ChangeNotifier {
 
   bool containsCell(CellIndex cellIndex) {
     return visibleCells.any((cell) => cell.cellIndex == cellIndex);
-  }
-
-  bool shouldHideSelection(CellIndex start, CellIndex end) {
-    bool vertical1 = start.rowIndex < visibleRows.first.rowIndex && end.rowIndex > visibleRows.last.rowIndex ;
-    bool vertical2 = end.rowIndex < visibleRows.first.rowIndex && start.rowIndex > visibleRows.last.rowIndex ;
-    bool horizontal1 = start.columnIndex < visibleColumns.first.columnIndex && end.columnIndex > visibleColumns.last.columnIndex ;
-    bool horizontal2 = end.columnIndex < visibleColumns.first.columnIndex && start.columnIndex > visibleColumns.last.columnIndex ;
-
-    return !(horizontal1 || horizontal2 || vertical1 || vertical2);
-
   }
 
   List<RowConfig> _calculateVisibleRows() {
@@ -210,4 +191,25 @@ class SheetPaintConfig extends ChangeNotifier {
 
     return visibleCells;
   }
+}
+
+class ClosestVisible<T extends SheetItemIndex> with EquatableMixin {
+  final List<Direction> hiddenBorders;
+  final T item;
+
+  ClosestVisible._({required this.hiddenBorders, required this.item});
+
+  ClosestVisible.fullyVisible(this.item) : hiddenBorders = [];
+
+  ClosestVisible.partiallyVisible({required this.hiddenBorders, required this.item});
+
+  static ClosestVisible<CellIndex> combineCellIndex(ClosestVisible<RowIndex> rowIndex, ClosestVisible<ColumnIndex> columnIndex) {
+    return ClosestVisible<CellIndex>._(
+      hiddenBorders: [...rowIndex.hiddenBorders, ...columnIndex.hiddenBorders],
+      item: CellIndex(rowIndex: rowIndex.item, columnIndex: columnIndex.item),
+    );
+  }
+
+  @override
+  List<Object?> get props => [hiddenBorders, item];
 }

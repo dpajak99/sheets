@@ -21,7 +21,7 @@ class SheetScrollPosition {
 }
 
 class SheetScrollController {
-  final SheetScrollPhysics physics = CellScrollPhysics();
+  final SheetScrollPhysics physics = SmoothScrollPhysics();
   final SheetScrollPosition position = SheetScrollPosition();
 
   Size viewportSize = Size.zero;

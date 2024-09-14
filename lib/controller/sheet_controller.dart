@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/custom_scroll_controller.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/selection/sheet_range_selection.dart';
+import 'package:sheets/controller/selection/sheet_selection.dart';
+import 'package:sheets/controller/selection/sheet_single_selection.dart';
 import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
 import 'package:sheets/controller/style.dart';
@@ -84,6 +87,11 @@ class SheetController {
       selection = SheetRangeSelection(paintConfig: paintConfig, start: computedStart, end: end, completed: completed);
       selectionPainterNotifier.repaint();
     }
+  }
+
+  void completeSelection() {
+    selection = selection.complete();
+    selectionPainterNotifier.repaint();
   }
 
   void selectAll() {

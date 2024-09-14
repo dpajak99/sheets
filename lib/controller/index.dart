@@ -1,6 +1,28 @@
 import 'package:equatable/equatable.dart';
 
-class CellIndex with EquatableMixin {
+mixin NumericIndexMixin {
+  int get value;
+
+  bool operator <(NumericIndexMixin other) {
+    return value < other.value;
+  }
+
+  bool operator <=(NumericIndexMixin other) {
+    return value <= other.value;
+  }
+
+  bool operator >(NumericIndexMixin other) {
+    return value > other.value;
+  }
+
+  bool operator >=(NumericIndexMixin other) {
+    return value >= other.value;
+  }
+}
+
+abstract class SheetItemIndex with EquatableMixin {}
+
+class CellIndex extends SheetItemIndex {
   final RowIndex rowIndex;
   final ColumnIndex columnIndex;
 
@@ -20,60 +42,36 @@ class CellIndex with EquatableMixin {
   List<Object?> get props => [rowIndex, columnIndex];
 }
 
-class ColumnIndex with EquatableMixin {
-  final int value;
+class ColumnIndex extends SheetItemIndex with NumericIndexMixin {
+  final int _value;
 
-  ColumnIndex(this.value) : assert(value >= 0);
+  ColumnIndex(int value)
+      : _value = value,
+        assert(value >= 0);
 
   static ColumnIndex zero = ColumnIndex(0);
-
-  bool operator <(ColumnIndex other) {
-    return value < other.value;
-  }
-
-  bool operator <=(ColumnIndex other) {
-    return value <= other.value;
-  }
 
   ColumnIndex operator -(int number) {
     return ColumnIndex(value - number);
   }
 
-  bool operator >(ColumnIndex other) {
-    return value > other.value;
-  }
-
-  bool operator >=(ColumnIndex other) {
-    return value >= other.value;
-  }
+  @override
+  int get value => _value;
 
   @override
   List<Object?> get props => [value];
 }
 
-class RowIndex with EquatableMixin {
-  final int value;
+class RowIndex extends SheetItemIndex with NumericIndexMixin {
+  final int _value;
 
-  RowIndex(int value) : value = value < 0 ? 0 : value;
+  RowIndex(int value) : _value = value < 0 ? 0 : value;
 
   static RowIndex zero = RowIndex(0);
 
-  bool operator <(RowIndex other) {
-    return value < other.value;
-  }
-
-  bool operator <=(RowIndex other) {
-    return value <= other.value;
-  }
-
-  bool operator >(RowIndex other) {
-    return value > other.value;
-  }
-
-  bool operator >=(RowIndex other) {
-    return value >= other.value;
-  }
+  @override
+  int get value => _value;
 
   @override
-  List<Object?> get props => [value];
+  List<Object?> get props => [_value];
 }

@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:sheets/controller/custom_scroll_controller.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/controller/style.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/scroll_wrapper.dart';
 import 'package:sheets/sheet_footer.dart';

@@ -80,14 +80,9 @@ class SheetCursorController extends ChangeNotifier {
     _dragInProgress = false;
 
     position = details.globalPosition;
-    SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position);
-
     if (isResizing) {
     } else {
-      switch (dragHoveredElement) {
-        case CellConfig cellConfig:
-          sheetController.selectRange(end: cellConfig.cellIndex, completed: true);
-      }
+      sheetController.completeSelection();
     }
     notifyListeners();
   }

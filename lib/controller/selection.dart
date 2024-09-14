@@ -2,263 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
-import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/controller/selection/sheet_selection.dart';
 import 'package:sheets/utils/direction.dart';
-
-abstract class SheetSelection with EquatableMixin {
-  final SheetPaintConfig paintConfig;
-
-  SheetSelection({required this.paintConfig});
-
-  SelectionBounds? getSelectionBounds() {
-    bool startCellVisible = paintConfig.containsCell(start);
-    bool endCellVisible = paintConfig.containsCell(end);
-
-    if ((startCellVisible || endCellVisible) == false) {
-      if (paintConfig.shouldHideSelection(start, end)) {
-        return null;
-      }
-    }
-
-    CellConfig? startCell = paintConfig.findCell(start);
-    CellConfig? endCell = paintConfig.findCell(end);
-
-    if (startCell != null && endCell != null) {
-      return SelectionBounds(startCell, endCell, direction);
-    } else if (startCell == null && endCell == null) {
-      Direction startVerticalDirection, startHorizontalDirection;
-      CellConfig startClosestCell;
-      (startVerticalDirection, startHorizontalDirection, startClosestCell) = paintConfig.findClosestVisible(start);
-      List<Direction> startHiddenBorders = [startVerticalDirection, startHorizontalDirection];
-
-      Direction endVerticalDirection, endHorizontalDirection;
-      CellConfig endClosestCell;
-      (endVerticalDirection, endHorizontalDirection, endClosestCell) = paintConfig.findClosestVisible(end);
-      List<Direction> endHiddenBorders = [endVerticalDirection, endHorizontalDirection];
-
-      return SelectionBounds(
-        startClosestCell,
-        endClosestCell,
-        direction,
-        hiddenBorders: [...startHiddenBorders, ...endHiddenBorders],
-        startCellVisible: false,
-      );
-    } else if (startCell == null && endCell != null) {
-      Direction verticalDirection, horizontalDirection;
-      CellConfig startClosestCell;
-
-      (verticalDirection, horizontalDirection, startClosestCell) = paintConfig.findClosestVisible(start);
-
-      List<Direction> hiddenBorders = [verticalDirection, horizontalDirection];
-      return SelectionBounds(startClosestCell, endCell, direction, hiddenBorders: hiddenBorders, startCellVisible: false);
-    } else if (startCell != null && endCell == null) {
-      Direction verticalDirection, horizontalDirection;
-      CellConfig closestCell;
-
-      (verticalDirection, horizontalDirection, closestCell) = paintConfig.findClosestVisible(end);
-
-      List<Direction> hiddenBorders = [verticalDirection, horizontalDirection];
-      return SelectionBounds(startCell, closestCell, direction, hiddenBorders: hiddenBorders, lastCellVisible: false);
-    } else {
-      return null;
-    }
-  }
-
-  CellIndex get start;
-
-  CellIndex get end;
-
-  bool get hasBackground => false;
-
-  bool get circleVisible => true;
-
-  bool isColumnSelected(ColumnIndex columnIndex);
-
-  bool isAllColumnSelected(ColumnIndex columnIndex);
-
-  bool isRowSelected(RowIndex rowIndex);
-
-  bool isAllRowSelected(RowIndex rowIndex);
-
-  SelectionDirection get direction;
-
-  bool get isCompleted;
-}
-
-class SheetSingleSelection extends SheetSelection {
-  final CellIndex cellIndex;
-  final bool editingEnabled;
-
-  SheetSingleSelection({
-    required super.paintConfig,
-    required this.cellIndex,
-    this.editingEnabled = false,
-  });
-
-  SheetSingleSelection.defaultSelection({required super.paintConfig})
-      : cellIndex = CellIndex.zero,
-        editingEnabled = false;
-
-  @override
-  CellIndex get start => cellIndex;
-
-  @override
-  CellIndex get end => cellIndex;
-
-  @override
-  bool isColumnSelected(ColumnIndex columnIndex) => cellIndex.columnIndex == columnIndex;
-
-  @override
-  bool isRowSelected(RowIndex rowIndex) => cellIndex.rowIndex == rowIndex;
-
-  @override
-  bool isAllColumnSelected(ColumnIndex columnIndex) => false;
-
-  @override
-  bool isAllRowSelected(RowIndex rowIndex) => false;
-
-  @override
-  SelectionDirection get direction => SelectionDirection.topRight;
-
-  @override
-  bool get isCompleted => true;
-
-  @override
-  bool get circleVisible => !editingEnabled;
-
-  @override
-  List<Object?> get props => [cellIndex];
-}
-
-class SheetRangeSelection extends SheetSelection {
-  final CellIndex _start;
-  final CellIndex _end;
-  final bool _completed;
-
-  SheetRangeSelection({
-    required super.paintConfig,
-    required CellIndex start,
-    required CellIndex end,
-    required bool completed,
-  })  : _end = end,
-        _start = start,
-        _completed = completed;
-
-  @override
-  CellIndex get start => _start;
-
-  @override
-  CellIndex get end => _end;
-
-  @override
-  bool isColumnSelected(ColumnIndex columnIndex) {
-    int startColumnIndex = selectionCorners.topLeft.columnIndex.value;
-    int endColumnIndex = selectionCorners.topRight.columnIndex.value;
-
-    return columnIndex.value >= startColumnIndex && columnIndex.value <= endColumnIndex;
-  }
-
-  @override
-  bool isAllColumnSelected(ColumnIndex columnIndex) {
-    int lastRowIndex = defaultRowCount - 1;
-    bool columnSelected = isColumnSelected(columnIndex);
-
-    return columnSelected && isRowSelected(RowIndex(lastRowIndex));
-  }
-
-  @override
-  bool isRowSelected(RowIndex rowIndex) {
-    int startRowIndex = selectionCorners.topLeft.rowIndex.value;
-    int endRowIndex = selectionCorners.bottomLeft.rowIndex.value;
-
-    return rowIndex.value >= startRowIndex && rowIndex.value <= endRowIndex;
-  }
-
-  @override
-  bool isAllRowSelected(RowIndex rowIndex) {
-    int lastColumnIndex = defaultColumnCount - 1;
-    bool rowSelected = isRowSelected(rowIndex);
-
-    return rowSelected && isColumnSelected(ColumnIndex(lastColumnIndex));
-  }
-
-  @override
-  SelectionDirection get direction {
-    bool startBeforeEndRow = _start.rowIndex.value < _end.rowIndex.value;
-    bool startBeforeEndColumn = _start.columnIndex.value < _end.columnIndex.value;
-
-    if (startBeforeEndRow) {
-      return startBeforeEndColumn ? SelectionDirection.bottomRight : SelectionDirection.bottomLeft;
-    } else {
-      return startBeforeEndColumn ? SelectionDirection.topRight : SelectionDirection.topLeft;
-    }
-  }
-
-  @override
-  bool get hasBackground => true;
-
-  @override
-  bool get isCompleted => _completed;
-
-  SelectionCorners<CellIndex> get selectionCorners {
-    return SelectionCorners.fromDirection(
-      topLeft: start,
-      topRight: CellIndex(rowIndex: start.rowIndex, columnIndex: end.columnIndex),
-      bottomLeft: CellIndex(rowIndex: end.rowIndex, columnIndex: start.columnIndex),
-      bottomRight: end,
-      direction: direction,
-    );
-  }
-
-  @override
-  List<Object?> get props => [_start, _end];
-}
-
-class SheetMultiSelection extends SheetSelection {
-  final List<CellIndex> cells;
-
-  SheetMultiSelection({
-    required super.paintConfig,
-    required this.cells,
-  });
-
-  @override
-  SelectionDirection get direction => SelectionDirection.topRight;
-
-  @override
-  CellIndex get end => cells.first;
-
-  @override
-  CellIndex get start => cells.last;
-
-  @override
-  bool isAllColumnSelected(ColumnIndex columnIndex) {
-    return false;
-  }
-
-  @override
-  bool isAllRowSelected(RowIndex rowIndex) {
-    return false;
-  }
-
-  @override
-  bool isColumnSelected(ColumnIndex columnIndex) {
-    return cells.any((CellIndex cellIndex) => cellIndex.columnIndex == columnIndex);
-  }
-
-  @override
-  bool get isCompleted => true;
-
-  @override
-  bool isRowSelected(RowIndex rowIndex) {
-    return cells.any((CellIndex cellIndex) => cellIndex.rowIndex == rowIndex);
-  }
-
-  @override
-  List<Object?> get props => [cells];
-}
-
 
 enum SelectionDirection { topRight, topLeft, bottomRight, bottomLeft }
 
@@ -295,17 +40,16 @@ class SelectionCorners<T> with EquatableMixin {
 
 class SelectionBounds {
   final SelectionCorners<Rect> _corners;
-  final CellConfig _startCell;
+  final CellConfig startCell;
   final bool _startCellVisible;
   final List<Direction> _hiddenBorders;
 
   SelectionBounds._({
     required SelectionCorners<Rect> corners,
-    required CellConfig startCell,
+    required this.startCell,
     required bool startCellVisible,
     required List<Direction> hiddenBorders,
   })  : _corners = corners,
-        _startCell = startCell,
         _startCellVisible = startCellVisible,
         _hiddenBorders = hiddenBorders;
 
@@ -341,7 +85,7 @@ class SelectionBounds {
 
   bool get isStartCellVisible => _startCellVisible;
 
-  Rect get startCellRect => _startCell.rect;
+  Rect get mainCellRect => startCell.rect;
 
   Rect get selectionRect {
     return Rect.fromPoints(_corners.topLeft.topLeft, _corners.bottomRight.bottomRight);
@@ -354,6 +98,4 @@ class SelectionBounds {
   bool get isRightBorderVisible => !_hiddenBorders.contains(Direction.right);
 
   bool get isBottomBorderVisible => !_hiddenBorders.contains(Direction.bottom);
-
-  SelectionCorners<Rect> get corners => _corners;
 }
