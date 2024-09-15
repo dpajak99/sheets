@@ -4,7 +4,7 @@ import 'package:sheets/controller/custom_scroll_controller.dart';
 extension OffsetExtension on Offset {
   Offset limit(Offset x, Offset y) {
     return Offset(
-      dx.clamp(x.dx, y.dx),
+      dx.clamp(x.dx, x.dy),
       dy.clamp(y.dx, y.dy),
     );
   }

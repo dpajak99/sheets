@@ -35,19 +35,19 @@ class SheetMultiSelection extends SheetSelection {
   List<CellIndex> get selectedCells => _selectedCells.toList();
 
   @override
-  CellIndex get start => CellIndex.zero;
+  CellIndex get start => _selectedCells.first;
 
   @override
-  CellIndex get end => CellIndex.zero;
+  CellIndex get end => _selectedCells.last;
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    return selectedCells.any((cellIndex) => cellIndex.columnIndex == columnIndex) ? SelectionStatus.statusTrue : SelectionStatus.statusFalse;
+    return mergedSelections.fold(SelectionStatus.statusFalse, (status, mergedSelection) => status.merge(mergedSelection.isColumnSelected(columnIndex)));
   }
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
-    return selectedCells.any((cellIndex) => cellIndex.rowIndex == rowIndex) ? SelectionStatus.statusTrue : SelectionStatus.statusFalse;
+    return mergedSelections.fold(SelectionStatus.statusFalse, (status, mergedSelection) => status.merge(mergedSelection.isRowSelected(rowIndex)));
   }
 
   void addSingle(CellIndex cellIndex) {

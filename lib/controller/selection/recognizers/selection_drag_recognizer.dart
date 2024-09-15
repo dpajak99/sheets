@@ -1,9 +1,12 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/selection/sheet_selection_controller.dart';
+import 'package:sheets/controller/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/controller/sheet_keyboard_controller.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/sheet_constants.dart';
 
@@ -36,18 +39,52 @@ class SelectionDragRecognizer {
         break;
     }
 
-    SheetSelection selection = createSelection(endRowIndex, endColumnIndex);
-    sheetController.selectionController.custom(selection);
+    List<_SelectionDragAction> actions = [
+      _MultiSelectionDragAction(sheetController, selectionStart, selectionEnd),
+      _SimpleSelectionDragAction(sheetController, selectionStart, selectionEnd),
+    ];
+
+    _SelectionDragAction? activeAction = actions.firstWhere((action) => action.isActive, orElse: () => actions.last);
+    SheetSelection sheetSelection = activeAction.execute(endRowIndex, endColumnIndex);
+    sheetController.selectionController.custom(sheetSelection);
   }
 
   void complete() {
     sheetController.cursorController.setCursor(SystemMouseCursors.grab, SystemMouseCursors.basic);
     sheetController.selectionController.completeSelection();
   }
+}
 
-  SheetSelection createSelection(RowIndex endRowIndex, ColumnIndex endColumnIndex) {
-    SheetPaintConfig paintConfig = sheetController.paintConfig;
+abstract class _SelectionDragAction {
+  final SheetController sheetController;
+  final SheetItemConfig selectionStart;
+  final SheetItemConfig selectionEnd;
 
+  _SelectionDragAction(this.sheetController, this.selectionStart, this.selectionEnd);
+
+  bool get isActive;
+
+  SheetSelection execute(RowIndex endRowIndex, ColumnIndex endColumnIndex);
+
+  SheetSelectionController get selectionController => sheetController.selectionController;
+
+  SheetKeyboardController get keyboardController => sheetController.keyboardController;
+
+  SheetPaintConfig get paintConfig => sheetController.paintConfig;
+
+  SheetSelection get previousSelection => selectionController.selection;
+}
+
+class _SimpleSelectionDragAction extends _SelectionDragAction {
+  _SimpleSelectionDragAction(super.sheetController, super.selectioNStart, super.selectionEnd);
+
+  @override
+  bool get isActive {
+    return true;
+  }
+
+  @override
+  SheetSelection execute(RowIndex endRowIndex, ColumnIndex endColumnIndex) {
     switch (selectionStart) {
       case CellConfig selectionStart:
         return SheetRangeSelection(
@@ -73,5 +110,33 @@ class SelectionDragRecognizer {
       default:
         throw Exception('Invalid selectionStart type: $selectionStart');
     }
+  }
+}
+
+class _MultiSelectionDragAction extends _SelectionDragAction {
+  _MultiSelectionDragAction(super.sheetController, super.selectioNStart, super.selectionEnd);
+
+  @override
+  bool get isActive {
+    return keyboardController.isKeyPressed(LogicalKeyboardKey.controlLeft);
+  }
+
+  @override
+  SheetSelection execute(RowIndex endRowIndex, ColumnIndex endColumnIndex) {
+    late SheetMultiSelection sheetMultiSelection;
+    if (previousSelection is SheetMultiSelection) {
+      sheetMultiSelection = previousSelection as SheetMultiSelection;
+    } else {
+      sheetMultiSelection = SheetMultiSelection(selectedCells: previousSelection.selectedCells, paintConfig: sheetController.paintConfig);
+    }
+
+    List<_SelectionDragAction> actions = [
+      _SimpleSelectionDragAction(sheetController, selectionStart, selectionEnd),
+    ];
+
+    _SelectionDragAction? activeAction = actions.firstWhere((action) => action.isActive, orElse: () => actions.last);
+    SheetSelection sheetSelection = activeAction.execute(endRowIndex, endColumnIndex);
+    sheetMultiSelection.addAll(sheetSelection.selectedCells);
+    return sheetMultiSelection;
   }
 }

@@ -57,6 +57,7 @@ class _MultiSelectionTapAction extends _SelectionTapAction {
 
   @override
   SheetSelection execute(SheetItemConfig sheetItem) {
+    print('Execute: Multi selection');
     late SheetMultiSelection sheetMultiSelection;
     if (previousSelection is SheetMultiSelection) {
       sheetMultiSelection = previousSelection as SheetMultiSelection;
@@ -90,11 +91,12 @@ class _ContinueRangeSelectionTapAction extends _SelectionTapAction {
 
   @override
   SheetSelection execute(SheetItemConfig selectionEnd) {
+
     switch (selectionEnd) {
       case CellConfig cellConfig:
         return SheetRangeSelection(
           paintConfig: paintConfig,
-          start: previousSelection.start,
+          start: previousSelection.end,
           end: cellConfig.cellIndex,
           completed: true,
         );
