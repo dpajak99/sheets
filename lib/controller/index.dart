@@ -18,6 +18,10 @@ mixin NumericIndexMixin {
   bool operator >=(NumericIndexMixin other) {
     return value >= other.value;
   }
+
+  int compareTo(NumericIndexMixin other) {
+    return value.compareTo(other.value);
+  }
 }
 
 abstract class SheetItemIndex with EquatableMixin {}

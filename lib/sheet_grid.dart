@@ -235,7 +235,7 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanStart: (_) {
-              if (widget.cursorController.isResizing == false) {
+              if (widget.cursorController.hasActiveAction == false) {
                 setState(() {
                   dragging = true;
                   hoverVisible = true;
@@ -266,16 +266,16 @@ class _HorizontalResizeDividerState extends State<HorizontalResizeDivider> {
               opaque: true,
               onEnter: (_) {
                 hovered = true;
-                if (widget.cursorController.isResizing == false) {
+                if (widget.cursorController.hasActiveAction == false) {
                   setState(() => hoverVisible = true);
-                  widget.cursorController.cursorListener.value = SystemMouseCursors.resizeRow;
+                  widget.cursorController.setCursor(SystemMouseCursors.basic, SystemMouseCursors.resizeRow);
                 }
               },
               onExit: (_) {
                 hovered = false;
-                if (widget.cursorController.isResizing == false) {
+                if (widget.cursorController.hasActiveAction == false) {
                   setState(() => hoverVisible = false);
-                  widget.cursorController.cursorListener.value = SystemMouseCursors.basic;
+                  widget.cursorController.setCursor(SystemMouseCursors.resizeRow, SystemMouseCursors.basic);
                 }
               },
               child: SizedBox(
@@ -344,7 +344,7 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanStart: (_) {
-              if (widget.cursorController.isResizing == false) {
+              if (widget.cursorController.hasActiveAction == false) {
                 setState(() {
                   dragging = true;
                   hoverVisible = true;
@@ -375,16 +375,16 @@ class _VerticalResizeDividerState extends State<VerticalResizeDivider> {
               opaque: true,
               onEnter: (_) {
                 hovered = true;
-                if (widget.cursorController.isResizing == false) {
+                if (widget.cursorController.hasActiveAction == false) {
                   setState(() => hoverVisible = true);
-                  widget.cursorController.cursorListener.value = SystemMouseCursors.resizeColumn;
+                  widget.cursorController.setCursor(SystemMouseCursors.basic, SystemMouseCursors.resizeColumn);
                 }
               },
               onExit: (_) {
                 hovered = false;
-                if (widget.cursorController.isResizing == false) {
+                if (widget.cursorController.hasActiveAction == false) {
                   setState(() => hoverVisible = false);
-                  widget.cursorController.cursorListener.value = SystemMouseCursors.basic;
+                  widget.cursorController.setCursor(SystemMouseCursors.resizeColumn, SystemMouseCursors.basic);
                 }
               },
               child: SizedBox(

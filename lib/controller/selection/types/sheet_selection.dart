@@ -41,6 +41,10 @@ class SelectionStatus with EquatableMixin {
 
   SelectionStatus(this._isSelected, this._isFullySelected);
 
+  static SelectionStatus statusFalse = SelectionStatus(false, false);
+
+  static SelectionStatus statusTrue = SelectionStatus(true, true);
+
   T selectValue<T>({required T notSelected, required T selected, required T fullySelected}) {
     if (_isSelected && _isFullySelected) {
       return fullySelected;
@@ -49,6 +53,10 @@ class SelectionStatus with EquatableMixin {
     } else {
       return notSelected;
     }
+  }
+
+  SelectionStatus merge(SelectionStatus other) {
+    return SelectionStatus(_isSelected || other._isSelected, _isFullySelected && other._isFullySelected);
   }
 
   @override
@@ -67,11 +75,17 @@ abstract class SheetSelection with EquatableMixin {
 
   CellIndex get end;
 
+  List<CellIndex> get selectedCells;
+
   SelectionStatus isColumnSelected(ColumnIndex columnIndex);
 
   SelectionStatus isRowSelected(RowIndex rowIndex);
 
   SheetSelection complete() {
+    return this;
+  }
+
+  SheetSelection simplify() {
     return this;
   }
 

@@ -1,11 +1,29 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/recognizers/selection_drag_recognizer.dart';
 import 'package:sheets/controller/selection/recognizers/selection_tap_recognizer.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/sheet_constants.dart';
+
+class SheetTapDetails with EquatableMixin {
+  final DateTime tapTime;
+  final SheetItemConfig hoveredItem;
+
+  SheetTapDetails({
+    required this.tapTime,
+    required this.hoveredItem,
+  });
+
+  SheetTapDetails.create(SheetItemConfig hoveredItem) : this(tapTime: DateTime.now(), hoveredItem: hoveredItem);
+
+  bool isDoubleTap(SheetTapDetails other) {
+    return tapTime.difference(other.tapTime) < const Duration(milliseconds: 300) && hoveredItem == other.hoveredItem;
+  }
+
+  @override
+  List<Object?> get props => [tapTime, hoveredItem];
+}
 
 class SheetCursorController extends ChangeNotifier {
   final SheetController sheetController;
@@ -15,13 +33,19 @@ class SheetCursorController extends ChangeNotifier {
 
   ValueNotifier<SystemMouseCursor> cursorListener = ValueNotifier(SystemMouseCursors.basic);
 
-  DateTime? lastTap;
+  SheetTapDetails? lastTap;
 
   SelectionDragRecognizer? selectionDragRecognizer;
 
   SheetCursorController(this.sheetController);
 
   ColumnConfig? _resizedColumn;
+
+  void setCursor(SystemMouseCursor previous, SystemMouseCursor next) {
+    if (cursorListener.value == previous) {
+      cursorListener.value = next;
+    }
+  }
 
   set resizedColumn(ColumnConfig? resizedColumn) {
     if (selectionDragRecognizer == null) {
@@ -45,11 +69,16 @@ class SheetCursorController extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool get hasActiveAction {
+    return isResizing || selectionDragRecognizer != null;
+  }
+
   bool get isResizing => _resizedRow != null || _resizedColumn != null;
 
   void dragStart(DragStartDetails details) {
     position = details.globalPosition;
     SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position);
+    hoveredElement = dragHoveredElement;
 
     if (isResizing) {
     } else if (dragHoveredElement != null) {
@@ -62,6 +91,7 @@ class SheetCursorController extends ChangeNotifier {
   void dragUpdate(DragUpdateDetails details) {
     position = details.globalPosition;
     SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position);
+    hoveredElement = dragHoveredElement;
 
     if (isResizing) {
     } else if (dragHoveredElement != null) {
@@ -72,13 +102,12 @@ class SheetCursorController extends ChangeNotifier {
   }
 
   void dragEnd(DragEndDetails details) {
-    selectionDragRecognizer = null;
-
     position = details.globalPosition;
 
     if (isResizing) {
     } else {
-      sheetController.selectionController.completeSelection();
+      selectionDragRecognizer?.complete();
+      selectionDragRecognizer = null;
     }
     notifyListeners();
   }
@@ -90,13 +119,16 @@ class SheetCursorController extends ChangeNotifier {
   }
 
   void tap() {
-    DateTime tapTime = DateTime.now();
-    if (lastTap != null && tapTime.difference(lastTap!) < const Duration(milliseconds: 300)) {
-      doubleTap();
-    } else if (hoveredElement != null) {
-      SelectionTapRecognizer(sheetController).handleItemTap(hoveredElement!);
+    if (hoveredElement != null) {
+      SheetTapDetails currentTap = SheetTapDetails.create(hoveredElement!);
+
+      if (lastTap != null && currentTap.isDoubleTap(lastTap!) && sheetController.keyboardController.anyKeyActive == false) {
+        doubleTap();
+      } else if (hoveredElement != null) {
+        SelectionTapRecognizer(sheetController).handleItemTap(hoveredElement!);
+      }
+      lastTap = currentTap;
     }
-    lastTap = tapTime;
   }
 
   void doubleTap() {

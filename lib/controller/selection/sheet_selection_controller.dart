@@ -8,18 +8,25 @@ import 'package:sheets/sheet_constants.dart';
 
 class SheetSelectionController extends ChangeNotifier {
   final SheetPaintConfig paintConfig;
-  late SheetSelection selection = SheetSingleSelection.defaultSelection(paintConfig: paintConfig);
+  late SheetSelection _selection = SheetSingleSelection.defaultSelection(paintConfig: paintConfig);
+
+  set selection(SheetSelection selection) {
+    _selection = selection.simplify();
+    notifyListeners();
+  }
+
+  SheetSelection get selection => _selection;
 
   SheetSelectionController(this.paintConfig);
 
-  void selectSingle(CellIndex cellIndex, {bool editingEnabled = false}) {
-    selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex, editingEnabled: editingEnabled);
-    notifyListeners();
+  void custom(SheetSelection selection) {
+    this.selection = selection;
   }
 
-  void add(CellIndex cellIndex) {
-    notifyListeners();
+  void selectSingle(CellIndex cellIndex, {bool editingEnabled = false}) {
+    selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex, fillHandleVisible: editingEnabled);
   }
+
 
   void selectRange({CellIndex? start, required CellIndex end, bool completed = true}) {
     CellIndex computedStart = start ?? selection.start;

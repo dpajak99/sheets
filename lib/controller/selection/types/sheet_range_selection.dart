@@ -3,6 +3,7 @@ import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
+import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils/direction.dart';
@@ -135,6 +136,25 @@ class SheetRangeSelection extends SheetSelection {
     } else {
       return startBeforeEndColumn ? SelectionDirection.topRight : SelectionDirection.topLeft;
     }
+  }
+
+  @override
+  List<CellIndex> get selectedCells {
+    List<CellIndex> cells = [];
+    for (int i = _start.rowIndex.value; i <= _end.rowIndex.value; i++) {
+      for (int j = _start.columnIndex.value; j <= _end.columnIndex.value; j++) {
+        cells.add(CellIndex(rowIndex: RowIndex(i), columnIndex: ColumnIndex(j)));
+      }
+    }
+    return cells;
+  }
+
+  @override
+  SheetSelection simplify() {
+    if (_start == _end) {
+      return SheetSingleSelection(paintConfig: paintConfig, cellIndex: _start);
+    }
+    return this;
   }
 
   @override

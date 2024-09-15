@@ -7,17 +7,17 @@ import 'package:sheets/painters/paint/sheet_paint_config.dart';
 
 class SheetSingleSelection extends SheetSelection {
   final CellIndex cellIndex;
-  final bool editingEnabled;
+  final bool fillHandleVisible;
 
   SheetSingleSelection({
     required super.paintConfig,
     required this.cellIndex,
-    this.editingEnabled = false,
+    this.fillHandleVisible = false,
   }) : super(completed: true);
 
   SheetSingleSelection.defaultSelection({required super.paintConfig})
       : cellIndex = CellIndex.zero,
-        editingEnabled = false,
+        fillHandleVisible = false,
         super(completed: true);
 
   @override
@@ -38,6 +38,11 @@ class SheetSingleSelection extends SheetSelection {
   SheetSelectionPaint get paint => SheetSingleSelectionPaint(this);
 
   @override
+  List<CellIndex> get selectedCells {
+    return [cellIndex];
+  }
+
+  @override
   List<Object?> get props => [cellIndex];
 }
 
@@ -55,7 +60,7 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
 
     paintMainCell(canvas, selectedCell.rect);
 
-    if (selection.editingEnabled) {
+    if (selection.fillHandleVisible == false) {
       paintFillHandle(canvas, selectedCell.rect.bottomRight);
     }
   }
