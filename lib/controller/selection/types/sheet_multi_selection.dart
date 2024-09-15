@@ -42,12 +42,12 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    return SelectionStatus.statusFalse;
+    return selectedCells.any((cellIndex) => cellIndex.columnIndex == columnIndex) ? SelectionStatus.statusTrue : SelectionStatus.statusFalse;
   }
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
-    return SelectionStatus.statusFalse;
+    return selectedCells.any((cellIndex) => cellIndex.rowIndex == rowIndex) ? SelectionStatus.statusTrue : SelectionStatus.statusFalse;
   }
 
   void addSingle(CellIndex cellIndex) {

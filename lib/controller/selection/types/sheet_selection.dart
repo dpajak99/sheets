@@ -43,7 +43,7 @@ class SelectionStatus with EquatableMixin {
 
   static SelectionStatus statusFalse = SelectionStatus(false, false);
 
-  static SelectionStatus statusTrue = SelectionStatus(true, true);
+  static SelectionStatus statusTrue = SelectionStatus(true, false);
 
   T selectValue<T>({required T notSelected, required T selected, required T fullySelected}) {
     if (_isSelected && _isFullySelected) {
