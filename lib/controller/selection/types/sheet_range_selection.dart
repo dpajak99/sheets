@@ -158,6 +158,16 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
+  Offset? get fillHandleOffset {
+    SelectionBounds? selectionBounds = getSelectionBounds();
+    if (selectionBounds == null) {
+      return null;
+    }
+
+    return selectionBounds.selectionRect.bottomRight;
+  }
+
+  @override
   List<Object?> get props => [_start, _end];
 }
 

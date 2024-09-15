@@ -89,6 +89,8 @@ abstract class SheetSelection with EquatableMixin {
     return this;
   }
 
+  Offset? get fillHandleOffset;
+
   SheetSelectionPaint get paint;
 }
 

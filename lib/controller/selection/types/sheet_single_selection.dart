@@ -38,6 +38,9 @@ class SheetSingleSelection extends SheetSelection {
   SheetSelectionPaint get paint => SheetSingleSelectionPaint(this);
 
   @override
+  Offset? get fillHandleOffset => paintConfig.findCell(cellIndex)?.rect.bottomRight;
+
+  @override
   List<CellIndex> get selectedCells {
     return [cellIndex];
   }

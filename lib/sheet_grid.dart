@@ -88,37 +88,37 @@ class SheetGrid extends StatelessWidget {
                 ),
                 Positioned.fill(
                   child: RepaintBoundary(
-                      child: MultiListenableBuilder(
-                        listenables: [
-                          sheetController.selectionController,
-                          sheetController.paintConfig,
-                        ],
-                        builder: (BuildContext context) {
-                          return Stack(
-                            children: sheetController.paintConfig.visibleColumns.map((ColumnConfig columnConfig) {
-                              return VerticalResizeDivider(columnConfig: columnConfig, cursorController: cursorController);
-                            }).toList(),
-                          );
-                        },
-                      ),
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionController,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return Stack(
+                          children: sheetController.paintConfig.visibleColumns.map((ColumnConfig columnConfig) {
+                            return VerticalResizeDivider(columnConfig: columnConfig, cursorController: cursorController);
+                          }).toList(),
+                        );
+                      },
                     ),
+                  ),
                 ),
                 Positioned.fill(
-                  child:  RepaintBoundary(
-                      child: MultiListenableBuilder(
-                        listenables: [
-                          sheetController.selectionController,
-                          sheetController.paintConfig,
-                        ],
-                        builder: (BuildContext context) {
-                          return Stack(
-                            children: sheetController.paintConfig.visibleRows.map((RowConfig rowConfig) {
-                              return HorizontalResizeDivider(rowConfig: rowConfig, cursorController: cursorController);
-                            }).toList(),
-                          );
-                        },
-                      ),
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionController,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        return Stack(
+                          children: sheetController.paintConfig.visibleRows.map((RowConfig rowConfig) {
+                            return HorizontalResizeDivider(rowConfig: rowConfig, cursorController: cursorController);
+                          }).toList(),
+                        );
+                      },
                     ),
+                  ),
                 ),
                 Positioned(
                   top: 0,
@@ -172,11 +172,56 @@ class SheetGrid extends StatelessWidget {
                     },
                   ),
                 ),
+                Positioned.fill(
+                  child: RepaintBoundary(
+                    child: MultiListenableBuilder(
+                      listenables: [
+                        sheetController.selectionController,
+                        sheetController.paintConfig,
+                      ],
+                      builder: (BuildContext context) {
+                        Offset? fillHandleOffset = sheetController.selectionController.selection.fillHandleOffset;
+                        return Stack(
+                          children: [
+                            if (fillHandleOffset != null)
+                              Positioned(
+                                left: fillHandleOffset.dx - 4,
+                                top: fillHandleOffset.dy - 4,
+                                child: FillHandleOffset(cursorController: sheetController.cursorController),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ],
             );
           },
         ),
       ),
+    );
+  }
+}
+
+class FillHandleOffset extends StatelessWidget {
+  final SheetCursorController cursorController;
+
+  const FillHandleOffset({
+    required this.cursorController,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        cursorController.setCursor(SystemMouseCursors.basic, SystemMouseCursors.precise);
+      },
+      onExit: (_) {
+        cursorController.setCursor(SystemMouseCursors.precise, SystemMouseCursors.basic);
+      },
+      child: const SizedBox(height: 8, width: 8),
     );
   }
 }
