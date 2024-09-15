@@ -10,7 +10,7 @@ class SheetKeyboardController {
 
   void addKey(LogicalKeyboardKey logicalKeyboardKey) {
     if (activeKeys.contains(LogicalKeyboardKey.controlLeft) && logicalKeyboardKey == LogicalKeyboardKey.keyA) {
-      sheetController.selectAll();
+      sheetController.selectionController.selectAll();
     }
     activeKeys.add(logicalKeyboardKey);
   }
@@ -22,4 +22,6 @@ class SheetKeyboardController {
   bool isKeyPressed(LogicalKeyboardKey logicalKeyboardKey) {
     return activeKeys.contains(logicalKeyboardKey);
   }
+
+  bool get anyKeyActive => activeKeys.isNotEmpty;
 }

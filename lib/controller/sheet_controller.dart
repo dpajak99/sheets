@@ -2,18 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/custom_scroll_controller.dart';
-import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection/sheet_range_selection.dart';
-import 'package:sheets/controller/selection/sheet_selection.dart';
-import 'package:sheets/controller/selection/sheet_single_selection.dart';
+import 'package:sheets/controller/selection/sheet_selection_controller.dart';
 import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
 import 'package:sheets/controller/style.dart';
-import 'package:sheets/controller/selection.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
-import 'package:sheets/painters/sheet_painter_notifier.dart';
-import 'package:sheets/sheet_constants.dart';
 
 class SheetController {
   final SheetProperties sheetProperties;
@@ -22,17 +16,8 @@ class SheetController {
   late final SheetPaintConfig paintConfig;
   late final SheetCursorController cursorController = SheetCursorController(this);
   late final SheetKeyboardController keyboardController = SheetKeyboardController(this);
+  late final SheetSelectionController selectionController = SheetSelectionController(paintConfig);
 
-  late SheetSelection _selection = SheetSingleSelection.defaultSelection(paintConfig: paintConfig);
-  set selection(SheetSelection selection) {
-    _selection = selection;
-    editNotifier.value = null;
-  }
-
-  SheetSelection get selection => _selection;
-
-
-  SheetPainterNotifier selectionPainterNotifier = SheetPainterNotifier();
   ValueNotifier<CellConfig?> editNotifier = ValueNotifier(null);
 
   SheetController({
@@ -42,6 +27,7 @@ class SheetController {
     paintConfig = SheetPaintConfig(sheetController: this);
     scrollController.customColumnExtents = sheetProperties.customColumnExtents;
     scrollController.customRowExtents = sheetProperties.customRowExtents;
+    selectionController.addListener(cancelEdit);
   }
 
   void resize(Size size) {
@@ -74,35 +60,9 @@ class SheetController {
     paintConfig.refresh();
   }
 
-  void selectSingle(CellIndex cellIndex, {bool editingEnabled = false}) {
-    selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex, editingEnabled: editingEnabled);
-    selectionPainterNotifier.repaint();
-  }
-
-  void selectRange({CellIndex? start, required CellIndex end, bool completed = true}) {
-    CellIndex computedStart = start ?? selection.start;
-    if (computedStart == end) {
-      selectSingle(computedStart);
-    } else {
-      selection = SheetRangeSelection(paintConfig: paintConfig, start: computedStart, end: end, completed: completed);
-      selectionPainterNotifier.repaint();
-    }
-  }
-
-  void completeSelection() {
-    selection = selection.complete();
-    selectionPainterNotifier.repaint();
-  }
-
-  void selectAll() {
-    selectRange(
-      start: CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0)),
-      end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: ColumnIndex(defaultColumnCount)),
-    );
-  }
 
   void edit(CellConfig cellConfig) {
-    selectSingle(cellConfig.cellIndex, editingEnabled: true);
+    selectionController.selectSingle(cellConfig.cellIndex, editingEnabled: true);
     editNotifier.value = cellConfig;
   }
 

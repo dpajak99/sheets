@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection/sheet_selection.dart';
+import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 
 class SheetSingleSelection extends SheetSelection {
@@ -32,7 +32,6 @@ class SheetSingleSelection extends SheetSelection {
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(cellIndex.rowIndex == rowIndex, false);
 
-
   CellConfig? get selectedCell => paintConfig.findCell(cellIndex);
 
   @override
@@ -55,6 +54,9 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
     }
 
     paintMainCell(canvas, selectedCell.rect);
-    paintFillHandle(canvas, selectedCell.rect.bottomRight);
+
+    if (selection.editingEnabled) {
+      paintFillHandle(canvas, selectedCell.rect.bottomRight);
+    }
   }
 }

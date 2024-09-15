@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/selection/sheet_selection.dart';
+import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
@@ -14,7 +14,7 @@ class SelectionPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth - borderWidth, columnHeadersHeight - borderWidth, size.width, size.height));
 
-    SheetSelectionPaint selectionPaint = sheetController.selection.paint;
+    SheetSelectionPaint selectionPaint = sheetController.selectionController.selection.paint;
     selectionPaint.paint(sheetController.paintConfig, canvas, size);
   }
 

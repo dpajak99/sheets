@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection/sheet_selection.dart';
+import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/utils/direction.dart';
 
 enum SelectionDirection { topRight, topLeft, bottomRight, bottomLeft }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/selection/recognizers/selection_drag_recognizer.dart';
+import 'package:sheets/controller/selection/recognizers/selection_tap_recognizer.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
@@ -15,14 +17,14 @@ class SheetCursorController extends ChangeNotifier {
 
   DateTime? lastTap;
 
-  bool _dragInProgress = false;
+  SelectionDragRecognizer? selectionDragRecognizer;
 
   SheetCursorController(this.sheetController);
 
   ColumnConfig? _resizedColumn;
 
   set resizedColumn(ColumnConfig? resizedColumn) {
-    if (_dragInProgress == false) {
+    if (selectionDragRecognizer == null) {
       _resizedColumn = resizedColumn;
       cursorListener.value = resizedColumn != null ? SystemMouseCursors.resizeColumn : SystemMouseCursors.basic;
     }
@@ -31,7 +33,7 @@ class SheetCursorController extends ChangeNotifier {
   RowConfig? _resizedRow;
 
   set resizedRow(RowConfig? resizedRow) {
-    if (_dragInProgress == false) {
+    if (selectionDragRecognizer == null) {
       _resizedRow = resizedRow;
       cursorListener.value = resizedRow != null ? SystemMouseCursors.resizeRow : SystemMouseCursors.basic;
     }
@@ -46,16 +48,12 @@ class SheetCursorController extends ChangeNotifier {
   bool get isResizing => _resizedRow != null || _resizedColumn != null;
 
   void dragStart(DragStartDetails details) {
-    _dragInProgress = true;
     position = details.globalPosition;
     SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position);
 
     if (isResizing) {
-    } else {
-      switch (dragHoveredElement) {
-        case CellConfig cellConfig:
-          sheetController.selectSingle(cellConfig.cellIndex);
-      }
+    } else if (dragHoveredElement != null) {
+      selectionDragRecognizer = SelectionDragRecognizer(sheetController, dragHoveredElement);
     }
 
     notifyListeners();
@@ -66,23 +64,21 @@ class SheetCursorController extends ChangeNotifier {
     SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position);
 
     if (isResizing) {
-    } else {
-      switch (dragHoveredElement) {
-        case CellConfig cellConfig:
-          sheetController.selectRange(end: cellConfig.cellIndex, completed: false);
-      }
+    } else if (dragHoveredElement != null) {
+      selectionDragRecognizer?.handleDragUpdate(dragHoveredElement);
     }
 
     notifyListeners();
   }
 
   void dragEnd(DragEndDetails details) {
-    _dragInProgress = false;
+    selectionDragRecognizer = null;
 
     position = details.globalPosition;
+
     if (isResizing) {
     } else {
-      sheetController.completeSelection();
+      sheetController.selectionController.completeSelection();
     }
     notifyListeners();
   }
@@ -97,55 +93,8 @@ class SheetCursorController extends ChangeNotifier {
     DateTime tapTime = DateTime.now();
     if (lastTap != null && tapTime.difference(lastTap!) < const Duration(milliseconds: 300)) {
       doubleTap();
-    } else if (sheetController.keyboardController.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      switch (hoveredElement) {
-        case CellConfig cellConfig:
-          sheetController.selectSingle(cellConfig.cellIndex);
-        case ColumnConfig columnConfig:
-          sheetController.selectRange(
-            start: CellIndex(rowIndex: RowIndex(0), columnIndex: sheetController.selection.start.columnIndex),
-            end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: columnConfig.columnIndex),
-          );
-        case RowConfig rowConfig:
-          sheetController.selectRange(
-            start: CellIndex(rowIndex: sheetController.selection.start.rowIndex, columnIndex: ColumnIndex(0)),
-            end: CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: ColumnIndex(defaultColumnCount)),
-          );
-      }
-    } else if(sheetController.keyboardController.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      switch (hoveredElement) {
-        case CellConfig cellConfig:
-          sheetController.selectRange(end: cellConfig.cellIndex);
-        case ColumnConfig columnConfig:
-          sheetController.selectRange(
-            start: CellIndex(rowIndex: RowIndex(0), columnIndex: sheetController.selection.start.columnIndex),
-            end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: columnConfig.columnIndex),
-          );
-        case RowConfig rowConfig:
-          sheetController.selectRange(
-            start: CellIndex(rowIndex: sheetController.selection.start.rowIndex, columnIndex: ColumnIndex(0)),
-            end: CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: ColumnIndex(defaultColumnCount)),
-          );
-      }
-
-    }else {
-      sheetController.cancelEdit();
-      switch (hoveredElement) {
-        case CellConfig cellConfig:
-          sheetController.selectSingle(cellConfig.cellIndex);
-        case ColumnConfig columnConfig:
-          sheetController.selectRange(
-            start: CellIndex(rowIndex: RowIndex(0), columnIndex: columnConfig.columnIndex),
-            end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: columnConfig.columnIndex),
-            completed: true,
-          );
-        case RowConfig rowConfig:
-          sheetController.selectRange(
-            start: CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: ColumnIndex(0)),
-            end: CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: ColumnIndex(defaultColumnCount)),
-            completed: true,
-          );
-      }
+    } else if (hoveredElement != null) {
+      SelectionTapRecognizer(sheetController).handleItemTap(hoveredElement!);
     }
     lastTap = tapTime;
   }

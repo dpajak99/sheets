@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection.dart';
-import 'package:sheets/controller/selection/sheet_selection.dart';
+import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils/direction.dart';

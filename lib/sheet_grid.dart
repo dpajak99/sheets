@@ -58,7 +58,7 @@ class SheetGrid extends StatelessWidget {
                   child: RepaintBoundary(
                     child: MultiListenableBuilder(
                       listenables: [
-                        sheetController.selectionPainterNotifier,
+                        sheetController.selectionController,
                         sheetController.paintConfig,
                       ],
                       builder: (BuildContext context) {
@@ -74,7 +74,7 @@ class SheetGrid extends StatelessWidget {
                   child: RepaintBoundary(
                     child: MultiListenableBuilder(
                       listenables: [
-                        sheetController.selectionPainterNotifier,
+                        sheetController.selectionController,
                         sheetController.paintConfig,
                       ],
                       builder: (BuildContext context) {
@@ -90,7 +90,7 @@ class SheetGrid extends StatelessWidget {
                   child: RepaintBoundary(
                       child: MultiListenableBuilder(
                         listenables: [
-                          sheetController.selectionPainterNotifier,
+                          sheetController.selectionController,
                           sheetController.paintConfig,
                         ],
                         builder: (BuildContext context) {
@@ -107,7 +107,7 @@ class SheetGrid extends StatelessWidget {
                   child:  RepaintBoundary(
                       child: MultiListenableBuilder(
                         listenables: [
-                          sheetController.selectionPainterNotifier,
+                          sheetController.selectionController,
                           sheetController.paintConfig,
                         ],
                         builder: (BuildContext context) {
@@ -139,7 +139,7 @@ class SheetGrid extends StatelessWidget {
                   child: RepaintBoundary(
                     child: MultiListenableBuilder(
                       listenables: [
-                        sheetController.selectionPainterNotifier,
+                        sheetController.selectionController,
                         sheetController.paintConfig,
                       ],
                       builder: (BuildContext context) {

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection/sheet_selection.dart';
+import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
@@ -61,7 +61,7 @@ class ColumnHeadersPainter extends HeadersPainter {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     for (ColumnConfig column in sheetController.paintConfig.visibleColumns) {
-      SelectionStatus selectionStatus = sheetController.selection.isColumnSelected(column.columnIndex);
+      SelectionStatus selectionStatus = sheetController.selectionController.selection.isColumnSelected(column.columnIndex);
 
       paintHeadersBackground(canvas, column.rect, selectionStatus);
       paintHeadersBorder(canvas, column.rect);
@@ -87,7 +87,7 @@ class RowHeadersPainter extends HeadersPainter {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     for (RowConfig row in sheetController.paintConfig.visibleRows) {
-      SelectionStatus selectionStatus = sheetController.selection.isRowSelected(row.rowIndex);
+      SelectionStatus selectionStatus = sheetController.selectionController.selection.isRowSelected(row.rowIndex);
 
       paintHeadersBackground(canvas, row.rect, selectionStatus);
       paintHeadersBorder(canvas, row.rect);
