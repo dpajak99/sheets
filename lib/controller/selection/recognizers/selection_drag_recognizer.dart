@@ -1,16 +1,19 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/selection/recognizers/selection_recognizer.dart';
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
+import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/sheet_constants.dart';
 
-class SelectionDragRecognizer {
+class SelectionDragRecognizer extends SelectionRecognizer {
   final SheetController sheetController;
   final SheetItemConfig selectionStart;
 
@@ -20,9 +23,14 @@ class SelectionDragRecognizer {
     }
   }
 
-  void handleDragUpdate(SheetItemConfig selectionEnd) {
+  @override
+  void handle(SheetItemConfig selectionEnd) {
     late RowIndex endRowIndex;
     late ColumnIndex endColumnIndex;
+
+    if (selectionStart.runtimeType != selectionEnd.runtimeType) {
+      return;
+    }
 
     switch (selectionEnd) {
       case CellConfig selectionEnd:
@@ -45,10 +53,12 @@ class SelectionDragRecognizer {
     ];
 
     _SelectionDragAction? activeAction = actions.firstWhere((action) => action.isActive, orElse: () => actions.last);
+    print('Found $activeAction. Paint it');
     SheetSelection sheetSelection = activeAction.execute(endRowIndex, endColumnIndex);
     sheetController.selectionController.custom(sheetSelection);
   }
 
+  @override
   void complete() {
     sheetController.cursorController.setCursor(SystemMouseCursors.grab, SystemMouseCursors.basic);
     sheetController.selectionController.completeSelection();
@@ -69,6 +79,8 @@ abstract class _SelectionDragAction {
   SheetSelectionController get selectionController => sheetController.selectionController;
 
   SheetKeyboardController get keyboardController => sheetController.keyboardController;
+
+  SheetCursorController get cursorController => sheetController.cursorController;
 
   SheetPaintConfig get paintConfig => sheetController.paintConfig;
 
@@ -93,6 +105,7 @@ class _SimpleSelectionDragAction extends _SelectionDragAction {
           end: CellIndex(rowIndex: endRowIndex, columnIndex: endColumnIndex),
           completed: false,
         );
+
       case ColumnConfig selectionStart:
         return SheetRangeSelection(
           paintConfig: paintConfig,

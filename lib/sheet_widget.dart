@@ -48,9 +48,22 @@ class SheetWidgetState extends State<SheetWidget> {
               children: [
                 Positioned.fill(
                   child: GestureDetector(
-                    onPanStart: sheetController.cursorController.dragStart,
-                    onPanUpdate: sheetController.cursorController.dragUpdate,
-                    onPanEnd: sheetController.cursorController.dragEnd,
+                    onPanStart: (DragStartDetails details) {
+                      if (sheetController.cursorController.isFilling == false) {
+                        print('Filling disabled, start base drag');
+                        sheetController.cursorController.dragStart(details);
+                      }
+                    },
+                    onPanUpdate: (DragUpdateDetails details) {
+                      if (sheetController.cursorController.isFilling == false) {
+                        sheetController.cursorController.dragUpdate(details);
+                      }
+                    },
+                    onPanEnd: (DragEndDetails details) {
+                      if (sheetController.cursorController.isFilling == false) {
+                        sheetController.cursorController.dragEnd(details);
+                      }
+                    },
                     onTap: sheetController.cursorController.tap,
                     behavior: HitTestBehavior.opaque,
                     child: Listener(

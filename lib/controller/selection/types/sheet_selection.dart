@@ -130,6 +130,38 @@ abstract class SheetSelectionPaint {
     if (left) canvas.drawLine(rect.topLeft, rect.bottomLeft, selectionPaint);
   }
 
+  void paintFillBorder(Canvas canvas, Rect rect) {
+    Paint selectionPaint = Paint()
+      ..color = const Color(0xff818181)
+      ..strokeWidth = borderWidth
+      ..isAntiAlias = false
+      ..strokeCap = StrokeCap.square
+      ..style = PaintingStyle.stroke;
+
+    double dashWidth = 4;
+    double dashSpace = 4;
+
+    // Draw top dashes
+    for (double x = rect.left; x < rect.right; x += dashWidth + dashSpace) {
+      canvas.drawLine(Offset(x, rect.top), Offset(x + dashWidth, rect.top), selectionPaint);
+    }
+
+    // Draw right dashes
+    for (double y = rect.top; y < rect.bottom; y += dashWidth + dashSpace) {
+      canvas.drawLine(Offset(rect.right, y), Offset(rect.right, y + dashWidth), selectionPaint);
+    }
+
+    // Draw bottom dashes
+    for (double x = rect.right; x > rect.left; x -= dashWidth + dashSpace) {
+      canvas.drawLine(Offset(x, rect.bottom), Offset(x - dashWidth, rect.bottom), selectionPaint);
+    }
+
+    // Draw left dashes
+    for (double y = rect.bottom; y > rect.top; y -= dashWidth + dashSpace) {
+      canvas.drawLine(Offset(rect.left, y), Offset(rect.left, y - dashWidth), selectionPaint);
+    }
+  }
+
   void paintFillHandle(Canvas canvas, Offset offset) {
     Paint fillHandleBorderPaint = Paint()
       ..color = const Color(0xffffffff)

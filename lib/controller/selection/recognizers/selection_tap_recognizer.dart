@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/selection/recognizers/selection_recognizer.dart';
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
 import 'package:sheets/controller/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
@@ -11,12 +12,13 @@ import 'package:sheets/controller/sheet_keyboard_controller.dart';
 import 'package:sheets/painters/paint/sheet_paint_config.dart';
 import 'package:sheets/sheet_constants.dart';
 
-class SelectionTapRecognizer {
+class SelectionTapRecognizer extends SelectionRecognizer {
   final SheetController sheetController;
 
   SelectionTapRecognizer(this.sheetController);
 
-  void handleItemTap(SheetItemConfig sheetItem) {
+  @override
+  void handle(SheetItemConfig selectionEnd) {
     List<_SelectionTapAction> actions = [
       _MultiSelectionTapAction(sheetController),
       _ContinueRangeSelectionTapAction(sheetController),
@@ -24,9 +26,12 @@ class SelectionTapRecognizer {
     ];
 
     _SelectionTapAction? activeAction = actions.firstWhere((action) => action.isActive, orElse: () => actions.last);
-    SheetSelection sheetSelection = activeAction.execute(sheetItem);
+    SheetSelection sheetSelection = activeAction.execute(selectionEnd);
     sheetController.selectionController.custom(sheetSelection);
   }
+
+  @override
+  void complete() {}
 }
 
 abstract class _SelectionTapAction {
@@ -72,7 +77,7 @@ class _MultiSelectionTapAction extends _SelectionTapAction {
 
     _SelectionTapAction? activeAction = actions.firstWhere((action) => action.isActive, orElse: () => actions.last);
     SheetSelection sheetSelection = activeAction.execute(sheetItem);
-    if( sheetSelection is SheetSingleSelection) {
+    if (sheetSelection is SheetSingleSelection) {
       sheetMultiSelection.addSingle(sheetSelection.cellIndex);
     } else if (sheetSelection is SheetRangeSelection) {
       sheetMultiSelection.addAll(sheetSelection.selectedCells);
@@ -91,7 +96,6 @@ class _ContinueRangeSelectionTapAction extends _SelectionTapAction {
 
   @override
   SheetSelection execute(SheetItemConfig selectionEnd) {
-
     switch (selectionEnd) {
       case CellConfig cellConfig:
         return SheetRangeSelection(

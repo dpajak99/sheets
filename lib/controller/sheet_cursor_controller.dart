@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/recognizers/selection_drag_recognizer.dart';
+import 'package:sheets/controller/selection/recognizers/selection_fill_recognizer.dart';
+import 'package:sheets/controller/selection/recognizers/selection_recognizer.dart';
 import 'package:sheets/controller/selection/recognizers/selection_tap_recognizer.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
@@ -35,7 +37,7 @@ class SheetCursorController extends ChangeNotifier {
 
   SheetTapDetails? lastTap;
 
-  SelectionDragRecognizer? selectionDragRecognizer;
+  SelectionRecognizer? selectionDragRecognizer;
 
   SheetCursorController(this.sheetController);
 
@@ -75,27 +77,41 @@ class SheetCursorController extends ChangeNotifier {
 
   bool get isResizing => _resizedRow != null || _resizedColumn != null;
 
-  void dragStart(DragStartDetails details) {
-    position = details.globalPosition;
-    SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position);
-    hoveredElement = dragHoveredElement;
+  bool _isFilling = false;
 
+  bool get isFilling => _isFilling;
+
+  set isFilling(bool value) {
+    print('Set is filling $value');
+    _isFilling = value;
+    notifyListeners();
+  }
+
+  void dragStart(DragStartDetails details, {Offset subtract = Offset.zero}) {
+    print('Drag start');
+    position = details.globalPosition;
+    SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
+    hoveredElement = dragHoveredElement;
     if (isResizing) {
     } else if (dragHoveredElement != null) {
-      selectionDragRecognizer = SelectionDragRecognizer(sheetController, dragHoveredElement);
+      if (sheetController.cursorController.isFilling) {
+        selectionDragRecognizer = SelectionFillRecognizer(sheetController, dragHoveredElement);
+      } else {
+        selectionDragRecognizer = SelectionDragRecognizer(sheetController, dragHoveredElement);
+      }
     }
 
     notifyListeners();
   }
 
-  void dragUpdate(DragUpdateDetails details) {
+  void dragUpdate(DragUpdateDetails details, {Offset subtract = Offset.zero}) {
     position = details.globalPosition;
-    SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position);
+    SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
     hoveredElement = dragHoveredElement;
 
     if (isResizing) {
     } else if (dragHoveredElement != null) {
-      selectionDragRecognizer?.handleDragUpdate(dragHoveredElement);
+      selectionDragRecognizer?.handle(dragHoveredElement);
     }
 
     notifyListeners();
@@ -125,7 +141,7 @@ class SheetCursorController extends ChangeNotifier {
       if (lastTap != null && currentTap.isDoubleTap(lastTap!) && sheetController.keyboardController.anyKeyActive == false) {
         doubleTap();
       } else if (hoveredElement != null) {
-        SelectionTapRecognizer(sheetController).handleItemTap(hoveredElement!);
+        SelectionTapRecognizer(sheetController).handle(hoveredElement!);
       }
       lastTap = currentTap;
     }

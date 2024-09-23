@@ -214,14 +214,29 @@ class FillHandleOffset extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {
+    return GestureDetector(
+      onPanStart: (DragStartDetails details) {
+        cursorController.isFilling = true;
+        cursorController.dragStart(details, subtract: const Offset(4, 4));
         cursorController.setCursor(SystemMouseCursors.basic, SystemMouseCursors.precise);
       },
-      onExit: (_) {
+      onPanUpdate: (DragUpdateDetails details) {
+        cursorController.dragUpdate(details, subtract: const Offset(4, 4));
+      },
+      onPanEnd: (DragEndDetails details) {
+        cursorController.isFilling = false;
+        cursorController.dragEnd(details);
         cursorController.setCursor(SystemMouseCursors.precise, SystemMouseCursors.basic);
       },
-      child: const SizedBox(height: 8, width: 8),
+      child: MouseRegion(
+        onEnter: (_) {
+          cursorController.setCursor(SystemMouseCursors.basic, SystemMouseCursors.precise);
+        },
+        onExit: (_) {
+          cursorController.setCursor(SystemMouseCursors.precise, SystemMouseCursors.basic);
+        },
+        child: const SizedBox(height: 8, width: 8),
+      ),
     );
   }
 }
