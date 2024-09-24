@@ -28,7 +28,7 @@ class SheetTapDetails with EquatableMixin {
 }
 
 class SheetCursorController extends ChangeNotifier {
-  final SheetController sheetController;
+  final SheetControllerOld sheetController;
 
   Offset position = Offset.zero;
   SheetItemConfig? hoveredElement;
@@ -67,7 +67,7 @@ class SheetCursorController extends ChangeNotifier {
 
   void scrollBy(Offset delta) {
     sheetController.scrollBy(delta);
-    hoveredElement = sheetController.getHoveredElement(position);
+    // hoveredElement = sheetController.visibilityController.getHoveredElement(position);
     notifyListeners();
   }
 
@@ -88,33 +88,33 @@ class SheetCursorController extends ChangeNotifier {
   }
 
   void dragStart(DragStartDetails details, {Offset subtract = Offset.zero}) {
-    print('Drag start');
-    position = details.globalPosition;
-    SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
-    hoveredElement = dragHoveredElement;
-    if (isResizing) {
-    } else if (dragHoveredElement != null) {
-      if (sheetController.cursorController.isFilling) {
-        selectionDragRecognizer = SelectionFillRecognizer(sheetController, dragHoveredElement);
-      } else {
-        selectionDragRecognizer = SelectionDragRecognizer(sheetController, dragHoveredElement);
-      }
-    }
-
-    notifyListeners();
+    // print('Drag start');
+    // position = details.globalPosition;
+    // SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
+    // hoveredElement = dragHoveredElement;
+    // if (isResizing) {
+    // } else if (dragHoveredElement != null) {
+    //   if (sheetController.cursorController.isFilling) {
+    //     selectionDragRecognizer = SelectionFillRecognizer(sheetController, dragHoveredElement);
+    //   } else {
+    //     selectionDragRecognizer = SelectionDragRecognizer(sheetController, dragHoveredElement);
+    //   }
+    // }
+    //
+    // notifyListeners();
   }
 
   void dragUpdate(DragUpdateDetails details, {Offset subtract = Offset.zero}) {
-    position = details.globalPosition;
-    SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
-    hoveredElement = dragHoveredElement;
-
-    if (isResizing) {
-    } else if (dragHoveredElement != null) {
-      selectionDragRecognizer?.handle(dragHoveredElement);
-    }
-
-    notifyListeners();
+    // position = details.globalPosition;
+    // SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
+    // hoveredElement = dragHoveredElement;
+    //
+    // if (isResizing) {
+    // } else if (dragHoveredElement != null) {
+    //   selectionDragRecognizer?.handle(dragHoveredElement);
+    // }
+    //
+    // notifyListeners();
   }
 
   void dragEnd(DragEndDetails details) {
@@ -129,9 +129,9 @@ class SheetCursorController extends ChangeNotifier {
   }
 
   void updateOffset(Offset newOffset) {
-    position = newOffset;
-    hoveredElement = sheetController.getHoveredElement(position);
-    notifyListeners();
+    // position = newOffset;
+    // hoveredElement = sheetController.getHoveredElement(position);
+    // notifyListeners();
   }
 
   void tap() {

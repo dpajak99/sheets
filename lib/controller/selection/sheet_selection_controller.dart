@@ -3,11 +3,11 @@ import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
 class SheetSelectionController extends ChangeNotifier {
-  final SheetPaintConfig paintConfig;
+  final SheetVisibilityController paintConfig;
   late SheetSelection _selection = SheetSingleSelection.defaultSelection(paintConfig: paintConfig);
 
   set selection(SheetSelection selection) {

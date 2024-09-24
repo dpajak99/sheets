@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
 class SheetKeyboardController {
-  final SheetController sheetController;
+  final SheetControllerOld sheetController;
 
   List<LogicalKeyboardKey> activeKeys = [];
 

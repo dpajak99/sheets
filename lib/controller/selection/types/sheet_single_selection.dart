@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 
 class SheetSingleSelection extends SheetSelection {
   final CellIndex cellIndex;
@@ -55,7 +55,7 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
   SheetSingleSelectionPaint(this.selection);
 
   @override
-  void paint(SheetPaintConfig paintConfig, Canvas canvas, Size size) {
+  void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size) {
     CellConfig? selectedCell = selection.selectedCell;
     if (selectedCell == null) {
       return;

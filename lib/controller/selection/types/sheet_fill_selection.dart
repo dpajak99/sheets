@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 
 class SheetFillSelection extends SheetRangeSelection {
   final SheetSelection baseSelection;
@@ -25,7 +25,7 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
   SheetFillSelectionPaint(this.selection);
 
   @override
-  void paint(SheetPaintConfig paintConfig, Canvas canvas, Size size) {
+  void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size) {
     print('Paint baseSelection selection: ${selection.baseSelection}');
     selection.baseSelection.paint.paint(paintConfig, canvas, size);
 

@@ -14,7 +14,7 @@ class SheetPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    for (CellConfig cell in sheetController.paintConfig.visibleCells) {
+    for (CellConfig cell in sheetController.visibilityController.visibleCells) {
       Paint backgroundPaint = Paint()
         ..color = Colors.white
         ..style = PaintingStyle.fill;

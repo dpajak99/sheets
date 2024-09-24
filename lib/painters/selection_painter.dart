@@ -15,7 +15,7 @@ class SelectionPainter extends CustomPainter {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth - borderWidth, columnHeadersHeight - borderWidth, size.width, size.height));
 
     SheetSelectionPaint selectionPaint = sheetController.selectionController.selection.paint;
-    selectionPaint.paint(sheetController.paintConfig, canvas, size);
+    selectionPaint.paint(sheetController.visibilityController, canvas, size);
   }
 
   @override

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 import 'package:sheets/controller/index.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
 class Range<A extends NumericIndexMixin> with EquatableMixin {
@@ -64,7 +64,7 @@ class SelectionStatus with EquatableMixin {
 }
 
 abstract class SheetSelection with EquatableMixin {
-  final SheetPaintConfig paintConfig;
+  final SheetVisibilityController paintConfig;
   final bool _completed;
 
   SheetSelection({required this.paintConfig, required bool completed}) : _completed = completed;
@@ -95,7 +95,7 @@ abstract class SheetSelection with EquatableMixin {
 }
 
 abstract class SheetSelectionPaint {
-  void paint(SheetPaintConfig paintConfig, Canvas canvas, Size size);
+  void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size);
 
   void paintMainCell(Canvas canvas, Rect rect) {
     Paint mainCellPaint = Paint()

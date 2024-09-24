@@ -5,7 +5,7 @@ import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 
 class SheetMultiSelection extends SheetSelection {
   late Set<CellIndex> _selectedCells;
@@ -19,7 +19,7 @@ class SheetMultiSelection extends SheetSelection {
         super(completed: true);
 
   factory SheetMultiSelection({
-    required SheetPaintConfig paintConfig,
+    required SheetVisibilityController paintConfig,
     required List<CellIndex> selectedCells,
     List<SheetSelection>? mergedSelections,
   }) {
@@ -122,7 +122,7 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
   SheetMultiSelectionPaint(this.selection);
 
   @override
-  void paint(SheetPaintConfig paintConfig, Canvas canvas, Size size) {
+  void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size) {
     for (SheetSelection mergedSelection in selection.mergedSelections) {
       if (mergedSelection is SheetRangeSelection) {
         SelectionBounds? selectionBounds = mergedSelection.getSelectionBounds();

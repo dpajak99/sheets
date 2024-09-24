@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:sheets/controller/custom_scroll_controller.dart';
+import 'package:sheets/controller/sheet_scroll_controller.dart';
 
 extension OffsetExtension on Offset {
   Offset limit(Offset x, Offset y) {
@@ -30,8 +30,8 @@ abstract class SheetScrollPhysics {
 class SmoothScrollPhysics extends SheetScrollPhysics {
   @override
   Offset parseScrolledOffset(Offset currentOffset, Offset delta) {
-    double maxHorizontalScrollExtent = _scrollController.maxHorizontalScrollExtent;
-    double maxVerticalScrollExtent = _scrollController.maxVerticalScrollExtent;
+    double maxHorizontalScrollExtent = _scrollController.metrics.horizontal.maxScrollExtent;
+    double maxVerticalScrollExtent = _scrollController.metrics.vertical.maxScrollExtent;
 
     Offset limitX = Offset(0, maxHorizontalScrollExtent);
     Offset limitY = Offset(0, maxVerticalScrollExtent);
@@ -44,8 +44,8 @@ class SmoothScrollPhysics extends SheetScrollPhysics {
 class CellScrollPhysics extends SheetScrollPhysics {
   @override
   Offset parseScrolledOffset(Offset currentOffset, Offset delta) {
-    double maxHorizontalScrollExtent = _scrollController.maxHorizontalScrollExtent;
-    double maxVerticalScrollExtent = _scrollController.maxVerticalScrollExtent;
+    double maxHorizontalScrollExtent = _scrollController.metrics.horizontal.maxScrollExtent;
+    double maxVerticalScrollExtent = _scrollController.metrics.vertical.maxScrollExtent;
 
     Offset updatedDelta = Offset(((delta.dx ~/ 22) * 22), ((delta.dy ~/ 22) * 22));
 

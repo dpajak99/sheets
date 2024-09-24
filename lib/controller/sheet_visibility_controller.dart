@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/controller/sheet_scroll_controller.dart';
 import 'package:sheets/controller/style.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils/direction.dart';
@@ -41,10 +41,21 @@ class SheetProperties {
   }
 }
 
-class SheetPaintConfig extends ChangeNotifier {
-  final SheetController sheetController;
+class SheetVisibilityController extends ChangeNotifier {
+  SheetVisibilityController({
+    required this.sheetProperties,
+    required this.scrollController,
+  }) : super() {
+    scrollController.metrics.addListener(refresh);
+    scrollController.position.addListener(() {
+      print('position listener');
+      refresh();
+    });
+    refresh();
+  }
 
-  Size canvasSize = Size.zero;
+  final SheetProperties sheetProperties;
+  final SheetScrollController scrollController;
 
   List<RowConfig> visibleRows = <RowConfig>[];
   List<ColumnConfig> visibleColumns = <ColumnConfig>[];
@@ -52,25 +63,24 @@ class SheetPaintConfig extends ChangeNotifier {
 
   List<SheetItemConfig> get visibleItems => [...visibleRows, ...visibleColumns, ...visibleCells];
 
-  SheetPaintConfig({
-    required this.sheetController,
-  });
-
-  void resize(Size size) {
-    canvasSize = size;
-    refresh();
-  }
-
   void refresh() {
-    if (canvasSize == Size.zero) {
-      return;
-    }
-
+    print('refresh');
     visibleRows = _calculateVisibleRows();
     visibleColumns = _calculateVisibleColumns();
     visibleCells = _calculateVisibleCells(visibleRows, visibleColumns);
 
     notifyListeners();
+  }
+
+  SheetItemConfig? findHoveredElement(Offset mousePosition) {
+    try {
+      SheetItemConfig sheetItemConfig = visibleItems.firstWhere(
+        (element) => element.rect.contains(mousePosition),
+      );
+      return sheetItemConfig;
+    } catch (e) {
+      return null;
+    }
   }
 
   ClosestVisible<CellIndex> findClosestVisible(CellIndex cellIndex) {
@@ -127,15 +137,15 @@ class SheetPaintConfig extends ChangeNotifier {
 
     RowIndex firstVisibleRow;
     double hiddenHeight;
-    (firstVisibleRow, hiddenHeight) = sheetController.scrollController.firstVisibleRow;
+    (firstVisibleRow, hiddenHeight) = scrollController.firstVisibleRow;
 
     double cursorSheetHeight = hiddenHeight;
 
     int index = 0;
 
-    while (cursorSheetHeight < canvasSize.height && firstVisibleRow.value + index < defaultRowCount) {
+    while (cursorSheetHeight < scrollController.metrics.vertical.viewportDimension && firstVisibleRow.value + index < defaultRowCount) {
       RowIndex rowIndex = RowIndex(firstVisibleRow.value + index);
-      RowStyle rowStyle = sheetController.sheetProperties.getRowStyle(rowIndex);
+      RowStyle rowStyle = sheetProperties.getRowStyle(rowIndex);
 
       RowConfig rowConfig = RowConfig(
         rowIndex: rowIndex,
@@ -155,14 +165,14 @@ class SheetPaintConfig extends ChangeNotifier {
 
     ColumnIndex firstVisibleColumn;
     double hiddenWidth;
-    (firstVisibleColumn, hiddenWidth) = sheetController.scrollController.firstVisibleColumn;
+    (firstVisibleColumn, hiddenWidth) = scrollController.firstVisibleColumn;
 
     double cursorSheetWidth = hiddenWidth;
     int index = 0;
 
-    while (cursorSheetWidth < canvasSize.width && firstVisibleColumn.value + index < defaultColumnCount) {
+    while (cursorSheetWidth < scrollController.metrics.horizontal.viewportDimension && firstVisibleColumn.value + index < defaultColumnCount) {
       ColumnIndex columnIndex = ColumnIndex(firstVisibleColumn.value + index);
-      ColumnStyle columnStyle = sheetController.sheetProperties.getColumnStyle(columnIndex);
+      ColumnStyle columnStyle = sheetProperties.getColumnStyle(columnIndex);
 
       ColumnConfig columnConfig = ColumnConfig(
         columnIndex: columnIndex,

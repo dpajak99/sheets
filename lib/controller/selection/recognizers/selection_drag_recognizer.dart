@@ -3,23 +3,22 @@ import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/recognizers/selection_recognizer.dart';
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
-import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
 class SelectionDragRecognizer extends SelectionRecognizer {
-  final SheetController sheetController;
+  final SheetControllerOld sheetController;
   final SheetItemConfig selectionStart;
 
   SelectionDragRecognizer(this.sheetController, this.selectionStart) {
     if (selectionStart is ColumnConfig || selectionStart is RowConfig) {
-      sheetController.cursorController.setCursor(SystemMouseCursors.basic, SystemMouseCursors.grab);
+      // sheetController.cursorController.setCursor(SystemMouseCursors.basic, SystemMouseCursors.grab);
     }
   }
 
@@ -60,13 +59,13 @@ class SelectionDragRecognizer extends SelectionRecognizer {
 
   @override
   void complete() {
-    sheetController.cursorController.setCursor(SystemMouseCursors.grab, SystemMouseCursors.basic);
+    // sheetController.cursorController.setCursor(SystemMouseCursors.grab, SystemMouseCursors.basic);
     sheetController.selectionController.completeSelection();
   }
 }
 
 abstract class _SelectionDragAction {
-  final SheetController sheetController;
+  final SheetControllerOld sheetController;
   final SheetItemConfig selectionStart;
   final SheetItemConfig selectionEnd;
 
@@ -80,9 +79,9 @@ abstract class _SelectionDragAction {
 
   SheetKeyboardController get keyboardController => sheetController.keyboardController;
 
-  SheetCursorController get cursorController => sheetController.cursorController;
+  // SheetCursorController get cursorController => sheetController.cursorController;
 
-  SheetPaintConfig get paintConfig => sheetController.paintConfig;
+  SheetVisibilityController get paintConfig => sheetController.paintConfig;
 
   SheetSelection get previousSelection => selectionController.selection;
 }

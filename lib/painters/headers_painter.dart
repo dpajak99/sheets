@@ -60,7 +60,7 @@ class ColumnHeadersPainter extends HeadersPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    for (ColumnConfig column in sheetController.paintConfig.visibleColumns) {
+    for (ColumnConfig column in sheetController.visibilityController.visibleColumns) {
       SelectionStatus selectionStatus = sheetController.selectionController.selection.isColumnSelected(column.columnIndex);
 
       paintHeadersBackground(canvas, column.rect, selectionStatus);
@@ -86,7 +86,7 @@ class RowHeadersPainter extends HeadersPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    for (RowConfig row in sheetController.paintConfig.visibleRows) {
+    for (RowConfig row in sheetController.visibilityController.visibleRows) {
       SelectionStatus selectionStatus = sheetController.selectionController.selection.isRowSelected(row.rowIndex);
 
       paintHeadersBackground(canvas, row.rect, selectionStatus);

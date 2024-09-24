@@ -7,7 +7,7 @@ import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
 class SelectionFillRecognizer extends SelectionRecognizer {
-  final SheetController sheetController;
+  final SheetControllerOld sheetController;
   final SheetItemConfig selectionStart;
 
   SelectionFillRecognizer(this.sheetController, this.selectionStart);

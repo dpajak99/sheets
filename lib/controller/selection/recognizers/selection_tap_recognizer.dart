@@ -9,11 +9,11 @@ import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
 class SelectionTapRecognizer extends SelectionRecognizer {
-  final SheetController sheetController;
+  final SheetControllerOld sheetController;
 
   SelectionTapRecognizer(this.sheetController);
 
@@ -35,7 +35,7 @@ class SelectionTapRecognizer extends SelectionRecognizer {
 }
 
 abstract class _SelectionTapAction {
-  final SheetController sheetController;
+  final SheetControllerOld sheetController;
 
   _SelectionTapAction(this.sheetController);
 
@@ -47,7 +47,7 @@ abstract class _SelectionTapAction {
 
   SheetKeyboardController get keyboardController => sheetController.keyboardController;
 
-  SheetPaintConfig get paintConfig => sheetController.paintConfig;
+  SheetVisibilityController get paintConfig => sheetController.paintConfig;
 
   SheetSelection get previousSelection => selectionController.selection;
 }

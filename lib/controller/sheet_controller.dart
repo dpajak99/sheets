@@ -1,30 +1,31 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/custom_scroll_controller.dart';
+import 'package:flutter/services.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
 import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
+import 'package:sheets/controller/sheet_scroll_controller.dart';
+import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/controller/style.dart';
-import 'package:sheets/painters/paint/sheet_paint_config.dart';
 
-class SheetController {
+class SheetControllerOld {
   final SheetProperties sheetProperties;
   final SheetScrollController scrollController;
 
-  late final SheetPaintConfig paintConfig;
+  late final SheetVisibilityController paintConfig;
   late final SheetCursorController cursorController = SheetCursorController(this);
   late final SheetKeyboardController keyboardController = SheetKeyboardController(this);
   late final SheetSelectionController selectionController = SheetSelectionController(paintConfig);
 
   ValueNotifier<CellConfig?> editNotifier = ValueNotifier(null);
 
-  SheetController({
+  SheetControllerOld({
     required this.sheetProperties,
     required this.scrollController,
   }) {
-    paintConfig = SheetPaintConfig(sheetController: this);
+    paintConfig = SheetVisibilityController(scrollController: scrollController, sheetProperties: sheetProperties);
     scrollController.customColumnExtents = sheetProperties.customColumnExtents;
     scrollController.customRowExtents = sheetProperties.customRowExtents;
     selectionController.addListener(cancelEdit);
@@ -32,12 +33,10 @@ class SheetController {
 
   void resize(Size size) {
     scrollController.viewportSize = size;
-    paintConfig.resize(size);
   }
 
   void scrollBy(Offset delta) {
     scrollController.scrollBy(delta);
-    paintConfig.refresh();
   }
 
   void resizeColumnBy(ColumnConfig column, double delta) {
@@ -69,15 +68,31 @@ class SheetController {
   void cancelEdit() {
     editNotifier.value = null;
   }
+}
 
-  SheetItemConfig? getHoveredElement(Offset mousePosition) {
-    try {
-      SheetItemConfig sheetItemConfig = paintConfig.visibleItems.firstWhere(
-        (element) => element.rect.contains(mousePosition),
-      );
-      return sheetItemConfig;
-    } catch (e) {
-      return null;
-    }
+class SheetController {
+  final SheetProperties sheetProperties = SheetProperties(
+    customColumnProperties: {
+      // ColumnIndex(3): ColumnStyle(width: 200),
+    },
+    customRowProperties: {
+      // RowIndex(8): RowStyle(height: 100),
+    },
+  );
+
+  final ValueNotifier<SystemMouseCursor> cursor = ValueNotifier(SystemMouseCursors.basic);
+  final ValueNotifier<SheetItemConfig?> hoveredItem = ValueNotifier(null);
+  final ValueNotifier<Offset> mousePosition = ValueNotifier(Offset.zero);
+
+  final SheetScrollController scrollController = SheetScrollController();
+  late final SheetVisibilityController visibilityController = SheetVisibilityController(
+    sheetProperties: sheetProperties,
+    scrollController: scrollController,
+  );
+  late final SheetSelectionController selectionController = SheetSelectionController(visibilityController);
+
+  SheetController() {
+    scrollController.customColumnExtents = sheetProperties.customColumnExtents;
+    scrollController.customRowExtents = sheetProperties.customRowExtents;
   }
 }

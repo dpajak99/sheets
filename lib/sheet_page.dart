@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/sheet.dart';
 import 'package:sheets/sheet_widget.dart';
 
 class SheetPage extends StatelessWidget {
@@ -7,7 +8,7 @@ class SheetPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SheetWidget(),
+      body: FlexibleSheet(),
     );
   }
 }
