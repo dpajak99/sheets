@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
@@ -52,109 +51,68 @@ class SheetScrollableState extends State<SheetScrollable> {
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      behavior: HitTestBehavior.opaque,
-      onPointerSignal: (PointerSignalEvent event) {
-        if (event is PointerScrollEvent) {
-          widget.scrollController.scrollBy(event.scrollDelta);
-        }
-      },
-      child: _ScrollbarLayout(
-        verticalScrollbar: CustomPaint(painter: verticalScrollbarPainter),
-        horizontalScrollbar: CustomPaint(painter: horizontalScrollbarPainter),
-        child: widget.child,
-      ),
-    );
+    double scrollbarWeight = scrollbarWidth - borderWidth * 2;
 
-    // return Column(
-    //   children: [
-    //     Expanded(
-    //       child: Row(
-    //         children: [
-    //           Expanded(child: child),
-    //           Container(
-    //             width: scrollbarWidth,
-    //             decoration: BoxDecoration(
-    //               color: const Color(0xfff8f8f8),
-    //               border: Border(
-    //                 left: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
-    //                 right: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
-    //               ),
-    //             ),
-    //             child: Column(
-    //               children: [
-    //                 Container(height: columnHeadersHeight),
-    //                 Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-    //                 Expanded(
-    //                   child: Container(
-    //                     decoration: const BoxDecoration(color: Colors.white),
-    //                     child: VerticalScrollbar(sheetController: sheetController),
-    //                   ),
-    //                 ),
-    //                 Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-    //                 // ScrollbarButton(
-    //                 //   size: innerHeight,
-    //                 //   icon: Icons.arrow_drop_up,
-    //                 //   onPressed: () {
-    //                 //     sheetController.cursorController.scrollBy(const Offset(0, -20));
-    //                 //   },
-    //                 // ),
-    //                 // Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-    //                 // ScrollbarButton(
-    //                 //   size: innerHeight,
-    //                 //   icon: Icons.arrow_drop_down,
-    //                 //   onPressed: () {
-    //                 //     sheetController.cursorController.scrollBy(const Offset(0, 20));
-    //                 //   },
-    //                 // ),
-    //               ],
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //     Container(
-    //       height: scrollbarWidth,
-    //       decoration: BoxDecoration(
-    //         color: const Color(0xfff8f8f8),
-    //         border: Border(
-    //           top: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
-    //           bottom: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
-    //         ),
-    //       ),
-    //       child: Row(
-    //         children: [
-    //           Container(width: rowHeadersWidth),
-    //           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-    //           Expanded(
-    //             child: Container(
-    //               decoration: const BoxDecoration(color: Colors.white),
-    //               child: HorizontalScrollbar(sheetController: sheetController),
-    //             ),
-    //           ),
-    //           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-    //           // ScrollbarButton(
-    //           //   size: innerHeight,
-    //           //   icon: Icons.arrow_left,
-    //           //   onPressed: () {
-    //           //     sheetController.cursorController.scrollBy(const Offset(-20, 0));
-    //           //   },
-    //           // ),
-    //           // VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-    //           // ScrollbarButton(
-    //           //   size: innerHeight,
-    //           //   icon: Icons.arrow_right,
-    //           //   onPressed: () {
-    //           //     sheetController.cursorController.scrollBy(const Offset(20, 0));
-    //           //   },
-    //           // ),
-    //           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-    //           // SizedBox(width: innerHeight, height: innerHeight),
-    //         ],
-    //       ),
-    //     )
-    //   ],
-    // );
+    return _ScrollbarLayout(
+      scrollbarWeight: scrollbarWeight,
+      verticalScrollbar: Column(
+        children: [
+          Container(height: columnHeadersHeight),
+          Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
+          Expanded(
+            child: SizedBox.expand(
+              child: CustomPaint(painter: verticalScrollbarPainter),
+            ),
+          ),
+          Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
+          ScrollbarButton(
+            size: scrollbarWeight,
+            icon: Icons.arrow_drop_up,
+            onPressed: () {
+              widget.scrollController.scrollBy(const Offset(0, -20));
+            },
+          ),
+          Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
+          ScrollbarButton(
+            size: scrollbarWeight,
+            icon: Icons.arrow_drop_down,
+            onPressed: () {
+              widget.scrollController.scrollBy(const Offset(0, 20));
+            },
+          ),
+        ],
+      ),
+      horizontalScrollbar: Row(
+        children: [
+          Container(width: rowHeadersWidth),
+          VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
+          Expanded(
+            child: SizedBox.expand(
+              child: CustomPaint(painter: horizontalScrollbarPainter),
+            ),
+          ),
+          VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
+          ScrollbarButton(
+            size: scrollbarWeight,
+            icon: Icons.arrow_left,
+            onPressed: () {
+              widget.scrollController.scrollBy(const Offset(-20, 0));
+            },
+          ),
+          VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
+          ScrollbarButton(
+            size: scrollbarWeight,
+            icon: Icons.arrow_right,
+            onPressed: () {
+              widget.scrollController.scrollBy(const Offset(20, 0));
+            },
+          ),
+          VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
+          SizedBox(width: scrollbarWeight, height: scrollbarWeight),
+        ],
+      ),
+      child: widget.child,
+    );
   }
 }
 
@@ -164,11 +122,12 @@ class _ScrollbarLayout extends StatelessWidget {
   final Widget child;
   final double scrollbarWeight;
 
-  _ScrollbarLayout({
+  const _ScrollbarLayout({
     required this.verticalScrollbar,
     required this.horizontalScrollbar,
     required this.child,
-  }) : scrollbarWeight = scrollbarWidth - borderWidth * 2;
+    required this.scrollbarWeight,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -178,11 +137,33 @@ class _ScrollbarLayout extends StatelessWidget {
           child: Row(
             children: [
               Expanded(child: child),
-              SizedBox(width: scrollbarWeight, height: double.infinity, child: verticalScrollbar),
+              Container(
+                width: scrollbarWeight,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xfff8f8f8),
+                  border: Border(
+                    left: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
+                    right: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
+                  ),
+                ),
+                child: verticalScrollbar,
+              ),
             ],
           ),
         ),
-        SizedBox(height: scrollbarWeight, width: double.infinity, child: horizontalScrollbar)
+        Container(
+          height: scrollbarWeight,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: const Color(0xfff8f8f8),
+            border: Border(
+              top: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
+              bottom: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
+            ),
+          ),
+          child: horizontalScrollbar,
+        ),
       ],
     );
   }
@@ -212,6 +193,14 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
     notifyListeners();
   }
 
+  bool _hovered = false;
+
+  set hovered(bool hovered) {
+    if (_hovered == hovered) return;
+    _hovered = hovered;
+    notifyListeners();
+  }
+
   @override
   bool? hitTest(Offset position) {
     return false;
@@ -219,26 +208,31 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.clipRect(Offset.zero & size);
     _paintScrollbar(canvas, size);
   }
 
   void _paintScrollbar(Canvas canvas, Size size) {
-    Size thumbSize, trackSize;
-    Offset thumbOffset;
+    EdgeInsets padding = const EdgeInsets.all(2);
+    Size trackSize = size;
 
-    double thumbWidth = _lastScrollMetrics.viewportDimension * (_lastScrollMetrics.viewportDimension / _lastScrollMetrics.maxScrollExtent);
-    double thumbPosition = _lastScrollPosition.offset / (_lastScrollMetrics.maxScrollExtent) * _lastScrollMetrics.viewportDimension;
+    Size thumbSize;
+    Offset thumbOffset;
 
     switch (axisDirection) {
       case SheetAxisDirection.vertical:
-        trackSize = size;
-        thumbSize = Size(trackSize.width, thumbWidth);
-        thumbOffset = Offset(0, thumbPosition);
+        double thumbHeight = (trackSize.height * (trackSize.height / _lastScrollMetrics.maxScrollExtent)).clamp(1, trackSize.height) - padding.vertical;
+        double thumbPosition = _lastScrollPosition.offset / (_lastScrollMetrics.maxScrollExtent) * (trackSize.height - thumbHeight) + padding.top;
+
+        thumbSize = Size(trackSize.width - padding.horizontal, thumbHeight - padding.vertical);
+        thumbOffset = Offset(padding.top, thumbPosition);
         break;
       case SheetAxisDirection.horizontal:
-        trackSize = size;
-        thumbSize = Size(thumbWidth, trackSize.height);
-        thumbOffset = Offset(thumbPosition, 0);
+        double thumbWidth = (trackSize.width * (trackSize.width / _lastScrollMetrics.maxScrollExtent)).clamp(1, trackSize.width) - padding.horizontal;
+        double thumbPosition = _lastScrollPosition.offset / (_lastScrollMetrics.maxScrollExtent) * (trackSize.width - thumbWidth) + padding.left;
+
+        thumbSize = Size(thumbWidth - padding.horizontal, trackSize.height - padding.vertical);
+        thumbOffset = Offset(thumbPosition, padding.left);
         break;
     }
 
@@ -248,7 +242,7 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
 
   void _paintTrack(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.red
+      ..color = Colors.white
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(Offset.zero & size, paint);
@@ -256,10 +250,10 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
 
   void _paintThumb(Canvas canvas, Size size, Offset offset) {
     Paint paint = Paint()
-      ..color = Colors.blue
+      ..color = _hovered ? const Color(0xffbdc1c6) : const Color(0xffdadce0)
       ..style = PaintingStyle.fill;
 
-    canvas.drawRect(offset & size, paint);
+    canvas.drawRRect(RRect.fromRectAndRadius(offset & size, const Radius.circular(16)), paint);
   }
 
   @override
@@ -347,7 +341,7 @@ class VerticalScrollbarState extends State<VerticalScrollbar> {
     return GestureDetector(
       onVerticalDragUpdate: (DragUpdateDetails details) {
         double delta = (details.primaryDelta ?? 0) * 3;
-        widget.sheetController.cursorController.scrollBy(Offset(0, delta));
+        // widget.sheetController.cursorController.scrollBy(Offset(0, delta));
       },
       child: MouseRegion(
         onEnter: (_) => setState(() => hovered = true),
@@ -409,7 +403,7 @@ class HorizontalScrollbarState extends State<HorizontalScrollbar> {
     return GestureDetector(
       onHorizontalDragUpdate: (DragUpdateDetails details) {
         double delta = (details.primaryDelta ?? 0) * 2;
-        widget.sheetController.cursorController.scrollBy(Offset(delta, 0));
+        // widget.sheetController.cursorController.scrollBy(Offset(delta, 0));
       },
       child: MouseRegion(
         onEnter: (_) => setState(() => hovered = true),

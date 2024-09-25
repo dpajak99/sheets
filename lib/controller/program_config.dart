@@ -74,21 +74,21 @@ class ColumnConfig extends SheetItemConfig {
 }
 
 class CellConfig extends SheetItemConfig {
-  final CellIndex cellIndex;
+  final CellIndex index;
   final RowConfig rowConfig;
   final ColumnConfig columnConfig;
   final String _value;
 
   CellConfig({
     required super.rect,
-    required this.cellIndex,
+    required this.index,
     required this.rowConfig,
     required this.columnConfig,
     required String value,
   }) : _value = value;
 
   CellConfig.fromColumnRow(this.columnConfig, this.rowConfig, {required String value})
-      : _value = value, cellIndex = CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: columnConfig.columnIndex),
+      : _value = value, index = CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: columnConfig.columnIndex),
         super(
           rect: Rect.fromLTWH(
             columnConfig.rect.left,

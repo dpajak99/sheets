@@ -8,10 +8,11 @@ class SheetScrollMetrics with EquatableMixin {
     required double contentSize,
     required double viewportDimension,
   })  : _axisDirection = axisDirection,
-        _maxScrollExtent = contentSize - viewportDimension,
+        _contentSize = contentSize,
         _viewportDimension = viewportDimension;
 
-  SheetScrollMetrics.zero(SheetAxisDirection axisDirection) : this(
+  SheetScrollMetrics.zero(SheetAxisDirection axisDirection)
+      : this(
           axisDirection: axisDirection,
           contentSize: 0,
           viewportDimension: 0,
@@ -23,7 +24,7 @@ class SheetScrollMetrics with EquatableMixin {
   }) {
     return SheetScrollMetrics(
       axisDirection: _axisDirection,
-      contentSize: contentSize ?? _maxScrollExtent + _viewportDimension,
+      contentSize: contentSize ?? _contentSize,
       viewportDimension: viewportDimension ?? _viewportDimension,
     );
   }
@@ -31,14 +32,16 @@ class SheetScrollMetrics with EquatableMixin {
   SheetAxisDirection get axisDirection => _axisDirection;
   final SheetAxisDirection _axisDirection;
 
-  double get maxScrollExtent => _maxScrollExtent;
-  final double _maxScrollExtent;
+  double get maxScrollExtent => _contentSize - _viewportDimension;
 
   double get minScrollExtent => 0;
+
+  double get contentSize => _contentSize;
+  final double _contentSize;
 
   double get viewportDimension => _viewportDimension;
   final double _viewportDimension;
 
   @override
-  List<Object?> get props => [_axisDirection, _maxScrollExtent, _viewportDimension];
+  List<Object?> get props => [_axisDirection, _viewportDimension, _contentSize];
 }

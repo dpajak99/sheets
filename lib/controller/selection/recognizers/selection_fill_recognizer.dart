@@ -31,8 +31,8 @@ class SelectionFillRecognizer extends SelectionRecognizer {
 
     switch (selectionEnd) {
       case CellConfig selectionEnd:
-        endRowIndex = selectionEnd.cellIndex.rowIndex;
-        endColumnIndex = selectionEnd.cellIndex.columnIndex;
+        endRowIndex = selectionEnd.index.rowIndex;
+        endColumnIndex = selectionEnd.index.columnIndex;
         break;
       case ColumnConfig selectionEnd:
         endRowIndex = RowIndex(defaultRowCount);

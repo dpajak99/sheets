@@ -46,6 +46,7 @@ class SheetState extends State<Sheet> {
   @override
   void initState() {
     super.initState();
+    ServicesBinding.instance.keyboard.addHandler(_onKeyboardKeyPressed);
     sheetController.scrollController.viewportSize = Size(widget.width, widget.height);
   }
 
@@ -72,8 +73,13 @@ class SheetState extends State<Sheet> {
             ),
             Positioned.fill(
               child: MouseCursorListener(
-                cursorListener: sheetController.cursor,
-                onMouseOffsetChanged: _handleMouseOffsetChanged,
+                cursorListener: sheetController.mouse.cursor,
+                onMouseOffsetChanged: sheetController.onMouseOffsetChanged,
+                onTap: sheetController.mouse.tap,
+                onDragStart: sheetController.mouse.dragStart,
+                onDragUpdate: sheetController.mouse.dragUpdate,
+                onDragEnd: sheetController.mouse.dragEnd,
+                onScroll: sheetController.mouse.scroll,
               ),
             ),
           ],
@@ -82,13 +88,13 @@ class SheetState extends State<Sheet> {
     );
   }
 
-  void setCursor(SystemMouseCursor cursor) {
-    sheetController.cursor.value = cursor;
-  }
-
-  void _handleMouseOffsetChanged(Offset offset) {
-    sheetController.mousePosition.value = offset;
-    sheetController.hoveredItem.value = sheetController.visibilityController.findHoveredElement(offset);
+  bool _onKeyboardKeyPressed(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      sheetController.keyboard.addKey(event.logicalKey);
+    } else if (event is KeyUpEvent) {
+      sheetController.keyboard.removeKey(event.logicalKey);
+    }
+    return false;
   }
 }
 
@@ -110,7 +116,9 @@ class SheetGrid extends StatelessWidget {
           height: 50,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [Text('Add more')],
+            children: [
+              Text('Add more'),
+            ],
           ),
         ),
         SheetLayer.fill(

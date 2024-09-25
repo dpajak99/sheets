@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_scroll_physics.dart';
@@ -5,10 +6,20 @@ import 'package:sheets/controller/sheet_scroll_physics.dart';
 class MouseCursorListener extends StatelessWidget {
   final ValueNotifier<SystemMouseCursor> cursorListener;
   final ValueChanged<Offset> onMouseOffsetChanged;
+  final VoidCallback onTap;
+  final VoidCallback onDragStart;
+  final VoidCallback onDragUpdate;
+  final VoidCallback onDragEnd;
+  final ValueChanged<Offset> onScroll;
 
   const MouseCursorListener({
     required this.cursorListener,
     required this.onMouseOffsetChanged,
+    required this.onTap,
+    required this.onDragStart,
+    required this.onDragUpdate,
+    required this.onDragEnd,
+    required this.onScroll,
     super.key,
   });
 
@@ -17,18 +28,33 @@ class MouseCursorListener extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: cursorListener,
       builder: (BuildContext context, SystemMouseCursor cursor, _) {
-        return GestureDetector(
+        return Listener(
           behavior: HitTestBehavior.opaque,
-          onPanStart: (DragStartDetails dragStartDetails) {
-            _notifyOffsetChanged(dragStartDetails.localPosition);
+          onPointerSignal: (PointerSignalEvent event) {
+            if (event is PointerScrollEvent) {
+              onScroll(event.scrollDelta);
+            }
           },
-          onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
-            _notifyOffsetChanged(dragUpdateDetails.localPosition);
-          },
-          child: MouseRegion(
-            opaque: false,
-            cursor: cursor,
-            onHover: (event) => _notifyOffsetChanged(event.localPosition),
+          child: GestureDetector(
+            onTap: onTap,
+            behavior: HitTestBehavior.opaque,
+            onPanStart: (DragStartDetails dragStartDetails) {
+              _notifyOffsetChanged(dragStartDetails.localPosition);
+              onTap();
+              onDragStart();
+            },
+            onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
+              _notifyOffsetChanged(dragUpdateDetails.localPosition);
+              onDragUpdate();
+            },
+            onPanEnd: (DragEndDetails dragEndDetails) {
+              onDragEnd();
+            },
+            child: MouseRegion(
+              opaque: false,
+              cursor: cursor,
+              onHover: (event) => _notifyOffsetChanged(event.localPosition),
+            ),
           ),
         );
       },

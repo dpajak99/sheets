@@ -125,11 +125,11 @@ class SheetVisibilityController extends ChangeNotifier {
   }
 
   CellConfig? findCell(CellIndex cellIndex) {
-    return visibleCells.where((cell) => cell.cellIndex == cellIndex).firstOrNull;
+    return visibleCells.where((cell) => cell.index == cellIndex).firstOrNull;
   }
 
   bool containsCell(CellIndex cellIndex) {
-    return visibleCells.any((cell) => cell.cellIndex == cellIndex);
+    return visibleCells.any((cell) => cell.index == cellIndex);
   }
 
   List<RowConfig> _calculateVisibleRows() {

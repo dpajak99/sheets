@@ -7,6 +7,7 @@ import 'package:sheets/sheet_scroll_metrics.dart';
 
 class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
   SheetScrollPosition();
+
   SheetScrollPosition.zero();
 
   double _offset = 0;
@@ -25,16 +26,11 @@ class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
 
 class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableMixin {
   DirectionalValues(this._vertical, this._horizontal) {
+    print('Set horizontal: $_horizontal');
     if (_vertical is Listenable) {
       (_vertical as Listenable).addListener(notifyListeners);
       (_horizontal as Listenable).addListener(notifyListeners);
     }
-  }
-
-  @override
-  notifyListeners() {
-    print('notify directional changed');
-    super.notifyListeners();
   }
 
   @override
@@ -51,7 +47,6 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
   A get vertical => _vertical;
 
   set vertical(A vertical) {
-    print('Setting vertical');
     if (_vertical == vertical) return;
     _vertical = vertical;
     notifyListeners();
@@ -59,15 +54,21 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
 
   A _horizontal;
 
-  A get horizontal => _horizontal;
+  A get horizontal {
+    return _horizontal;
+  }
 
   set horizontal(A horizontal) {
+    print('Set horizontal: $horizontal');
     if (_horizontal == horizontal) return;
     _horizontal = horizontal;
+
+
     notifyListeners();
   }
 
   void update({required A horizontal, required A vertical}) {
+    print('Set horizontal 2: $horizontal');
     if (_horizontal == horizontal && _vertical == vertical) return;
     _horizontal = horizontal;
     _vertical = vertical;

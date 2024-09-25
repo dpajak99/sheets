@@ -101,7 +101,7 @@ class _ContinueRangeSelectionTapAction extends _SelectionTapAction {
         return SheetRangeSelection(
           paintConfig: paintConfig,
           start: previousSelection.end,
-          end: cellConfig.cellIndex,
+          end: cellConfig.index,
           completed: true,
         );
       case ColumnConfig columnConfig:
@@ -136,7 +136,7 @@ class _StartSingleSelectionTapAction extends _SelectionTapAction {
   SheetSelection execute(SheetItemConfig sheetItem) {
     switch (sheetItem) {
       case CellConfig cellConfig:
-        return SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellConfig.cellIndex);
+        return SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellConfig.index);
       case ColumnConfig columnConfig:
         return SheetRangeSelection(
           paintConfig: paintConfig,

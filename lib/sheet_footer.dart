@@ -11,21 +11,22 @@ class SheetFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: sheetController.cursorController,
-      builder: (BuildContext context, _) {
-        return Container(
-          color: Colors.white,
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              Text('Mouse position: ${sheetController.cursorController.position}'),
-              const SizedBox(width: 16),
-              Text('Hovered element: ${sheetController.cursorController.hoveredElement?.value}'),
-            ],
-          ),
-        );
-      },
-    );
+    return const SizedBox();
+    // return ListenableBuilder(
+    //   listenable: sheetController.cursorController,
+    //   builder: (BuildContext context, _) {
+    //     return Container(
+    //       color: Colors.white,
+    //       padding: const EdgeInsets.all(8),
+    //       child: Row(
+    //         children: [
+    //           Text('Mouse position: ${sheetController.cursorController.position}'),
+    //           const SizedBox(width: 16),
+    //           Text('Hovered element: ${sheetController.cursorController.hoveredElement?.value}'),
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }

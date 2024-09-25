@@ -27,15 +27,41 @@ class SheetSelectionController extends ChangeNotifier {
     selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex, fillHandleVisible: editingEnabled);
   }
 
+  void selectColumn(ColumnIndex columnIndex) {
+    selectRange(
+      start: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex),
+      end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: columnIndex),
+    );
+  }
 
-  void selectRange({CellIndex? start, required CellIndex end, bool completed = true}) {
-    CellIndex computedStart = start ?? selection.start;
-    if (computedStart == end) {
-      selectSingle(computedStart);
+  void selectRow(RowIndex rowIndex) {
+    selectRange(
+      start: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)),
+      end: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(defaultColumnCount)),
+    );
+  }
+
+  void selectRange({required CellIndex start, required CellIndex end, bool completed = false}) {
+    if (start == end) {
+      selectSingle(start);
     } else {
-      selection = SheetRangeSelection(paintConfig: paintConfig, start: computedStart, end: end, completed: completed);
+      selection = SheetRangeSelection(paintConfig: paintConfig, start: start, end: end, completed: completed);
       notifyListeners();
     }
+  }
+
+  void selectColumnRange({required ColumnIndex start, required ColumnIndex end}) {
+    selectRange(
+      start: CellIndex(rowIndex: RowIndex(0), columnIndex: start),
+      end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: end),
+    );
+  }
+
+  void selectRowRange({required RowIndex start, required RowIndex end}) {
+    selectRange(
+      start: CellIndex(rowIndex: start, columnIndex: ColumnIndex(0)),
+      end: CellIndex(rowIndex: end, columnIndex: ColumnIndex(defaultColumnCount)),
+    );
   }
 
   void selectAll() {

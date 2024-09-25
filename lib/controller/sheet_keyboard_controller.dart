@@ -1,17 +1,9 @@
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/sheet_controller.dart';
 
 class SheetKeyboardController {
-  final SheetControllerOld sheetController;
-
   List<LogicalKeyboardKey> activeKeys = [];
 
-  SheetKeyboardController(this.sheetController);
-
   void addKey(LogicalKeyboardKey logicalKeyboardKey) {
-    if (activeKeys.contains(LogicalKeyboardKey.controlLeft) && logicalKeyboardKey == LogicalKeyboardKey.keyA) {
-      sheetController.selectionController.selectAll();
-    }
     activeKeys.add(logicalKeyboardKey);
   }
 
