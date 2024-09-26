@@ -1,5 +1,6 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/sheet_scroll_metrics.dart';
@@ -16,10 +17,10 @@ class SheetScrollable extends StatefulWidget {
   });
 
   @override
-  State<SheetScrollable> createState() => SheetScrollableState();
+  State<SheetScrollable> createState() => _SheetScrollableState();
 }
 
-class SheetScrollableState extends State<SheetScrollable> {
+class _SheetScrollableState extends State<SheetScrollable> {
   final SheetScrollbarPainter verticalScrollbarPainter = SheetScrollbarPainter(axisDirection: SheetAxisDirection.vertical);
   final SheetScrollbarPainter horizontalScrollbarPainter = SheetScrollbarPainter(axisDirection: SheetAxisDirection.horizontal);
 
@@ -60,12 +61,15 @@ class SheetScrollableState extends State<SheetScrollable> {
           Container(height: columnHeadersHeight),
           Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
           Expanded(
-            child: SizedBox.expand(
-              child: CustomPaint(painter: verticalScrollbarPainter),
+            child: SheetScrollbar(
+              painter: verticalScrollbarPainter,
+              onScroll: (double offset) {
+                widget.scrollController.scrollBy(Offset(0, offset));
+              },
             ),
           ),
           Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-          ScrollbarButton(
+          _ScrollbarButton(
             size: scrollbarWeight,
             icon: Icons.arrow_drop_up,
             onPressed: () {
@@ -73,7 +77,7 @@ class SheetScrollableState extends State<SheetScrollable> {
             },
           ),
           Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-          ScrollbarButton(
+          _ScrollbarButton(
             size: scrollbarWeight,
             icon: Icons.arrow_drop_down,
             onPressed: () {
@@ -87,12 +91,15 @@ class SheetScrollableState extends State<SheetScrollable> {
           Container(width: rowHeadersWidth),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
           Expanded(
-            child: SizedBox.expand(
-              child: CustomPaint(painter: horizontalScrollbarPainter),
+            child: SheetScrollbar(
+              painter: horizontalScrollbarPainter,
+              onScroll: (double offset) {
+                widget.scrollController.scrollBy(Offset(offset, 0));
+              },
             ),
           ),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-          ScrollbarButton(
+          _ScrollbarButton(
             size: scrollbarWeight,
             icon: Icons.arrow_left,
             onPressed: () {
@@ -100,7 +107,7 @@ class SheetScrollableState extends State<SheetScrollable> {
             },
           ),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
-          ScrollbarButton(
+          _ScrollbarButton(
             size: scrollbarWeight,
             icon: Icons.arrow_right,
             onPressed: () {
@@ -113,6 +120,52 @@ class SheetScrollableState extends State<SheetScrollable> {
       ),
       child: widget.child,
     );
+  }
+}
+
+class SheetScrollbar extends StatefulWidget {
+  final SheetScrollbarPainter painter;
+  final ValueChanged<double> onScroll;
+
+  const SheetScrollbar({
+    required this.painter,
+    required this.onScroll,
+    super.key,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _SheetScrollbarState();
+}
+
+class _SheetScrollbarState extends State<SheetScrollbar> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onHorizontalDragUpdate: _onScroll,
+        onVerticalDragUpdate: _onScroll,
+        child: MouseRegion(
+          onEnter: (_) => _onHover(),
+          onExit: (_) => _onExit(),
+          child: CustomPaint(painter: widget.painter),
+        ),
+      ),
+    );
+  }
+
+  void _onScroll(DragUpdateDetails details) {
+    double delta = details.primaryDelta ?? 0;
+    double updatedDelta = widget.painter.parseDeltaToRealScroll(delta);
+    widget.onScroll(updatedDelta);
+  }
+
+  void _onHover() {
+    widget.painter.hovered = true;
+  }
+
+  void _onExit() {
+    widget.painter.hovered = false;
   }
 }
 
@@ -170,26 +223,27 @@ class _ScrollbarLayout extends StatelessWidget {
 }
 
 class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
-  final SheetAxisDirection axisDirection;
+  final SheetAxisDirection _axisDirection;
 
   SheetScrollbarPainter({
-    required this.axisDirection,
-  })  : _lastScrollMetrics = SheetScrollMetrics.zero(axisDirection),
-        _lastScrollPosition = SheetScrollPosition();
+    required SheetAxisDirection axisDirection,
+  })  : _axisDirection = axisDirection,
+        _metrics = SheetScrollMetrics.zero(axisDirection),
+        _position = SheetScrollPosition();
 
-  late SheetScrollMetrics _lastScrollMetrics;
+  late SheetScrollMetrics _metrics;
 
   set scrollMetrics(SheetScrollMetrics scrollMetrics) {
-    if (_lastScrollMetrics == scrollMetrics) return;
-    _lastScrollMetrics = scrollMetrics;
+    if (_metrics == scrollMetrics) return;
+    _metrics = scrollMetrics;
     notifyListeners();
   }
 
-  late SheetScrollPosition _lastScrollPosition;
+  late SheetScrollPosition _position;
 
   set scrollPosition(SheetScrollPosition scrollPosition) {
-    if (_lastScrollPosition == scrollPosition) return;
-    _lastScrollPosition = scrollPosition;
+    if (_position == scrollPosition) return;
+    _position = scrollPosition;
     notifyListeners();
   }
 
@@ -200,6 +254,8 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
     _hovered = hovered;
     notifyListeners();
   }
+
+  double _scrollToThumbRatio = 0;
 
   @override
   bool? hitTest(Offset position) {
@@ -213,31 +269,63 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
   }
 
   void _paintScrollbar(Canvas canvas, Size size) {
-    EdgeInsets padding = const EdgeInsets.all(2);
+    double thumbMargin = _hovered ? 0 : 2;
+    double thumbMinSize = 48;
+
     Size trackSize = size;
 
     Size thumbSize;
     Offset thumbOffset;
 
-    switch (axisDirection) {
+    switch (_axisDirection) {
       case SheetAxisDirection.vertical:
-        double thumbHeight = (trackSize.height * (trackSize.height / _lastScrollMetrics.maxScrollExtent)).clamp(1, trackSize.height) - padding.vertical;
-        double thumbPosition = _lastScrollPosition.offset / (_lastScrollMetrics.maxScrollExtent) * (trackSize.height - thumbHeight) + padding.top;
+        double trackHeight = trackSize.height;
+        double availableTrackHeight = trackHeight - (2 * thumbMargin);
 
-        thumbSize = Size(trackSize.width - padding.horizontal, thumbHeight - padding.vertical);
-        thumbOffset = Offset(padding.top, thumbPosition);
+        double ratio = _viewportDimension / _contentSize;
+        double offsetRatio = _scrollOffset / (_contentSize - _viewportDimension);
+
+        double thumbHeight = max(availableTrackHeight * ratio, thumbMinSize);
+        double thumbPosition = offsetRatio * (availableTrackHeight - thumbHeight) + thumbMargin;
+
+        thumbSize = Size(trackSize.width - (thumbMargin * 2), thumbHeight);
+        thumbOffset = Offset(thumbMargin, thumbPosition);
+
+        double maxScrollPosition = _contentSize - _viewportDimension;
+        double maxThumbOffset = trackHeight - thumbHeight;
+        _scrollToThumbRatio = maxScrollPosition / maxThumbOffset;
         break;
       case SheetAxisDirection.horizontal:
-        double thumbWidth = (trackSize.width * (trackSize.width / _lastScrollMetrics.maxScrollExtent)).clamp(1, trackSize.width) - padding.horizontal;
-        double thumbPosition = _lastScrollPosition.offset / (_lastScrollMetrics.maxScrollExtent) * (trackSize.width - thumbWidth) + padding.left;
+        double trackWidth = trackSize.width;
+        double availableTrackWidth = trackWidth - (2 * thumbMargin);
 
-        thumbSize = Size(thumbWidth - padding.horizontal, trackSize.height - padding.vertical);
-        thumbOffset = Offset(thumbPosition, padding.left);
+        double ratio = _viewportDimension / _contentSize;
+        double offsetRatio = _scrollOffset / (_contentSize - _viewportDimension);
+
+        double thumbWidth = max(availableTrackWidth * ratio, thumbMinSize);
+        double thumbPosition = offsetRatio * (availableTrackWidth - thumbWidth) + thumbMargin;
+
+        thumbSize = Size(thumbWidth, trackSize.height - (thumbMargin * 2));
+        thumbOffset = Offset(thumbPosition, thumbMargin);
+
+        double maxScrollPosition = _contentSize - _viewportDimension;
+        double maxThumbOffset = trackWidth - thumbWidth;
+        _scrollToThumbRatio = maxScrollPosition / maxThumbOffset;
         break;
     }
 
     _paintTrack(canvas, trackSize);
     _paintThumb(canvas, thumbSize, thumbOffset);
+  }
+
+  double get _viewportDimension => _metrics.viewportDimension;
+
+  double get _contentSize => _metrics.contentSize;
+
+  double get _scrollOffset => _position.offset;
+
+  double parseDeltaToRealScroll(double delta) {
+    return delta * _scrollToThumbRatio;
   }
 
   void _paintTrack(Canvas canvas, Size size) {
@@ -266,17 +354,16 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
 
   @override
   bool shouldRepaint(covariant SheetScrollbarPainter oldDelegate) {
-    return oldDelegate._lastScrollMetrics != _lastScrollMetrics || oldDelegate._lastScrollPosition != _lastScrollPosition;
+    return oldDelegate._metrics != _metrics || oldDelegate._position != _position;
   }
 }
 
-class ScrollbarButton extends StatelessWidget {
+class _ScrollbarButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
   final double size;
 
-  const ScrollbarButton({
-    super.key,
+  const _ScrollbarButton({
     required this.icon,
     required this.onPressed,
     required this.size,
@@ -318,129 +405,5 @@ class ScrollbarButton extends StatelessWidget {
     } else {
       return const Color(0xff989898);
     }
-  }
-}
-
-class VerticalScrollbar extends StatefulWidget {
-  final SheetControllerOld sheetController;
-
-  const VerticalScrollbar({
-    super.key,
-    required this.sheetController,
-  });
-
-  @override
-  State<VerticalScrollbar> createState() => VerticalScrollbarState();
-}
-
-class VerticalScrollbarState extends State<VerticalScrollbar> {
-  bool hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragUpdate: (DragUpdateDetails details) {
-        double delta = (details.primaryDelta ?? 0) * 3;
-        // widget.sheetController.cursorController.scrollBy(Offset(0, delta));
-      },
-      child: MouseRegion(
-        onEnter: (_) => setState(() => hovered = true),
-        onExit: (_) => setState(() => hovered = false),
-        child: Padding(
-          padding: EdgeInsets.all(hovered ? 0 : 2),
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              Size viewportSize = constraints.biggest;
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  // ValueListenableBuilder(
-                  //   valueListenable: widget.sheetController.scrollController.position.verticalScrollListener,
-                  //   builder: (BuildContext context, double value, _) {
-                  //     double scrollbarHeight = viewportSize.height * (viewportSize.height / (widget.sheetController.scrollController.contentHeight + 60));
-                  //     double marginTop = value / (widget.sheetController.scrollController.contentHeight + 60) * viewportSize.height;
-                  //
-                  //     return Positioned(
-                  //       top: marginTop,
-                  //       child: Container(
-                  //         height: scrollbarHeight,
-                  //         width: viewportSize.width,
-                  //         decoration: BoxDecoration(
-                  //           color: hovered ? const Color(0xffbdc1c6) : const Color(0xffdadce0),
-                  //           borderRadius: BorderRadius.circular(16),
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class HorizontalScrollbar extends StatefulWidget {
-  final SheetControllerOld sheetController;
-
-  const HorizontalScrollbar({
-    super.key,
-    required this.sheetController,
-  });
-
-  @override
-  State<HorizontalScrollbar> createState() => HorizontalScrollbarState();
-}
-
-class HorizontalScrollbarState extends State<HorizontalScrollbar> {
-  bool hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: (DragUpdateDetails details) {
-        double delta = (details.primaryDelta ?? 0) * 2;
-        // widget.sheetController.cursorController.scrollBy(Offset(delta, 0));
-      },
-      child: MouseRegion(
-        onEnter: (_) => setState(() => hovered = true),
-        onExit: (_) => setState(() => hovered = false),
-        child: Padding(
-          padding: EdgeInsets.all(hovered ? 0 : 2),
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              Size viewportSize = constraints.biggest;
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  // ValueListenableBuilder(
-                  //   valueListenable: widget.sheetController.scrollController.position.horizontalScrollListener,
-                  //   builder: (BuildContext context, double value, _) {
-                  //     double scrollbarWidth = viewportSize.width * (viewportSize.width / (widget.sheetController.scrollController.contentWidth - 24));
-                  //     double marginLeft = value / (widget.sheetController.scrollController.contentWidth - 24) * viewportSize.width;
-                  //
-                  //     return Positioned(
-                  //       left: marginLeft,
-                  //       child: Container(
-                  //         width: scrollbarWidth,
-                  //         height: viewportSize.height,
-                  //         decoration: BoxDecoration(
-                  //           color: hovered ? const Color(0xffbdc1c6) : const Color(0xffdadce0),
-                  //           borderRadius: BorderRadius.circular(16),
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
   }
 }

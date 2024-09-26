@@ -4,6 +4,7 @@ import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/mouse_cursor_listener.dart';
 import 'package:sheets/multi_listenable_builder.dart';
 import 'package:sheets/painters/headers_painter.dart';
+import 'package:sheets/painters/headers_resizer_painter.dart';
 import 'package:sheets/painters/selection_painter.dart';
 import 'package:sheets/painters/sheet_painter.dart';
 import 'package:sheets/sheet_constants.dart';
@@ -151,7 +152,31 @@ class SheetGrid extends StatelessWidget {
           builder: (BuildContext context) {
             return CustomPaint(
               isComplex: true,
+              painter: ColumnHeadersResizerPainter(sheetController: sheetController),
+            );
+          },
+        ),
+        SheetLayer.fill(
+          listenables: [
+            sheetController.selectionController,
+            sheetController.visibilityController,
+          ],
+          builder: (BuildContext context) {
+            return CustomPaint(
+              isComplex: true,
               painter: RowHeadersPainter(sheetController: sheetController),
+            );
+          },
+        ),
+        SheetLayer.fill(
+          listenables: [
+            sheetController.selectionController,
+            sheetController.visibilityController,
+          ],
+          builder: (BuildContext context) {
+            return CustomPaint(
+              isComplex: true,
+              painter: RowHeadersResizerPainter(sheetController: sheetController),
             );
           },
         ),
