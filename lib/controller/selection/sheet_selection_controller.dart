@@ -31,6 +31,7 @@ class SheetSelectionController extends ChangeNotifier {
     selectRange(
       start: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex),
       end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: columnIndex),
+      completed: true,
     );
   }
 
@@ -38,6 +39,7 @@ class SheetSelectionController extends ChangeNotifier {
     selectRange(
       start: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)),
       end: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(defaultColumnCount)),
+      completed: true,
     );
   }
 
@@ -54,6 +56,7 @@ class SheetSelectionController extends ChangeNotifier {
     selectRange(
       start: CellIndex(rowIndex: RowIndex(0), columnIndex: start),
       end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: end),
+      completed: true,
     );
   }
 
@@ -61,6 +64,7 @@ class SheetSelectionController extends ChangeNotifier {
     selectRange(
       start: CellIndex(rowIndex: start, columnIndex: ColumnIndex(0)),
       end: CellIndex(rowIndex: end, columnIndex: ColumnIndex(defaultColumnCount)),
+      completed: true,
     );
   }
 
@@ -68,6 +72,7 @@ class SheetSelectionController extends ChangeNotifier {
     selectRange(
       start: CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0)),
       end: CellIndex(rowIndex: RowIndex(defaultRowCount), columnIndex: ColumnIndex(defaultColumnCount)),
+      completed: true,
     );
   }
 

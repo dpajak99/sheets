@@ -114,6 +114,11 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   List<Object?> get props => [selectedCells];
+
+  @override
+  String stringifySelection() {
+    return selectedCells.map((cellIndex) => cellIndex.stringifyPosition()).join(', ');
+  }
 }
 
 class SheetMultiSelectionPaint extends SheetSelectionPaint {

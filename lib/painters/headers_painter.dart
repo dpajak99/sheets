@@ -21,14 +21,19 @@ abstract class HeadersPainter extends CustomPainter {
     canvas.drawRect(rect, backgroundPaint);
   }
 
-  void paintHeadersBorder(Canvas canvas, Rect rect) {
+  void paintHeadersBorder(Canvas canvas, Rect rect, {bool top = true}) {
     Paint borderPaint = Paint()
       ..color = const Color(0xffc4c7c5)
       ..strokeWidth = borderWidth
       ..isAntiAlias = false
       ..style = PaintingStyle.stroke;
 
-    canvas.drawRect(rect, borderPaint);
+    if(top) {
+      canvas.drawLine(rect.topLeft, rect.topRight, borderPaint);
+    }
+    canvas.drawLine(rect.topRight, rect.bottomRight, borderPaint);
+    canvas.drawLine(rect.bottomLeft, rect.bottomRight, borderPaint);
+    canvas.drawLine(rect.topLeft, rect.bottomLeft, borderPaint);
   }
 
   void paintHeadersLabel(Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
@@ -64,7 +69,7 @@ class ColumnHeadersPainter extends HeadersPainter {
       SelectionStatus selectionStatus = sheetController.selectionController.selection.isColumnSelected(column.columnIndex);
 
       paintHeadersBackground(canvas, column.rect, selectionStatus);
-      paintHeadersBorder(canvas, column.rect);
+      paintHeadersBorder(canvas, column.rect, top: false);
       paintHeadersLabel(canvas, column.rect, column.value, selectionStatus);
     }
   }

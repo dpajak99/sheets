@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_scroll_physics.dart';
+import 'package:sheets/utils/extensions/offset_extension.dart';
 
 class MouseCursorListener extends StatelessWidget {
   final ValueNotifier<SystemMouseCursor> cursorListener;
@@ -29,7 +30,7 @@ class MouseCursorListener extends StatelessWidget {
       valueListenable: cursorListener,
       builder: (BuildContext context, SystemMouseCursor cursor, _) {
         return Listener(
-          behavior: HitTestBehavior.opaque,
+          behavior: HitTestBehavior.translucent,
           onPointerSignal: (PointerSignalEvent event) {
             if (event is PointerScrollEvent) {
               onScroll(event.scrollDelta);
@@ -37,7 +38,7 @@ class MouseCursorListener extends StatelessWidget {
           },
           child: GestureDetector(
             onTap: onTap,
-            behavior: HitTestBehavior.opaque,
+            behavior: HitTestBehavior.translucent,
             onPanStart: (DragStartDetails dragStartDetails) {
               _notifyOffsetChanged(dragStartDetails.localPosition);
               onTap();
@@ -52,6 +53,7 @@ class MouseCursorListener extends StatelessWidget {
             },
             child: MouseRegion(
               opaque: false,
+              hitTestBehavior: HitTestBehavior.translucent,
               cursor: cursor,
               onHover: (event) => _notifyOffsetChanged(event.localPosition),
             ),

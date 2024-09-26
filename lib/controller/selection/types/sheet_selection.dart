@@ -92,6 +92,8 @@ abstract class SheetSelection with EquatableMixin {
   Offset? get fillHandleOffset;
 
   SheetSelectionPaint get paint;
+
+  String stringifySelection();
 }
 
 abstract class SheetSelectionPaint {

@@ -63,6 +63,13 @@ class ColumnHeaderResizerPainter extends HeaderResizerPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
+
+  bool isHovered(Offset offset) {
+    Rect columnRect = column.rect;
+    double center = columnRect.right;
+    Rect rect = Rect.fromLTWH(center - _kGapSize - _kWeight, 0, _kWeight * 2 + _kGapSize, columnRect.height);
+    return rect.contains(offset);
+  }
 }
 
 class RowHeaderResizerPainter extends HeaderResizerPainter {

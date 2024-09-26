@@ -20,6 +20,13 @@ class SheetCursorController {
 
   final SheetTapRecognizer tapRecognizer = SheetTapRecognizer();
 
+  bool _enabled = true;
+  void disable() => _enabled = false;
+  void enable() => _enabled = true;
+  bool get enabled => _enabled;
+  
+  bool nativeDragging = false;
+
   void updateOffset(Offset offset, SheetItemConfig? element) {
     mousePosition.value = offset;
     hoveredItem.value = element;
@@ -31,15 +38,16 @@ class SheetCursorController {
 
   void tap() {
     SheetGesture tapGesture = tapRecognizer.onTap(SheetTapDetails.create(mousePosition.value, hoveredItem.value));
-    _gesturesStream.add(tapGesture);
+    _addGesture(tapGesture);
   }
 
   SheetDragDetails? _activeStartDragDetails;
 
   void dragStart() {
+    nativeDragging = true;
     SheetDragDetails sheetDragDetails = SheetDragDetails.create(mousePosition.value, hoveredItem.value);
     _activeStartDragDetails = sheetDragDetails;
-    _gesturesStream.add(SheetDragStartGesture(sheetDragDetails));
+    _addGesture(SheetDragStartGesture(sheetDragDetails));
   }
 
   void dragUpdate() {
@@ -49,21 +57,27 @@ class SheetCursorController {
       SheetDragDetails.create(mousePosition.value, hoveredItem.value),
       startDetails: _activeStartDragDetails!,
     );
-    _gesturesStream.add(dragUpdateGesture);
+    _addGesture(dragUpdateGesture);
   }
 
   void dragEnd() {
+    nativeDragging = false;
     if (_activeStartDragDetails == null) return;
 
     SheetGesture dragEndGesture = SheetDragEndGesture(
       SheetDragDetails.create(mousePosition.value, hoveredItem.value),
       startDetails: _activeStartDragDetails!,
     );
-    _gesturesStream.add(dragEndGesture);
+    _addGesture(dragEndGesture);
   }
 
   void scroll(Offset delta) {
-    _gesturesStream.add(SheetScrollGesture(delta));
+    _addGesture(SheetScrollGesture(delta));
+  }
+  
+  void _addGesture(SheetGesture gesture) {
+    if(!_enabled) return;
+    _gesturesStream.add(gesture);
   }
 
   // void dragStart(DragStartDetails details, {Offset subtract = Offset.zero}) {

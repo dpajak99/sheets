@@ -24,7 +24,9 @@ mixin NumericIndexMixin {
   }
 }
 
-abstract class SheetItemIndex with EquatableMixin {}
+abstract class SheetItemIndex with EquatableMixin {
+  String stringifyPosition();
+}
 
 class CellIndex extends SheetItemIndex {
   final RowIndex rowIndex;
@@ -40,6 +42,11 @@ class CellIndex extends SheetItemIndex {
   @override
   String toString() {
     return 'Cell(${rowIndex.value}, ${columnIndex.value})';
+  }
+
+  @override
+  String stringifyPosition() {
+    return '${columnIndex.stringifyPosition()}${rowIndex.stringifyPosition()}';
   }
 
   @override
@@ -63,6 +70,23 @@ class ColumnIndex extends SheetItemIndex with NumericIndexMixin {
   int get value => _value;
 
   @override
+  String stringifyPosition() {
+    return numberToExcelColumn(value + 1);
+  }
+
+  String numberToExcelColumn(int number) {
+    String result = '';
+
+    while (number > 0) {
+      number--; // Excel columns start from 1, not 0, hence this adjustment
+      result = String.fromCharCode(65 + (number % 26)) + result;
+      number = (number ~/ 26);
+    }
+
+    return result;
+  }
+
+  @override
   List<Object?> get props => [value];
 }
 
@@ -75,6 +99,11 @@ class RowIndex extends SheetItemIndex with NumericIndexMixin {
 
   @override
   int get value => _value;
+
+  @override
+  String stringifyPosition() {
+    return (value + 1).toString();
+  }
 
   @override
   List<Object?> get props => [_value];

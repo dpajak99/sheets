@@ -44,26 +44,6 @@ class SheetControllerOld {
     scrollController.scrollBy(delta);
   }
 
-  void resizeColumnBy(ColumnConfig column, double delta) {
-    ColumnStyle columnStyle = sheetProperties.getColumnStyle(column.columnIndex);
-    sheetProperties.setColumnStyle(
-      column.columnIndex,
-      columnStyle.copyWith(width: max(10, columnStyle.width + delta)),
-    );
-    scrollController.customColumnExtents = sheetProperties.customColumnExtents;
-    paintConfig.refresh();
-  }
-
-  void resizeRowBy(RowConfig row, double delta) {
-    RowStyle rowStyle = sheetProperties.getRowStyle(row.rowIndex);
-    sheetProperties.setRowStyle(
-      row.rowIndex,
-      rowStyle.copyWith(height: max(10, rowStyle.height + delta)),
-    );
-    scrollController.customRowExtents = sheetProperties.customRowExtents;
-    paintConfig.refresh();
-  }
-
   void edit(CellConfig cellConfig) {
     selectionController.selectSingle(cellConfig.index, editingEnabled: true);
     editNotifier.value = cellConfig;
@@ -108,6 +88,26 @@ class SheetController {
     mouse.setCursor(cursor);
   }
 
+  void resizeColumnBy(ColumnConfig column, double delta) {
+    ColumnStyle columnStyle = sheetProperties.getColumnStyle(column.columnIndex);
+    sheetProperties.setColumnStyle(
+      column.columnIndex,
+      columnStyle.copyWith(width: max(10, columnStyle.width + delta)),
+    );
+    scrollController.customColumnExtents = sheetProperties.customColumnExtents;
+    visibilityController.refresh();
+  }
+
+  void resizeRowBy(RowConfig row, double delta) {
+    RowStyle rowStyle = sheetProperties.getRowStyle(row.rowIndex);
+    sheetProperties.setRowStyle(
+      row.rowIndex,
+      rowStyle.copyWith(height: max(10, rowStyle.height + delta)),
+    );
+    scrollController.customRowExtents = sheetProperties.customRowExtents;
+    visibilityController.refresh();
+  }
+
   void _handleGesture(SheetGesture gesture) {
     return switch (gesture) {
       SheetTapGesture tapGesture => _handleTap(tapGesture),
@@ -124,7 +124,7 @@ class SheetController {
     if (keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
       CellIndex selectionStart = selectionController.selection.start;
       return switch (tapGesture.details.hoveredItem) {
-        CellConfig cell => selectionController.selectRange(start: selectionStart, end: cell.index),
+        CellConfig cell => selectionController.selectRange(start: selectionStart, end: cell.index, completed: true),
         ColumnConfig column => selectionController.selectColumnRange(start: selectionStart.columnIndex, end: column.columnIndex),
         RowConfig row => selectionController.selectRowRange(start: selectionStart.rowIndex, end: row.rowIndex),
         (_) => () {},

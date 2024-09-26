@@ -46,6 +46,11 @@ class SheetSingleSelection extends SheetSelection {
   }
 
   @override
+  String stringifySelection() {
+    return cellIndex.stringifyPosition();
+  }
+
+  @override
   List<Object?> get props => [cellIndex];
 }
 

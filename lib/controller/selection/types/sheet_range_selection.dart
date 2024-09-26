@@ -168,6 +168,11 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
+  String stringifySelection() {
+    return '${_start.stringifyPosition()}:${_end.stringifyPosition()}';
+  }
+
+  @override
   List<Object?> get props => [_start, _end];
 }
 
