@@ -7,17 +7,18 @@ import 'package:sheets/controller/sheet_visibility_controller.dart';
 
 class SheetSingleSelection extends SheetSelection {
   final CellIndex cellIndex;
-  final bool fillHandleVisible;
+  final bool _fillHandleVisible;
 
   SheetSingleSelection({
     required super.paintConfig,
     required this.cellIndex,
-    this.fillHandleVisible = false,
-  }) : super(completed: true);
+    bool fillHandleVisible = true,
+  })  : _fillHandleVisible = fillHandleVisible,
+        super(completed: true);
 
   SheetSingleSelection.defaultSelection({required super.paintConfig})
       : cellIndex = CellIndex.zero,
-        fillHandleVisible = false,
+        _fillHandleVisible = true,
         super(completed: true);
 
   @override
@@ -36,6 +37,9 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   SheetSelectionPaint get paint => SheetSingleSelectionPaint(this);
+
+  @override
+  bool get fillHandleVisible => _fillHandleVisible;
 
   @override
   Offset? get fillHandleOffset => paintConfig.findCell(cellIndex)?.rect.bottomRight;
@@ -67,9 +71,5 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
     }
 
     paintMainCell(canvas, selectedCell.rect);
-
-    if (selection.fillHandleVisible == false) {
-      paintFillHandle(canvas, selectedCell.rect.bottomRight);
-    }
   }
 }

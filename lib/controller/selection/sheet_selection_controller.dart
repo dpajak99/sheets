@@ -24,7 +24,7 @@ class SheetSelectionController extends ChangeNotifier {
   }
 
   void selectSingle(CellIndex cellIndex, {bool editingEnabled = false}) {
-    selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex, fillHandleVisible: editingEnabled);
+    selection = SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex, fillHandleVisible: editingEnabled == false);
   }
 
   void selectColumn(ColumnIndex columnIndex) {

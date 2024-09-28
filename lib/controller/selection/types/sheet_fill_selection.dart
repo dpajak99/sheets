@@ -26,7 +26,6 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
 
   @override
   void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size) {
-    print('Paint baseSelection selection: ${selection.baseSelection}');
     selection.baseSelection.paint.paint(paintConfig, canvas, size);
 
     SelectionBounds? selectionBounds = selection.getSelectionBounds();
@@ -47,8 +46,6 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
         bottom: selectionBounds.isBottomBorderVisible,
         left: selectionBounds.isLeftBorderVisible,
       );
-
-      paintFillHandle(canvas, selectionBounds.selectionRect.bottomRight);
     }
   }
 }

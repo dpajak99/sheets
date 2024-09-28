@@ -89,6 +89,8 @@ abstract class SheetSelection with EquatableMixin {
     return this;
   }
 
+  bool get fillHandleVisible;
+
   Offset? get fillHandleOffset;
 
   SheetSelectionPaint get paint;
@@ -164,17 +166,17 @@ abstract class SheetSelectionPaint {
     }
   }
 
-  void paintFillHandle(Canvas canvas, Offset offset) {
-    Paint fillHandleBorderPaint = Paint()
-      ..color = const Color(0xffffffff)
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(offset, 5, fillHandleBorderPaint);
-
-    Paint fillHandlePaint = Paint()
-      ..color = const Color(0xff3572e3)
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(offset, 4, fillHandlePaint);
-  }
+  // void paintFillHandle(Canvas canvas, Offset offset) {
+  //   Paint fillHandleBorderPaint = Paint()
+  //     ..color = const Color(0xffffffff)
+  //     ..style = PaintingStyle.fill;
+  //
+  //   canvas.drawCircle(offset, 5, fillHandleBorderPaint);
+  //
+  //   Paint fillHandlePaint = Paint()
+  //     ..color = const Color(0xff3572e3)
+  //     ..style = PaintingStyle.fill;
+  //
+  //   canvas.drawCircle(offset, 4, fillHandlePaint);
+  // }
 }

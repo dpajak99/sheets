@@ -110,6 +110,9 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
+  bool get fillHandleVisible => false;
+
+  @override
   Offset? get fillHandleOffset => null;
 
   @override

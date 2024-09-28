@@ -7,7 +7,7 @@ import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
 class SelectionFillRecognizer extends SelectionRecognizer {
-  final SheetControllerOld sheetController;
+  final SheetController sheetController;
   final SheetItemConfig selectionStart;
 
   SelectionFillRecognizer(this.sheetController, this.selectionStart);
@@ -46,7 +46,7 @@ class SelectionFillRecognizer extends SelectionRecognizer {
 
     return SheetFillSelection(
       baseSelection: firstPreviousSelection,
-      paintConfig: sheetController.paintConfig,
+      paintConfig: sheetController.visibilityController,
       start: firstPreviousSelection.end,
       end: CellIndex(rowIndex: endRowIndex, columnIndex: endColumnIndex),
       completed: false,

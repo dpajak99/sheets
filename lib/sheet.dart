@@ -6,11 +6,12 @@ import 'package:sheets/multi_listenable_builder.dart';
 import 'package:sheets/painters/headers_painter.dart';
 import 'package:sheets/painters/selection_painter.dart';
 import 'package:sheets/painters/sheet_painter.dart';
-import 'package:sheets/sheet_cell_info_bar.dart';
 import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/sheet_fill_handle.dart';
 import 'package:sheets/sheet_resize_divider.dart';
 import 'package:sheets/sheet_scrollable.dart';
-import 'package:sheets/sheet_toolbar.dart';
+import 'package:sheets/widgets/sheet_cell_info_bar.dart';
+import 'package:sheets/widgets/sheet_toolbar.dart';
 
 class SheetPage extends StatefulWidget {
   const SheetPage({super.key});
@@ -226,6 +227,9 @@ class SheetGrid extends StatelessWidget {
                 VerticalHeadersResizer(sheetController: sheetController),
                 HorizontalHeadersResizer(sheetController: sheetController),
                 CustomPaint(isComplex: true, painter: SelectionPainter(sheetController: sheetController)),
+                SheetFillHandle(
+                  sheetController: sheetController,
+                ),
               ],
             );
           },

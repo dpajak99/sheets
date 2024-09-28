@@ -6,19 +6,23 @@ class SheetGestureDetector extends StatefulWidget {
   final Size actionSize;
   final SystemMouseCursor cursor;
   final SystemMouseCursor? dragCursor;
-  final Positioned? Function(bool hovered, bool dragged) builder;
   final ValueChanged<Offset> onDragDeltaChanged;
   final ValueChanged<Offset> onDragEnd;
-  final Offset dragBarrier;
+  final Positioned? Function(bool hovered, bool dragged)? builder;
+  final Widget? child;
+  final Offset? dragBarrier;
+  final bool disableOnHover;
 
   const SheetGestureDetector({
     required this.actionSize,
     required this.cursor,
-    required this.builder,
     required this.onDragDeltaChanged,
     required this.onDragEnd,
-    required this.dragBarrier,
     SystemMouseCursor? dragCursor,
+    this.builder,
+    this.child,
+    this.dragBarrier,
+    this.disableOnHover = false,
     super.key,
   }) : dragCursor = dragCursor ?? cursor;
 
@@ -28,13 +32,12 @@ class SheetGestureDetector extends StatefulWidget {
 
 class _SheetGestureDetectorState extends State<SheetGestureDetector> {
   Offset _dragDelta = Offset.zero;
-  bool _hovered = false;
   bool _hoverInProgress = false;
   bool _dragInProgress = false;
 
   @override
   Widget build(BuildContext context) {
-    Widget? child = widget.builder.call(_hoverInProgress, _dragInProgress);
+    Widget? child = widget.child ?? widget.builder!.call(_hoverInProgress, _dragInProgress);
 
     return Stack(
       children: [
@@ -68,7 +71,7 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
   }
 
   void _onDragUpdate(PointerMoveEvent event) {
-    if (event.position.dy < widget.dragBarrier.dy) {
+    if (widget.dragBarrier != null && (event.position.dy < widget.dragBarrier!.dy || event.position.dx < widget.dragBarrier!.dx)) {
       Sheet.of(context).resetCursor();
       return;
     } else {
@@ -95,10 +98,18 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
   }
 
   void _setHovered(bool value) {
-    _hovered = value;
     if (_dragInProgress) return;
-    if (Sheet.of(context).areMouseActionsEnabled() == false) return;
     if (Sheet.of(context).isNativeDragging()) return;
+
+    if (widget.disableOnHover) {
+      if (value) {
+        _disableParentMouseActions();
+      } else {
+        _enableParentMouseActions();
+      }
+    }
+
+    if (Sheet.of(context).areMouseActionsEnabled() == false) return;
 
     if (_hoverInProgress != value) {
       setState(() {
@@ -117,5 +128,15 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
     if (_dragInProgress != value) {
       setState(() => _dragInProgress = value);
     }
+  }
+
+  void _disableParentMouseActions() {
+    Sheet.of(context).setCursor(widget.cursor);
+    Sheet.of(context).disableMouseActions();
+  }
+
+  void _enableParentMouseActions() {
+    Sheet.of(context).enableMouseActions();
+    Sheet.of(context).resetCursor();
   }
 }

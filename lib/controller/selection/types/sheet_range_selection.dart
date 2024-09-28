@@ -156,6 +156,8 @@ class SheetRangeSelection extends SheetSelection {
     }
     return this;
   }
+  @override
+  bool get fillHandleVisible => isCompleted;
 
   @override
   Offset? get fillHandleOffset {
@@ -205,8 +207,6 @@ class SheetRangeSelectionPaint extends SheetSelectionPaint {
         bottom: selectionBounds.isBottomBorderVisible,
         left: selectionBounds.isLeftBorderVisible,
       );
-
-      paintFillHandle(canvas, selectionBounds.selectionRect.bottomRight);
     }
   }
 }

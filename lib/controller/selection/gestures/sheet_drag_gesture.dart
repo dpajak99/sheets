@@ -22,6 +22,11 @@ class SheetDragUpdateGesture extends SheetDragGesture {
   SheetDragUpdateGesture(super.details, {required this.startDetails});
 }
 
+class SheetFillUpdateGesture extends SheetDragGesture {
+
+  SheetFillUpdateGesture(super.details);
+}
+
 class SheetDragEndGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
 

@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/sheet_scroll_physics.dart';
 import 'package:sheets/utils/extensions/offset_extension.dart';
 
 class MouseCursorListener extends StatelessWidget {
@@ -36,31 +35,34 @@ class MouseCursorListener extends StatelessWidget {
               onScroll(event.scrollDelta);
             }
           },
-          child: GestureDetector(
-            onTap: onTap,
-            behavior: HitTestBehavior.translucent,
-            onPanStart: (DragStartDetails dragStartDetails) {
-              _notifyOffsetChanged(dragStartDetails.localPosition);
-              onTap();
-              onDragStart();
-            },
-            onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
-              _notifyOffsetChanged(dragUpdateDetails.localPosition);
-              onDragUpdate();
-            },
-            onPanEnd: (DragEndDetails dragEndDetails) {
-              onDragEnd();
-            },
-            child: MouseRegion(
-              opaque: false,
-              hitTestBehavior: HitTestBehavior.translucent,
-              cursor: cursor,
-              onHover: (event) => _notifyOffsetChanged(event.localPosition),
-            ),
+          onPointerDown: _onDragStart,
+          onPointerMove: _onDragUpdate,
+          onPointerUp: _onDragEnd,
+          child: MouseRegion(
+            opaque: false,
+            hitTestBehavior: HitTestBehavior.translucent,
+            cursor: cursor,
+            onHover: (event) => _notifyOffsetChanged(event.localPosition),
           ),
         );
       },
     );
+  }
+
+  void _onDragStart(PointerDownEvent event) {
+    _notifyOffsetChanged(event.localPosition);
+    onTap();
+    onDragStart();
+  }
+
+  void _onDragUpdate(PointerMoveEvent event) {
+    _notifyOffsetChanged(event.localPosition);
+    onDragUpdate();
+  }
+
+  void _onDragEnd(PointerUpEvent event) {
+    _notifyOffsetChanged(event.localPosition);
+    onDragEnd();
   }
 
   void _notifyOffsetChanged(Offset value) {

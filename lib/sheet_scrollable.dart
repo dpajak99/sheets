@@ -389,11 +389,11 @@ class _ScrollbarButton extends StatelessWidget {
 
   Color getBackgroundColor(Set<WidgetState> states) {
     if (states.contains(WidgetState.pressed)) {
-      return const Color(0xffbdc1c6);
+      return const Color(0xff919191);
     } else if (states.contains(WidgetState.hovered)) {
-      return const Color(0xffc2c2c2);
+      return const Color(0xffc1c1c1);
     } else {
-      return Colors.white;
+      return const Color(0xfff8f8f8);
     }
   }
 

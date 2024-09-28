@@ -8,7 +8,9 @@ import 'package:sheets/controller/selection/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_scroll_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_tap_gesture.dart';
+import 'package:sheets/controller/selection/recognizers/selection_fill_recognizer.dart';
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
+import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
@@ -109,14 +111,16 @@ class SheetController {
   }
 
   void _handleGesture(SheetGesture gesture) {
+    print('Received gesture: $gesture');
     return switch (gesture) {
       SheetTapGesture tapGesture => _handleTap(tapGesture),
       SheetDoubleTapGesture doubleTapGesture => _handleDoubleTap(doubleTapGesture),
       SheetDragStartGesture dragStartGesture => _handleDragStart(dragStartGesture),
       SheetDragUpdateGesture dragUpdateGesture => _handleDragUpdate(dragUpdateGesture),
       SheetDragEndGesture dragEndGesture => _handleDragEnd(dragEndGesture),
+      SheetFillUpdateGesture fillUpdateGesture => _handleFillUpdate(fillUpdateGesture),
       SheetScrollGesture scrollGesture => _handleScroll(scrollGesture),
-      (_) => () {},
+      (_) => print('Unhandled gesture: $gesture'),
     };
   }
 
@@ -154,6 +158,11 @@ class SheetController {
       default:
         return;
     }
+  }
+
+  void _handleFillUpdate(SheetFillUpdateGesture fillUpdateGesture) {
+    if(mouse.hoveredItem.value == null) return;
+    SelectionFillRecognizer(this, mouse.hoveredItem.value!).handle(mouse.hoveredItem.value!);
   }
 
   void _handleCellDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
