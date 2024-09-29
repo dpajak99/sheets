@@ -5,6 +5,7 @@ import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 class Range<A extends NumericIndexMixin> with EquatableMixin {
   final A start;
@@ -111,7 +112,7 @@ abstract class SheetSelectionPaint {
       ..isAntiAlias = false
       ..style = PaintingStyle.stroke;
 
-    canvas.drawRect(rect, mainCellPaint);
+    canvas.drawRect(rect.subtract(borderWidth / 2), mainCellPaint);
   }
 
   void paintSelectionBackground(Canvas canvas, Rect rect) {

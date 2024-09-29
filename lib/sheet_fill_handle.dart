@@ -29,7 +29,6 @@ class SheetFillHandleState extends State<SheetFillHandle> {
             left: fillHandleOffset.dx - size / 2,
             top: fillHandleOffset.dy - size / 2,
             child: SheetGestureDetector(
-              disableTapOnHover: true,
               actionSize: const Size(size, size),
               cursor: SystemMouseCursors.precise,
               onDragStart: (_) {

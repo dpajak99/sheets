@@ -20,7 +20,6 @@ class SelectionFillRecognizer extends SelectionRecognizer {
     if(corners == null) return;
 
     Direction direction = corners.getRelativePosition(selectionEnd.index);
-    print('Direction: $direction');
 
     late CellIndex start;
     late CellIndex end;

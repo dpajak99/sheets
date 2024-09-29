@@ -11,12 +11,10 @@ double _kLength = 16;
 abstract class HeaderResizerPainter extends CustomPainter {
   Paint get resizerPaint => Paint()
     ..color = Colors.black
-    ..isAntiAlias = false
     ..style = PaintingStyle.fill;
 
   Paint get dividerPaint => Paint()
     ..color = const Color(0xffc4c7c5)
-    ..isAntiAlias = false
     ..style = PaintingStyle.fill;
 }
 

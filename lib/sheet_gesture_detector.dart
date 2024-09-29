@@ -104,7 +104,6 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
     if (Sheet.of(context).areMouseActionsEnabled() == false) return;
 
     Sheet.of(context).setCustomTapHovered(value);
-
     if (_hoverInProgress != value) {
       setState(() {
         _hoverInProgress = value;

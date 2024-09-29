@@ -24,7 +24,6 @@ class SheetPainter extends CustomPainter {
       Paint borderPaint = Paint()
         ..color = const Color(0xffe1e1e1)
         ..strokeWidth = borderWidth
-        ..isAntiAlias = false
         ..style = PaintingStyle.stroke;
 
       canvas.drawRect(cell.rect, borderPaint);
