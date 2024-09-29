@@ -171,6 +171,10 @@ class SheetState extends State<Sheet> {
     return sheetController.mouse.nativeDragging;
   }
 
+  void setCustomTapHovered(bool value) {
+    sheetController.mouse.customTapHovered = value;
+  }
+
   void setCursor(SystemMouseCursor cursor) {
     sheetController.mouse.cursor.value = cursor;
   }

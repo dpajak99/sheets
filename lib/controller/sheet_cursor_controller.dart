@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/gestures/sheet_drag_gesture.dart';
+import 'package:sheets/controller/selection/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_scroll_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_tap_gesture.dart';
@@ -29,6 +30,7 @@ class SheetCursorController {
   bool get enabled => _enabled;
 
   bool nativeDragging = false;
+  bool customTapHovered = false;
   SheetItemConfig? _dragStartElement;
 
   void updateOffset(Offset offset, SheetItemConfig? element) {
@@ -41,6 +43,7 @@ class SheetCursorController {
   }
 
   void tap() {
+    if(customTapHovered) return;
     SheetGesture tapGesture = tapRecognizer.onTap(SheetTapDetails.create(mousePosition.value, hoveredItem.value));
     _addGesture(tapGesture);
   }
@@ -66,9 +69,19 @@ class SheetCursorController {
     _addGesture(dragUpdateGesture);
   }
 
+  void fillStart() {
+    SheetFillStartGesture fillStartGesture = SheetFillStartGesture();
+    _gesturesStream.add(fillStartGesture);
+  }
+
   void fillUpdate() {
-    SheetGesture fillUpdateGesture = SheetFillUpdateGesture(SheetDragDetails.create(mousePosition.value, hoveredItem.value));
+    SheetGesture fillUpdateGesture = SheetFillUpdateGesture(endDetails: SheetDragDetails.create(mousePosition.value, hoveredItem.value));
     _gesturesStream.add(fillUpdateGesture);
+  }
+
+  void fillEnd() {
+    SheetFillEndGesture fillEndGesture = SheetFillEndGesture();
+    _gesturesStream.add(fillEndGesture);
   }
 
   void dragEnd() {

@@ -6,23 +6,23 @@ class SheetGestureDetector extends StatefulWidget {
   final Size actionSize;
   final SystemMouseCursor cursor;
   final SystemMouseCursor? dragCursor;
+  final ValueChanged<Offset> onDragStart;
   final ValueChanged<Offset> onDragDeltaChanged;
   final ValueChanged<Offset> onDragEnd;
   final Positioned? Function(bool hovered, bool dragged)? builder;
   final Widget? child;
   final Offset? dragBarrier;
-  final bool disableOnHover;
 
   const SheetGestureDetector({
     required this.actionSize,
     required this.cursor,
+    required this.onDragStart,
     required this.onDragDeltaChanged,
     required this.onDragEnd,
     SystemMouseCursor? dragCursor,
     this.builder,
     this.child,
     this.dragBarrier,
-    this.disableOnHover = false,
     super.key,
   }) : dragCursor = dragCursor ?? cursor;
 
@@ -68,6 +68,7 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
     Sheet.of(context).disableMouseActions();
     Sheet.of(context).setCursor(widget.cursor);
     _setDragged(true);
+    widget.onDragStart(event.position);
   }
 
   void _onDragUpdate(PointerMoveEvent event) {
@@ -100,16 +101,9 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
   void _setHovered(bool value) {
     if (_dragInProgress) return;
     if (Sheet.of(context).isNativeDragging()) return;
-
-    if (widget.disableOnHover) {
-      if (value) {
-        _disableParentMouseActions();
-      } else {
-        _enableParentMouseActions();
-      }
-    }
-
     if (Sheet.of(context).areMouseActionsEnabled() == false) return;
+
+    Sheet.of(context).setCustomTapHovered(value);
 
     if (_hoverInProgress != value) {
       setState(() {
@@ -128,15 +122,5 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
     if (_dragInProgress != value) {
       setState(() => _dragInProgress = value);
     }
-  }
-
-  void _disableParentMouseActions() {
-    Sheet.of(context).setCursor(widget.cursor);
-    Sheet.of(context).disableMouseActions();
-  }
-
-  void _enableParentMouseActions() {
-    Sheet.of(context).enableMouseActions();
-    Sheet.of(context).resetCursor();
   }
 }

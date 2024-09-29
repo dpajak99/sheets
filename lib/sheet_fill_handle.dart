@@ -29,13 +29,18 @@ class SheetFillHandleState extends State<SheetFillHandle> {
             left: fillHandleOffset.dx - size / 2,
             top: fillHandleOffset.dy - size / 2,
             child: SheetGestureDetector(
-              disableOnHover: true,
+              disableTapOnHover: true,
               actionSize: const Size(size, size),
               cursor: SystemMouseCursors.precise,
+              onDragStart: (_) {
+                widget.sheetController.mouse.fillStart();
+              },
               onDragDeltaChanged: (_) {
                 widget.sheetController.mouse.fillUpdate();
               },
-              onDragEnd: (_) {},
+              onDragEnd: (_) {
+                widget.sheetController.mouse.fillEnd();
+              },
               child: Container(
                 width: size,
                 height: size,

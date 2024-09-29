@@ -116,6 +116,9 @@ class SheetMultiSelection extends SheetSelection {
   Offset? get fillHandleOffset => null;
 
   @override
+  SelectionCellCorners? get selectionCorners => null;
+
+  @override
   List<Object?> get props => [selectedCells];
 
   @override

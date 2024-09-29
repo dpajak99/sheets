@@ -1,56 +1,59 @@
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/recognizers/selection_recognizer.dart';
 import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/utils/direction.dart';
 
 class SelectionFillRecognizer extends SelectionRecognizer {
   final SheetController sheetController;
-  final SheetItemConfig selectionStart;
+  final SheetSelection sheetSelection;
 
-  SelectionFillRecognizer(this.sheetController, this.selectionStart);
+  SelectionFillRecognizer.from(this.sheetSelection, this.sheetController);
 
   @override
   void handle(SheetItemConfig selectionEnd) {
-    if (selectionStart.runtimeType != selectionEnd.runtimeType) {
-      return;
+    SelectionCellCorners? corners = sheetSelection.selectionCorners;
+    if(selectionEnd is! CellConfig) return;
+    if(corners == null) return;
+
+    Direction direction = corners.getRelativePosition(selectionEnd.index);
+    print('Direction: $direction');
+
+    late CellIndex start;
+    late CellIndex end;
+
+    switch(direction) {
+      case Direction.top:
+        start = corners.topLeft.move(-1, 0);
+        end = CellIndex(rowIndex: selectionEnd.index.rowIndex, columnIndex: corners.topRight.columnIndex);
+        break;
+      case Direction.bottom:
+        start = CellIndex(rowIndex: selectionEnd.index.rowIndex, columnIndex: corners.bottomLeft.columnIndex);
+        end = corners.bottomRight.move(1, 0);
+        break;
+      case Direction.left:
+        start = corners.topLeft.move(0, -1);
+        end = CellIndex(rowIndex: corners.bottomLeft.rowIndex, columnIndex: selectionEnd.index.columnIndex);
+        break;
+      case Direction.right:
+        start = CellIndex(rowIndex: corners.topRight.rowIndex, columnIndex: selectionEnd.index.columnIndex);
+        end = corners.bottomRight.move(0, 1);
+        break;
     }
 
-    SheetSelection fillSelection = getFillSelection(selectionEnd);
-    sheetController.selectionController.custom(fillSelection);
-  }
-
-  SheetSelection getFillSelection(SheetItemConfig selectionEnd) {
-    SheetSelection realPreviousSelection = sheetController.selectionController.selection;
-    SheetSelection firstPreviousSelection = realPreviousSelection is SheetFillSelection ? realPreviousSelection.baseSelection : realPreviousSelection;
-
-    late RowIndex endRowIndex;
-    late ColumnIndex endColumnIndex;
-
-    switch (selectionEnd) {
-      case CellConfig selectionEnd:
-        endRowIndex = selectionEnd.index.rowIndex;
-        endColumnIndex = selectionEnd.index.columnIndex;
-        break;
-      case ColumnConfig selectionEnd:
-        endRowIndex = RowIndex(defaultRowCount);
-        endColumnIndex = selectionEnd.columnIndex;
-        break;
-      case RowConfig selectionEnd:
-        endRowIndex = selectionEnd.rowIndex;
-        endColumnIndex = ColumnIndex(defaultColumnCount);
-        break;
-    }
-
-    return SheetFillSelection(
-      baseSelection: firstPreviousSelection,
+    SheetFillSelection sheetFillSelection = SheetFillSelection(
+      fillDirection: direction,
+      baseSelection: sheetSelection,
       paintConfig: sheetController.visibilityController,
-      start: firstPreviousSelection.end,
-      end: CellIndex(rowIndex: endRowIndex, columnIndex: endColumnIndex),
+      start: start,
+      end: end,
       completed: false,
     );
+
+    sheetController.selectionController.custom(sheetFillSelection);
   }
 
   @override

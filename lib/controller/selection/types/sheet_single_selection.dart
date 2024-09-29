@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_visibility_controller.dart';
 
@@ -47,6 +48,11 @@ class SheetSingleSelection extends SheetSelection {
   @override
   List<CellIndex> get selectedCells {
     return [cellIndex];
+  }
+
+  @override
+  SelectionCellCorners get selectionCorners {
+    return SelectionCellCorners(cellIndex, cellIndex, cellIndex, cellIndex);
   }
 
   @override

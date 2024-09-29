@@ -80,8 +80,9 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
       width: dividerWidth,
       child: SheetGestureDetector(
         dragBarrier: Offset(widget.column.rect.left + 20, 0),
-        onDragEnd: widget.onResize,
+        onDragStart: (_) {},
         onDragDeltaChanged: _handleDragDeltaChanged,
+        onDragEnd: widget.onResize,
         cursor: SystemMouseCursors.resizeColumn,
         actionSize: Size(dividerWidth, columnRect.height),
         builder: (bool hovered, bool dragged) {
@@ -140,8 +141,9 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
       height: dividerHeight,
       child: SheetGestureDetector(
         dragBarrier: Offset(0, widget.row.rect.top + 20),
-        onDragEnd: widget.onResize,
+        onDragStart: (_) {},
         onDragDeltaChanged: _handleDragDeltaChanged,
+        onDragEnd: widget.onResize,
         cursor: SystemMouseCursors.resizeRow,
         actionSize: Size(rowRect.width, dividerHeight),
         builder: (bool hovered, bool dragged) {

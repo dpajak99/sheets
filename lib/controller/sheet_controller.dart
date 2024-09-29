@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/gestures/sheet_drag_gesture.dart';
+import 'package:sheets/controller/selection/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_scroll_gesture.dart';
 import 'package:sheets/controller/selection/gestures/sheet_tap_gesture.dart';
 import 'package:sheets/controller/selection/recognizers/selection_fill_recognizer.dart';
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
+import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
@@ -111,14 +113,15 @@ class SheetController {
   }
 
   void _handleGesture(SheetGesture gesture) {
-    print('Received gesture: $gesture');
     return switch (gesture) {
       SheetTapGesture tapGesture => _handleTap(tapGesture),
       SheetDoubleTapGesture doubleTapGesture => _handleDoubleTap(doubleTapGesture),
       SheetDragStartGesture dragStartGesture => _handleDragStart(dragStartGesture),
       SheetDragUpdateGesture dragUpdateGesture => _handleDragUpdate(dragUpdateGesture),
       SheetDragEndGesture dragEndGesture => _handleDragEnd(dragEndGesture),
+      SheetFillStartGesture fillStartGesture => _handleFillStart(fillStartGesture),
       SheetFillUpdateGesture fillUpdateGesture => _handleFillUpdate(fillUpdateGesture),
+      SheetFillEndGesture fillEndGesture => _handleFillEnd(fillEndGesture),
       SheetScrollGesture scrollGesture => _handleScroll(scrollGesture),
       (_) => print('Unhandled gesture: $gesture'),
     };
@@ -160,14 +163,9 @@ class SheetController {
     }
   }
 
-  void _handleFillUpdate(SheetFillUpdateGesture fillUpdateGesture) {
-    if(mouse.hoveredItem.value == null) return;
-    SelectionFillRecognizer(this, mouse.hoveredItem.value!).handle(mouse.hoveredItem.value!);
-  }
-
   void _handleCellDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
     CellIndex start = (dragUpdateGesture.startDetails.hoveredItem! as CellConfig).index;
-    return switch (dragUpdateGesture.details.hoveredItem) {
+    return switch (dragUpdateGesture.endDetails.hoveredItem) {
       CellConfig endCell => selectionController.selectRange(start: start, end: endCell.index),
       (_) => () {},
     };
@@ -177,7 +175,7 @@ class SheetController {
     ColumnIndex start = (dragUpdateGesture.startDetails.hoveredItem! as ColumnConfig).columnIndex;
     late ColumnIndex end;
 
-    switch (dragUpdateGesture.details.hoveredItem) {
+    switch (dragUpdateGesture.endDetails.hoveredItem) {
       case CellConfig cellConfig:
         end = cellConfig.index.columnIndex;
         break;
@@ -195,7 +193,7 @@ class SheetController {
     RowIndex start = (dragUpdateGesture.startDetails.hoveredItem! as RowConfig).rowIndex;
     late RowIndex end;
 
-    switch (dragUpdateGesture.details.hoveredItem) {
+    switch (dragUpdateGesture.endDetails.hoveredItem) {
       case CellConfig cellConfig:
         end = cellConfig.index.rowIndex;
         break;
@@ -212,6 +210,27 @@ class SheetController {
   void _handleDragEnd(SheetDragEndGesture dragEndGesture) {
     selectionController.completeSelection();
   }
+
+  bool _fillingInProgress = false;
+
+  void _handleFillStart(SheetFillStartGesture fillStartGesture) {
+    _fillingInProgress = true;
+  }
+
+  void _handleFillUpdate(SheetFillUpdateGesture fillUpdateGesture) {
+    if(_fillingInProgress == false) return;
+    if (mouse.hoveredItem.value == null) return;
+    SheetSelection sheetSelection = (selectionController.selection is SheetFillSelection)
+        ? (selectionController.selection as SheetFillSelection).baseSelection
+        : selectionController.selection;
+    SelectionFillRecognizer.from(sheetSelection, this).handle(mouse.hoveredItem.value!);
+  }
+
+  void _handleFillEnd(SheetFillEndGesture fillEndGesture) {
+    _fillingInProgress = false;
+    selectionController.completeSelection();
+  }
+
 
   void _handleScroll(SheetScrollGesture scrollGesture) {
     if (keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {

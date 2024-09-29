@@ -39,6 +39,13 @@ class CellIndex extends SheetItemIndex {
 
   static CellIndex zero = CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0));
 
+  CellIndex move(int row, int column) {
+    return CellIndex(
+      rowIndex: RowIndex(rowIndex.value + row),
+      columnIndex: ColumnIndex(columnIndex.value + column),
+    );
+  }
+
   @override
   String toString() {
     return 'Cell(${rowIndex.value}, ${columnIndex.value})';

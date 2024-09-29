@@ -4,33 +4,34 @@ import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/gestures/sheet_gesture.dart';
 
 abstract class SheetDragGesture extends SheetGesture {
-  final SheetDragDetails details;
+  final SheetDragDetails endDetails;
 
-  SheetDragGesture(this.details);
+  SheetDragGesture(this.endDetails);
 
   @override
-  List<Object?> get props => [details];
+  List<Object?> get props => [endDetails];
 }
 
 class SheetDragStartGesture extends SheetDragGesture {
-  SheetDragStartGesture(super.details);
+  SheetDragStartGesture(super.endDetails);
 }
 
 class SheetDragUpdateGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
 
-  SheetDragUpdateGesture(super.details, {required this.startDetails});
-}
-
-class SheetFillUpdateGesture extends SheetDragGesture {
-
-  SheetFillUpdateGesture(super.details);
+  SheetDragUpdateGesture(super.endDetails, {required this.startDetails});
+  
+  @override
+  List<Object?> get props => [endDetails, startDetails];
 }
 
 class SheetDragEndGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
 
-  SheetDragEndGesture(super.details, {required this.startDetails});
+  SheetDragEndGesture(super.endDetails, {required this.startDetails});
+  
+  @override
+  List<Object?> get props => [endDetails, startDetails];
 }
 
 class SheetDragDetails with EquatableMixin {

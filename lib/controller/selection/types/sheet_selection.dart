@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 import 'package:sheets/controller/index.dart';
+import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/sheet_constants.dart';
 
@@ -76,6 +77,8 @@ abstract class SheetSelection with EquatableMixin {
   CellIndex get end;
 
   List<CellIndex> get selectedCells;
+
+  SelectionCellCorners? get selectionCorners;
 
   SelectionStatus isColumnSelected(ColumnIndex columnIndex);
 

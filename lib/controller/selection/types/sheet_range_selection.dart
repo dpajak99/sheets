@@ -59,8 +59,9 @@ class SheetRangeSelection extends SheetSelection {
 
   Range<RowIndex> get verticalRange => Range(_start.rowIndex, _end.rowIndex);
 
-  SelectionCorners<CellIndex> get selectionCorners {
-    return SelectionCorners.fromDirection(
+  @override
+  SelectionCellCorners get selectionCorners {
+    return SelectionCellCorners.fromDirection(
       topLeft: start,
       topRight: CellIndex(rowIndex: start.rowIndex, columnIndex: end.columnIndex),
       bottomLeft: CellIndex(rowIndex: end.rowIndex, columnIndex: start.columnIndex),

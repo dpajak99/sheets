@@ -1,19 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_visibility_controller.dart';
+import 'package:sheets/utils/direction.dart';
 
 class SheetFillSelection extends SheetRangeSelection {
   final SheetSelection baseSelection;
+  final Direction fillDirection;
 
   SheetFillSelection({
     required this.baseSelection,
+    required this.fillDirection,
     required super.paintConfig,
     required super.start,
     required super.end,
     required super.completed,
   }) : assert(baseSelection is! SheetFillSelection);
+
+  @override
+  SelectionStatus isColumnSelected(ColumnIndex columnIndex) => baseSelection.isColumnSelected(columnIndex);
+
+  @override
+  SelectionStatus isRowSelected(RowIndex rowIndex) => baseSelection.isRowSelected(rowIndex);
+
+  @override
+  bool get fillHandleVisible => true;
+
+  @override
+  Offset? get fillHandleOffset => baseSelection.fillHandleOffset;
+
+  @override
+  SheetSelection complete() {
+    SelectionCellCorners parentCorners = baseSelection.selectionCorners!;
+    SelectionCellCorners currentCorners = selectionCorners;
+
+    switch(fillDirection) {
+      case Direction.top:
+        return SheetRangeSelection(
+          paintConfig: paintConfig,
+          start: currentCorners.topLeft,
+          end: parentCorners.bottomRight,
+          completed: true,
+        );
+      case Direction.bottom:
+        return SheetRangeSelection(
+          paintConfig: paintConfig,
+          start: parentCorners.topLeft,
+          end: currentCorners.bottomRight,
+          completed: true,
+        );
+      case Direction.left:
+        return SheetRangeSelection(
+          paintConfig: paintConfig,
+          start: currentCorners.topLeft,
+          end: parentCorners.bottomRight,
+          completed: true,
+        );
+      case Direction.right:
+        return SheetRangeSelection(
+          paintConfig: paintConfig,
+          start: parentCorners.topLeft,
+          end: currentCorners.bottomRight,
+          completed: true,
+        );
+    }
+  }
+
+  @override
+  SheetSelection simplify() => this;
 
   @override
   SheetSelectionPaint get paint => SheetFillSelectionPaint(this);
@@ -36,16 +92,5 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
     Rect selectionRect = selectionBounds.selectionRect;
 
     paintFillBorder(canvas, selectionRect);
-
-    if (selection.isCompleted) {
-      paintSelectionBorder(
-        canvas,
-        selectionRect,
-        top: selectionBounds.isTopBorderVisible,
-        right: selectionBounds.isRightBorderVisible,
-        bottom: selectionBounds.isBottomBorderVisible,
-        left: selectionBounds.isLeftBorderVisible,
-      );
-    }
   }
 }

@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/utils/direction.dart';
 
 enum SelectionDirection { topRight, topLeft, bottomRight, bottomLeft }
@@ -33,6 +32,52 @@ class SelectionCorners<T> with EquatableMixin {
         return SelectionCorners(bottomRight, bottomLeft, topRight, topLeft);
     }
   }
+
+  @override
+  List<Object?> get props => <Object?>[topLeft, topRight, bottomLeft, bottomRight];
+}
+
+class SelectionCellCorners extends SelectionCorners<CellIndex> {
+  SelectionCellCorners(super.topLeft, super.topRight, super.bottomLeft, super.bottomRight);
+
+  factory SelectionCellCorners.fromDirection({
+    required CellIndex topLeft,
+    required CellIndex topRight,
+    required CellIndex bottomLeft,
+    required CellIndex bottomRight,
+    required SelectionDirection direction,
+  }) {
+    switch (direction) {
+      case SelectionDirection.bottomRight:
+        return SelectionCellCorners(topLeft, topRight, bottomLeft, bottomRight);
+      case SelectionDirection.bottomLeft:
+        return SelectionCellCorners(topRight, topLeft, bottomRight, bottomLeft);
+      case SelectionDirection.topRight:
+        return SelectionCellCorners(bottomLeft, bottomRight, topLeft, topRight);
+      case SelectionDirection.topLeft:
+        return SelectionCellCorners(bottomRight, bottomLeft, topRight, topLeft);
+    }
+  }
+
+  Direction getRelativePosition(CellIndex cellIndex) {
+    Map<Direction, int> directionSpaces = {
+      Direction.top: cellIndex.rowIndex.value - topLeft.rowIndex.value,
+      Direction.left: cellIndex.columnIndex.value - topLeft.columnIndex.value,
+      Direction.bottom: bottomRight.rowIndex.value - cellIndex.rowIndex.value,
+      Direction.right: bottomRight.columnIndex.value - cellIndex.columnIndex.value,
+    };
+
+    print('Direction Spaces: $directionSpaces');
+    return directionSpaces.entries.reduce((a, b) => a.value < b.value ? a : b).key;
+  }
+
+  int get topIndex => topLeft.rowIndex.value;
+
+  int get bottomIndex => bottomLeft.rowIndex.value;
+
+  int get leftIndex => topLeft.columnIndex.value;
+
+  int get rightIndex => topRight.columnIndex.value;
 
   @override
   List<Object?> get props => <Object?>[topLeft, topRight, bottomLeft, bottomRight];
