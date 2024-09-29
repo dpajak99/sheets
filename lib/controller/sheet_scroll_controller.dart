@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/sheet_scroll_physics.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/sheet_scroll_metrics.dart';
@@ -59,7 +58,6 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
   }
 
   set horizontal(A horizontal) {
-    print('Set horizontal: $horizontal');
     if (_horizontal == horizontal) return;
     _horizontal = horizontal;
 
@@ -68,7 +66,6 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
   }
 
   void update({required A horizontal, required A vertical}) {
-    print('Set horizontal 2: $horizontal');
     if (_horizontal == horizontal && _vertical == vertical) return;
     _horizontal = horizontal;
     _vertical = vertical;
@@ -79,7 +76,7 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
   List<Object?> get props => [_vertical, _horizontal];
 }
 
-class SheetScrollController {
+class SheetScrollController extends ChangeNotifier {
   final SheetScrollPhysics physics = SmoothScrollPhysics();
 
   final DirectionalValues<SheetScrollPosition> position = DirectionalValues(
@@ -94,6 +91,15 @@ class SheetScrollController {
 
   SheetScrollController() {
     physics.applyTo(this);
+    metrics.addListener(notifyListeners);
+    position.addListener(notifyListeners);
+  }
+
+  @override
+  void dispose() {
+    metrics.dispose();
+    position.dispose();
+    super.dispose();
   }
 
   void scrollBy(Offset delta) {
@@ -111,11 +117,7 @@ class SheetScrollController {
     );
   }
 
-  Map<int, double> _customRowExtents = <int, double>{};
-
   set customRowExtents(Map<int, double> customRowExtents) {
-    _customRowExtents = customRowExtents;
-
     double contentHeight = 0;
     for (int i = 0; i < defaultRowCount; i++) {
       double rowHeight = customRowExtents[i] ?? defaultRowHeight;
@@ -125,11 +127,7 @@ class SheetScrollController {
     metrics.vertical = metrics.vertical.copyWith(contentSize: contentHeight);
   }
 
-  Map<int, double> _customColumnExtents = <int, double>{};
-
   set customColumnExtents(Map<int, double> customColumnExtents) {
-    _customColumnExtents = customColumnExtents;
-
     double contentWidth = 0;
     for (int i = 0; i < defaultColumnCount; i++) {
       double columnWidth = customColumnExtents[i] ?? defaultColumnWidth;
@@ -137,46 +135,5 @@ class SheetScrollController {
     }
 
     metrics.horizontal = metrics.horizontal.copyWith(contentSize: contentWidth);
-  }
-
-  (RowIndex, double) get firstVisibleRow {
-    double contentHeight = 0;
-    int hiddenRows = 0;
-
-    while (contentHeight < position.vertical.offset) {
-      hiddenRows++;
-      double rowHeight = _customRowExtents[hiddenRows] ?? defaultRowHeight;
-      contentHeight += rowHeight;
-    }
-
-    double rowHeight = _customRowExtents[hiddenRows] ?? defaultRowHeight;
-    double verticalOverscroll = position.vertical.offset - contentHeight;
-    if (verticalOverscroll != 0) {
-      double hiddenHeight = ((-rowHeight) - verticalOverscroll);
-      return (RowIndex(hiddenRows), hiddenHeight);
-    } else {
-      return (RowIndex(hiddenRows), 0);
-    }
-  }
-
-  (ColumnIndex, double) get firstVisibleColumn {
-    double contentWidth = 0;
-    int hiddenColumns = 0;
-
-    while (contentWidth < position.horizontal.offset) {
-      hiddenColumns++;
-      double columnWidth = _customColumnExtents[hiddenColumns] ?? defaultColumnWidth;
-      contentWidth += columnWidth;
-    }
-
-    double columnWidth = _customColumnExtents[hiddenColumns] ?? defaultColumnWidth;
-    double horizontalOverscroll = position.horizontal.offset - contentWidth;
-
-    if (horizontalOverscroll != 0) {
-      double hiddenWidth = ((-columnWidth) - horizontalOverscroll);
-      return (ColumnIndex(hiddenColumns), hiddenWidth);
-    } else {
-      return (ColumnIndex(hiddenColumns), 0);
-    }
   }
 }

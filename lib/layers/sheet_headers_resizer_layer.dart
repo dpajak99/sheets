@@ -7,10 +7,10 @@ double _kGapSize = 5;
 double _kWeight = 3;
 double _kLength = 16;
 
-class VerticalHeadersResizer extends StatelessWidget {
+class HeadersResizerLayer extends StatelessWidget {
   final SheetController sheetController;
 
-  const VerticalHeadersResizer({
+  const HeadersResizerLayer({
     required this.sheetController,
     super.key,
   });
@@ -19,32 +19,27 @@ class VerticalHeadersResizer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: sheetController.visibilityController.visibleColumns.map((ColumnConfig column) {
-        return _VerticalHeaderResizer(
-          column: column,
-          onResize: (Offset delta) => sheetController.resizeColumnBy(column, delta.dx),
-        );
-      }).toList(),
+      children: [
+        _VerticalHeadersResizerLayer(sheetController: sheetController),
+        _HorizontalHeadersResizerLayer(sheetController: sheetController),
+      ],
     );
   }
 }
 
-class HorizontalHeadersResizer extends StatelessWidget {
+class _VerticalHeadersResizerLayer extends StatelessWidget {
   final SheetController sheetController;
 
-  const HorizontalHeadersResizer({
-    required this.sheetController,
-    super.key,
-  });
+  const _VerticalHeadersResizerLayer({required this.sheetController});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: sheetController.visibilityController.visibleRows.map((RowConfig row) {
-        return _HorizontalHeaderResizer(
-          row: row,
-          onResize: (Offset delta) => sheetController.resizeRowBy(row, delta.dy),
+      children: sheetController.viewport.visibleColumns.map((ColumnConfig column) {
+        return _VerticalHeaderResizer(
+          column: column,
+          onResize: (Offset delta) => sheetController.resizeColumnBy(column, delta.dx),
         );
       }).toList(),
     );
@@ -109,6 +104,25 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
 
   void _handleDragDeltaChanged(Offset value) {
     setState(() => dragDelta = value.dx);
+  }
+}
+
+class _HorizontalHeadersResizerLayer extends StatelessWidget {
+  final SheetController sheetController;
+
+  const _HorizontalHeadersResizerLayer({required this.sheetController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: sheetController.viewport.visibleRows.map((RowConfig row) {
+        return _HorizontalHeaderResizer(
+          row: row,
+          onResize: (Offset delta) => sheetController.resizeRowBy(row, delta.dy),
+        );
+      }).toList(),
+    );
   }
 }
 

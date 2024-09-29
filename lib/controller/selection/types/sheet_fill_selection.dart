@@ -3,7 +3,7 @@ import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/controller/sheet_visibility_controller.dart';
+import 'package:sheets/controller/sheet_viewport_delegate.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetFillSelection extends SheetRangeSelection {
@@ -81,7 +81,7 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
   SheetFillSelectionPaint(this.selection);
 
   @override
-  void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size) {
+  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
     selection.baseSelection.paint.paint(paintConfig, canvas, size);
 
     SelectionBounds? selectionBounds = selection.getSelectionBounds();

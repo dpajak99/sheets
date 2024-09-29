@@ -1,19 +1,17 @@
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection.dart';
-import 'package:sheets/controller/selection/recognizers/selection_recognizer.dart';
 import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SelectionFillRecognizer extends SelectionRecognizer {
+class SelectionFillRecognizer  {
   final SheetController sheetController;
   final SheetSelection sheetSelection;
 
   SelectionFillRecognizer.from(this.sheetSelection, this.sheetController);
 
-  @override
   void handle(SheetItemConfig selectionEnd) {
     SelectionCellCorners? corners = sheetSelection.selectionCorners;
     if(selectionEnd is! CellConfig) return;
@@ -46,7 +44,7 @@ class SelectionFillRecognizer extends SelectionRecognizer {
     SheetFillSelection sheetFillSelection = SheetFillSelection(
       fillDirection: direction,
       baseSelection: sheetSelection,
-      paintConfig: sheetController.visibilityController,
+      paintConfig: sheetController.viewport,
       start: start,
       end: end,
       completed: false,
@@ -54,7 +52,4 @@ class SelectionFillRecognizer extends SelectionRecognizer {
 
     sheetController.selectionController.custom(sheetFillSelection);
   }
-
-  @override
-  void complete() {}
 }

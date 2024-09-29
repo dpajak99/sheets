@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/multi_listenable_builder.dart';
-import 'package:sheets/painters/headers_painter.dart';
-import 'package:sheets/painters/selection_painter.dart';
-import 'package:sheets/painters/sheet_painter.dart';
+import 'package:sheets/layers/sheet_cells_layer.dart';
+import 'package:sheets/layers/sheet_fill_handle_layer.dart';
+import 'package:sheets/layers/sheet_headers_layer.dart';
+import 'package:sheets/layers/sheet_headers_resizer_layer.dart';
+import 'package:sheets/layers/sheet_selection_layer.dart';
 import 'package:sheets/sheet_constants.dart';
-import 'package:sheets/sheet_fill_handle.dart';
-import 'package:sheets/sheet_draggable.dart';
 import 'package:sheets/sheet_gesture_detector.dart';
-import 'package:sheets/sheet_resize_divider.dart';
 import 'package:sheets/sheet_scrollable.dart';
 import 'package:sheets/widgets/sheet_cell_info_bar.dart';
 import 'package:sheets/widgets/sheet_toolbar.dart';
@@ -208,37 +206,11 @@ class SheetGrid extends StatelessWidget {
             ],
           ),
         ),
-        SheetLayer.fill(
-          listenables: [
-            sheetController.visibilityController,
-          ],
-          builder: (BuildContext context) {
-            return CustomPaint(
-              painter: SheetPainter(sheetController: sheetController),
-            );
-          },
-        ),
-        SheetLayer.fill(
-          listenables: [
-            sheetController.selectionController,
-            sheetController.visibilityController,
-          ],
-          builder: (BuildContext context) {
-            return Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                CustomPaint(isComplex: true, painter: ColumnHeadersPainter(sheetController: sheetController)),
-                CustomPaint(isComplex: true, painter: RowHeadersPainter(sheetController: sheetController)),
-                VerticalHeadersResizer(sheetController: sheetController),
-                HorizontalHeadersResizer(sheetController: sheetController),
-                CustomPaint(isComplex: true, painter: SelectionPainter(sheetController: sheetController)),
-                SheetFillHandle(
-                  sheetController: sheetController,
-                ),
-              ],
-            );
-          },
-        ),
+        Positioned.fill(child: SheetCellsLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetHeadersLayer(sheetController: sheetController)),
+        Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetSelectionLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
         Positioned(
           top: 0,
           left: 0,
@@ -275,64 +247,7 @@ class SheetGrid extends StatelessWidget {
         //     },
         //   ),
         // ),
-        // SheetLayer.fill(
-        //   listenables: [
-        //     sheetController.selectionController,
-        //     sheetController.paintConfig,
-        //   ],
-        //   builder: (BuildContext context) {
-        //     Offset? fillHandleOffset = sheetController.selectionController.selection.fillHandleOffset;
-        //     return Stack(
-        //       children: [
-        //         if (fillHandleOffset != null)
-        //           Positioned(
-        //             left: fillHandleOffset.dx - 4,
-        //             top: fillHandleOffset.dy - 4,
-        //             child: FillHandleOffset(cursorController: sheetController.cursorController),
-        //           ),
-        //       ],
-        //     );
-        //   },
-        // ),
       ],
-    );
-  }
-}
-
-class SheetLayer extends StatelessWidget {
-  final List<Listenable> listenables;
-  final Widget Function(BuildContext context) builder;
-  final double? top;
-  final double? left;
-  final double? right;
-  final double? bottom;
-
-  const SheetLayer({
-    required this.listenables,
-    required this.builder,
-    this.top,
-    this.left,
-    this.right,
-    this.bottom,
-    super.key,
-  });
-
-  const SheetLayer.fill({super.key, required this.listenables, required this.builder})
-      : top = 0,
-        left = 0,
-        right = 0,
-        bottom = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: top,
-      left: left,
-      right: right,
-      bottom: bottom,
-      child: RepaintBoundary(
-        child: MultiListenableBuilder(listenables: listenables, builder: builder),
-      ),
     );
   }
 }

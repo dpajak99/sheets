@@ -1,5 +1,6 @@
 part of 'asset_icon.dart';
 
+// ignore_for_file: constant_identifier_names
 class SheetIcons {
   static const AssetIconData add = AssetIconData('assets/icons/add.svg');
   static const AssetIconData add_comment = AssetIconData('assets/icons/add_comment.svg');

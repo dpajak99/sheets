@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/program_config.dart';
@@ -13,30 +12,30 @@ import 'package:sheets/controller/selection/recognizers/selection_fill_recognize
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
 import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/controller/sheet_cursor_controller.dart';
 import 'package:sheets/controller/sheet_keyboard_controller.dart';
+import 'package:sheets/controller/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/controller/sheet_visibility_controller.dart';
-import 'package:sheets/controller/style.dart';
+import 'package:sheets/controller/sheet_viewport_delegate.dart';
+import 'package:sheets/sheet_gesture_detector.dart';
 import 'package:sheets/utils/extensions/offset_extension.dart';
 
 class SheetController {
   final SheetProperties sheetProperties = SheetProperties(
-    customColumnProperties: {
+    customColumnStyles: {
       // ColumnIndex(3): ColumnStyle(width: 200),
     },
-    customRowProperties: {
+    customRowStyles: {
       // RowIndex(8): RowStyle(height: 100),
     },
   );
 
   final SheetScrollController scrollController = SheetScrollController();
-  late final SheetVisibilityController visibilityController = SheetVisibilityController(
+  late final SheetViewportDelegate viewport = SheetViewportBaseDelegate(
     sheetProperties: sheetProperties,
     scrollController: scrollController,
   );
-  late final SheetSelectionController selectionController = SheetSelectionController(visibilityController);
-  late final SheetCursorController mouse = SheetCursorController();
+  late final SheetSelectionController selectionController = SheetSelectionController(viewport);
+  late final SheetMouseListener mouse = SheetMouseListener();
   late final SheetKeyboardController keyboard = SheetKeyboardController();
 
   SheetController() {
@@ -47,7 +46,7 @@ class SheetController {
   }
 
   void onMouseOffsetChanged(Offset offset) {
-    mouse.updateOffset(offset, visibilityController.findHoveredElement(offset));
+    mouse.updateOffset(offset, viewport.findByOffset(offset));
   }
 
   void setCursor(SystemMouseCursor cursor) {
@@ -61,7 +60,6 @@ class SheetController {
       columnStyle.copyWith(width: max(10, columnStyle.width + delta)),
     );
     scrollController.customColumnExtents = sheetProperties.customColumnExtents;
-    visibilityController.refresh();
   }
 
   void resizeRowBy(RowConfig row, double delta) {
@@ -71,7 +69,6 @@ class SheetController {
       rowStyle.copyWith(height: max(10, rowStyle.height + delta)),
     );
     scrollController.customRowExtents = sheetProperties.customRowExtents;
-    visibilityController.refresh();
   }
 
   void _handleGesture(SheetGesture gesture) {

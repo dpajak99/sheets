@@ -4,7 +4,7 @@ import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
-import 'package:sheets/controller/sheet_visibility_controller.dart';
+import 'package:sheets/controller/sheet_viewport_delegate.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -185,7 +185,7 @@ class SheetRangeSelectionPaint extends SheetSelectionPaint {
   SheetRangeSelectionPaint(this.selection);
 
   @override
-  void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size) {
+  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
     SelectionBounds? selectionBounds = selection.getSelectionBounds();
     if (selectionBounds == null) {
       return;

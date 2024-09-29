@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 import 'package:sheets/controller/index.dart';
 import 'package:sheets/controller/selection.dart';
-import 'package:sheets/controller/sheet_visibility_controller.dart';
+import 'package:sheets/controller/sheet_viewport_delegate.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
@@ -66,7 +66,7 @@ class SelectionStatus with EquatableMixin {
 }
 
 abstract class SheetSelection with EquatableMixin {
-  final SheetVisibilityController paintConfig;
+  final SheetViewportDelegate paintConfig;
   final bool _completed;
 
   SheetSelection({required this.paintConfig, required bool completed}) : _completed = completed;
@@ -103,7 +103,7 @@ abstract class SheetSelection with EquatableMixin {
 }
 
 abstract class SheetSelectionPaint {
-  void paint(SheetVisibilityController paintConfig, Canvas canvas, Size size);
+  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size);
 
   void paintMainCell(Canvas canvas, Rect rect) {
     Paint mainCellPaint = Paint()

@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/selection/gestures/sheet_gesture.dart';
-import 'package:sheets/controller/selection/recognizers/sheet_tap_recognizer.dart';
 
 class SheetTapGesture extends SheetGesture {
   final SheetTapDetails details;

@@ -67,7 +67,6 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
       Direction.right: bottomRight.columnIndex.value - cellIndex.columnIndex.value,
     };
 
-    print('Direction Spaces: $directionSpaces');
     return directionSpaces.entries.reduce((a, b) => a.value < b.value ? a : b).key;
   }
 
