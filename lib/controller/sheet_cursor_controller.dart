@@ -103,45 +103,4 @@ class SheetCursorController {
     if (!_enabled) return;
     _gesturesStream.add(gesture);
   }
-
-// void dragStart(DragStartDetails details, {Offset subtract = Offset.zero}) {
-//   // print('Drag start');
-//   // position = details.globalPosition;
-//   // SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
-//   // hoveredElement = dragHoveredElement;
-//   // if (isResizing) {
-//   // } else if (dragHoveredElement != null) {
-//   //   if (sheetController.cursorController.isFilling) {
-//   //     selectionDragRecognizer = SelectionFillRecognizer(sheetController, dragHoveredElement);
-//   //   } else {
-//   //     selectionDragRecognizer = SelectionDragRecognizer(sheetController, dragHoveredElement);
-//   //   }
-//   // }
-//   //
-//   // notifyListeners();
-// }
-//
-// void dragUpdate(DragUpdateDetails details, {Offset subtract = Offset.zero}) {
-//   // position = details.globalPosition;
-//   // SheetItemConfig? dragHoveredElement = sheetController.getHoveredElement(position - subtract);
-//   // hoveredElement = dragHoveredElement;
-//   //
-//   // if (isResizing) {
-//   // } else if (dragHoveredElement != null) {
-//   //   selectionDragRecognizer?.handle(dragHoveredElement);
-//   // }
-//   //
-//   // notifyListeners();
-// }
-//
-// void dragEnd(DragEndDetails details) {
-//   position = details.globalPosition;
-//
-//   if (isResizing) {
-//   } else {
-//     selectionDragRecognizer?.complete();
-//     selectionDragRecognizer = null;
-//   }
-//   notifyListeners();
-// }
 }

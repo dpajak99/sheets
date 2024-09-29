@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/sheet_gesture_detector.dart';
+import 'package:sheets/sheet_draggable.dart';
 
 class SheetFillHandle extends StatefulWidget {
   final SheetController sheetController;
@@ -28,7 +28,7 @@ class SheetFillHandleState extends State<SheetFillHandle> {
           Positioned(
             left: fillHandleOffset.dx - size / 2,
             top: fillHandleOffset.dy - size / 2,
-            child: SheetGestureDetector(
+            child: SheetDraggable(
               actionSize: const Size(size, size),
               cursor: SystemMouseCursors.precise,
               onDragStart: (_) {

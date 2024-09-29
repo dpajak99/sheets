@@ -1,125 +1,71 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/sheet.dart';
+import 'package:sheets/utils/extensions/offset_extension.dart';
 
-class SheetGestureDetector extends StatefulWidget {
-  final Size actionSize;
-  final SystemMouseCursor cursor;
-  final SystemMouseCursor? dragCursor;
-  final ValueChanged<Offset> onDragStart;
-  final ValueChanged<Offset> onDragDeltaChanged;
-  final ValueChanged<Offset> onDragEnd;
-  final Positioned? Function(bool hovered, bool dragged)? builder;
-  final Widget? child;
-  final Offset? dragBarrier;
+class SheetGestureDetector extends StatelessWidget {
+  final ValueNotifier<SystemMouseCursor> cursorListener;
+  final ValueChanged<Offset> onMouseOffsetChanged;
+  final VoidCallback onTap;
+  final VoidCallback onDragStart;
+  final VoidCallback onDragUpdate;
+  final VoidCallback onDragEnd;
+  final ValueChanged<Offset> onScroll;
 
   const SheetGestureDetector({
-    required this.actionSize,
-    required this.cursor,
+    required this.cursorListener,
+    required this.onMouseOffsetChanged,
+    required this.onTap,
     required this.onDragStart,
-    required this.onDragDeltaChanged,
+    required this.onDragUpdate,
     required this.onDragEnd,
-    SystemMouseCursor? dragCursor,
-    this.builder,
-    this.child,
-    this.dragBarrier,
+    required this.onScroll,
     super.key,
-  }) : dragCursor = dragCursor ?? cursor;
-
-  @override
-  State<StatefulWidget> createState() => _SheetGestureDetectorState();
-}
-
-class _SheetGestureDetectorState extends State<SheetGestureDetector> {
-  Offset _dragDelta = Offset.zero;
-  bool _hoverInProgress = false;
-  bool _dragInProgress = false;
+  });
 
   @override
   Widget build(BuildContext context) {
-    Widget? child = widget.child ?? widget.builder!.call(_hoverInProgress, _dragInProgress);
-
-    return Stack(
-      children: [
-        if (child != null) child,
-        Positioned(
-          width: widget.actionSize.width,
-          height: widget.actionSize.height,
+    return ValueListenableBuilder(
+      valueListenable: cursorListener,
+      builder: (BuildContext context, SystemMouseCursor cursor, _) {
+        return Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerSignal: (PointerSignalEvent event) {
+            if (event is PointerScrollEvent) {
+              onScroll(event.scrollDelta);
+            }
+          },
+          onPointerDown: _onDragStart,
+          onPointerMove: _onDragUpdate,
+          onPointerUp: _onDragEnd,
           child: MouseRegion(
             opaque: false,
             hitTestBehavior: HitTestBehavior.translucent,
-            onEnter: (_) => _setHovered(true),
-            onHover: (_) => _setHovered(true),
-            onExit: (_) => _setHovered(false),
-            child: Listener(
-              onPointerDown: _onDragStart,
-              onPointerMove: _onDragUpdate,
-              onPointerUp: _onDragEnd,
-              behavior: HitTestBehavior.translucent,
-              child: const SizedBox.expand(),
-            ),
+            cursor: cursor,
+            onHover: (event) => _notifyOffsetChanged(event.localPosition),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
   void _onDragStart(PointerDownEvent event) {
-    Sheet.of(context).disableMouseActions();
-    Sheet.of(context).setCursor(widget.cursor);
-    _setDragged(true);
-    widget.onDragStart(event.position);
+    _notifyOffsetChanged(event.localPosition);
+    onTap();
+    onDragStart();
   }
 
   void _onDragUpdate(PointerMoveEvent event) {
-    if (widget.dragBarrier != null && (event.position.dy < widget.dragBarrier!.dy || event.position.dx < widget.dragBarrier!.dx)) {
-      Sheet.of(context).resetCursor();
-      return;
-    } else {
-      Sheet.of(context).setCursor(widget.cursor);
-    }
-
-    _dragDelta += event.delta;
-    widget.onDragDeltaChanged(_dragDelta);
+    _notifyOffsetChanged(event.localPosition);
+    onDragUpdate();
   }
 
-  void _onDragEnd(PointerUpEvent details) {
-    widget.onDragEnd(_dragDelta);
-
-    _dragDelta = Offset.zero;
-    widget.onDragDeltaChanged(_dragDelta);
-
-    setState(() {
-      _hoverInProgress = false;
-      _dragInProgress = false;
-    });
-
-    Sheet.of(context).enableMouseActions();
-    Sheet.of(context).resetCursor();
+  void _onDragEnd(PointerUpEvent event) {
+    _notifyOffsetChanged(event.localPosition);
+    onDragEnd();
   }
 
-  void _setHovered(bool value) {
-    if (_dragInProgress) return;
-    if (Sheet.of(context).isNativeDragging()) return;
-    if (Sheet.of(context).areMouseActionsEnabled() == false) return;
-
-    Sheet.of(context).setCustomTapHovered(value);
-    if (_hoverInProgress != value) {
-      setState(() {
-        _hoverInProgress = value;
-        _dragInProgress = false;
-      });
-      if (value == true) {
-        Sheet.of(context).setCursor(widget.cursor);
-      } else {
-        Sheet.of(context).resetCursor();
-      }
-    }
-  }
-
-  void _setDragged(bool value) {
-    if (_dragInProgress != value) {
-      setState(() => _dragInProgress = value);
-    }
+  void _notifyOffsetChanged(Offset value) {
+    onMouseOffsetChanged(value.limitMin(0, 0));
   }
 }

@@ -20,44 +20,6 @@ import 'package:sheets/controller/sheet_visibility_controller.dart';
 import 'package:sheets/controller/style.dart';
 import 'package:sheets/utils/extensions/offset_extension.dart';
 
-class SheetControllerOld {
-  final SheetProperties sheetProperties;
-  final SheetScrollController scrollController;
-
-  late final SheetVisibilityController paintConfig;
-  late final SheetKeyboardController keyboardController = SheetKeyboardController();
-  late final SheetSelectionController selectionController = SheetSelectionController(paintConfig);
-
-  ValueNotifier<CellConfig?> editNotifier = ValueNotifier(null);
-
-  SheetControllerOld({
-    required this.sheetProperties,
-    required this.scrollController,
-  }) {
-    paintConfig = SheetVisibilityController(scrollController: scrollController, sheetProperties: sheetProperties);
-    scrollController.customColumnExtents = sheetProperties.customColumnExtents;
-    scrollController.customRowExtents = sheetProperties.customRowExtents;
-    selectionController.addListener(cancelEdit);
-  }
-
-  void resize(Size size) {
-    scrollController.viewportSize = size;
-  }
-
-  void scrollBy(Offset delta) {
-    scrollController.scrollBy(delta);
-  }
-
-  void edit(CellConfig cellConfig) {
-    selectionController.selectSingle(cellConfig.index, editingEnabled: true);
-    editNotifier.value = cellConfig;
-  }
-
-  void cancelEdit() {
-    editNotifier.value = null;
-  }
-}
-
 class SheetController {
   final SheetProperties sheetProperties = SheetProperties(
     customColumnProperties: {

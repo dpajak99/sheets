@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/mouse_cursor_listener.dart';
 import 'package:sheets/multi_listenable_builder.dart';
 import 'package:sheets/painters/headers_painter.dart';
 import 'package:sheets/painters/selection_painter.dart';
 import 'package:sheets/painters/sheet_painter.dart';
 import 'package:sheets/sheet_constants.dart';
 import 'package:sheets/sheet_fill_handle.dart';
+import 'package:sheets/sheet_draggable.dart';
+import 'package:sheets/sheet_gesture_detector.dart';
 import 'package:sheets/sheet_resize_divider.dart';
 import 'package:sheets/sheet_scrollable.dart';
 import 'package:sheets/widgets/sheet_cell_info_bar.dart';
@@ -129,7 +130,7 @@ class SheetState extends State<Sheet> {
                 child: SheetGrid(sheetController: sheetController),
               ),
               Positioned.fill(
-                child: MouseCursorListener(
+                child: SheetGestureDetector(
                   cursorListener: sheetController.mouse.cursor,
                   onMouseOffsetChanged: sheetController.onMouseOffsetChanged,
                   onTap: sheetController.mouse.tap,

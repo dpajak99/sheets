@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/program_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/sheet_gesture_detector.dart';
+import 'package:sheets/sheet_draggable.dart';
 
 double _kGapSize = 5;
 double _kWeight = 3;
@@ -78,7 +78,7 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
       left: widget.column.rect.right - (_kGapSize / 2) - _kWeight + dragDelta,
       bottom: 0,
       width: dividerWidth,
-      child: SheetGestureDetector(
+      child: SheetDraggable(
         dragBarrier: Offset(widget.column.rect.left + 20, 0),
         onDragStart: (_) {},
         onDragDeltaChanged: _handleDragDeltaChanged,
@@ -139,7 +139,7 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
       left: 0,
       right: 0,
       height: dividerHeight,
-      child: SheetGestureDetector(
+      child: SheetDraggable(
         dragBarrier: Offset(0, widget.row.rect.top + 20),
         onDragStart: (_) {},
         onDragDeltaChanged: _handleDragDeltaChanged,

@@ -17,6 +17,7 @@ class SheetPainter extends CustomPainter {
     for (CellConfig cell in sheetController.visibilityController.visibleCells) {
       Paint backgroundPaint = Paint()
         ..color = Colors.white
+        ..isAntiAlias = false
         ..style = PaintingStyle.fill;
 
       canvas.drawRect(cell.rect, backgroundPaint);
@@ -24,6 +25,7 @@ class SheetPainter extends CustomPainter {
       Paint borderPaint = Paint()
         ..color = const Color(0xffe1e1e1)
         ..strokeWidth = borderWidth
+        ..isAntiAlias = false
         ..style = PaintingStyle.stroke;
 
       canvas.drawRect(cell.rect, borderPaint);
