@@ -146,10 +146,12 @@ class SheetRangeSelection extends SheetSelection {
 
   @override
   List<CellIndex> get selectedCells {
+    SelectionCellCorners selectionCorners = this.selectionCorners;
+
     List<CellIndex> cells = [];
-    for (int i = _start.rowIndex.value; i <= _end.rowIndex.value; i++) {
-      for (int j = _start.columnIndex.value; j <= _end.columnIndex.value; j++) {
-        cells.add(CellIndex(rowIndex: RowIndex(i), columnIndex: ColumnIndex(j)));
+    for (int rowIndex = selectionCorners.topLeft.rowIndex.value; rowIndex <= selectionCorners.bottomLeft.rowIndex.value; rowIndex++) {
+      for (int columnIndex = selectionCorners.topLeft.columnIndex.value; columnIndex <= selectionCorners.topRight.columnIndex.value; columnIndex++) {
+        cells.add(CellIndex(rowIndex: RowIndex(rowIndex), columnIndex: ColumnIndex(columnIndex)));
       }
     }
     return cells;

@@ -17,6 +17,10 @@ class SheetDoubleTapGesture extends SheetGesture {
 
   SheetDoubleTapGesture(this.details);
 
+  SheetTapGesture toSingleTap() {
+    return SheetTapGesture(details);
+  }
+
   @override
   List<Object?> get props => [details];
 }

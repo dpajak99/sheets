@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:sheets/controller/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
@@ -87,6 +88,33 @@ class SheetController {
   }
 
   void _handleTap(SheetTapGesture tapGesture) {
+    if (keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
+      CellIndex selectionStart = selectionController.selection.end;
+      SheetSelection? sheetSelection = switch (tapGesture.details.hoveredItem) {
+        CellConfig cell => selectionController.getRangeSelection(start: selectionStart, end: cell.index, completed: true),
+        ColumnConfig column => selectionController.getColumnRangeSelection(start: selectionStart.columnIndex, end: column.columnIndex),
+        RowConfig row => selectionController.getRowRangeSelection(start: selectionStart.rowIndex, end: row.rowIndex),
+        (_) => null,
+      };
+
+      if (sheetSelection != null) {
+        selectionController.selectMultiple(
+          <CellIndex>[...selectionController.selection.selectedCells, ...sheetSelection.selectedCells],
+          endCell: sheetSelection.end,
+        );
+      }
+      return;
+    }
+
+    if (keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
+      return switch (tapGesture.details.hoveredItem) {
+        CellConfig cell => selectionController.toggleCell(cell.index),
+        ColumnConfig column => selectionController.toggleColumn(column.columnIndex),
+        RowConfig row => selectionController.toggleRow(row.rowIndex),
+        (_) => () {},
+      };
+    }
+
     if (keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
       CellIndex selectionStart = selectionController.selection.start;
       return switch (tapGesture.details.hoveredItem) {
@@ -95,42 +123,57 @@ class SheetController {
         RowConfig row => selectionController.selectRowRange(start: selectionStart.rowIndex, end: row.rowIndex),
         (_) => () {},
       };
-    } else {
-      return switch (tapGesture.details.hoveredItem) {
-        CellConfig cell => selectionController.selectSingle(cell.index),
-        ColumnConfig column => selectionController.selectColumn(column.columnIndex),
-        RowConfig row => selectionController.selectRow(row.rowIndex),
-        (_) => () {},
-      };
     }
-  }
 
-  void _handleDoubleTap(SheetDoubleTapGesture doubleTapGesture) {}
-
-  void _handleDragStart(SheetDragStartGesture dragStartGesture) {}
-
-  void _handleDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
-    switch (dragUpdateGesture.startDetails.hoveredItem) {
-      case CellConfig _:
-        return _handleCellDragUpdate(dragUpdateGesture);
-      case ColumnConfig _:
-        return _handleColumnDragUpdate(dragUpdateGesture);
-      case RowConfig _:
-        return _handleRowDragUpdate(dragUpdateGesture);
-      default:
-        return;
-    }
-  }
-
-  void _handleCellDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
-    CellIndex start = (dragUpdateGesture.startDetails.hoveredItem! as CellConfig).index;
-    return switch (dragUpdateGesture.endDetails.hoveredItem) {
-      CellConfig endCell => selectionController.selectRange(start: start, end: endCell.index),
+    return switch (tapGesture.details.hoveredItem) {
+      CellConfig cell => selectionController.selectSingle(cell.index),
+      ColumnConfig column => selectionController.selectColumn(column.columnIndex),
+      RowConfig row => selectionController.selectRow(row.rowIndex),
       (_) => () {},
     };
   }
 
-  void _handleColumnDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
+  void _handleDoubleTap(SheetDoubleTapGesture doubleTapGesture) {
+    if (keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
+      _handleTap(doubleTapGesture.toSingleTap());
+    }
+  }
+
+  SheetSelection? previousSelection;
+
+  void _handleDragStart(SheetDragStartGesture dragStartGesture) {
+    previousSelection = selectionController.selection;
+  }
+
+  void _handleDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
+    if (previousSelection == null) return;
+
+    SheetSelection? sheetSelection = switch (dragUpdateGesture.startDetails.hoveredItem) {
+      CellConfig _ => _handleCellDragUpdate(dragUpdateGesture),
+      ColumnConfig _ => _handleColumnDragUpdate(dragUpdateGesture),
+      RowConfig _ => _handleRowDragUpdate(dragUpdateGesture),
+      _ => null,
+    };
+
+    if (sheetSelection != null) {
+      if (keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
+        selectionController.selectMultiple(<CellIndex>[...previousSelection!.selectedCells, ...sheetSelection.selectedCells]);
+      } else {
+        selectionController.custom(sheetSelection);
+      }
+    }
+  }
+
+  SheetSelection? _handleCellDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
+    CellIndex start = (dragUpdateGesture.startDetails.hoveredItem! as CellConfig).index;
+
+    return switch (dragUpdateGesture.endDetails.hoveredItem) {
+      CellConfig endCell => selectionController.getRangeSelection(start: start, end: endCell.index),
+      (_) => null,
+    };
+  }
+
+  SheetSelection? _handleColumnDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
     ColumnIndex start = (dragUpdateGesture.startDetails.hoveredItem! as ColumnConfig).columnIndex;
     late ColumnIndex end;
 
@@ -142,13 +185,13 @@ class SheetController {
         end = columnConfig.columnIndex;
         break;
       default:
-        return;
+        return null;
     }
 
-    selectionController.selectColumnRange(start: start, end: end);
+    return selectionController.getColumnRangeSelection(start: start, end: end);
   }
 
-  void _handleRowDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
+  SheetSelection? _handleRowDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
     RowIndex start = (dragUpdateGesture.startDetails.hoveredItem! as RowConfig).rowIndex;
     late RowIndex end;
 
@@ -160,14 +203,15 @@ class SheetController {
         end = rowConfig.rowIndex;
         break;
       default:
-        return;
+        return null;
     }
 
-    selectionController.selectRowRange(start: start, end: end);
+    return selectionController.getRowRangeSelection(start: start, end: end);
   }
 
   void _handleDragEnd(SheetDragEndGesture dragEndGesture) {
     selectionController.completeSelection();
+    previousSelection = null;
   }
 
   bool _fillingInProgress = false;

@@ -15,5 +15,10 @@ class SheetKeyboardListener {
     return activeKeys.contains(logicalKeyboardKey);
   }
 
+  bool areKeysPressed(List<LogicalKeyboardKey> keys) {
+    return keys.every((key) => activeKeys.contains(key));
+  }
+
+
   bool get anyKeyActive => activeKeys.isNotEmpty;
 }

@@ -29,13 +29,9 @@ abstract class SheetSelection with EquatableMixin {
 
   SelectionStatus isRowSelected(RowIndex rowIndex);
 
-  SheetSelection complete() {
-    return this;
-  }
+  SheetSelection complete() => this;
 
-  SheetSelection simplify() {
-    return this;
-  }
+  SheetSelection simplify() => this;
 
   bool get fillHandleVisible;
 
@@ -113,18 +109,4 @@ abstract class SheetSelectionPaint {
       canvas.drawLine(Offset(rect.left, y), Offset(rect.left, y - dashWidth), selectionPaint);
     }
   }
-
-  // void paintFillHandle(Canvas canvas, Offset offset) {
-  //   Paint fillHandleBorderPaint = Paint()
-  //     ..color = const Color(0xffffffff)
-  //     ..style = PaintingStyle.fill;
-  //
-  //   canvas.drawCircle(offset, 5, fillHandleBorderPaint);
-  //
-  //   Paint fillHandlePaint = Paint()
-  //     ..color = const Color(0xff3572e3)
-  //     ..style = PaintingStyle.fill;
-  //
-  //   canvas.drawCircle(offset, 4, fillHandlePaint);
-  // }
 }
