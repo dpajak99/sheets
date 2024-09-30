@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:sheets/controller/index.dart';
+import 'package:sheets/models/sheet_item_index.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
-import 'package:sheets/controller/sheet_viewport_delegate.dart';
-import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/config/sheet_constants.dart';
 
 class SheetSelectionController extends ChangeNotifier {
   final SheetViewportDelegate paintConfig;

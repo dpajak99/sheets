@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/program_config.dart';
+import 'package:sheets/models/sheet_item_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/sheet_draggable.dart';
 

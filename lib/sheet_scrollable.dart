@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/sheet_constants.dart';
-import 'package:sheets/sheet_scroll_metrics.dart';
+import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/models/sheet_axis_direction.dart';
+import 'package:sheets/models/sheet_scroll_metrics.dart';
+import 'package:sheets/models/sheet_scroll_position.dart';
 import 'package:sheets/utils/mouse_state_listener.dart';
 
 class SheetScrollable extends StatefulWidget {

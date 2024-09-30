@@ -1,8 +1,7 @@
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
-
-enum SheetAxisDirection { vertical, horizontal }
+import 'package:sheets/models/sheet_axis_direction.dart';
 
 class SheetScrollMetrics with EquatableMixin {
   SheetScrollMetrics({
@@ -15,10 +14,10 @@ class SheetScrollMetrics with EquatableMixin {
 
   SheetScrollMetrics.zero(SheetAxisDirection axisDirection)
       : this(
-          axisDirection: axisDirection,
-          contentSize: 0,
-          viewportDimension: 0,
-        );
+    axisDirection: axisDirection,
+    contentSize: 0,
+    viewportDimension: 0,
+  );
 
   SheetScrollMetrics copyWith({
     double? contentSize,

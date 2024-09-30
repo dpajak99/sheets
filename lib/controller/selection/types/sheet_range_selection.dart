@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/index.dart';
-import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection.dart';
+import 'package:sheets/models/range.dart';
+import 'package:sheets/models/selection_status.dart';
+import 'package:sheets/models/sheet_item_index.dart';
+import 'package:sheets/models/selection_bounds.dart';
+import 'package:sheets/models/selection_corners.dart';
+import 'package:sheets/models/selection_direction.dart';
+import 'package:sheets/models/sheet_item_config.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
-import 'package:sheets/controller/sheet_viewport_delegate.dart';
-import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/models/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetRangeSelection extends SheetSelection {
@@ -157,6 +162,7 @@ class SheetRangeSelection extends SheetSelection {
     }
     return this;
   }
+
   @override
   bool get fillHandleVisible => isCompleted;
 

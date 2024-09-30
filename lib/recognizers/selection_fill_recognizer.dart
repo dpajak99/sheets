@@ -1,6 +1,6 @@
-import 'package:sheets/controller/index.dart';
-import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection.dart';
+import 'package:sheets/models/sheet_item_index.dart';
+import 'package:sheets/models/selection_corners.dart';
+import 'package:sheets/models/sheet_item_config.dart';
 import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
 import 'package:sheets/controller/sheet_controller.dart';

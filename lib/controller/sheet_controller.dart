@@ -1,22 +1,22 @@
 import 'dart:math';
 
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/index.dart';
-import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/controller/selection/gestures/sheet_drag_gesture.dart';
-import 'package:sheets/controller/selection/gestures/sheet_fill_gesture.dart';
-import 'package:sheets/controller/selection/gestures/sheet_gesture.dart';
-import 'package:sheets/controller/selection/gestures/sheet_scroll_gesture.dart';
-import 'package:sheets/controller/selection/gestures/sheet_tap_gesture.dart';
-import 'package:sheets/controller/selection/recognizers/selection_fill_recognizer.dart';
+import 'package:sheets/gestures/sheet_drag_gesture.dart';
+import 'package:sheets/gestures/sheet_fill_gesture.dart';
+import 'package:sheets/gestures/sheet_gesture.dart';
+import 'package:sheets/gestures/sheet_scroll_gesture.dart';
+import 'package:sheets/gestures/sheet_tap_gesture.dart';
+import 'package:sheets/models/sheet_item_index.dart';
+import 'package:sheets/models/sheet_item_config.dart';
 import 'package:sheets/controller/selection/sheet_selection_controller.dart';
 import 'package:sheets/controller/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/controller/sheet_keyboard_controller.dart';
-import 'package:sheets/controller/sheet_properties.dart';
+import 'package:sheets/models/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/controller/sheet_viewport_delegate.dart';
-import 'package:sheets/sheet_gesture_detector.dart';
+import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/listeners/keyboard_listener.dart';
+import 'package:sheets/listeners/mouse_listener.dart';
+import 'package:sheets/recognizers/selection_fill_recognizer.dart';
 import 'package:sheets/utils/extensions/offset_extension.dart';
 
 class SheetController {
@@ -36,7 +36,7 @@ class SheetController {
   );
   late final SheetSelectionController selectionController = SheetSelectionController(viewport);
   late final SheetMouseListener mouse = SheetMouseListener();
-  late final SheetKeyboardController keyboard = SheetKeyboardController();
+  late final SheetKeyboardListener keyboard = SheetKeyboardListener();
 
   SheetController() {
     scrollController.customColumnExtents = sheetProperties.customColumnExtents;
@@ -177,7 +177,7 @@ class SheetController {
   }
 
   void _handleFillUpdate(SheetFillUpdateGesture fillUpdateGesture) {
-    if(_fillingInProgress == false) return;
+    if (_fillingInProgress == false) return;
     if (mouse.hoveredItem.value == null) return;
     SheetSelection sheetSelection = (selectionController.selection is SheetFillSelection)
         ? (selectionController.selection as SheetFillSelection).baseSelection
@@ -189,7 +189,6 @@ class SheetController {
     _fillingInProgress = false;
     selectionController.completeSelection();
   }
-
 
   void _handleScroll(SheetScrollGesture scrollGesture) {
     if (keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {

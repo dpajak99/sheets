@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/program_config.dart';
-import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/models/sheet_item_config.dart';
+import 'package:sheets/config/sheet_constants.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
 class SheetCellsLayer extends StatefulWidget {

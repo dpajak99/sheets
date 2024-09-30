@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-class SheetKeyboardController {
+class SheetKeyboardListener {
   List<LogicalKeyboardKey> activeKeys = [];
 
   void addKey(LogicalKeyboardKey logicalKeyboardKey) {

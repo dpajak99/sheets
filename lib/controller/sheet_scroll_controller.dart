@@ -1,80 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:sheets/controller/sheet_scroll_physics.dart';
-import 'package:sheets/sheet_constants.dart';
-import 'package:sheets/sheet_scroll_metrics.dart';
-
-class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
-  SheetScrollPosition();
-
-  SheetScrollPosition.zero();
-
-  double _offset = 0;
-
-  double get offset => _offset;
-
-  set offset(double offset) {
-    if (_offset == offset) return;
-    _offset = offset;
-    notifyListeners();
-  }
-
-  @override
-  List<Object?> get props => [_offset];
-}
-
-class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableMixin {
-  DirectionalValues(this._vertical, this._horizontal) {
-    print('Set horizontal: $_horizontal');
-    if (_vertical is Listenable) {
-      (_vertical as Listenable).addListener(notifyListeners);
-      (_horizontal as Listenable).addListener(notifyListeners);
-    }
-  }
-
-  @override
-  void dispose() {
-    if (_vertical is Listenable) {
-      (_vertical as Listenable).removeListener(notifyListeners);
-      (_horizontal as Listenable).removeListener(notifyListeners);
-    }
-    super.dispose();
-  }
-
-  A _vertical;
-
-  A get vertical => _vertical;
-
-  set vertical(A vertical) {
-    if (_vertical == vertical) return;
-    _vertical = vertical;
-    notifyListeners();
-  }
-
-  A _horizontal;
-
-  A get horizontal {
-    return _horizontal;
-  }
-
-  set horizontal(A horizontal) {
-    if (_horizontal == horizontal) return;
-    _horizontal = horizontal;
-
-
-    notifyListeners();
-  }
-
-  void update({required A horizontal, required A vertical}) {
-    if (_horizontal == horizontal && _vertical == vertical) return;
-    _horizontal = horizontal;
-    _vertical = vertical;
-    notifyListeners();
-  }
-
-  @override
-  List<Object?> get props => [_vertical, _horizontal];
-}
+import 'package:sheets/models/sheet_scroll_physics.dart';
+import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/models/directional_values.dart';
+import 'package:sheets/models/sheet_axis_direction.dart';
+import 'package:sheets/models/sheet_scroll_metrics.dart';
+import 'package:sheets/models/sheet_scroll_position.dart';
 
 class SheetScrollController extends ChangeNotifier {
   final SheetScrollPhysics physics = SmoothScrollPhysics();

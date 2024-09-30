@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/index.dart';
-import 'package:sheets/controller/selection.dart';
+import 'package:sheets/models/selection_status.dart';
+import 'package:sheets/models/sheet_item_index.dart';
 import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
 import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/controller/sheet_viewport_delegate.dart';
+import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/models/selection_bounds.dart';
+import 'package:sheets/models/selection_corners.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetFillSelection extends SheetRangeSelection {
@@ -36,7 +38,7 @@ class SheetFillSelection extends SheetRangeSelection {
     SelectionCellCorners parentCorners = baseSelection.selectionCorners!;
     SelectionCellCorners currentCorners = selectionCorners;
 
-    switch(fillDirection) {
+    switch (fillDirection) {
       case Direction.top:
         return SheetRangeSelection(
           paintConfig: paintConfig,

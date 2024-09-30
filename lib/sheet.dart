@@ -6,7 +6,7 @@ import 'package:sheets/layers/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/sheet_headers_layer.dart';
 import 'package:sheets/layers/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/sheet_selection_layer.dart';
-import 'package:sheets/sheet_constants.dart';
+import 'package:sheets/config/sheet_constants.dart';
 import 'package:sheets/sheet_gesture_detector.dart';
 import 'package:sheets/sheet_scrollable.dart';
 import 'package:sheets/widgets/sheet_cell_info_bar.dart';

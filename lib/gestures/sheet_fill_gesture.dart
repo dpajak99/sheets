@@ -1,5 +1,5 @@
-import 'package:sheets/controller/selection/gestures/sheet_drag_gesture.dart';
-import 'package:sheets/controller/selection/gestures/sheet_gesture.dart';
+import 'package:sheets/gestures/sheet_drag_gesture.dart';
+import 'package:sheets/gestures/sheet_gesture.dart';
 
 abstract class SheetFillGesture extends SheetGesture {}
 
