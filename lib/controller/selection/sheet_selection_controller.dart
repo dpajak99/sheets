@@ -9,7 +9,7 @@ import 'package:sheets/config/sheet_constants.dart';
 
 class SheetSelectionController extends ChangeNotifier {
   final SheetViewportDelegate paintConfig;
-  late SheetSelection _selection = SheetSingleSelection.defaultSelection(paintConfig: paintConfig);
+  late SheetSelection _selection = SheetSingleSelection.defaultSelection();
 
   set selection(SheetSelection selection) {
     _selection = selection.simplify();
@@ -53,7 +53,7 @@ class SheetSelectionController extends ChangeNotifier {
     if(endCell != null && cells.contains(endCell)) {
       cells..remove(endCell)..add(endCell);
     }
-    selection = SheetMultiSelection(paintConfig: paintConfig, selectedCells: cells);
+    selection = SheetMultiSelection(selectedCells: cells);
   }
 
   void selectAll() {
@@ -61,7 +61,7 @@ class SheetSelectionController extends ChangeNotifier {
   }
 
   SheetSelection getSingleSelection(CellIndex cellIndex) {
-    return SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex);
+    return SheetSingleSelection(cellIndex: cellIndex);
   }
 
   SheetSelection getColumnSelection(ColumnIndex columnIndex) {
@@ -84,7 +84,7 @@ class SheetSelectionController extends ChangeNotifier {
     if (start == end) {
       return getSingleSelection(start);
     } else {
-      return SheetRangeSelection(paintConfig: paintConfig, start: start, end: end, completed: completed);
+      return SheetRangeSelection(start: start, end: end, completed: completed);
     }
   }
 
@@ -119,7 +119,7 @@ class SheetSelectionController extends ChangeNotifier {
     } else {
       selectedCells.add(cellIndex);
     }
-    selection = SheetMultiSelection(paintConfig: paintConfig, selectedCells: selectedCells);
+    selection = SheetMultiSelection(selectedCells: selectedCells);
   }
 
   void toggleColumn(ColumnIndex columnIndex) {
@@ -129,7 +129,7 @@ class SheetSelectionController extends ChangeNotifier {
     } else {
       selectedCells.addAll(List.generate(defaultRowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
     }
-    selection = SheetMultiSelection(paintConfig: paintConfig, selectedCells: selectedCells);
+    selection = SheetMultiSelection(selectedCells: selectedCells);
   }
 
   void toggleRow(RowIndex rowIndex) {
@@ -139,7 +139,7 @@ class SheetSelectionController extends ChangeNotifier {
     } else {
       selectedCells.addAll(List.generate(defaultColumnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
     }
-    selection = SheetMultiSelection(paintConfig: paintConfig, selectedCells: selectedCells);
+    selection = SheetMultiSelection(selectedCells: selectedCells);
   }
 
   void completeSelection() {

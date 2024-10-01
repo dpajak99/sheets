@@ -20,29 +20,53 @@ class HeadersResizerLayer extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        _VerticalHeadersResizerLayer(sheetController: sheetController),
-        _HorizontalHeadersResizerLayer(sheetController: sheetController),
+        Positioned.fill(child: _VerticalHeadersResizerLayer(sheetController: sheetController)),
+        Positioned.fill(child: _HorizontalHeadersResizerLayer(sheetController: sheetController)),
       ],
     );
   }
 }
 
-class _VerticalHeadersResizerLayer extends StatelessWidget {
+class _VerticalHeadersResizerLayer extends StatefulWidget {
   final SheetController sheetController;
 
   const _VerticalHeadersResizerLayer({required this.sheetController});
 
   @override
+  State<StatefulWidget> createState() => _VerticalHeadersResizerLayerState();
+}
+
+class _VerticalHeadersResizerLayerState extends State<_VerticalHeadersResizerLayer> {
+  List<ColumnConfig> _visibleColumns = <ColumnConfig>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _updateVisibleColumns();
+    widget.sheetController.viewport.addListener(_updateVisibleColumns);
+  }
+
+  @override
+  void dispose() {
+    widget.sheetController.viewport.removeListener(_updateVisibleColumns);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: sheetController.viewport.visibleColumns.map((ColumnConfig column) {
+      children: _visibleColumns.map((ColumnConfig column) {
         return _VerticalHeaderResizer(
           column: column,
-          onResize: (Offset delta) => sheetController.resizeColumnBy(column, delta.dx),
+          onResize: (Offset delta) => widget.sheetController.resizeColumnBy(column, delta.dx),
         );
       }).toList(),
     );
+  }
+
+  void _updateVisibleColumns() {
+    setState(() => _visibleColumns = widget.sheetController.viewport.visibleColumns);
   }
 }
 
@@ -60,7 +84,7 @@ class _VerticalHeaderResizer extends StatefulWidget {
 }
 
 class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
-  double dragDelta = 0;
+  double _dragDelta = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +94,7 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
 
     return Positioned(
       top: widget.column.rect.top,
-      left: widget.column.rect.right - (_kGapSize / 2) - _kWeight + dragDelta,
+      left: widget.column.rect.right - (_kGapSize / 2) - _kWeight + _dragDelta,
       bottom: 0,
       width: dividerWidth,
       child: SheetDraggable(
@@ -103,26 +127,50 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
   }
 
   void _handleDragDeltaChanged(Offset value) {
-    setState(() => dragDelta = value.dx);
+    setState(() => _dragDelta = value.dx);
   }
 }
 
-class _HorizontalHeadersResizerLayer extends StatelessWidget {
+class _HorizontalHeadersResizerLayer extends StatefulWidget {
   final SheetController sheetController;
 
   const _HorizontalHeadersResizerLayer({required this.sheetController});
+  
+  @override
+  State<StatefulWidget> createState() => _HorizontalHeadersResizerLayerState();
+}
+
+class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResizerLayer> {
+  List<RowConfig> _visibleRows = <RowConfig>[];
+  
+  @override
+  void initState() {
+    super.initState();
+    _updateVisibleRows();
+    widget.sheetController.viewport.addListener(_updateVisibleRows);
+  }
+  
+  @override
+  void dispose() {
+    widget.sheetController.viewport.removeListener(_updateVisibleRows);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: sheetController.viewport.visibleRows.map((RowConfig row) {
+      children: _visibleRows.map((RowConfig row) {
         return _HorizontalHeaderResizer(
           row: row,
-          onResize: (Offset delta) => sheetController.resizeRowBy(row, delta.dy),
+          onResize: (Offset delta) => widget.sheetController.resizeRowBy(row, delta.dy),
         );
       }).toList(),
     );
+  }
+  
+  void _updateVisibleRows() {
+    setState(() => _visibleRows = widget.sheetController.viewport.visibleRows);
   }
 }
 
@@ -140,7 +188,7 @@ class _HorizontalHeaderResizer extends StatefulWidget {
 }
 
 class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
-  double dragDelta = 0;
+  double _dragDelta = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +197,7 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
     double dividerHeight = _kGapSize + _kWeight * 2;
 
     return Positioned(
-      top: widget.row.rect.bottom - (_kGapSize / 2) - _kWeight + dragDelta,
+      top: widget.row.rect.bottom - (_kGapSize / 2) - _kWeight + _dragDelta,
       left: 0,
       right: 0,
       height: dividerHeight,
@@ -183,6 +231,6 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
   }
 
   void _handleDragDeltaChanged(Offset value) {
-    setState(() => dragDelta = value.dy);
+    setState(() => _dragDelta = value.dy);
   }
 }

@@ -10,10 +10,9 @@ import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 
 abstract class SheetSelection with EquatableMixin {
-  final SheetViewportDelegate paintConfig;
   final bool _completed;
 
-  SheetSelection({required this.paintConfig, required bool completed}) : _completed = completed;
+  SheetSelection({required bool completed}) : _completed = completed;
 
   bool get isCompleted => _completed;
 
@@ -23,7 +22,7 @@ abstract class SheetSelection with EquatableMixin {
 
   List<CellIndex> get selectedCells;
 
-  SelectionCellCorners? get selectionCorners;
+  SelectionCellCorners? get selectionCellCorners;
 
   SelectionStatus isColumnSelected(ColumnIndex columnIndex);
 
@@ -33,13 +32,21 @@ abstract class SheetSelection with EquatableMixin {
 
   SheetSelection simplify() => this;
 
+  String stringifySelection();
+
+  SheetSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate);
+}
+
+abstract class SheetSelectionRenderer {
+  final SheetViewportDelegate viewportDelegate;
+
+  SheetSelectionRenderer({required this.viewportDelegate});
+
   bool get fillHandleVisible;
 
   Offset? get fillHandleOffset;
 
   SheetSelectionPaint get paint;
-
-  String stringifySelection();
 }
 
 abstract class SheetSelectionPaint {

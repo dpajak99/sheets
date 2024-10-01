@@ -40,7 +40,7 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      child: CustomPaint(isComplex: true, painter: _selectionPainter),
+      child: CustomPaint(painter: _selectionPainter),
     );
   }
 
@@ -78,7 +78,9 @@ class _SelectionPainter extends ChangeNotifier implements CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth - borderWidth, columnHeadersHeight - borderWidth, size.width, size.height));
 
-    SheetSelectionPaint selectionPaint = _sheetSelection.paint;
+    SheetSelectionRenderer selectionRenderer = _sheetSelection.createRenderer(_viewportDelegate);
+
+    SheetSelectionPaint selectionPaint = selectionRenderer.paint;
     selectionPaint.paint(_viewportDelegate, canvas, size);
   }
 
@@ -88,7 +90,7 @@ class _SelectionPainter extends ChangeNotifier implements CustomPainter {
   }
 
   @override
-  bool? hitTest(Offset position) => null;
+  bool? hitTest(Offset position) => false;
 
   @override
   SemanticsBuilderCallback? get semanticsBuilder => null;

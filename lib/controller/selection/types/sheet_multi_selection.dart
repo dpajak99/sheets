@@ -14,33 +14,32 @@ class SheetMultiSelection extends SheetSelection {
   late List<SheetSelection> mergedSelections;
 
   SheetMultiSelection._({
-    required super.paintConfig,
     required Set<CellIndex> selectedCells,
     required this.mergedSelections,
   })  : _selectedCells = selectedCells,
         super(completed: true);
 
   factory SheetMultiSelection({
-    required SheetViewportDelegate paintConfig,
     required List<CellIndex> selectedCells,
     List<SheetSelection>? mergedSelections,
   }) {
     return SheetMultiSelection._(
-      paintConfig: paintConfig,
       selectedCells: selectedCells.toSet(),
-      mergedSelections:
-          mergedSelections ?? selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex)).toList(),
+      mergedSelections: mergedSelections ?? selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(cellIndex: cellIndex)).toList(),
     );
   }
-
-  @override
-  List<CellIndex> get selectedCells => _selectedCells.toList();
 
   @override
   CellIndex get start => _selectedCells.first;
 
   @override
   CellIndex get end => _selectedCells.last;
+
+  @override
+  List<CellIndex> get selectedCells => _selectedCells.toList();
+
+  @override
+  SelectionCellCorners? get selectionCellCorners => null;
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
@@ -52,64 +51,54 @@ class SheetMultiSelection extends SheetSelection {
     return mergedSelections.fold(SelectionStatus.statusFalse, (status, mergedSelection) => status.merge(mergedSelection.isRowSelected(rowIndex)));
   }
 
-  void addSingle(CellIndex cellIndex) {
-    if (selectedCells.contains(cellIndex) && _selectedCells.length > 1) {
-      _selectedCells.remove(cellIndex);
-    } else {
-      _selectedCells.add(cellIndex);
-    }
-    updatePainters();
-  }
-
-  void addAll(List<CellIndex> cells) {
-    _selectedCells.addAll(cells);
-    updatePainters();
-  }
-
   @override
   SheetSelection simplify() {
     if (selectedCells.length == 1) {
-      return SheetSingleSelection(
-        paintConfig: paintConfig,
-        cellIndex: selectedCells.first,
-      );
+      return SheetSingleSelection(cellIndex: selectedCells.first);
     }
 
-    // Group cells by their column index
     List<SheetSelection> mergedSelections = [];
-    var groupedByColumn = selectedCells.groupListsBy((cell) => cell.columnIndex);
+    Map<ColumnIndex, List<CellIndex>> groupedByColumn = selectedCells.groupListsBy((cell) => cell.columnIndex);
 
-    for (var columnCells in groupedByColumn.values) {
-      // Sort cells within the column by their row index
+    for (List<CellIndex> columnCells in groupedByColumn.values) {
       columnCells.sort((a, b) => a.rowIndex.compareTo(b.rowIndex));
 
-      // Merge consecutive cells in the same column
       int start = 0;
       for (int i = 0; i < columnCells.length; i++) {
         bool isLastCell = i == columnCells.length - 1;
         bool isNonConsecutive = !isLastCell && columnCells[i].rowIndex.value + 1 != columnCells[i + 1].rowIndex.value;
 
         if (isLastCell || isNonConsecutive) {
-          mergedSelections.add(SheetRangeSelection(
-            paintConfig: paintConfig,
-            start: columnCells[start],
-            end: columnCells[i],
-            completed: true,
-          ));
+          mergedSelections.add(SheetRangeSelection(start: columnCells[start], end: columnCells[i], completed: true));
           start = i + 1;
         }
       }
     }
 
-    return SheetMultiSelection(paintConfig: paintConfig, selectedCells: selectedCells, mergedSelections: mergedSelections);
+    return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections);
   }
 
   @override
-  SheetSelectionPaint get paint => SheetMultiSelectionPaint(this);
-
-  void updatePainters() {
-    mergedSelections = selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(paintConfig: paintConfig, cellIndex: cellIndex)).toList();
+  String stringifySelection() {
+    return selectedCells.map((cellIndex) => cellIndex.stringifyPosition()).join(', ');
   }
+
+  @override
+  SheetSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate) {
+    return SheetMultiSelectionRenderer(viewportDelegate: viewportDelegate, selection: this);
+  }
+
+  @override
+  List<Object?> get props => [selectedCells];
+}
+
+class SheetMultiSelectionRenderer extends SheetSelectionRenderer {
+  final SheetMultiSelection selection;
+
+  SheetMultiSelectionRenderer({
+    required super.viewportDelegate,
+    required this.selection,
+  });
 
   @override
   bool get fillHandleVisible => false;
@@ -118,27 +107,22 @@ class SheetMultiSelection extends SheetSelection {
   Offset? get fillHandleOffset => null;
 
   @override
-  SelectionCellCorners? get selectionCorners => null;
+  SheetSelectionPaint get paint => SheetMultiSelectionPaint(this);
 
-  @override
-  List<Object?> get props => [selectedCells];
-
-  @override
-  String stringifySelection() {
-    return selectedCells.map((cellIndex) => cellIndex.stringifyPosition()).join(', ');
-  }
+  CellConfig? get lastSelectedCell => viewportDelegate.findCell(selection.selectedCells.last);
 }
 
 class SheetMultiSelectionPaint extends SheetSelectionPaint {
-  final SheetMultiSelection selection;
+  final SheetMultiSelectionRenderer renderer;
 
-  SheetMultiSelectionPaint(this.selection);
+  SheetMultiSelectionPaint(this.renderer);
 
   @override
   void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
-    for (SheetSelection mergedSelection in selection.mergedSelections) {
+    for (SheetSelection mergedSelection in renderer.selection.mergedSelections) {
       if (mergedSelection is SheetRangeSelection) {
-        SelectionBounds? selectionBounds = mergedSelection.getSelectionBounds();
+        SheetRangeSelectionRenderer sheetRangeSelectionRenderer = mergedSelection.createRenderer(paintConfig);
+        SelectionBounds? selectionBounds = sheetRangeSelectionRenderer.selectionBounds;
         if (selectionBounds == null) {
           return;
         }
@@ -155,7 +139,8 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
           left: selectionBounds.isLeftBorderVisible,
         );
       } else if (mergedSelection is SheetSingleSelection) {
-        CellConfig? selectedCell = mergedSelection.selectedCell;
+        SheetSingleSelectionRenderer sheetSingleSelectionRenderer = mergedSelection.createRenderer(paintConfig);
+        CellConfig? selectedCell = sheetSingleSelectionRenderer.selectedCell;
         if (selectedCell == null) {
           return;
         }
@@ -165,7 +150,7 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
       }
     }
 
-    CellConfig? selectedCell = selection.paintConfig.findCell(selection.selectedCells.last);
+    CellConfig? selectedCell = renderer.lastSelectedCell;
     if (selectedCell == null) {
       return;
     }

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';

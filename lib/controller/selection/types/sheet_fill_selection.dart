@@ -15,7 +15,6 @@ class SheetFillSelection extends SheetRangeSelection {
   SheetFillSelection({
     required this.baseSelection,
     required this.fillDirection,
-    required super.paintConfig,
     required super.start,
     required super.end,
     required super.completed,
@@ -28,45 +27,19 @@ class SheetFillSelection extends SheetRangeSelection {
   SelectionStatus isRowSelected(RowIndex rowIndex) => baseSelection.isRowSelected(rowIndex);
 
   @override
-  bool get fillHandleVisible => true;
-
-  @override
-  Offset? get fillHandleOffset => baseSelection.fillHandleOffset;
-
-  @override
   SheetSelection complete() {
-    SelectionCellCorners parentCorners = baseSelection.selectionCorners!;
-    SelectionCellCorners currentCorners = selectionCorners;
+    SelectionCellCorners parentCorners = baseSelection.selectionCellCorners!;
+    SelectionCellCorners currentCorners = selectionCellCorners;
 
     switch (fillDirection) {
       case Direction.top:
-        return SheetRangeSelection(
-          paintConfig: paintConfig,
-          start: currentCorners.topLeft,
-          end: parentCorners.bottomRight,
-          completed: true,
-        );
+        return SheetRangeSelection(start: currentCorners.topLeft, end: parentCorners.bottomRight, completed: true);
       case Direction.bottom:
-        return SheetRangeSelection(
-          paintConfig: paintConfig,
-          start: parentCorners.topLeft,
-          end: currentCorners.bottomRight,
-          completed: true,
-        );
+        return SheetRangeSelection(start: parentCorners.topLeft, end: currentCorners.bottomRight, completed: true);
       case Direction.left:
-        return SheetRangeSelection(
-          paintConfig: paintConfig,
-          start: currentCorners.topLeft,
-          end: parentCorners.bottomRight,
-          completed: true,
-        );
+        return SheetRangeSelection(start: currentCorners.topLeft, end: parentCorners.bottomRight, completed: true);
       case Direction.right:
-        return SheetRangeSelection(
-          paintConfig: paintConfig,
-          start: parentCorners.topLeft,
-          end: currentCorners.bottomRight,
-          completed: true,
-        );
+        return SheetRangeSelection(start: parentCorners.topLeft, end: currentCorners.bottomRight, completed: true);
     }
   }
 
@@ -74,25 +47,40 @@ class SheetFillSelection extends SheetRangeSelection {
   SheetSelection simplify() => this;
 
   @override
+  SheetFillSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate) {
+    return SheetFillSelectionRenderer(viewportDelegate: viewportDelegate, selection: this);
+  }
+}
+
+class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer {
+  SheetFillSelectionRenderer({
+    required super.viewportDelegate,
+    required super.selection,
+  });
+
+  @override
+  SheetFillSelection get selection => super.selection as SheetFillSelection;
+
+  @override
   SheetSelectionPaint get paint => SheetFillSelectionPaint(this);
 }
 
 class SheetFillSelectionPaint extends SheetSelectionPaint {
-  final SheetFillSelection selection;
+  final SheetFillSelectionRenderer renderer;
 
-  SheetFillSelectionPaint(this.selection);
+  SheetFillSelectionPaint(this.renderer);
 
   @override
   void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
-    selection.baseSelection.paint.paint(paintConfig, canvas, size);
+    SheetRangeSelectionRenderer sheetRangeSelectionRenderer = renderer.selection.createRenderer(paintConfig);
+    sheetRangeSelectionRenderer.paint.paint(paintConfig, canvas, size);
 
-    SelectionBounds? selectionBounds = selection.getSelectionBounds();
+    SelectionBounds? selectionBounds = renderer.selectionBounds;
     if (selectionBounds == null) {
       return;
     }
 
     Rect selectionRect = selectionBounds.selectionRect;
-
     paintFillBorder(canvas, selectionRect);
   }
 }

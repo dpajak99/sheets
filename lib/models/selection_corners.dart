@@ -37,6 +37,8 @@ class SelectionCorners<T> with EquatableMixin {
 class SelectionCellCorners extends SelectionCorners<CellIndex> {
   SelectionCellCorners(super.topLeft, super.topRight, super.bottomLeft, super.bottomRight);
 
+  SelectionCellCorners.single(CellIndex cellIndex) : super(cellIndex, cellIndex, cellIndex, cellIndex);
+
   factory SelectionCellCorners.fromDirection({
     required CellIndex topLeft,
     required CellIndex topRight,

@@ -13,7 +13,7 @@ class SelectionFillRecognizer  {
   SelectionFillRecognizer.from(this.sheetSelection, this.sheetController);
 
   void handle(SheetItemConfig selectionEnd) {
-    SelectionCellCorners? corners = sheetSelection.selectionCorners;
+    SelectionCellCorners? corners = sheetSelection.selectionCellCorners;
     if(selectionEnd is! CellConfig) return;
     if(corners == null) return;
 
@@ -44,7 +44,6 @@ class SelectionFillRecognizer  {
     SheetFillSelection sheetFillSelection = SheetFillSelection(
       fillDirection: direction,
       baseSelection: sheetSelection,
-      paintConfig: sheetController.viewport,
       start: start,
       end: end,
       completed: false,
