@@ -69,6 +69,13 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
     return directionSpaces.entries.reduce((a, b) => a.value < b.value ? a : b).key;
   }
 
+  bool contains(CellIndex cellIndex) {
+    return cellIndex.rowIndex.value >= topLeft.rowIndex.value &&
+        cellIndex.rowIndex.value <= bottomLeft.rowIndex.value &&
+        cellIndex.columnIndex.value >= topLeft.columnIndex.value &&
+        cellIndex.columnIndex.value <= topRight.columnIndex.value;
+  }
+
   int get topIndex => topLeft.rowIndex.value;
 
   int get bottomIndex => bottomLeft.rowIndex.value;

@@ -72,8 +72,8 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
 
   @override
   void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
-    SheetRangeSelectionRenderer sheetRangeSelectionRenderer = renderer.selection.createRenderer(paintConfig);
-    sheetRangeSelectionRenderer.paint.paint(paintConfig, canvas, size);
+    SheetSelectionRenderer sheetSelectionRenderer = renderer.selection.baseSelection.createRenderer(paintConfig);
+    sheetSelectionRenderer.paint.paint(paintConfig, canvas, size);
 
     SelectionBounds? selectionBounds = renderer.selectionBounds;
     if (selectionBounds == null) {

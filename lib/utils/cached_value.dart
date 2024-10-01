@@ -6,6 +6,6 @@ class CachedValue<T> {
 
   T get value {
     _value ??= getter();
-    return _value!;
+    return _value as T;
   }
 }

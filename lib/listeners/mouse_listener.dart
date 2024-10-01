@@ -60,7 +60,6 @@ class SheetMouseListener {
 
   void dragUpdate() {
     if (_activeStartDragDetails == null) return;
-    if (_dragStartElement == hoveredItem.value) return;
 
     SheetGesture dragUpdateGesture = SheetDragUpdateGesture(
       SheetDragDetails.create(mousePosition.value, hoveredItem.value),

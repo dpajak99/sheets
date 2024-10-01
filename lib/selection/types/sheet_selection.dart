@@ -34,6 +34,13 @@ abstract class SheetSelection with EquatableMixin {
   String stringifySelection();
 
   SheetSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate);
+
+  bool contains(CellIndex cellIndex) {
+    SelectionCellCorners? corners = selectionCellCorners;
+    if(corners == null) return selectedCells.contains(cellIndex);
+
+    return corners.contains(cellIndex);
+  }
 }
 
 abstract class SheetSelectionRenderer {

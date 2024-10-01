@@ -19,6 +19,10 @@ class SelectionFillRecognizer {
 
     Direction direction = corners.getRelativePosition(selectionEnd.index);
 
+    if(sheetSelection.contains(selectionEnd.index)) {
+      return sheetController.selectionController.custom(sheetSelection);
+    }
+
     late CellIndex start;
     late CellIndex end;
 
