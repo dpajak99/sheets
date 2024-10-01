@@ -135,21 +135,21 @@ class _HorizontalHeadersResizerLayer extends StatefulWidget {
   final SheetController sheetController;
 
   const _HorizontalHeadersResizerLayer({required this.sheetController});
-  
+
   @override
   State<StatefulWidget> createState() => _HorizontalHeadersResizerLayerState();
 }
 
 class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResizerLayer> {
   List<RowConfig> _visibleRows = <RowConfig>[];
-  
+
   @override
   void initState() {
     super.initState();
     _updateVisibleRows();
     widget.sheetController.viewport.addListener(_updateVisibleRows);
   }
-  
+
   @override
   void dispose() {
     widget.sheetController.viewport.removeListener(_updateVisibleRows);
@@ -168,7 +168,7 @@ class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResize
       }).toList(),
     );
   }
-  
+
   void _updateVisibleRows() {
     setState(() => _visibleRows = widget.sheetController.viewport.visibleRows);
   }

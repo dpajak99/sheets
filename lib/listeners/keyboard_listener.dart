@@ -19,6 +19,5 @@ class SheetKeyboardListener {
     return keys.every((key) => activeKeys.contains(key));
   }
 
-
   bool get anyKeyActive => activeKeys.isNotEmpty;
 }

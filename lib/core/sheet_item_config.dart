@@ -88,7 +88,8 @@ class CellConfig extends SheetItemConfig {
   }) : _value = value;
 
   CellConfig.fromColumnRow(this.columnConfig, this.rowConfig, {required String value})
-      : _value = value, index = CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: columnConfig.columnIndex),
+      : _value = value,
+        index = CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: columnConfig.columnIndex),
         super(
           rect: Rect.fromLTWH(
             columnConfig.rect.left,

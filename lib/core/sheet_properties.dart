@@ -5,9 +5,11 @@ import 'package:sheets/config/sheet_constants.dart';
 
 class SheetProperties extends ChangeNotifier {
   final Map<ColumnIndex, ColumnStyle> _customColumnStyles;
+
   Map<ColumnIndex, ColumnStyle> get customColumnStyles => _customColumnStyles;
 
   final Map<RowIndex, RowStyle> _customRowStyles;
+
   Map<RowIndex, RowStyle> get customRowStyles => _customRowStyles;
 
   SheetProperties({

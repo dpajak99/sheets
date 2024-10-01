@@ -8,7 +8,6 @@ import 'package:sheets/config/sheet_constants.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
-
 abstract class SheetSelection with EquatableMixin {
   final bool _completed;
 

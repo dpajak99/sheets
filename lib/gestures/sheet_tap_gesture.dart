@@ -38,10 +38,10 @@ class SheetTapDetails with EquatableMixin {
 
   SheetTapDetails.create(Offset mousePosition, [SheetItemConfig? hoveredItem])
       : this(
-    tapTime: DateTime.now(),
-    mousePosition: mousePosition,
-    hoveredItem: hoveredItem,
-  );
+          tapTime: DateTime.now(),
+          mousePosition: mousePosition,
+          hoveredItem: hoveredItem,
+        );
 
   bool isDoubleTap(SheetTapDetails other) {
     return tapTime.difference(other.tapTime) < const Duration(milliseconds: 300) && hoveredItem == other.hoveredItem;

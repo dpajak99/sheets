@@ -20,7 +20,7 @@ class SheetDragUpdateGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
 
   SheetDragUpdateGesture(super.endDetails, {required this.startDetails});
-  
+
   @override
   List<Object?> get props => [endDetails, startDetails];
 }
@@ -29,7 +29,7 @@ class SheetDragEndGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
 
   SheetDragEndGesture(super.endDetails, {required this.startDetails});
-  
+
   @override
   List<Object?> get props => [endDetails, startDetails];
 }
@@ -45,9 +45,9 @@ class SheetDragDetails with EquatableMixin {
 
   SheetDragDetails.create(Offset mousePosition, [SheetItemConfig? hoveredItem])
       : this(
-    mousePosition: mousePosition,
-    hoveredItem: hoveredItem,
-  );
+          mousePosition: mousePosition,
+          hoveredItem: hoveredItem,
+        );
 
   @override
   List<Object?> get props => [mousePosition, hoveredItem];

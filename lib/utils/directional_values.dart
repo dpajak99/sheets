@@ -38,7 +38,6 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
     if (_horizontal == horizontal) return;
     _horizontal = horizontal;
 
-
     notifyListeners();
   }
 
