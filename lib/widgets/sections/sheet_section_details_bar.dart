@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:sheets/config/app_icons/asset_icon.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
-class SheetCellInfoBar extends StatefulWidget {
+class SheetSectionDetailsBar extends StatefulWidget {
   final SheetController sheetController;
 
-  const SheetCellInfoBar({
+  const SheetSectionDetailsBar({
     required this.sheetController,
     super.key,
   });
 
   @override
-  State<StatefulWidget> createState() => _SheetCellInfoBarState();
+  State<StatefulWidget> createState() => _SheetSectionDetailsBarState();
 }
 
-class _SheetCellInfoBarState extends State<SheetCellInfoBar> {
+class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
   @override
   Widget build(BuildContext context) {
     return Container(

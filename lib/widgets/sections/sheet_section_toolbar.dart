@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/config/app_icons/asset_icon.dart';
 
-class SheetToolbar extends StatefulWidget {
-  const SheetToolbar({super.key});
+class SheetSectionToolbar extends StatefulWidget {
+  const SheetSectionToolbar({super.key});
 
   @override
-  State<StatefulWidget> createState() => _SheetToolbarState();
+  State<StatefulWidget> createState() => _SheetSectionToolbarState();
 }
 
-class _SheetToolbarState extends State<SheetToolbar> {
+class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
   @override
   Widget build(BuildContext context) {
     return Container(
