@@ -6,11 +6,11 @@ import 'package:sheets/models/selection_bounds.dart';
 import 'package:sheets/models/selection_corners.dart';
 import 'package:sheets/models/selection_direction.dart';
 import 'package:sheets/models/sheet_item_config.dart';
-import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
 import 'package:sheets/models/sheet_viewport_delegate.dart';
 import 'package:sheets/config/sheet_constants.dart';
 import 'package:sheets/models/closest_visible.dart';
+import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/sheet_single_selection.dart';
 import 'package:sheets/utils/cached_value.dart';
 import 'package:sheets/utils/direction.dart';
 

@@ -4,10 +4,10 @@ import 'package:sheets/models/sheet_item_index.dart';
 import 'package:sheets/models/selection_bounds.dart';
 import 'package:sheets/models/selection_corners.dart';
 import 'package:sheets/models/sheet_item_config.dart';
-import 'package:sheets/controller/selection/types/sheet_range_selection.dart';
-import 'package:sheets/controller/selection/types/sheet_selection.dart';
-import 'package:sheets/controller/selection/types/sheet_single_selection.dart';
 import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/selection/sheet_range_selection.dart';
+import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/sheet_single_selection.dart';
 
 class SheetMultiSelection extends SheetSelection {
   late Set<CellIndex> _selectedCells;
