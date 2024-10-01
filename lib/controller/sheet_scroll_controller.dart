@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:sheets/models/sheet_scroll_physics.dart';
+import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
 import 'package:sheets/config/sheet_constants.dart';
-import 'package:sheets/models/directional_values.dart';
-import 'package:sheets/models/sheet_axis_direction.dart';
-import 'package:sheets/models/sheet_scroll_metrics.dart';
-import 'package:sheets/models/sheet_scroll_position.dart';
+import 'package:sheets/utils/directional_values.dart';
+import 'package:sheets/core/scroll/sheet_axis_direction.dart';
+import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
+import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 
 class SheetScrollController extends ChangeNotifier {
   final SheetScrollPhysics physics = SmoothScrollPhysics();

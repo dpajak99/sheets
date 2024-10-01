@@ -7,7 +7,7 @@ import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/gestures/sheet_scroll_gesture.dart';
 import 'package:sheets/gestures/sheet_tap_gesture.dart';
-import 'package:sheets/models/sheet_item_config.dart';
+import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/recognizers/sheet_tap_recognizer.dart';
 
 class SheetMouseListener {

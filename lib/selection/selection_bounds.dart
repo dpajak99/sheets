@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/models/selection_corners.dart';
-import 'package:sheets/models/selection_direction.dart';
-import 'package:sheets/models/sheet_item_config.dart';
+import 'package:sheets/selection/selection_corners.dart';
+import 'package:sheets/selection/selection_direction.dart';
+import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SelectionBounds {

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
-import 'package:sheets/models/sheet_axis_direction.dart';
+import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 
 class SheetScrollMetrics with EquatableMixin {
   SheetScrollMetrics({

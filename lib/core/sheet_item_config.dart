@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/models/sheet_item_index.dart';
-import 'package:sheets/models/sheet_properties.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/sheet_properties.dart';
 
 abstract class SheetItemConfig with EquatableMixin {
   final Rect rect;

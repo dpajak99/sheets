@@ -7,10 +7,10 @@ import 'package:sheets/layers/sheet_headers_layer.dart';
 import 'package:sheets/layers/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/sheet_selection_layer.dart';
 import 'package:sheets/config/sheet_constants.dart';
-import 'package:sheets/sheet_gesture_detector.dart';
-import 'package:sheets/sheet_scrollable.dart';
-import 'package:sheets/widgets/sheet_cell_info_bar.dart';
-import 'package:sheets/widgets/sheet_toolbar.dart';
+import 'package:sheets/widgets/sheet_gesture_detector.dart';
+import 'package:sheets/widgets/sheet_scrollable.dart';
+import 'package:sheets/widgets/sections/sheet_cell_info_bar.dart';
+import 'package:sheets/widgets/sections/sheet_toolbar.dart';
 
 class SheetPage extends StatefulWidget {
   const SheetPage({super.key});

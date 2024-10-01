@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
 import 'package:sheets/config/sheet_constants.dart';
-import 'package:sheets/models/sheet_axis_direction.dart';
-import 'package:sheets/models/sheet_scroll_metrics.dart';
-import 'package:sheets/models/sheet_scroll_position.dart';
-import 'package:sheets/utils/mouse_state_listener.dart';
+import 'package:sheets/core/scroll/sheet_axis_direction.dart';
+import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
+import 'package:sheets/core/scroll/sheet_scroll_position.dart';
+import 'package:sheets/widgets/mouse_state_listener.dart';
 
 class SheetScrollable extends StatefulWidget {
   final SheetScrollController scrollController;

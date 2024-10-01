@@ -6,17 +6,17 @@ import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/gestures/sheet_scroll_gesture.dart';
 import 'package:sheets/gestures/sheet_tap_gesture.dart';
-import 'package:sheets/models/sheet_item_index.dart';
-import 'package:sheets/models/sheet_item_config.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/controller/sheet_selection_controller.dart';
-import 'package:sheets/models/sheet_properties.dart';
+import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/core/sheet_viewport_delegate.dart';
 import 'package:sheets/listeners/keyboard_listener.dart';
 import 'package:sheets/listeners/mouse_listener.dart';
 import 'package:sheets/recognizers/selection_fill_recognizer.dart';
-import 'package:sheets/selection/sheet_fill_selection.dart';
-import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/types/sheet_fill_selection.dart';
+import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/utils/extensions/offset_extension.dart';
 
 class SheetController {

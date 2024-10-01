@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'package:sheets/models/sheet_item_index.dart';
-import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/sheet_viewport_delegate.dart';
 import 'package:sheets/config/sheet_constants.dart';
-import 'package:sheets/selection/sheet_multi_selection.dart';
-import 'package:sheets/selection/sheet_range_selection.dart';
-import 'package:sheets/selection/sheet_selection.dart';
-import 'package:sheets/selection/sheet_single_selection.dart';
+import 'package:sheets/selection/types/sheet_multi_selection.dart';
+import 'package:sheets/selection/types/sheet_range_selection.dart';
+import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/selection/types/sheet_single_selection.dart';
 
 class SheetSelectionController extends ChangeNotifier {
   final SheetViewportDelegate paintConfig;
@@ -50,8 +50,10 @@ class SheetSelectionController extends ChangeNotifier {
 
   void selectMultiple(List<CellIndex> selectedCells, {CellIndex? endCell}) {
     List<CellIndex> cells = selectedCells.toSet().toList();
-    if(endCell != null && cells.contains(endCell)) {
-      cells..remove(endCell)..add(endCell);
+    if (endCell != null && cells.contains(endCell)) {
+      cells
+        ..remove(endCell)
+        ..add(endCell);
     }
     selection = SheetMultiSelection(selectedCells: cells);
   }

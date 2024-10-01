@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:sheets/models/sheet_item_index.dart';
+import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/utils/direction.dart';
 
 class ClosestVisible<T extends SheetItemIndex> with EquatableMixin {

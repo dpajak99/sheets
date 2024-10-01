@@ -1,28 +1,5 @@
 import 'package:equatable/equatable.dart';
-
-mixin NumericIndexMixin {
-  int get value;
-
-  bool operator <(NumericIndexMixin other) {
-    return value < other.value;
-  }
-
-  bool operator <=(NumericIndexMixin other) {
-    return value <= other.value;
-  }
-
-  bool operator >(NumericIndexMixin other) {
-    return value > other.value;
-  }
-
-  bool operator >=(NumericIndexMixin other) {
-    return value >= other.value;
-  }
-
-  int compareTo(NumericIndexMixin other) {
-    return value.compareTo(other.value);
-  }
-}
+import 'package:sheets/utils/numeric_index_mixin.dart';
 
 abstract class SheetItemIndex with EquatableMixin {
   String stringifyPosition();

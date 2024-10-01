@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/models/range.dart';
-import 'package:sheets/models/selection_status.dart';
-import 'package:sheets/models/sheet_item_index.dart';
-import 'package:sheets/models/selection_bounds.dart';
-import 'package:sheets/models/selection_corners.dart';
-import 'package:sheets/models/selection_direction.dart';
-import 'package:sheets/models/sheet_item_config.dart';
-import 'package:sheets/models/sheet_viewport_delegate.dart';
+import 'package:sheets/utils/range.dart';
+import 'package:sheets/selection/selection_status.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/selection/selection_bounds.dart';
+import 'package:sheets/selection/selection_corners.dart';
+import 'package:sheets/selection/selection_direction.dart';
+import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/core/sheet_viewport_delegate.dart';
 import 'package:sheets/config/sheet_constants.dart';
-import 'package:sheets/models/closest_visible.dart';
-import 'package:sheets/selection/sheet_selection.dart';
-import 'package:sheets/selection/sheet_single_selection.dart';
+import 'package:sheets/utils/closest_visible.dart';
+import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/selection/types/sheet_single_selection.dart';
 import 'package:sheets/utils/cached_value.dart';
 import 'package:sheets/utils/direction.dart';
 

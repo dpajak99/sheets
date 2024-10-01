@@ -1,11 +1,11 @@
 import 'dart:ui';
 
-import 'package:sheets/models/selection_status.dart';
-import 'package:sheets/models/sheet_item_index.dart';
-import 'package:sheets/models/selection_corners.dart';
-import 'package:sheets/models/sheet_item_config.dart';
-import 'package:sheets/models/sheet_viewport_delegate.dart';
-import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/selection_status.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/selection/selection_corners.dart';
+import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/core/sheet_viewport_delegate.dart';
+import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/utils/cached_value.dart';
 
 class SheetSingleSelection extends SheetSelection {

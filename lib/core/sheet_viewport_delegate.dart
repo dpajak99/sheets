@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/models/sheet_item_index.dart';
-import 'package:sheets/models/sheet_item_config.dart';
-import 'package:sheets/models/sheet_properties.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
 import 'package:sheets/config/sheet_constants.dart';
-import 'package:sheets/models/closest_visible.dart';
-import 'package:sheets/models/directional_values.dart';
-import 'package:sheets/models/sheet_scroll_metrics.dart';
-import 'package:sheets/models/sheet_scroll_position.dart';
+import 'package:sheets/utils/closest_visible.dart';
+import 'package:sheets/utils/directional_values.dart';
+import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
+import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/utils/direction.dart';
 
 abstract class SheetViewportDelegate extends ChangeNotifier {

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:sheets/models/sheet_item_index.dart';
+import 'package:sheets/utils/numeric_index_mixin.dart';
 
 class Range<A extends NumericIndexMixin> with EquatableMixin {
   final A start;

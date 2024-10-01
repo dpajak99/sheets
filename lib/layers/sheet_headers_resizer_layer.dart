@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/models/sheet_item_config.dart';
+import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/sheet_draggable.dart';
+import 'package:sheets/widgets/sheet_draggable.dart';
 
 double _kGapSize = 5;
 double _kWeight = 3;

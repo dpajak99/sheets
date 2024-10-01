@@ -1,12 +1,12 @@
-import 'package:sheets/models/sheet_item_index.dart';
-import 'package:sheets/models/selection_corners.dart';
-import 'package:sheets/models/sheet_item_config.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/selection/selection_corners.dart';
+import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/selection/sheet_fill_selection.dart';
-import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/types/sheet_fill_selection.dart';
+import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SelectionFillRecognizer  {
+class SelectionFillRecognizer {
   final SheetController sheetController;
   final SheetSelection sheetSelection;
 
@@ -14,15 +14,15 @@ class SelectionFillRecognizer  {
 
   void handle(SheetItemConfig selectionEnd) {
     SelectionCellCorners? corners = sheetSelection.selectionCellCorners;
-    if(selectionEnd is! CellConfig) return;
-    if(corners == null) return;
+    if (selectionEnd is! CellConfig) return;
+    if (corners == null) return;
 
     Direction direction = corners.getRelativePosition(selectionEnd.index);
 
     late CellIndex start;
     late CellIndex end;
 
-    switch(direction) {
+    switch (direction) {
       case Direction.top:
         start = corners.topLeft.move(-1, 0);
         end = CellIndex(rowIndex: selectionEnd.index.rowIndex, columnIndex: corners.topRight.columnIndex);
