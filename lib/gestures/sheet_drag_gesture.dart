@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/selection/types/sheet_selection.dart';
 
 abstract class SheetDragGesture extends SheetGesture {
   final SheetDragDetails endDetails;
@@ -14,12 +16,19 @@ abstract class SheetDragGesture extends SheetGesture {
 
 class SheetDragStartGesture extends SheetDragGesture {
   SheetDragStartGesture(super.endDetails);
+
+  @override
+  void resolve(SheetController controller) {}
 }
 
 class SheetDragUpdateGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
 
   SheetDragUpdateGesture(super.endDetails, {required this.startDetails});
+
+  @override
+  void resolve(SheetController controller) {
+  }
 
   @override
   List<Object?> get props => [endDetails, startDetails];
@@ -29,6 +38,10 @@ class SheetDragEndGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
 
   SheetDragEndGesture(super.endDetails, {required this.startDetails});
+
+  @override
+  void resolve(SheetController controller) {
+  }
 
   @override
   List<Object?> get props => [endDetails, startDetails];
@@ -52,3 +65,4 @@ class SheetDragDetails with EquatableMixin {
   @override
   List<Object?> get props => [mousePosition, hoveredItem];
 }
+

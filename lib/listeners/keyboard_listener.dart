@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 class SheetKeyboardListener {
   List<LogicalKeyboardKey> activeKeys = [];
 
+  void dispose() {
+    activeKeys.clear();
+  }
+
   void addKey(LogicalKeyboardKey logicalKeyboardKey) {
     activeKeys.add(logicalKeyboardKey);
   }

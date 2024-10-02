@@ -11,6 +11,8 @@ abstract class SheetItemConfig with EquatableMixin {
   });
 
   String get value;
+
+  SheetItemIndex get index;
 }
 
 class RowConfig extends SheetItemConfig {
@@ -32,6 +34,9 @@ class RowConfig extends SheetItemConfig {
   String get value {
     return '${rowIndex.value + 1}';
   }
+
+  @override
+  SheetItemIndex get index => rowIndex;
 
   @override
   List<Object?> get props => [rowIndex, rowStyle, rect];
@@ -57,6 +62,9 @@ class ColumnConfig extends SheetItemConfig {
     return numberToExcelColumn(columnIndex.value + 1);
   }
 
+  @override
+  SheetItemIndex get index => columnIndex;
+
   String numberToExcelColumn(int number) {
     String result = '';
 
@@ -74,14 +82,14 @@ class ColumnConfig extends SheetItemConfig {
 }
 
 class CellConfig extends SheetItemConfig {
-  final CellIndex index;
+  final CellIndex cellIndex;
   final RowConfig rowConfig;
   final ColumnConfig columnConfig;
   final String _value;
 
   CellConfig({
     required super.rect,
-    required this.index,
+    required this.cellIndex,
     required this.rowConfig,
     required this.columnConfig,
     required String value,
@@ -89,7 +97,7 @@ class CellConfig extends SheetItemConfig {
 
   CellConfig.fromColumnRow(this.columnConfig, this.rowConfig, {required String value})
       : _value = value,
-        index = CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: columnConfig.columnIndex),
+        cellIndex = CellIndex(rowIndex: rowConfig.rowIndex, columnIndex: columnConfig.columnIndex),
         super(
           rect: Rect.fromLTWH(
             columnConfig.rect.left,
@@ -103,6 +111,9 @@ class CellConfig extends SheetItemConfig {
   String get value {
     return _value.isEmpty ? '${columnConfig.value}${rowConfig.value}' : _value;
   }
+
+  @override
+  SheetItemIndex get index => cellIndex;
 
   @override
   List<Object?> get props => [rowConfig, columnConfig];

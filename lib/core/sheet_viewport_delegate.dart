@@ -98,12 +98,12 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
 
   @override
   CellConfig? findCell(CellIndex cellIndex) {
-    return visibleCells.where((cell) => cell.index == cellIndex).firstOrNull;
+    return visibleCells.where((cell) => cell.cellIndex == cellIndex).firstOrNull;
   }
 
   @override
   bool containsCell(CellIndex cellIndex) {
-    return visibleCells.any((cell) => cell.index == cellIndex);
+    return visibleCells.any((cell) => cell.cellIndex == cellIndex);
   }
 
   (RowIndex, double) get _firstVisibleRow {

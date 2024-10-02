@@ -1,23 +1,19 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
-import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
-import 'package:sheets/gestures/sheet_scroll_gesture.dart';
-import 'package:sheets/gestures/sheet_tap_gesture.dart';
-import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/controller/sheet_selection_controller.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
+import 'package:sheets/gestures/sheet_selection_gesture.dart';
+import 'package:sheets/gestures/sheet_tap_gesture.dart';
 import 'package:sheets/listeners/keyboard_listener.dart';
 import 'package:sheets/listeners/mouse_listener.dart';
-import 'package:sheets/recognizers/selection_fill_recognizer.dart';
-import 'package:sheets/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
-import 'package:sheets/utils/extensions/offset_extension.dart';
 
 class SheetController {
   final SheetProperties sheetProperties = SheetProperties(
@@ -38,11 +34,23 @@ class SheetController {
   late final SheetMouseListener mouse = SheetMouseListener();
   late final SheetKeyboardListener keyboard = SheetKeyboardListener();
 
+  final StreamController<SheetGesture> _gesturesStream = StreamController<SheetGesture>();
+
+  Stream<SheetGesture> get stream => _gesturesStream.stream;
+
   SheetController() {
     scrollController.customColumnExtents = sheetProperties.customColumnExtents;
     scrollController.customRowExtents = sheetProperties.customRowExtents;
 
-    mouse.stream.listen(_handleGesture);
+    mouse.stream.listen(_handleMouseGesture);
+    stream.listen(_handleGesture);
+  }
+
+  void dispose() {
+    _gesturesStream.close();
+    selectionController.dispose();
+    mouse.dispose();
+    keyboard.dispose();
   }
 
   void onMouseOffsetChanged(Offset offset) {
@@ -71,173 +79,29 @@ class SheetController {
     scrollController.customRowExtents = sheetProperties.customRowExtents;
   }
 
-  void _handleGesture(SheetGesture gesture) {
-    return switch (gesture) {
-      SheetTapGesture tapGesture => _handleTap(tapGesture),
-      SheetDoubleTapGesture doubleTapGesture => _handleDoubleTap(doubleTapGesture),
-      SheetDragStartGesture dragStartGesture => _handleDragStart(dragStartGesture),
-      SheetDragUpdateGesture dragUpdateGesture => _handleDragUpdate(dragUpdateGesture),
-      SheetDragEndGesture dragEndGesture => _handleDragEnd(dragEndGesture),
-      SheetFillStartGesture fillStartGesture => _handleFillStart(fillStartGesture),
-      SheetFillUpdateGesture fillUpdateGesture => _handleFillUpdate(fillUpdateGesture),
-      SheetFillEndGesture fillEndGesture => _handleFillEnd(fillEndGesture),
-      SheetScrollGesture scrollGesture => _handleScroll(scrollGesture),
-      (_) => print('Unhandled gesture: $gesture'),
-    };
-  }
-
-  void _handleTap(SheetTapGesture tapGesture) {
-    if (keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
-      CellIndex selectionStart = selectionController.selection.end;
-      SheetSelection? sheetSelection = switch (tapGesture.details.hoveredItem) {
-        CellConfig cell => selectionController.getRangeSelection(start: selectionStart, end: cell.index, completed: true),
-        ColumnConfig column => selectionController.getColumnRangeSelection(start: selectionStart.columnIndex, end: column.columnIndex),
-        RowConfig row => selectionController.getRowRangeSelection(start: selectionStart.rowIndex, end: row.rowIndex),
-        (_) => null,
-      };
-
-      if (sheetSelection != null) {
-        selectionController.selectMultiple(
-          <CellIndex>[...selectionController.selection.selectedCells, ...sheetSelection.selectedCells],
-          endCell: sheetSelection.end,
-        );
-      }
-      return;
-    }
-
-    if (keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      return switch (tapGesture.details.hoveredItem) {
-        CellConfig cell => selectionController.toggleCell(cell.index),
-        ColumnConfig column => selectionController.toggleColumn(column.columnIndex),
-        RowConfig row => selectionController.toggleRow(row.rowIndex),
-        (_) => () {},
-      };
-    }
-
-    if (keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      CellIndex selectionStart = selectionController.selection.start;
-      return switch (tapGesture.details.hoveredItem) {
-        CellConfig cell => selectionController.selectRange(start: selectionStart, end: cell.index, completed: true),
-        ColumnConfig column => selectionController.selectColumnRange(start: selectionStart.columnIndex, end: column.columnIndex),
-        RowConfig row => selectionController.selectRowRange(start: selectionStart.rowIndex, end: row.rowIndex),
-        (_) => () {},
-      };
-    }
-
-    return switch (tapGesture.details.hoveredItem) {
-      CellConfig cell => selectionController.selectSingle(cell.index),
-      ColumnConfig column => selectionController.selectColumn(column.columnIndex),
-      RowConfig row => selectionController.selectRow(row.rowIndex),
-      (_) => () {},
-    };
-  }
-
-  void _handleDoubleTap(SheetDoubleTapGesture doubleTapGesture) {
-    if (keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      _handleTap(doubleTapGesture.toSingleTap());
-    }
-  }
-
   SheetSelection? previousSelection;
 
-  void _handleDragStart(SheetDragStartGesture dragStartGesture) {
-    previousSelection = selectionController.selection;
+  void _handleGesture(SheetGesture gesture) {
+    gesture.resolve(this);
   }
 
-  void _handleDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
-    if (previousSelection == null) return;
-
-    SheetSelection? sheetSelection = switch (dragUpdateGesture.startDetails.hoveredItem) {
-      CellConfig _ => _handleCellDragUpdate(dragUpdateGesture),
-      ColumnConfig _ => _handleColumnDragUpdate(dragUpdateGesture),
-      RowConfig _ => _handleRowDragUpdate(dragUpdateGesture),
-      _ => null,
-    };
-
-    if (sheetSelection != null) {
-      if (keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-        selectionController.selectMultiple(<CellIndex>[...previousSelection!.selectedCells, ...sheetSelection.selectedCells]);
-      } else {
-        selectionController.custom(sheetSelection);
-      }
-    }
-  }
-
-  SheetSelection? _handleCellDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
-    CellIndex start = (dragUpdateGesture.startDetails.hoveredItem! as CellConfig).index;
-
-    return switch (dragUpdateGesture.endDetails.hoveredItem) {
-      CellConfig endCell => selectionController.getRangeSelection(start: start, end: endCell.index),
-      (_) => null,
-    };
-  }
-
-  SheetSelection? _handleColumnDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
-    ColumnIndex start = (dragUpdateGesture.startDetails.hoveredItem! as ColumnConfig).columnIndex;
-    late ColumnIndex end;
-
-    switch (dragUpdateGesture.endDetails.hoveredItem) {
-      case CellConfig cellConfig:
-        end = cellConfig.index.columnIndex;
-        break;
-      case ColumnConfig columnConfig:
-        end = columnConfig.columnIndex;
-        break;
+  void _handleMouseGesture(SheetGesture gesture) {
+    switch (gesture) {
+      case SheetTapGesture tapGesture:
+        return _gesturesStream.add(SheetSingleSelectionGesture.from(tapGesture));
+      case SheetDoubleTapGesture tapGesture:
+        return _gesturesStream.add(SheetSingleSelectionGesture.from(tapGesture.single));
+      case SheetDragStartGesture dragStartGesture:
+        previousSelection = selectionController.selection;
+        return _gesturesStream.add(SheetSelectionStartGesture.from(dragStartGesture));
+      case SheetDragUpdateGesture dragUpdateGesture:
+        if (previousSelection == null) return;
+        return _gesturesStream.add(SheetSelectionUpdateGesture.from(dragUpdateGesture, selection: previousSelection!));
+      case SheetDragEndGesture dragEndGesture:
+        previousSelection = null;
+        return _gesturesStream.add(SheetSelectionEndGesture.from(dragEndGesture));
       default:
-        return null;
-    }
-
-    return selectionController.getColumnRangeSelection(start: start, end: end);
-  }
-
-  SheetSelection? _handleRowDragUpdate(SheetDragUpdateGesture dragUpdateGesture) {
-    RowIndex start = (dragUpdateGesture.startDetails.hoveredItem! as RowConfig).rowIndex;
-    late RowIndex end;
-
-    switch (dragUpdateGesture.endDetails.hoveredItem) {
-      case CellConfig cellConfig:
-        end = cellConfig.index.rowIndex;
-        break;
-      case RowConfig rowConfig:
-        end = rowConfig.rowIndex;
-        break;
-      default:
-        return null;
-    }
-
-    return selectionController.getRowRangeSelection(start: start, end: end);
-  }
-
-  void _handleDragEnd(SheetDragEndGesture dragEndGesture) {
-    selectionController.completeSelection();
-    previousSelection = null;
-  }
-
-  bool _fillingInProgress = false;
-
-  void _handleFillStart(SheetFillStartGesture fillStartGesture) {
-    _fillingInProgress = true;
-  }
-
-  void _handleFillUpdate(SheetFillUpdateGesture fillUpdateGesture) {
-    if (_fillingInProgress == false) return;
-    if (mouse.hoveredItem.value == null) return;
-    SheetSelection sheetSelection = (selectionController.selection is SheetFillSelection)
-        ? (selectionController.selection as SheetFillSelection).baseSelection
-        : selectionController.selection;
-    SelectionFillRecognizer.from(sheetSelection, this).handle(mouse.hoveredItem.value!);
-  }
-
-  void _handleFillEnd(SheetFillEndGesture fillEndGesture) {
-    _fillingInProgress = false;
-    selectionController.completeSelection();
-  }
-
-  void _handleScroll(SheetScrollGesture scrollGesture) {
-    if (keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      scrollController.scrollBy(scrollGesture.delta.reverse());
-    } else {
-      scrollController.scrollBy(scrollGesture.delta);
+        return _gesturesStream.add(gesture);
     }
   }
 }

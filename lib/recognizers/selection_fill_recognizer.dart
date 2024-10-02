@@ -17,9 +17,9 @@ class SelectionFillRecognizer {
     if (selectionEnd is! CellConfig) return;
     if (corners == null) return;
 
-    Direction direction = corners.getRelativePosition(selectionEnd.index);
+    Direction direction = corners.getRelativePosition(selectionEnd.cellIndex);
 
-    if(sheetSelection.contains(selectionEnd.index)) {
+    if(sheetSelection.contains(selectionEnd.cellIndex)) {
       return sheetController.selectionController.custom(sheetSelection);
     }
 
@@ -29,18 +29,18 @@ class SelectionFillRecognizer {
     switch (direction) {
       case Direction.top:
         start = corners.topLeft.move(-1, 0);
-        end = CellIndex(rowIndex: selectionEnd.index.rowIndex, columnIndex: corners.topRight.columnIndex);
+        end = CellIndex(rowIndex: selectionEnd.cellIndex.rowIndex, columnIndex: corners.topRight.columnIndex);
         break;
       case Direction.bottom:
-        start = CellIndex(rowIndex: selectionEnd.index.rowIndex, columnIndex: corners.bottomLeft.columnIndex);
+        start = CellIndex(rowIndex: selectionEnd.cellIndex.rowIndex, columnIndex: corners.bottomLeft.columnIndex);
         end = corners.bottomRight.move(1, 0);
         break;
       case Direction.left:
         start = corners.topLeft.move(0, -1);
-        end = CellIndex(rowIndex: corners.bottomLeft.rowIndex, columnIndex: selectionEnd.index.columnIndex);
+        end = CellIndex(rowIndex: corners.bottomLeft.rowIndex, columnIndex: selectionEnd.cellIndex.columnIndex);
         break;
       case Direction.right:
-        start = CellIndex(rowIndex: corners.topRight.rowIndex, columnIndex: selectionEnd.index.columnIndex);
+        start = CellIndex(rowIndex: corners.topRight.rowIndex, columnIndex: selectionEnd.cellIndex.columnIndex);
         end = corners.bottomRight.move(0, 1);
         break;
     }

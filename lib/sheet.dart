@@ -29,6 +29,13 @@ class SheetPageState extends State<SheetPage> {
   }
 
   @override
+  void dispose() {
+    ServicesBinding.instance.keyboard.removeHandler(_onKeyboardKeyPressed);
+    sheetController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(

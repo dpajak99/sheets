@@ -33,6 +33,10 @@ class SheetMouseListener {
   bool customTapHovered = false;
   SheetItemConfig? _dragStartElement;
 
+  void dispose() {
+    _gesturesStream.close();
+  }
+
   void updateOffset(Offset offset, SheetItemConfig? element) {
     mousePosition.value = offset;
     hoveredItem.value = element;
