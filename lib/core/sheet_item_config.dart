@@ -36,7 +36,7 @@ class RowConfig extends SheetItemConfig {
   }
 
   @override
-  SheetItemIndex get index => rowIndex;
+  RowIndex get index => rowIndex;
 
   @override
   List<Object?> get props => [rowIndex, rowStyle, rect];
@@ -63,7 +63,7 @@ class ColumnConfig extends SheetItemConfig {
   }
 
   @override
-  SheetItemIndex get index => columnIndex;
+  ColumnIndex get index => columnIndex;
 
   String numberToExcelColumn(int number) {
     String result = '';
@@ -113,7 +113,7 @@ class CellConfig extends SheetItemConfig {
   }
 
   @override
-  SheetItemIndex get index => cellIndex;
+  CellIndex get index => cellIndex;
 
   @override
   List<Object?> get props => [rowConfig, columnConfig];

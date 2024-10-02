@@ -20,7 +20,7 @@ class SelectionFillRecognizer {
     Direction direction = corners.getRelativePosition(selectionEnd.cellIndex);
 
     if(sheetSelection.contains(selectionEnd.cellIndex)) {
-      return sheetController.selectionController.custom(sheetSelection);
+      return sheetController.customSelection(sheetSelection);
     }
 
     late CellIndex start;
@@ -53,6 +53,6 @@ class SelectionFillRecognizer {
       completed: false,
     );
 
-    sheetController.selectionController.custom(sheetFillSelection);
+    sheetController.customSelection(sheetFillSelection);
   }
 }

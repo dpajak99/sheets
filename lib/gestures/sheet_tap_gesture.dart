@@ -2,8 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/controller/sheet_selection_controller.dart';
-import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_item_config.dart';
 

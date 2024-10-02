@@ -32,6 +32,11 @@ class SheetScrollController extends ChangeNotifier {
     super.dispose();
   }
 
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
+  }
+
   void scrollBy(Offset delta) {
     Offset currentOffset = Offset(position.horizontal.offset, position.vertical.offset);
     Offset newOffset = physics.parseScrolledOffset(currentOffset, delta);
@@ -41,6 +46,7 @@ class SheetScrollController extends ChangeNotifier {
   }
 
   set viewportSize(Size size) {
+    print('Updating viewport size: $size');
     metrics.update(
       horizontal: metrics.horizontal.copyWith(viewportDimension: size.width),
       vertical: metrics.vertical.copyWith(viewportDimension: size.height),

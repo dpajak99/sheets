@@ -24,9 +24,9 @@ class SheetFillUpdateGesture extends SheetFillGesture {
   void resolve(SheetController controller) {
     if (endDetails.hoveredItem == null) return;
 
-    SheetSelection sheetSelection = (controller.selectionController.selection is SheetFillSelection)
-        ? (controller.selectionController.selection as SheetFillSelection).baseSelection
-        : controller.selectionController.selection;
+    SheetSelection sheetSelection = (controller.selection is SheetFillSelection)
+        ? (controller.selection as SheetFillSelection).baseSelection
+        : controller.selection;
     SelectionFillRecognizer.from(sheetSelection, controller).handle(endDetails.hoveredItem!);
   }
 
@@ -37,7 +37,7 @@ class SheetFillUpdateGesture extends SheetFillGesture {
 class SheetFillEndGesture extends SheetFillGesture {
   @override
   void resolve(SheetController controller) {
-    controller.selectionController.completeSelection();
+    controller.completeSelection();
   }
 
   @override

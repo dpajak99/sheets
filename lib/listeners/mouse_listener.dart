@@ -31,7 +31,6 @@ class SheetMouseListener {
 
   bool nativeDragging = false;
   bool customTapHovered = false;
-  SheetItemConfig? _dragStartElement;
 
   void dispose() {
     _gesturesStream.close();
@@ -56,7 +55,6 @@ class SheetMouseListener {
 
   void dragStart() {
     nativeDragging = true;
-    _dragStartElement = hoveredItem.value;
     SheetDragDetails sheetDragDetails = SheetDragDetails.create(mousePosition.value, hoveredItem.value);
     _activeStartDragDetails = sheetDragDetails;
     _addGesture(SheetDragStartGesture(sheetDragDetails));

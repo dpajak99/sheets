@@ -36,6 +36,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     _sheetProperties = sheetProperties;
     _scrollPosition = scrollController.position;
     _scrollMetrics = scrollController.metrics;
+    _recalculateVisibleElements();
 
     sheetProperties.addListener(() => _updateSheetProperties(sheetProperties));
     scrollController.addListener(() => _updateScrollPosition(scrollController));

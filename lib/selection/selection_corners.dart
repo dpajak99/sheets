@@ -84,6 +84,10 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
 
   int get rightIndex => topRight.columnIndex.value;
 
+  String stringifyCorners() {
+    return '${topLeft.stringifyPosition()}, ${topRight.stringifyPosition()}, ${bottomLeft.stringifyPosition()}, ${bottomRight.stringifyPosition()}';
+  }
+
   @override
   List<Object?> get props => <Object?>[topLeft, topRight, bottomLeft, bottomRight];
 }

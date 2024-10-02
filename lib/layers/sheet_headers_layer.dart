@@ -26,23 +26,23 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
     super.initState();
     columnHeadersPainter = _ColumnHeadersPainter(
       visibleColumns: widget.sheetController.viewport.visibleColumns,
-      selection: widget.sheetController.selectionController.selection,
+      selection: widget.sheetController.selection,
     );
     rowHeadersPainter = _RowHeadersPainter(
       visibleRows: widget.sheetController.viewport.visibleRows,
-      selection: widget.sheetController.selectionController.selection,
+      selection: widget.sheetController.selection,
     );
 
     widget.sheetController.viewport.addListener(_updateVisibleColumns);
     widget.sheetController.viewport.addListener(_updateVisibleRows);
-    widget.sheetController.selectionController.addListener(_updateSelection);
+    widget.sheetController.selectionNotifier.addListener(_updateSelection);
   }
 
   @override
   void dispose() {
     widget.sheetController.viewport.removeListener(_updateVisibleColumns);
     widget.sheetController.viewport.removeListener(_updateVisibleRows);
-    widget.sheetController.selectionController.removeListener(_updateSelection);
+    widget.sheetController.selectionNotifier.removeListener(_updateSelection);
     super.dispose();
   }
 
@@ -70,8 +70,8 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   }
 
   void _updateSelection() {
-    columnHeadersPainter.selection = widget.sheetController.selectionController.selection;
-    rowHeadersPainter.selection = widget.sheetController.selectionController.selection;
+    columnHeadersPainter.selection = widget.sheetController.selection;
+    rowHeadersPainter.selection = widget.sheetController.selection;
   }
 }
 

@@ -59,7 +59,7 @@ class _VerticalHeadersResizerLayerState extends State<_VerticalHeadersResizerLay
       children: _visibleColumns.map((ColumnConfig column) {
         return _VerticalHeaderResizer(
           column: column,
-          onResize: (Offset delta) => widget.sheetController.resizeColumnBy(column, delta.dx),
+          onResize: (Offset delta) => widget.sheetController.resizeColumnBy(column.index, delta.dx),
         );
       }).toList(),
     );
@@ -163,7 +163,7 @@ class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResize
       children: _visibleRows.map((RowConfig row) {
         return _HorizontalHeaderResizer(
           row: row,
-          onResize: (Offset delta) => widget.sheetController.resizeRowBy(row, delta.dy),
+          onResize: (Offset delta) => widget.sheetController.resizeRowBy(row.index, delta.dy),
         );
       }).toList(),
     );

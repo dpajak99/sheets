@@ -26,19 +26,19 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   @override
   void initState() {
     super.initState();
-    SheetSelectionRenderer selectionRenderer = widget.sheetController.selectionController.selection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer selectionRenderer = widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
     widget.sheetController.sheetProperties.addListener(_updateFillHandle);
-    widget.sheetController.selectionController.addListener(_updateFillHandle);
+    widget.sheetController.selectionNotifier.addListener(_updateFillHandle);
     widget.sheetController.scrollController.addListener(_updateFillHandle);
   }
 
   @override
   void dispose() {
     widget.sheetController.sheetProperties.removeListener(_updateFillHandle);
-    widget.sheetController.selectionController.removeListener(_updateFillHandle);
+    widget.sheetController.selectionNotifier.removeListener(_updateFillHandle);
     widget.sheetController.scrollController.removeListener(_updateFillHandle);
     super.dispose();
   }
@@ -76,7 +76,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
     if(_dragInProgress) {
       return;
     }
-    SheetSelectionRenderer selectionRenderer = widget.sheetController.selectionController.selection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer selectionRenderer = widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
 
     setState(() {
       _visible = selectionRenderer.fillHandleVisible;
