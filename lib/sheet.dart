@@ -136,13 +136,8 @@ class SheetState extends State<Sheet> {
               ),
               Positioned.fill(
                 child: SheetGestureDetector(
-                  cursorListener: sheetController.mouse.cursor,
+                  mouseListener: sheetController.mouse,
                   onMouseOffsetChanged: sheetController.onMouseOffsetChanged,
-                  onTap: sheetController.mouse.tap,
-                  onDragStart: sheetController.mouse.dragStart,
-                  onDragUpdate: sheetController.mouse.dragUpdate,
-                  onDragEnd: sheetController.mouse.dragEnd,
-                  onScroll: sheetController.mouse.scroll,
                 ),
               ),
             ],
@@ -217,7 +212,7 @@ class SheetGrid extends StatelessWidget {
         Positioned.fill(child: SheetHeadersLayer(sheetController: sheetController)),
         Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetSelectionLayer(sheetController: sheetController)),
-        Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
+        // Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
         Positioned(
           top: 0,
           left: 0,

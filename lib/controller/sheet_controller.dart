@@ -35,12 +35,26 @@ class SheetController {
     sheetProperties: sheetProperties,
     scrollController: scrollController,
   );
-  late final SheetMouseListener mouse = SheetMouseListener();
   late final SheetKeyboardListener keyboard = SheetKeyboardListener();
+  late final SheetMouseListener mouse = SheetMouseListener();
 
   late ValueNotifier<SheetSelection> selectionNotifier = ValueNotifier<SheetSelection>(SheetSingleSelection.defaultSelection());
+  
+  SheetSelection? _savedSelection;
+  SheetSelection _previousSelection = SheetSingleSelection.defaultSelection();
+
+  SheetSelection? get savedSelection => _savedSelection;
+  SheetSelection get previousSelection => _previousSelection;
 
   SheetSelection get selection => selectionNotifier.value;
+
+  set selection(SheetSelection selection) {
+    if(selection.isCompleted && !keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
+      _previousSelection = selectionNotifier.value;
+    }
+    // selectionNotifier.value = selection.simplify();
+    selectionNotifier.value = selection;
+  }
 
   final StreamController<SheetGesture> _gesturesStream = StreamController<SheetGesture>();
 
@@ -52,6 +66,14 @@ class SheetController {
 
     mouse.stream.listen(_handleMouseGesture);
     stream.listen(_handleGesture);
+
+    keyboard.onKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectAll);
+    keyboard.onKeyPressed(LogicalKeyboardKey.shiftLeft, () {
+      _savedSelection = selection;
+    });
+    keyboard.onKeyReleased(LogicalKeyboardKey.shiftLeft, () {
+      _savedSelection = null;
+    });
   }
 
   void dispose() {
@@ -63,8 +85,7 @@ class SheetController {
   void _handleGesture(SheetGesture gesture) {
     gesture.resolve(this);
   }
-
-  SheetSelection? previousSelection;
+  
   bool fillInProgress = false;
 
   void _handleMouseGesture(SheetGesture gesture) {
@@ -72,20 +93,17 @@ class SheetController {
       case SheetTapGesture tapGesture:
         return _gesturesStream.add(SheetSingleSelectionGesture.from(tapGesture));
 
-      case SheetDoubleTapGesture tapGesture:
-        return _gesturesStream.add(SheetSingleSelectionGesture.from(tapGesture.single));
+      // case SheetDoubleTapGesture tapGesture:
+      //   return _gesturesStream.add(SheetSingleSelectionGesture.from(tapGesture.single));
 
-      case SheetDragStartGesture dragStartGesture:
-        previousSelection = selection;
-        return _gesturesStream.add(SheetSelectionStartGesture.from(dragStartGesture));
+      case SheetDragStartGesture _:
+        return _gesturesStream.add(SheetSelectionStartGesture());
 
       case SheetDragUpdateGesture dragUpdateGesture:
-        if (previousSelection == null) return;
-        return _gesturesStream.add(SheetSelectionUpdateGesture.from(dragUpdateGesture, selection: previousSelection!));
+        return _gesturesStream.add(SheetSelectionUpdateGesture.from(dragUpdateGesture));
 
-      case SheetDragEndGesture dragEndGesture:
-        previousSelection = null;
-        return _gesturesStream.add(SheetSelectionEndGesture.from(dragEndGesture));
+      case SheetDragEndGesture _:
+        return _gesturesStream.add(SheetSelectionEndGesture());
 
       case SheetFillStartGesture fillStartGesture:
         fillInProgress = true;
@@ -121,31 +139,31 @@ class SheetController {
   }
 
   void customSelection(SheetSelection selection) {
-    selectionNotifier.value = selection;
+    this.selection = selection;
   }
 
   void selectSingle(CellIndex cellIndex, {bool editingEnabled = false}) {
-    selectionNotifier.value = SelectionUtils.getSingleSelection(cellIndex);
+    selection = SelectionUtils.getSingleSelection(cellIndex);
   }
 
   void selectColumn(ColumnIndex columnIndex) {
-    selectionNotifier.value = SelectionUtils.getColumnSelection(columnIndex);
+    selection = SelectionUtils.getColumnSelection(columnIndex);
   }
 
   void selectRow(RowIndex rowIndex) {
-    selectionNotifier.value = SelectionUtils.getRowSelection(rowIndex);
+    selection = SelectionUtils.getRowSelection(rowIndex);
   }
 
   void selectRange({required CellIndex start, required CellIndex end, bool completed = false}) {
-    selectionNotifier.value = SelectionUtils.getRangeSelection(start: start, end: end, completed: completed);
+    selection = SelectionUtils.getRangeSelection(start: start, end: end, completed: completed);
   }
 
   void selectColumnRange({required ColumnIndex start, required ColumnIndex end}) {
-    selectionNotifier.value = SelectionUtils.getColumnRangeSelection(start: start, end: end);
+    selection = SelectionUtils.getColumnRangeSelection(start: start, end: end);
   }
 
   void selectRowRange({required RowIndex start, required RowIndex end}) {
-    selectionNotifier.value = SelectionUtils.getRowRangeSelection(start: start, end: end);
+    selection = SelectionUtils.getRowRangeSelection(start: start, end: end);
   }
 
   void selectMultiple(List<CellIndex> selectedCells, {CellIndex? endCell}) {
@@ -155,11 +173,11 @@ class SheetController {
         ..remove(endCell)
         ..add(endCell);
     }
-    selectionNotifier.value = SheetMultiSelection(selectedCells: cells);
+    selection = SheetMultiSelection(selectedCells: cells);
   }
 
   void selectAll() {
-    selectionNotifier.value = SelectionUtils.getAllSelection();
+    selection = SelectionUtils.getAllSelection();
   }
 
   void toggleCellSelection(CellIndex cellIndex) {
@@ -169,7 +187,7 @@ class SheetController {
     } else {
       selectedCells.add(cellIndex);
     }
-    selectionNotifier.value = SheetMultiSelection(selectedCells: selectedCells);
+    selection = SheetMultiSelection(selectedCells: selectedCells);
   }
 
   void toggleColumnSelection(ColumnIndex columnIndex) {
@@ -179,7 +197,7 @@ class SheetController {
     } else {
       selectedCells.addAll(List.generate(defaultRowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
     }
-    selectionNotifier.value = SheetMultiSelection(selectedCells: selectedCells);
+    selection = SheetMultiSelection(selectedCells: selectedCells);
   }
 
   void toggleRowSelection(RowIndex rowIndex) {
@@ -189,10 +207,10 @@ class SheetController {
     } else {
       selectedCells.addAll(List.generate(defaultColumnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
     }
-    selectionNotifier.value = SheetMultiSelection(selectedCells: selectedCells);
+    selection = SheetMultiSelection(selectedCells: selectedCells);
   }
 
   void completeSelection() {
-    selectionNotifier.value = selection.complete();
+    selection = selection.complete();
   }
 }

@@ -36,6 +36,9 @@ class SheetMultiSelection extends SheetSelection {
   CellIndex get end => _selectedCells.last;
 
   @override
+  CellIndex get mainCell => end;
+
+  @override
   List<CellIndex> get selectedCells => _selectedCells.toList();
 
   @override
@@ -109,7 +112,7 @@ class SheetMultiSelectionRenderer extends SheetSelectionRenderer {
   @override
   SheetSelectionPaint get paint => SheetMultiSelectionPaint(this);
 
-  CellConfig? get lastSelectedCell => viewportDelegate.findCell(selection.selectedCells.last);
+  CellConfig? get lastSelectedCell => viewportDelegate.findCell(selection.mainCell);
 }
 
 class SheetMultiSelectionPaint extends SheetSelectionPaint {

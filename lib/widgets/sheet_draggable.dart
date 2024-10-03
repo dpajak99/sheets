@@ -48,9 +48,12 @@ class _SheetDraggableState extends State<SheetDraggable> {
           child: MouseRegion(
             opaque: false,
             hitTestBehavior: HitTestBehavior.translucent,
-            onEnter: (_) => _setHovered(true),
-            onHover: (_) => _setHovered(true),
-            onExit: (_) => _setHovered(false),
+            onEnter: (_) => _setHovered(),
+            onHover: (_) => _setHovered(),
+            onExit: (_) {
+              if (_dragInProgress) return;
+              _resetCursor();
+            },
             child: Listener(
               onPointerDown: _onDragStart,
               onPointerMove: _onDragUpdate,
@@ -67,7 +70,7 @@ class _SheetDraggableState extends State<SheetDraggable> {
   void _onDragStart(PointerDownEvent event) {
     Sheet.of(context).disableMouseActions();
     Sheet.of(context).setCursor(widget.cursor);
-    _setDragged(true);
+    _dragInProgress = true;
     widget.onDragStart(event.position);
   }
 
@@ -89,37 +92,31 @@ class _SheetDraggableState extends State<SheetDraggable> {
     _dragDelta = Offset.zero;
     widget.onDragDeltaChanged(_dragDelta);
 
-    setState(() {
-      _hoverInProgress = false;
-      _dragInProgress = false;
-    });
-
-    Sheet.of(context).enableMouseActions();
-    Sheet.of(context).resetCursor();
+    _resetCursor();
   }
 
-  void _setHovered(bool value) {
+  void _setHovered() {
     if (_dragInProgress) return;
     if (Sheet.of(context).isNativeDragging()) return;
     if (Sheet.of(context).areMouseActionsEnabled() == false) return;
 
-    Sheet.of(context).setCustomTapHovered(value);
-    if (_hoverInProgress != value) {
+    Sheet.of(context).setCustomTapHovered(true);
+    if (_hoverInProgress == false) {
       setState(() {
-        _hoverInProgress = value;
+        _hoverInProgress = true;
         _dragInProgress = false;
       });
-      if (value == true) {
-        Sheet.of(context).setCursor(widget.cursor);
-      } else {
-        Sheet.of(context).resetCursor();
-      }
+      Sheet.of(context).setCursor(widget.cursor);
     }
   }
 
-  void _setDragged(bool value) {
-    if (_dragInProgress != value) {
-      setState(() => _dragInProgress = value);
-    }
+  void _resetCursor() {
+    setState(() {
+      _hoverInProgress = false;
+      _dragInProgress = false;
+    });
+    Sheet.of(context).enableMouseActions();
+    Sheet.of(context).setCustomTapHovered(false);
+    Sheet.of(context).resetCursor();
   }
 }

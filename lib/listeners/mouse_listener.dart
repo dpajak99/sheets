@@ -47,17 +47,21 @@ class SheetMouseListener {
 
   void tap() {
     if (customTapHovered) return;
+    if (nativeDragging) return;
     SheetGesture tapGesture = tapRecognizer.onTap(SheetTapDetails.create(mousePosition.value, hoveredItem.value));
     _addGesture(tapGesture);
   }
 
   SheetDragDetails? _activeStartDragDetails;
 
-  void dragStart() {
+  void dragStart(SheetItemConfig draggedItem) {
+    if(_previousGesture is SheetTapGesture && (_previousGesture as SheetTapGesture).details.hoveredItem == hoveredItem.value) return;
+    if(_previousGesture is SheetDoubleTapGesture && (_previousGesture as SheetDoubleTapGesture).details.hoveredItem == hoveredItem.value) return;
+
     nativeDragging = true;
-    SheetDragDetails sheetDragDetails = SheetDragDetails.create(mousePosition.value, hoveredItem.value);
+    SheetDragDetails sheetDragDetails = SheetDragDetails.create(mousePosition.value, draggedItem);
     _activeStartDragDetails = sheetDragDetails;
-    _addGesture(SheetDragStartGesture(sheetDragDetails));
+    _addGesture(SheetDragStartGesture());
   }
 
   void dragUpdate() {
@@ -68,6 +72,14 @@ class SheetMouseListener {
       startDetails: _activeStartDragDetails!,
     );
     _addGesture(dragUpdateGesture);
+  }
+
+  void dragEnd() {
+    nativeDragging = false;
+    if (_activeStartDragDetails == null) return;
+
+    SheetGesture dragEndGesture = SheetDragEndGesture();
+    _addGesture(dragEndGesture);
   }
 
   void fillStart() {
@@ -85,23 +97,15 @@ class SheetMouseListener {
     _gesturesStream.add(fillEndGesture);
   }
 
-  void dragEnd() {
-    nativeDragging = false;
-    if (_activeStartDragDetails == null) return;
-
-    SheetGesture dragEndGesture = SheetDragEndGesture(
-      SheetDragDetails.create(mousePosition.value, hoveredItem.value),
-      startDetails: _activeStartDragDetails!,
-    );
-    _addGesture(dragEndGesture);
-  }
 
   void scroll(Offset delta) {
     _addGesture(SheetScrollGesture(delta));
   }
 
+  SheetGesture? _previousGesture;
   void _addGesture(SheetGesture gesture) {
     if (!_enabled) return;
     _gesturesStream.add(gesture);
+    _previousGesture = gesture;
   }
 }

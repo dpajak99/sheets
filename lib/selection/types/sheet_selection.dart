@@ -19,6 +19,8 @@ abstract class SheetSelection with EquatableMixin {
 
   CellIndex get end;
 
+  CellIndex get mainCell => start;
+
   List<CellIndex> get selectedCells;
 
   SelectionCellCorners? get selectionCellCorners;
