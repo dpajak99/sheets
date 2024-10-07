@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
 
 class SheetSelectionLayer extends StatefulWidget {
@@ -23,16 +23,16 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
   void initState() {
     super.initState();
     _selectionPainter = _SelectionPainter(
-      sheetSelection: widget.sheetController.selection,
+      sheetSelection: widget.sheetController.selectionController.visibleSelection,
       viewportDelegate: widget.sheetController.viewport,
     );
-    widget.sheetController.selectionNotifier.addListener(_updateSelection);
+    widget.sheetController.selectionController.addListener(_updateSelection);
     widget.sheetController.viewport.addListener(_updateViewport);
   }
 
   @override
   void dispose() {
-    widget.sheetController.selectionNotifier.removeListener(_updateSelection);
+    widget.sheetController.selectionController.removeListener(_updateSelection);
     widget.sheetController.viewport.removeListener(_updateViewport);
     super.dispose();
   }
@@ -45,7 +45,7 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
   }
 
   void _updateSelection() {
-    _selectionPainter.sheetSelection = widget.sheetController.selection;
+    _selectionPainter.sheetSelection = widget.sheetController.selectionController.visibleSelection;
   }
 
   void _updateViewport() {

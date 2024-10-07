@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
-import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/utils/directional_values.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
@@ -46,7 +46,6 @@ class SheetScrollController extends ChangeNotifier {
   }
 
   set viewportSize(Size size) {
-    print('Updating viewport size: $size');
     metrics.update(
       horizontal: metrics.horizontal.copyWith(viewportDimension: size.width),
       vertical: metrics.vertical.copyWith(viewportDimension: size.height),

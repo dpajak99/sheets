@@ -6,7 +6,7 @@ import 'package:sheets/layers/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/sheet_headers_layer.dart';
 import 'package:sheets/layers/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/sheet_selection_layer.dart';
-import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
 import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 import 'package:sheets/widgets/sheet_gesture_detector.dart';
@@ -25,12 +25,10 @@ class SheetPageState extends State<SheetPage> {
   @override
   void initState() {
     super.initState();
-    ServicesBinding.instance.keyboard.addHandler(_onKeyboardKeyPressed);
   }
 
   @override
   void dispose() {
-    ServicesBinding.instance.keyboard.removeHandler(_onKeyboardKeyPressed);
     sheetController.dispose();
     super.dispose();
   }
@@ -47,15 +45,6 @@ class SheetPageState extends State<SheetPage> {
         ),
       ],
     ));
-  }
-
-  bool _onKeyboardKeyPressed(KeyEvent event) {
-    if (event is KeyDownEvent) {
-      sheetController.keyboard.addKey(event.logicalKey);
-    } else if (event is KeyUpEvent) {
-      sheetController.keyboard.removeKey(event.logicalKey);
-    }
-    return false;
   }
 }
 
@@ -212,7 +201,7 @@ class SheetGrid extends StatelessWidget {
         Positioned.fill(child: SheetHeadersLayer(sheetController: sheetController)),
         Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetSelectionLayer(sheetController: sheetController)),
-        // Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
         Positioned(
           top: 0,
           left: 0,

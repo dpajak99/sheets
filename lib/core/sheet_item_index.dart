@@ -37,7 +37,7 @@ class CellIndex extends SheetItemIndex {
   List<Object?> get props => [rowIndex, columnIndex];
 }
 
-class ColumnIndex extends SheetItemIndex with NumericIndexMixin {
+class ColumnIndex extends SheetItemIndex with NumericIndexMixin implements Comparable {
   final int _value;
 
   ColumnIndex(int value)
@@ -71,10 +71,19 @@ class ColumnIndex extends SheetItemIndex with NumericIndexMixin {
   }
 
   @override
+  int compareTo(other) {
+    if (other is ColumnIndex) {
+      return value.compareTo(other.value);
+    } else {
+      return -1;
+    }
+  }
+
+  @override
   List<Object?> get props => [value];
 }
 
-class RowIndex extends SheetItemIndex with NumericIndexMixin {
+class RowIndex extends SheetItemIndex with NumericIndexMixin implements Comparable {
   final int _value;
 
   RowIndex(int value) : _value = value < 0 ? 0 : value;
@@ -87,6 +96,15 @@ class RowIndex extends SheetItemIndex with NumericIndexMixin {
   @override
   String stringifyPosition() {
     return (value + 1).toString();
+  }
+
+  @override
+  int compareTo(other) {
+    if (other is RowIndex) {
+      return value.compareTo(other.value);
+    } else {
+      return -1;
+    }
   }
 
   @override

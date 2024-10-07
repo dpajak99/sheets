@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
@@ -21,7 +21,7 @@ abstract class SheetSelection with EquatableMixin {
 
   CellIndex get mainCell => start;
 
-  List<CellIndex> get selectedCells;
+  Set<CellIndex> get selectedCells;
 
   SelectionCellCorners? get selectionCellCorners;
 

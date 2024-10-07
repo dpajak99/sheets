@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/controller/selection_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/gestures/sheet_fill_gesture.dart';
@@ -12,13 +11,8 @@ import 'package:sheets/controller/sheet_scroll_controller.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
 import 'package:sheets/gestures/sheet_resize_gestures.dart';
 import 'package:sheets/gestures/sheet_selection_gesture.dart';
-import 'package:sheets/gestures/sheet_tap_gesture.dart';
 import 'package:sheets/listeners/keyboard_listener.dart';
 import 'package:sheets/listeners/mouse_listener.dart';
-import 'package:sheets/selection/selection_utils.dart';
-import 'package:sheets/selection/types/sheet_multi_selection.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
-import 'package:sheets/selection/types/sheet_single_selection.dart';
 
 class SheetController {
   final SheetProperties sheetProperties = SheetProperties(
@@ -38,23 +32,7 @@ class SheetController {
   late final SheetKeyboardListener keyboard = SheetKeyboardListener();
   late final SheetMouseListener mouse = SheetMouseListener();
 
-  late ValueNotifier<SheetSelection> selectionNotifier = ValueNotifier<SheetSelection>(SheetSingleSelection.defaultSelection());
-  
-  SheetSelection? _savedSelection;
-  SheetSelection _previousSelection = SheetSingleSelection.defaultSelection();
-
-  SheetSelection? get savedSelection => _savedSelection;
-  SheetSelection get previousSelection => _previousSelection;
-
-  SheetSelection get selection => selectionNotifier.value;
-
-  set selection(SheetSelection selection) {
-    if(selection.isCompleted && !keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      _previousSelection = selectionNotifier.value;
-    }
-    // selectionNotifier.value = selection.simplify();
-    selectionNotifier.value = selection;
-  }
+  SelectionController selectionController = SelectionController();
 
   final StreamController<SheetGesture> _gesturesStream = StreamController<SheetGesture>();
 
@@ -67,12 +45,19 @@ class SheetController {
     mouse.stream.listen(_handleMouseGesture);
     stream.listen(_handleGesture);
 
-    keyboard.onKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectAll);
+    keyboard.onKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectionController.selectAll);
     keyboard.onKeyPressed(LogicalKeyboardKey.shiftLeft, () {
-      _savedSelection = selection;
+      selectionController.openNewLayer();
+    });
+    keyboard.onKeyPressed(LogicalKeyboardKey.controlLeft, () {
+      selectionController.openNewLayer();
     });
     keyboard.onKeyReleased(LogicalKeyboardKey.shiftLeft, () {
-      _savedSelection = null;
+      selectionController.closeLayer();
+    });
+    keyboard.onKeyReleased(LogicalKeyboardKey.controlLeft, () {
+      selectionController.closeLayer();
+
     });
   }
 
@@ -85,19 +70,13 @@ class SheetController {
   void _handleGesture(SheetGesture gesture) {
     gesture.resolve(this);
   }
-  
+
   bool fillInProgress = false;
 
   void _handleMouseGesture(SheetGesture gesture) {
     switch (gesture) {
-      case SheetTapGesture tapGesture:
-        return _gesturesStream.add(SheetSingleSelectionGesture.from(tapGesture));
-
-      // case SheetDoubleTapGesture tapGesture:
-      //   return _gesturesStream.add(SheetSingleSelectionGesture.from(tapGesture.single));
-
-      case SheetDragStartGesture _:
-        return _gesturesStream.add(SheetSelectionStartGesture());
+      case SheetDragStartGesture sheetDragStartGesture:
+        return _gesturesStream.add(SheetSelectionStartGesture.from(sheetDragStartGesture));
 
       case SheetDragUpdateGesture dragUpdateGesture:
         return _gesturesStream.add(SheetSelectionUpdateGesture.from(dragUpdateGesture));
@@ -136,81 +115,5 @@ class SheetController {
 
   void resizeRowBy(RowIndex row, double delta) {
     _gesturesStream.add(SheetResizeRowGesture(row, delta));
-  }
-
-  void customSelection(SheetSelection selection) {
-    this.selection = selection;
-  }
-
-  void selectSingle(CellIndex cellIndex, {bool editingEnabled = false}) {
-    selection = SelectionUtils.getSingleSelection(cellIndex);
-  }
-
-  void selectColumn(ColumnIndex columnIndex) {
-    selection = SelectionUtils.getColumnSelection(columnIndex);
-  }
-
-  void selectRow(RowIndex rowIndex) {
-    selection = SelectionUtils.getRowSelection(rowIndex);
-  }
-
-  void selectRange({required CellIndex start, required CellIndex end, bool completed = false}) {
-    selection = SelectionUtils.getRangeSelection(start: start, end: end, completed: completed);
-  }
-
-  void selectColumnRange({required ColumnIndex start, required ColumnIndex end}) {
-    selection = SelectionUtils.getColumnRangeSelection(start: start, end: end);
-  }
-
-  void selectRowRange({required RowIndex start, required RowIndex end}) {
-    selection = SelectionUtils.getRowRangeSelection(start: start, end: end);
-  }
-
-  void selectMultiple(List<CellIndex> selectedCells, {CellIndex? endCell}) {
-    List<CellIndex> cells = selectedCells.toSet().toList();
-    if (endCell != null && cells.contains(endCell)) {
-      cells
-        ..remove(endCell)
-        ..add(endCell);
-    }
-    selection = SheetMultiSelection(selectedCells: cells);
-  }
-
-  void selectAll() {
-    selection = SelectionUtils.getAllSelection();
-  }
-
-  void toggleCellSelection(CellIndex cellIndex) {
-    List<CellIndex> selectedCells = selection.selectedCells;
-    if (selectedCells.contains(cellIndex) && selectedCells.length > 1) {
-      selectedCells.remove(cellIndex);
-    } else {
-      selectedCells.add(cellIndex);
-    }
-    selection = SheetMultiSelection(selectedCells: selectedCells);
-  }
-
-  void toggleColumnSelection(ColumnIndex columnIndex) {
-    List<CellIndex> selectedCells = selection.selectedCells;
-    if (selectedCells.any((CellIndex cellIndex) => cellIndex.columnIndex == columnIndex)) {
-      selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.columnIndex == columnIndex);
-    } else {
-      selectedCells.addAll(List.generate(defaultRowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
-    }
-    selection = SheetMultiSelection(selectedCells: selectedCells);
-  }
-
-  void toggleRowSelection(RowIndex rowIndex) {
-    List<CellIndex> selectedCells = selection.selectedCells;
-    if (selectedCells.any((CellIndex cellIndex) => cellIndex.rowIndex == rowIndex)) {
-      selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.rowIndex == rowIndex);
-    } else {
-      selectedCells.addAll(List.generate(defaultColumnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
-    }
-    selection = SheetMultiSelection(selectedCells: selectedCells);
-  }
-
-  void completeSelection() {
-    selection = selection.complete();
   }
 }

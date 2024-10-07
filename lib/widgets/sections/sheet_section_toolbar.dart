@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/config/app_icons/asset_icon.dart';
+import 'package:sheets/core/config/app_icons/asset_icon.dart';
 
 class SheetSectionToolbar extends StatefulWidget {
   const SheetSectionToolbar({super.key});

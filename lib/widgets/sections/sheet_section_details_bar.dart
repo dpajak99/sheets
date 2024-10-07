@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/config/app_icons/asset_icon.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/core/config/app_icons/asset_icon.dart';
 
 class SheetSectionDetailsBar extends StatefulWidget {
   final SheetController sheetController;
@@ -29,9 +28,9 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
       ),
       child: Row(
         children: <Widget>[
-          ValueListenableBuilder<SheetSelection>(
-            valueListenable: widget.sheetController.selectionNotifier,
-            builder: (BuildContext context, SheetSelection selection, _) {
+          ListenableBuilder(
+            listenable: widget.sheetController.selectionController,
+            builder: (BuildContext context, _) {
               return Container(
                 width: 98,
                 padding: const EdgeInsets.only(left: 14, right: 12),
@@ -39,7 +38,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
                   children: [
                     Expanded(
                       child: Text(
-                        selection.stringifySelection(),
+                        widget.sheetController.selectionController.visibleSelection.stringifySelection(),
                         style: const TextStyle(color: Colors.black, fontSize: 12, height: 1),
                       ),
                     ),

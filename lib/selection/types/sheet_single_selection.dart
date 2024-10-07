@@ -10,16 +10,14 @@ import 'package:sheets/utils/cached_value.dart';
 
 class SheetSingleSelection extends SheetSelection {
   final CellIndex cellIndex;
-  final bool active;
 
   SheetSingleSelection({
     required this.cellIndex,
-    this.active = false,
-  }) : super(completed: true);
+    required super.completed,
+  });
 
   SheetSingleSelection.defaultSelection()
       : cellIndex = CellIndex.zero,
-        active = true,
         super(completed: true);
 
   @override
@@ -29,7 +27,7 @@ class SheetSingleSelection extends SheetSelection {
   CellIndex get end => cellIndex;
 
   @override
-  List<CellIndex> get selectedCells => [cellIndex];
+  Set<CellIndex> get selectedCells => {cellIndex};
 
   @override
   SelectionCellCorners get selectionCellCorners => SelectionCellCorners.single(cellIndex);
@@ -49,7 +47,12 @@ class SheetSingleSelection extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => <Object?>[cellIndex, active];
+  SheetSelection complete() {
+    return SheetSingleSelection(cellIndex: cellIndex, completed: true);
+  }
+
+  @override
+  List<Object?> get props => <Object?>[cellIndex, isCompleted];
 }
 
 class SheetSingleSelectionRenderer extends SheetSelectionRenderer {
@@ -64,7 +67,7 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer {
   }
 
   @override
-  bool get fillHandleVisible => selection.active == false;
+  bool get fillHandleVisible => selection.isCompleted == true;
 
   @override
   Offset? get fillHandleOffset => selectedCell?.rect.bottomRight;

@@ -6,9 +6,7 @@ import 'package:sheets/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/gestures/sheet_scroll_gesture.dart';
-import 'package:sheets/gestures/sheet_tap_gesture.dart';
 import 'package:sheets/core/sheet_item_config.dart';
-import 'package:sheets/recognizers/sheet_tap_recognizer.dart';
 
 class SheetMouseListener {
   final StreamController<SheetGesture> _gesturesStream = StreamController<SheetGesture>();
@@ -18,8 +16,6 @@ class SheetMouseListener {
   final ValueNotifier<Offset> mousePosition = ValueNotifier(Offset.zero);
   final ValueNotifier<SheetItemConfig?> hoveredItem = ValueNotifier(null);
   final ValueNotifier<SystemMouseCursor> cursor = ValueNotifier(SystemMouseCursors.basic);
-
-  final SheetTapRecognizer tapRecognizer = SheetTapRecognizer();
 
   bool _enabled = true;
 
@@ -45,41 +41,36 @@ class SheetMouseListener {
     this.cursor.value = cursor;
   }
 
-  void tap() {
-    if (customTapHovered) return;
-    if (nativeDragging) return;
-    SheetGesture tapGesture = tapRecognizer.onTap(SheetTapDetails.create(mousePosition.value, hoveredItem.value));
-    _addGesture(tapGesture);
-  }
+  // void tap() {
+  //   print('tap');
+  //   if (customTapHovered) return;
+  //   if (nativeDragging) return;
+  //   SheetGesture tapGesture = tapRecognizer.onTap(SheetTapDetails.create(mousePosition.value, hoveredItem.value));
+  //   _addGesture(tapGesture);
+  // }
 
   SheetDragDetails? _activeStartDragDetails;
 
   void dragStart(SheetItemConfig draggedItem) {
-    if(_previousGesture is SheetTapGesture && (_previousGesture as SheetTapGesture).details.hoveredItem == hoveredItem.value) return;
-    if(_previousGesture is SheetDoubleTapGesture && (_previousGesture as SheetDoubleTapGesture).details.hoveredItem == hoveredItem.value) return;
-
     nativeDragging = true;
-    SheetDragDetails sheetDragDetails = SheetDragDetails.create(mousePosition.value, draggedItem);
-    _activeStartDragDetails = sheetDragDetails;
-    _addGesture(SheetDragStartGesture());
+    _activeStartDragDetails = SheetDragDetails.create(mousePosition.value, draggedItem);
+    _addGesture(SheetDragStartGesture(_activeStartDragDetails!));
   }
 
   void dragUpdate() {
-    if (_activeStartDragDetails == null) return;
-
-    SheetGesture dragUpdateGesture = SheetDragUpdateGesture(
-      SheetDragDetails.create(mousePosition.value, hoveredItem.value),
-      startDetails: _activeStartDragDetails!,
-    );
-    _addGesture(dragUpdateGesture);
+    if (nativeDragging && _activeStartDragDetails != null) {
+      _addGesture(SheetDragUpdateGesture(
+        SheetDragDetails.create(mousePosition.value, hoveredItem.value),
+        startDetails: _activeStartDragDetails!,
+      ));
+    }
   }
 
   void dragEnd() {
     nativeDragging = false;
-    if (_activeStartDragDetails == null) return;
+    _activeStartDragDetails = null;
 
-    SheetGesture dragEndGesture = SheetDragEndGesture();
-    _addGesture(dragEndGesture);
+    _addGesture(SheetDragEndGesture());
   }
 
   void fillStart() {
@@ -97,15 +88,12 @@ class SheetMouseListener {
     _gesturesStream.add(fillEndGesture);
   }
 
-
   void scroll(Offset delta) {
     _addGesture(SheetScrollGesture(delta));
   }
 
-  SheetGesture? _previousGesture;
   void _addGesture(SheetGesture gesture) {
     if (!_enabled) return;
     _gesturesStream.add(gesture);
-    _previousGesture = gesture;
   }
 }

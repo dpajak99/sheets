@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/selection_direction.dart';
 import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SelectionBounds {
+class SelectionBounds with EquatableMixin {
   final SelectionCorners<Rect> _corners;
   final CellConfig startCell;
   final bool _startCellVisible;
@@ -64,4 +65,7 @@ class SelectionBounds {
   bool get isRightBorderVisible => !_hiddenBorders.contains(Direction.right);
 
   bool get isBottomBorderVisible => !_hiddenBorders.contains(Direction.bottom);
+
+  @override
+  List<Object?> get props => [_corners, startCell, _startCellVisible, _hiddenBorders];
 }

@@ -4,8 +4,8 @@ double borderWidth = 1;
 
 double scrollbarWidth = 14;
 
-int defaultColumnCount = 20;
-int defaultRowCount = 100;
+int defaultColumnCount = 14;
+int defaultRowCount = 30;
 
 int columnHeadersCount = 1;
 int rowHeadersCount = 1;

@@ -20,9 +20,9 @@ class SelectionStatus with EquatableMixin {
     }
   }
 
-  SelectionStatus merge(SelectionStatus other) {
-    return SelectionStatus(_isSelected || other._isSelected, _isFullySelected && other._isFullySelected);
-  }
+  bool get isSelected => _isSelected;
+
+  bool get isFullySelected => _isFullySelected;
 
   @override
   List<Object?> get props => [_isSelected, _isFullySelected];

@@ -7,7 +7,7 @@ import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/selection_direction.dart';
 import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
@@ -44,16 +44,15 @@ class SheetRangeSelection extends SheetSelection {
   CellIndex get end => _end;
 
   @override
-  List<CellIndex> get selectedCells {
+  Set<CellIndex> get selectedCells {
     SelectionCellCorners selectionCorners = selectionCellCorners;
-
     List<CellIndex> cells = [];
     for (int rowIndex = selectionCorners.topLeft.rowIndex.value; rowIndex <= selectionCorners.bottomLeft.rowIndex.value; rowIndex++) {
       for (int columnIndex = selectionCorners.topLeft.columnIndex.value; columnIndex <= selectionCorners.topRight.columnIndex.value; columnIndex++) {
         cells.add(CellIndex(rowIndex: RowIndex(rowIndex), columnIndex: ColumnIndex(columnIndex)));
       }
     }
-    return cells;
+    return cells.toSet();
   }
 
   @override
@@ -69,17 +68,19 @@ class SheetRangeSelection extends SheetSelection {
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
+    bool selected = horizontalRange.contains(columnIndex);
     return SelectionStatus(
-      horizontalRange.contains(columnIndex),
-      verticalRange.containsRange(Range<RowIndex>(RowIndex.zero, RowIndex(defaultRowCount))),
+      selected,
+      selected && verticalRange.containsRange(Range<RowIndex>(RowIndex.zero, RowIndex(defaultRowCount - 1))),
     );
   }
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
+    bool selected = verticalRange.contains(rowIndex);
     return SelectionStatus(
-      verticalRange.contains(rowIndex),
-      horizontalRange.containsRange(Range<ColumnIndex>(ColumnIndex.zero, ColumnIndex(defaultColumnCount))),
+      selected,
+      selected && horizontalRange.containsRange(Range<ColumnIndex>(ColumnIndex.zero, ColumnIndex(defaultColumnCount - 1))),
     );
   }
 
@@ -89,7 +90,7 @@ class SheetRangeSelection extends SheetSelection {
   @override
   SheetSelection simplify() {
     if (_start == _end) {
-      return SheetSingleSelection(cellIndex: _start);
+      return SheetSingleSelection(cellIndex: _start, completed: isCompleted);
     }
     return this;
   }

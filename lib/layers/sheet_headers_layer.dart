@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/config/sheet_constants.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
 
 class SheetHeadersLayer extends StatefulWidget {
@@ -26,23 +26,23 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
     super.initState();
     columnHeadersPainter = _ColumnHeadersPainter(
       visibleColumns: widget.sheetController.viewport.visibleColumns,
-      selection: widget.sheetController.selection,
+      selection: widget.sheetController.selectionController.visibleSelection,
     );
     rowHeadersPainter = _RowHeadersPainter(
       visibleRows: widget.sheetController.viewport.visibleRows,
-      selection: widget.sheetController.selection,
+      selection: widget.sheetController.selectionController.visibleSelection,
     );
 
     widget.sheetController.viewport.addListener(_updateVisibleColumns);
     widget.sheetController.viewport.addListener(_updateVisibleRows);
-    widget.sheetController.selectionNotifier.addListener(_updateSelection);
+    widget.sheetController.selectionController.addListener(_updateSelection);
   }
 
   @override
   void dispose() {
     widget.sheetController.viewport.removeListener(_updateVisibleColumns);
     widget.sheetController.viewport.removeListener(_updateVisibleRows);
-    widget.sheetController.selectionNotifier.removeListener(_updateSelection);
+    widget.sheetController.selectionController.removeListener(_updateSelection);
     super.dispose();
   }
 
@@ -70,8 +70,8 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   }
 
   void _updateSelection() {
-    columnHeadersPainter.selection = widget.sheetController.selection;
-    rowHeadersPainter.selection = widget.sheetController.selection;
+    columnHeadersPainter.selection = widget.sheetController.selectionController.visibleSelection;
+    rowHeadersPainter.selection = widget.sheetController.selectionController.visibleSelection;
   }
 }
 

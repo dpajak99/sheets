@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';

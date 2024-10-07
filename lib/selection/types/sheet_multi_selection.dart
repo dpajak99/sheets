@@ -1,4 +1,7 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_bounds.dart';
@@ -10,22 +13,27 @@ import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
 
 class SheetMultiSelection extends SheetSelection {
-  late Set<CellIndex> _selectedCells;
-  late List<SheetSelection> mergedSelections;
+  final Set<CellIndex> _selectedCells;
+  final List<SheetSelection> mergedSelections;
+  final CellIndex? _mainCell;
 
   SheetMultiSelection._({
     required Set<CellIndex> selectedCells,
     required this.mergedSelections,
+    CellIndex? mainCell,
   })  : _selectedCells = selectedCells,
+        _mainCell = mainCell,
         super(completed: true);
 
   factory SheetMultiSelection({
-    required List<CellIndex> selectedCells,
+    required Set<CellIndex> selectedCells,
     List<SheetSelection>? mergedSelections,
+    CellIndex? mainCell,
   }) {
     return SheetMultiSelection._(
-      selectedCells: selectedCells.toSet(),
-      mergedSelections: mergedSelections ?? selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(cellIndex: cellIndex)).toList(),
+      selectedCells: selectedCells,
+      mergedSelections: mergedSelections ?? selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(cellIndex: cellIndex, completed: false)).toList(),
+      mainCell: mainCell,
     );
   }
 
@@ -36,28 +44,44 @@ class SheetMultiSelection extends SheetSelection {
   CellIndex get end => _selectedCells.last;
 
   @override
-  CellIndex get mainCell => end;
+  CellIndex get mainCell {
+    if(_mainCell != null) {
+      return _mainCell;
+    } else {
+      return end;
+    }
+  }
 
   @override
-  List<CellIndex> get selectedCells => _selectedCells.toList();
+  Set<CellIndex> get selectedCells => _selectedCells;
 
   @override
   SelectionCellCorners? get selectionCellCorners => null;
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    return mergedSelections.fold(SelectionStatus.statusFalse, (status, mergedSelection) => status.merge(mergedSelection.isColumnSelected(columnIndex)));
+    Set<CellIndex> columnCells = selectedCells.where((cell) => cell.columnIndex == columnIndex).toSet();
+
+    bool selected = columnCells.isNotEmpty;
+    bool fullySelected = columnCells.length == defaultRowCount;
+
+    return SelectionStatus(selected, fullySelected);
   }
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
-    return mergedSelections.fold(SelectionStatus.statusFalse, (status, mergedSelection) => status.merge(mergedSelection.isRowSelected(rowIndex)));
+    Set<CellIndex> rowCells = selectedCells.where((cell) => cell.rowIndex == rowIndex).toSet();
+
+    bool selected = rowCells.isNotEmpty;
+    bool fullySelected = rowCells.length == defaultColumnCount;
+
+    return SelectionStatus(selected, fullySelected);
   }
 
   @override
   SheetSelection simplify() {
     if (selectedCells.length == 1) {
-      return SheetSingleSelection(cellIndex: selectedCells.first);
+      return SheetSingleSelection(cellIndex: selectedCells.first, completed: true);
     }
 
     List<SheetSelection> mergedSelections = [];
@@ -78,7 +102,7 @@ class SheetMultiSelection extends SheetSelection {
       }
     }
 
-    return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections);
+    return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections, mainCell: _mainCell);
   }
 
   @override
@@ -150,6 +174,7 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
 
         paintSelectionBackground(canvas, selectedCell.rect);
         paintSelectionBorder(canvas, selectedCell.rect);
+      } else {
       }
     }
 
@@ -162,9 +187,9 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
   }
 }
 
-extension ListExtensions<T> on List<T> {
+extension SetExtensions<T extends Object> on Set<T> {
   /// Groups the list elements by a key returned by the provided [keySelector] function.
-  Map<K, List<T>> groupListsBy<K>(K Function(T) keySelector) {
+  Map<K, List<T>> groupListsBy<K extends Comparable>(K Function(T) keySelector) {
     Map<K, List<T>> groupedMap = {};
 
     for (var element in this) {
@@ -172,6 +197,7 @@ extension ListExtensions<T> on List<T> {
       groupedMap.putIfAbsent(key, () => []).add(element);
     }
 
-    return groupedMap;
+    SplayTreeMap sortedMap = SplayTreeMap<K, List<T>>.from(groupedMap, (K a, K b) => a.compareTo(b));
+    return Map.from(sortedMap);
   }
 }

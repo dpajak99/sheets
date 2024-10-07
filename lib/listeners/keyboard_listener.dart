@@ -1,55 +1,59 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class SheetKeyboardListener {
-  List<LogicalKeyboardKey> activeKeys = [];
+  List<int> activeKeys = [];
 
-  final Map<List<LogicalKeyboardKey>, Function> _keyPressedListeners = {};
-  final Map<List<LogicalKeyboardKey>, Function> _keyReleasedListeners = {};
+  final Map<List<int>, Function> _keyPressedListeners = {};
+  final Map<int, Function> _keyReleasedListeners = {};
 
   void dispose() {
     activeKeys.clear();
   }
 
   void addKey(LogicalKeyboardKey logicalKeyboardKey) {
-    activeKeys.add(logicalKeyboardKey);
+    activeKeys.add(logicalKeyboardKey.keyId);
     _keyPressedListeners.forEach((keys, callback) {
-      if (areKeysPressed(keys)) {
+      if (areKeyIdsPressed(keys)) {
         callback();
       }
     });
   }
 
   void removeKey(LogicalKeyboardKey logicalKeyboardKey) {
-    activeKeys.remove(logicalKeyboardKey);
+    activeKeys.remove(logicalKeyboardKey.keyId);
+    if(activeKeys.isNotEmpty) return;
     _keyReleasedListeners.forEach((keys, callback) {
-      if (areKeysPressed(keys)) {
+      if (keys == logicalKeyboardKey.keyId) {
         callback();
       }
     });
   }
 
   bool isKeyPressed(LogicalKeyboardKey logicalKeyboardKey) {
-    return activeKeys.contains(logicalKeyboardKey);
+    return activeKeys.contains(logicalKeyboardKey.keyId);
   }
 
   bool areKeysPressed(List<LogicalKeyboardKey> keys) {
-    return keys.every((key) => activeKeys.contains(key));
+    List<int> checkedKeys = keys.map((key) => key.keyId).toList();
+    return listEquals(activeKeys, checkedKeys);
+  }
+
+  bool areKeyIdsPressed(List<int> keys) {
+    return listEquals(activeKeys, keys);
   }
 
   void onKeyPressed(LogicalKeyboardKey key, Function callback) {
-    _keyPressedListeners[[key]] = callback;
+    _keyPressedListeners[[key.keyId]] = callback;
   }
 
   void onKeysPressed(List<LogicalKeyboardKey> keys, Function callback) {
-    _keyPressedListeners[keys] = callback;
+    List<int> keyIds = keys.map((key) => key.keyId).toList();
+    _keyPressedListeners[keyIds] = callback;
   }
 
   void onKeyReleased(LogicalKeyboardKey key, Function callback) {
-    _keyReleasedListeners[[key]] = callback;
-  }
-
-  void onKeysReleased(List<LogicalKeyboardKey> keys, Function callback) {
-    _keyReleasedListeners[keys] = callback;
+    _keyReleasedListeners[key.keyId] = callback;
   }
 
   bool get anyKeyActive => activeKeys.isNotEmpty;

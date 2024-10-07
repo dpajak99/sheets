@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_item_config.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
 
 abstract class SheetDragGesture extends SheetGesture {
 
@@ -12,10 +11,15 @@ abstract class SheetDragGesture extends SheetGesture {
 }
 
 class SheetDragStartGesture extends SheetDragGesture {
-  SheetDragStartGesture();
+  final SheetDragDetails startDetails;
+
+  SheetDragStartGesture(this.startDetails);
 
   @override
   void resolve(SheetController controller) {}
+
+  @override
+  List<Object?> get props => [startDetails];
 }
 
 class SheetDragUpdateGesture extends SheetDragGesture {
@@ -36,7 +40,6 @@ class SheetDragEndGesture extends SheetDragGesture {
 
   @override
   void resolve(SheetController controller) {
-    print('SheetDragEndGesture');
   }
 
   @override
