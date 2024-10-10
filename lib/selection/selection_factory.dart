@@ -1,4 +1,3 @@
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/types/sheet_range_selection.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
@@ -11,16 +10,16 @@ class SelectionFactory {
 
   static SheetSelection getColumnSelection(ColumnIndex columnIndex, {bool completed = true}) {
     return SheetRangeSelection(
-      start: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex),
-      end: CellIndex(rowIndex: RowIndex(defaultRowCount - 1), columnIndex: columnIndex),
+      start: CellIndex(rowIndex: RowIndex.zero, columnIndex: columnIndex),
+      end: CellIndex(rowIndex: RowIndex.max, columnIndex: columnIndex),
       completed: completed,
     );
   }
 
   static SheetSelection getRowSelection(RowIndex rowIndex, {bool completed = true}) {
     return SheetRangeSelection(
-      start: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)),
-      end: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(defaultColumnCount - 1)),
+      start: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.zero),
+      end: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.max),
       completed: completed,
     );
   }
@@ -38,24 +37,24 @@ class SelectionFactory {
 
   static SheetSelection getColumnRangeSelection({required ColumnIndex start, required ColumnIndex end, bool completed = false}) {
     return SheetRangeSelection(
-      start: CellIndex(rowIndex: RowIndex(0), columnIndex: start),
-      end: CellIndex(rowIndex: RowIndex(defaultRowCount - 1), columnIndex: end),
+      start: CellIndex(rowIndex: RowIndex.zero, columnIndex: start),
+      end: CellIndex(rowIndex: RowIndex.max, columnIndex: end),
       completed: completed,
     );
   }
 
   static SheetSelection getRowRangeSelection({required RowIndex start, required RowIndex end, bool completed = false}) {
     return SheetRangeSelection(
-      start: CellIndex(rowIndex: start, columnIndex: ColumnIndex(0)),
-      end: CellIndex(rowIndex: end, columnIndex: ColumnIndex(defaultColumnCount - 1)),
+      start: CellIndex(rowIndex: start, columnIndex: ColumnIndex.zero),
+      end: CellIndex(rowIndex: end, columnIndex: ColumnIndex.max),
       completed: completed,
     );
   }
 
   static SheetSelection getAllSelection() {
     return SheetRangeSelection(
-      start: CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0)),
-      end: CellIndex(rowIndex: RowIndex(defaultRowCount - 1), columnIndex: ColumnIndex(defaultColumnCount - 1)),
+      start: CellIndex(rowIndex: RowIndex.zero, columnIndex: ColumnIndex.zero),
+      end: CellIndex(rowIndex: RowIndex.max, columnIndex: ColumnIndex.max),
       completed: true,
     );
   }

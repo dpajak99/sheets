@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/selection/selection_factory.dart';
@@ -10,9 +9,6 @@ import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
 
 class SelectionController extends ChangeNotifier {
-  SheetSelection _confirmedSelection = SheetSingleSelection.defaultSelection();
-  SheetSelection _unconfirmedSelection = SheetSingleSelection.defaultSelection();
-
   SheetSelection get confirmedSelection => _confirmedSelection;
 
   SheetSelection get unconfirmedSelection => _unconfirmedSelection;
@@ -20,7 +16,10 @@ class SelectionController extends ChangeNotifier {
   SheetSelection get visibleSelection => _unconfirmedSelection;
 
   set selection(SheetSelection sheetSelection) {
+    sheetSelection.applyProperties(properties);
+
     _unconfirmedSelection = sheetSelection.simplify();
+
     if (layerSelectionActive == false) {
       _confirmedSelection = sheetSelection.simplify();
     }
@@ -28,9 +27,13 @@ class SelectionController extends ChangeNotifier {
   }
 
   late final SheetProperties properties;
+  late SheetSelection _confirmedSelection;
+  late SheetSelection _unconfirmedSelection;
 
   void applyTo(SheetController controller) {
     properties = controller.sheetProperties;
+    _confirmedSelection = SheetSingleSelection.defaultSelection()..applyProperties(properties);
+    _unconfirmedSelection = SheetSingleSelection.defaultSelection()..applyProperties(properties);
   }
 
   bool layerSelectionActive = false;
@@ -112,7 +115,7 @@ class SelectionController extends ChangeNotifier {
 
     SelectionStatus columnSelectionStatus = _unconfirmedSelection.isColumnSelected(columnIndex);
     if (columnSelectionStatus.isFullySelected == false) {
-      selectedCells.addAll(List.generate(defaultRowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
+      selectedCells.addAll(List.generate(properties.rowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
       selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex));
       return true;
     } else if (selectedColumns.length == 1 && selectedColumns.first == columnIndex) {
@@ -130,7 +133,7 @@ class SelectionController extends ChangeNotifier {
 
     SelectionStatus rowSelectionStatus = _unconfirmedSelection.isRowSelected(rowIndex);
     if (rowSelectionStatus.isFullySelected == false) {
-      selectedCells.addAll(List.generate(defaultColumnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
+      selectedCells.addAll(List.generate(properties.columnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
       selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)));
       return true;
     } else if (selectedRows.length == 1 && selectedRows.first == rowIndex) {

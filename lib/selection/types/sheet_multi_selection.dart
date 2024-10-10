@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_bounds.dart';
@@ -32,7 +31,8 @@ class SheetMultiSelection extends SheetSelection {
   }) {
     return SheetMultiSelection._(
       selectedCells: selectedCells,
-      mergedSelections: mergedSelections ?? selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(cellIndex: cellIndex, completed: false)).toList(),
+      mergedSelections:
+          mergedSelections ?? selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(cellIndex: cellIndex, completed: false)).toList(),
       mainCell: mainCell,
     );
   }
@@ -45,7 +45,7 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   CellIndex get mainCell {
-    if(_mainCell != null) {
+    if (_mainCell != null) {
       return _mainCell;
     } else {
       return end;
@@ -63,7 +63,7 @@ class SheetMultiSelection extends SheetSelection {
     Set<CellIndex> columnCells = selectedCells.where((cell) => cell.columnIndex == columnIndex).toSet();
 
     bool selected = columnCells.isNotEmpty;
-    bool fullySelected = columnCells.length == defaultRowCount;
+    bool fullySelected = columnCells.length == sheetProperties.rowCount;
 
     return SelectionStatus(selected, fullySelected);
   }
@@ -73,7 +73,7 @@ class SheetMultiSelection extends SheetSelection {
     Set<CellIndex> rowCells = selectedCells.where((cell) => cell.rowIndex == rowIndex).toSet();
 
     bool selected = rowCells.isNotEmpty;
-    bool fullySelected = rowCells.length == defaultColumnCount;
+    bool fullySelected = rowCells.length == sheetProperties.columnCount;
 
     return SelectionStatus(selected, fullySelected);
   }
@@ -81,7 +81,7 @@ class SheetMultiSelection extends SheetSelection {
   @override
   SheetSelection simplify() {
     if (selectedCells.length == 1) {
-      return SheetSingleSelection(cellIndex: selectedCells.first, completed: true);
+      return SheetSingleSelection(cellIndex: selectedCells.first, completed: true)..applyProperties(sheetProperties);
     }
 
     List<SheetSelection> mergedSelections = [];
@@ -96,13 +96,16 @@ class SheetMultiSelection extends SheetSelection {
         bool isNonConsecutive = !isLastCell && columnCells[i].rowIndex.value + 1 != columnCells[i + 1].rowIndex.value;
 
         if (isLastCell || isNonConsecutive) {
-          mergedSelections.add(SheetRangeSelection(start: columnCells[start], end: columnCells[i], completed: true));
+          mergedSelections.add(
+            SheetRangeSelection(start: columnCells[start], end: columnCells[i], completed: true)..applyProperties(sheetProperties),
+          );
           start = i + 1;
         }
       }
     }
 
-    return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections, mainCell: _mainCell);
+    return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections, mainCell: _mainCell)
+      ..applyProperties(sheetProperties);
   }
 
   @override
@@ -175,8 +178,7 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
 
         paintSelectionBackground(canvas, selectedCell.rect);
         paintSelectionBorder(canvas, selectedCell.rect);
-      } else {
-      }
+      } else {}
     }
 
     CellConfig? selectedCell = renderer.lastSelectedCell;

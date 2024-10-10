@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
+import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
@@ -10,6 +11,11 @@ import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 abstract class SheetSelection with EquatableMixin {
   final bool _completed;
+  late SheetProperties sheetProperties;
+
+  void applyProperties(SheetProperties properties) {
+    sheetProperties = properties;
+  }
 
   SheetSelection({required bool completed}) : _completed = completed;
 
@@ -19,7 +25,31 @@ abstract class SheetSelection with EquatableMixin {
 
   CellIndex get end;
 
-  CellIndex get mainCell => start;
+  CellIndex get trueStart {
+    if( start == CellIndex.max) {
+      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+    } else if (start.columnIndex == ColumnIndex.max) {
+      return CellIndex(rowIndex: start.rowIndex, columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+    } else if (start.rowIndex == RowIndex.max) {
+      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: start.columnIndex);
+    } else {
+      return start;
+    }
+  }
+
+  CellIndex get trueEnd {
+    if( end == CellIndex.max) {
+      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+    } else if (end.columnIndex == ColumnIndex.max) {
+      return CellIndex(rowIndex: end.rowIndex, columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+    } else if (end.rowIndex == RowIndex.max) {
+      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: end.columnIndex);
+    } else {
+      return end;
+    }
+  }
+
+  CellIndex get mainCell => trueStart;
 
   Set<CellIndex> get selectedCells;
 

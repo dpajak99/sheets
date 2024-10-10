@@ -26,6 +26,8 @@ abstract class SheetViewportDelegate extends ChangeNotifier {
   List<CellConfig> get visibleCells;
 
   List<SheetItemConfig> get visibleItems => [...visibleRows, ...visibleColumns, ...visibleCells];
+
+  SheetProperties get properties;
 }
 
 class SheetViewportBaseDelegate extends SheetViewportDelegate {
@@ -41,6 +43,9 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     sheetProperties.addListener(() => _updateSheetProperties(sheetProperties));
     scrollController.addListener(() => _updateScrollPosition(scrollController));
   }
+
+  @override
+  SheetProperties get properties => _sheetProperties;
 
   @override
   List<RowConfig> get visibleRows => _visibleRows;
@@ -159,7 +164,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
 
     int index = 0;
 
-    while (cursorSheetHeight < _scrollMetrics.vertical.viewportDimension && firstVisibleRow.value + index < defaultRowCount) {
+    while (cursorSheetHeight < _scrollMetrics.vertical.viewportDimension && firstVisibleRow.value + index < properties.rowCount) {
       RowIndex rowIndex = RowIndex(firstVisibleRow.value + index);
       RowStyle rowStyle = _sheetProperties.getRowStyle(rowIndex);
 
@@ -186,7 +191,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     double cursorSheetWidth = hiddenWidth;
     int index = 0;
 
-    while (cursorSheetWidth < _scrollMetrics.horizontal.viewportDimension && firstVisibleColumn.value + index < defaultColumnCount) {
+    while (cursorSheetWidth < _scrollMetrics.horizontal.viewportDimension && firstVisibleColumn.value + index < properties.columnCount) {
       ColumnIndex columnIndex = ColumnIndex(firstVisibleColumn.value + index);
       ColumnStyle columnStyle = _sheetProperties.getColumnStyle(columnIndex);
 

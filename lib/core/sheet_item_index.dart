@@ -16,6 +16,8 @@ class CellIndex extends SheetItemIndex {
 
   static CellIndex zero = CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0));
 
+  static CellIndex max = CellIndex(rowIndex: RowIndex.max, columnIndex: ColumnIndex.max);
+
   CellIndex move(int row, int column) {
     return CellIndex(
       rowIndex: RowIndex(rowIndex.value + row),
@@ -40,11 +42,11 @@ class CellIndex extends SheetItemIndex {
 class ColumnIndex extends SheetItemIndex with NumericIndexMixin implements Comparable {
   final int _value;
 
-  ColumnIndex(int value)
-      : _value = value,
-        assert(value >= 0);
+  ColumnIndex(this._value);
 
   static ColumnIndex zero = ColumnIndex(0);
+
+  static ColumnIndex max = ColumnIndex(-1);
 
   ColumnIndex operator -(int number) {
     return ColumnIndex(value - number);
@@ -86,9 +88,11 @@ class ColumnIndex extends SheetItemIndex with NumericIndexMixin implements Compa
 class RowIndex extends SheetItemIndex with NumericIndexMixin implements Comparable {
   final int _value;
 
-  RowIndex(int value) : _value = value < 0 ? 0 : value;
+  RowIndex(this._value);
 
   static RowIndex zero = RowIndex(0);
+
+  static RowIndex max = RowIndex(-1);
 
   @override
   int get value => _value;

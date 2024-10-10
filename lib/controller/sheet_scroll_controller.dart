@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_properties.dart';
@@ -28,6 +29,12 @@ class SheetScrollController extends ChangeNotifier {
     position.addListener(notifyListeners);
   }
 
+  void applyTo(SheetController sheetController) {
+    properties = sheetController.sheetProperties;
+    properties.addListener(_handlePropertiesUpdated);
+    _handlePropertiesUpdated();
+  }
+
   @override
   void dispose() {
     metrics.dispose();
@@ -55,9 +62,14 @@ class SheetScrollController extends ChangeNotifier {
     );
   }
 
-  set customRowExtents(Map<int, double> customRowExtents) {
+  void _handlePropertiesUpdated() {
+    _customRowExtents = properties.customRowExtents;
+    _customColumnExtents = properties.customColumnExtents;
+  }
+
+  set _customRowExtents(Map<int, double> customRowExtents) {
     double contentHeight = 0;
-    for (int i = 0; i < defaultRowCount; i++) {
+    for (int i = 0; i < properties.rowCount; i++) {
       double rowHeight = customRowExtents[i] ?? defaultRowHeight;
       contentHeight += rowHeight;
     }
@@ -65,9 +77,9 @@ class SheetScrollController extends ChangeNotifier {
     metrics.vertical = metrics.vertical.copyWith(contentSize: contentHeight);
   }
 
-  set customColumnExtents(Map<int, double> customColumnExtents) {
+  set _customColumnExtents(Map<int, double> customColumnExtents) {
     double contentWidth = 0;
-    for (int i = 0; i < defaultColumnCount; i++) {
+    for (int i = 0; i < properties.columnCount; i++) {
       double columnWidth = customColumnExtents[i] ?? defaultColumnWidth;
       contentWidth += columnWidth;
     }

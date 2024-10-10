@@ -39,8 +39,8 @@ class SheetController {
   Stream<SheetGesture> get stream => _gesturesStream.stream;
 
   SheetController() {
-    scrollController.customColumnExtents = sheetProperties.customColumnExtents;
-    scrollController.customRowExtents = sheetProperties.customRowExtents;
+    scrollController.applyTo(this);
+    selectionController.applyTo(this);
 
     mouse.stream.listen(_handleMouseGesture);
     stream.listen(_handleGesture);
@@ -57,7 +57,13 @@ class SheetController {
     });
     keyboard.onKeyReleased(LogicalKeyboardKey.controlLeft, () {
       selectionController.closeLayer();
-
+    });
+    // -------------------
+    keyboard.onKeyPressed(LogicalKeyboardKey.keyR, () {
+      sheetProperties.addRows(10);
+    });
+    keyboard.onKeyPressed(LogicalKeyboardKey.keyC, () {
+      sheetProperties.addColumns(10);
     });
   }
 

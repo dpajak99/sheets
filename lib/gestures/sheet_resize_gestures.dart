@@ -18,7 +18,6 @@ class SheetResizeColumnGesture extends SheetGesture {
       columnIndex,
       columnStyle.copyWith(width: max(10, columnStyle.width + delta)),
     );
-    controller.scrollController.customColumnExtents = controller.sheetProperties.customColumnExtents;
   }
 
   @override
@@ -38,7 +37,6 @@ class SheetResizeRowGesture extends SheetGesture {
       rowIndex,
       rowStyle.copyWith(height: max(10, rowStyle.height + delta)),
     );
-    controller.scrollController.customRowExtents = controller.sheetProperties.customRowExtents;
   }
 
   @override
