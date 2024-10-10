@@ -82,16 +82,16 @@ class SelectionController extends ChangeNotifier {
     selection = SelectionUtils.getAllSelection();
   }
 
-  bool toggleCellSelection(CellIndex cellIndex) {
+  void toggleCellSelection(CellIndex cellIndex) {
     Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
     if (selectedCells.contains(cellIndex) && selectedCells.length > 1) {
       selectedCells.remove(cellIndex);
       selection = SheetMultiSelection(selectedCells: selectedCells);
-      return false;
+      layerSelectionEnabled = false;
     } else {
       selectedCells.add(cellIndex);
       selection = SheetMultiSelection(selectedCells: selectedCells);
-      return true;
+      layerSelectionEnabled = true;
     }
   }
 

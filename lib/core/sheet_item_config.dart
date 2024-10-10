@@ -115,6 +115,10 @@ class CellConfig extends SheetItemConfig {
   @override
   CellIndex get index => cellIndex;
 
+  ColumnIndex get columnIndex => columnConfig.columnIndex;
+
+  RowIndex get rowIndex => rowConfig.rowIndex;
+
   @override
   List<Object?> get props => [rowConfig, columnConfig];
 }

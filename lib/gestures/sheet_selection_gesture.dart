@@ -1,11 +1,8 @@
 import 'package:flutter/services.dart';
-import 'package:sheets/actions/selection_actions.dart';
+import 'package:sheets/behaviors/selection_behaviors.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
-import 'package:sheets/core/sheet_item_config.dart';
-import 'package:sheets/selection/selection_utils.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
 
 class SheetSelectionStartGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
@@ -18,17 +15,17 @@ class SheetSelectionStartGesture extends SheetDragGesture {
 
   @override
   void resolve(SheetController controller) {
-    SheetItemIndex? hoveredItemIndex = startDetails.hoveredItem?.index;
-    if (hoveredItemIndex == null) return;
+    SheetItemIndex? hoveredIndex = startDetails.hoveredItem?.index;
+    if (hoveredIndex == null) return;
 
     if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
-      return StartSelectRangeOverlapAction(hoveredItemIndex).resolve(controller);
+      return ModifyAppendedSelectionBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      return StartSelectToggleAction(hoveredItemIndex).resolve(controller);
+      return ToggleSingleSelectionBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      return StartSelectRangeAction(hoveredItemIndex).resolve(controller);
+      return BasicSelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else {
-      return StartSelectSingleAction(hoveredItemIndex).resolve(controller);
+      return SingleSelectionBehavior(hoveredIndex).invoke(controller);
     }
   }
 }
@@ -45,90 +42,18 @@ class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
 
   @override
   void resolve(SheetController controller) {
-
-
-    SheetItemIndex? hoveredItemIndex = endDetails.hoveredItem?.index;
-    if (hoveredItemIndex == null) return;
-
-    SheetSelection? sheetSelection = switch (startDetails.hoveredItem?.index) {
-      CellIndex index => _handleCellDragUpdate(index),
-      ColumnIndex index => _handleColumnDragUpdate(index),
-      RowIndex index => _handleRowDragUpdate(index),
-      _ => null,
-    };
-    if (sheetSelection == null) return;
+    SheetItemIndex? hoveredIndex = endDetails.hoveredItem?.index;
+    if (hoveredIndex == null) return;
 
     if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
-      if( controller.selectionController.layerSelectionEnabled == false) {
-        return;
-      }
-
-      SheetSelection savedSelection = controller.selectionController.confirmedSelection;
-
-      SheetSelection layerSelection = SelectionUtils.getRangeSelection(start: savedSelection.mainCell, end: sheetSelection.end, completed: true);
-      controller.selectionController.selectMultiple(<CellIndex>[...savedSelection.selectedCells, ...layerSelection.selectedCells], mainCell: savedSelection.mainCell);
-
+      ModifyAppendedSelectionBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      if( controller.selectionController.layerSelectionEnabled == false) {
-        return;
-      }
-
-      SheetSelection savedSelection = controller.selectionController.confirmedSelection;
-      SheetSelection? sheetSelection = switch (savedSelection.end) {
-        CellIndex index => _handleCellDragUpdate(index),
-      };
-
-      controller.selectionController.selectMultiple(<CellIndex>[...savedSelection.selectedCells, ...?sheetSelection?.selectedCells], mainCell: savedSelection.mainCell);
+      AppendSelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      if( controller.selectionController.layerSelectionEnabled == false) {
-        return;
-      }
-
-      controller.selectionController.selectRange(start: controller.selectionController.confirmedSelection.mainCell, end: sheetSelection.end, completed: true);
+      ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else {
-      controller.selectionController.customSelection(sheetSelection);
+      BasicSelectionRangeBehavior(hoveredIndex).invoke(controller);
     }
-  }
-
-  SheetSelection? _handleCellDragUpdate(CellIndex start) {
-    return switch (endDetails.hoveredItem?.index) {
-      CellIndex index => SelectionUtils.getRangeSelection(start: start, end: index),
-      (_) => null,
-    };
-  }
-
-  SheetSelection? _handleColumnDragUpdate(ColumnIndex start) {
-    late ColumnIndex end;
-
-    switch (endDetails.hoveredItem) {
-      case CellConfig cellConfig:
-        end = cellConfig.cellIndex.columnIndex;
-        break;
-      case ColumnConfig columnConfig:
-        end = columnConfig.columnIndex;
-        break;
-      default:
-        return null;
-    }
-
-    return SelectionUtils.getColumnRangeSelection(start: start, end: end, completed: false);
-  }
-
-  SheetSelection? _handleRowDragUpdate(RowIndex start) {
-    late RowIndex end;
-
-    switch (endDetails.hoveredItem) {
-      case CellConfig cellConfig:
-        end = cellConfig.cellIndex.rowIndex;
-        break;
-      case RowConfig rowConfig:
-        end = rowConfig.rowIndex;
-        break;
-      default:
-        return null;
-    }
-
-    return SelectionUtils.getRowRangeSelection(start: start, end: end, completed: false);
   }
 }
 
