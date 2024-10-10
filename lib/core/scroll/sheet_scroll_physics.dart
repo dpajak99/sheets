@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/utils/extensions/offset_extension.dart';
+import 'package:sheets/utils/extensions/offset_extensions.dart';
 
 abstract class SheetScrollPhysics {
   late final SheetScrollController _scrollController;

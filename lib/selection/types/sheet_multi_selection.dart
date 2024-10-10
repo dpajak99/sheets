@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
@@ -10,8 +8,11 @@ import 'package:sheets/core/sheet_viewport_delegate.dart';
 import 'package:sheets/selection/types/sheet_range_selection.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
+import 'package:sheets/utils/extensions/set_extensions.dart';
 
 class SheetMultiSelection extends SheetSelection {
+  // TODO: Current way to store selected cells is not efficient and generates lags when using app on Chrome
+  // TODO: Need to find a way to store selected cells in a more efficient way (How?)
   final Set<CellIndex> _selectedCells;
   final List<SheetSelection> mergedSelections;
   final CellIndex? _mainCell;
@@ -187,20 +188,5 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
     }
 
     paintMainCell(canvas, selectedCell.rect);
-  }
-}
-
-extension SetExtensions<T extends Object> on Set<T> {
-  /// Groups the list elements by a key returned by the provided [keySelector] function.
-  Map<K, List<T>> groupListsBy<K extends Comparable>(K Function(T) keySelector) {
-    Map<K, List<T>> groupedMap = {};
-
-    for (var element in this) {
-      final key = keySelector(element);
-      groupedMap.putIfAbsent(key, () => []).add(element);
-    }
-
-    SplayTreeMap sortedMap = SplayTreeMap<K, List<T>>.from(groupedMap, (K a, K b) => a.compareTo(b));
-    return Map.from(sortedMap);
   }
 }

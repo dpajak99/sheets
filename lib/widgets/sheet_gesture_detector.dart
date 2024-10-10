@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/listeners/mouse_listener.dart';
-import 'package:sheets/utils/extensions/offset_extension.dart';
+import 'package:sheets/utils/extensions/offset_extensions.dart';
 
 class SheetGestureDetector extends StatefulWidget {
   final SheetMouseListener mouseListener;
