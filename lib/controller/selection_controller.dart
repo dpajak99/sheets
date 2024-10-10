@@ -17,11 +17,14 @@ class SelectionController extends ChangeNotifier {
 
   set selection(SheetSelection sheetSelection) {
     sheetSelection.applyProperties(properties);
+    SheetSelection simplifiedSelection = sheetSelection.simplify();
 
-    _unconfirmedSelection = sheetSelection.simplify();
+    if(_unconfirmedSelection == simplifiedSelection) return;
+
+    _unconfirmedSelection = simplifiedSelection;
 
     if (layerSelectionActive == false) {
-      _confirmedSelection = sheetSelection.simplify();
+      _confirmedSelection = simplifiedSelection;
     }
     notifyListeners();
   }
@@ -42,56 +45,37 @@ class SelectionController extends ChangeNotifier {
   void openLayer() {
     layerSelectionActive = true;
     layerSelectionEnabled = true;
-    notifyListeners();
   }
 
   void saveLayer() {
     _confirmedSelection = _unconfirmedSelection;
-    notifyListeners();
   }
 
   void closeLayer() {
     layerSelectionActive = false;
     layerSelectionEnabled = false;
-    notifyListeners();
   }
 
   void customSelection(SheetSelection customSelection) {
     selection = customSelection;
   }
 
-  void selectSingle(CellIndex cellIndex, {bool completed = false}) {
-    selection = SelectionFactory.getSingleSelection(cellIndex, completed: completed);
-  }
-
-  void selectColumn(ColumnIndex columnIndex, {bool completed = false}) {
-    selection = SelectionFactory.getColumnSelection(columnIndex, completed: completed);
-  }
-
-  void selectRow(RowIndex rowIndex, {bool completed = false}) {
-    selection = SelectionFactory.getRowSelection(rowIndex, completed: completed);
+  void selectSingle(SheetItemIndex sheetItemIndex, {bool completed = false}) {
+    selection = SelectionFactory.getSingleSelection(sheetItemIndex, completed: completed);
   }
 
   void selectRange({required SheetItemIndex start, required SheetItemIndex end, bool completed = false}) {
-    SheetSelection? newSelection = SelectionFactory.getRangeSelection(start: start, end: end, completed: completed);
-    if(newSelection != null) {
-      selection = newSelection;
-    }
-  }
-
-  void selectColumnRange({required ColumnIndex start, required ColumnIndex end, bool completed = false}) {
-    selection = SelectionFactory.getColumnRangeSelection(start: start, end: end, completed: completed);
-  }
-
-  void selectRowRange({required RowIndex start, required RowIndex end, bool completed = false}) {
-    selection = SelectionFactory.getRowRangeSelection(start: start, end: end, completed: completed);
+    selection = SelectionFactory.getRangeSelection(start: start, end: end, completed: completed);
   }
 
   void combine(SheetSelection previousSelection, SheetSelection appendedSelection) {
+    previousSelection.applyProperties(properties);
+    appendedSelection.applyProperties(properties);
+
     Set<CellIndex> cells = {...previousSelection.selectedCells, ...appendedSelection.selectedCells};
     selection = SheetMultiSelection(selectedCells: cells, mainCell: appendedSelection.mainCell);
   }
-  
+
   void selectAll() {
     selection = SelectionFactory.getAllSelection();
   }
@@ -109,7 +93,7 @@ class SelectionController extends ChangeNotifier {
     }
   }
 
-  bool? toggleColumnSelection(ColumnIndex columnIndex) {
+  void toggleColumnSelection(ColumnIndex columnIndex) {
     Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
     List<ColumnIndex> selectedColumns = selectedCells.map((CellIndex cellIndex) => cellIndex.columnIndex).toSet().toList();
 
@@ -117,17 +101,16 @@ class SelectionController extends ChangeNotifier {
     if (columnSelectionStatus.isFullySelected == false) {
       selectedCells.addAll(List.generate(properties.rowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
       selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex));
-      return true;
     } else if (selectedColumns.length == 1 && selectedColumns.first == columnIndex) {
-      return null;
+      return;
     } else {
       selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.columnIndex == columnIndex);
       selection = SheetMultiSelection(selectedCells: selectedCells);
-      return false;
+      return;
     }
   }
 
-  bool? toggleRowSelection(RowIndex rowIndex) {
+  void toggleRowSelection(RowIndex rowIndex) {
     Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
     List<RowIndex> selectedRows = selectedCells.map((CellIndex cellIndex) => cellIndex.rowIndex).toSet().toList();
 
@@ -135,13 +118,11 @@ class SelectionController extends ChangeNotifier {
     if (rowSelectionStatus.isFullySelected == false) {
       selectedCells.addAll(List.generate(properties.columnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
       selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)));
-      return true;
     } else if (selectedRows.length == 1 && selectedRows.first == rowIndex) {
-      return null;
+      return;
     } else {
       selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.rowIndex == rowIndex);
       selection = SheetMultiSelection(selectedCells: selectedCells);
-      return false;
     }
   }
 

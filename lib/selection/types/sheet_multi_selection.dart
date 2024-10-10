@@ -119,7 +119,7 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => [selectedCells];
+  List<Object?> get props => [selectedCells, mergedSelections, _mainCell];
 }
 
 class SheetMultiSelectionRenderer extends SheetSelectionRenderer {

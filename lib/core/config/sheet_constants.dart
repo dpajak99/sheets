@@ -11,7 +11,7 @@ double columnHeadersHeight = 24;
 double rowHeadersWidth = 46;
 
 double defaultColumnWidth = 100;
-double defaultRowHeight = 22;
+double defaultRowHeight = 50;
 
 TextStyle defaultTextStyle = const TextStyle(
   color: Color(0xff000000),

@@ -1,8 +1,31 @@
 import 'package:equatable/equatable.dart';
 import 'package:sheets/utils/numeric_index_mixin.dart';
 
-abstract class SheetItemIndex with EquatableMixin {
+sealed class SheetItemIndex with EquatableMixin {
   String stringifyPosition();
+
+  static SheetItemIndex matchType(SheetItemIndex base, SheetItemIndex other) {
+    switch(base) {
+      case CellIndex _:
+        return switch(other) {
+          CellIndex other => other,
+          ColumnIndex other => CellIndex(columnIndex: other, rowIndex: RowIndex.zero),
+          RowIndex other => CellIndex(rowIndex: other, columnIndex: ColumnIndex.zero),
+        };
+      case ColumnIndex _:
+        return switch(other) {
+          CellIndex other => other.columnIndex,
+          ColumnIndex other => other,
+          RowIndex _ => ColumnIndex.zero,
+        };
+      case RowIndex _:
+        return switch(other) {
+          CellIndex other => other.rowIndex,
+          ColumnIndex _ => RowIndex.zero,
+          RowIndex other => other,
+        };
+    }
+  }
 }
 
 class CellIndex extends SheetItemIndex {

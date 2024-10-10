@@ -48,9 +48,9 @@ class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
     if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
       ModifyAppendedSelectionBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      AppendSelectionRangeBehavior(hoveredIndex).invoke(controller);
+      AppendSelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
+      ModifySelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
     } else {
       BasicSelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
     }
