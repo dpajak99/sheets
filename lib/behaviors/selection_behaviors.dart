@@ -1,42 +1,14 @@
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
-import 'package:sheets/selection/selection_utils.dart';
+import 'package:sheets/selection/selection_corners.dart';
+import 'package:sheets/selection/selection_factory.dart';
+import 'package:sheets/selection/types/sheet_fill_selection.dart';
+import 'package:sheets/selection/types/sheet_range_selection.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/utils/direction.dart';
 
 abstract class SelectionBehavior {
   void invoke(SheetController controller);
-
-  SheetSelection? getBaseRangeSelection({required SheetItemIndex start, required SheetItemIndex end}) {
-    return switch (start) {
-      CellIndex start => _getCellRangeSelection(start, end),
-      ColumnIndex start => _getColumnRangeSelection(start, end),
-      RowIndex start => _getRowRangeSelection(start, end),
-      _ => null,
-    };
-  }
-
-  SheetSelection? _getCellRangeSelection(CellIndex start, SheetItemIndex end) {
-    return switch (end) {
-      CellIndex end => SelectionUtils.getRangeSelection(start: start, end: end),
-      (_) => null,
-    };
-  }
-
-  SheetSelection? _getColumnRangeSelection(ColumnIndex start, SheetItemIndex end) {
-    return switch (end) {
-      CellIndex end => SelectionUtils.getColumnRangeSelection(start: start, end: end.columnIndex, completed: false),
-      ColumnIndex end => SelectionUtils.getColumnRangeSelection(start: start, end: end, completed: false),
-      (_) => null,
-    };
-  }
-
-  SheetSelection? _getRowRangeSelection(RowIndex start, SheetItemIndex end) {
-    return switch (end) {
-      CellIndex end => SelectionUtils.getRowRangeSelection(start: start, end: end.rowIndex, completed: false),
-      RowIndex end => SelectionUtils.getRowRangeSelection(start: start, end: end, completed: false),
-      (_) => null,
-    };
-  }
 }
 
 class SingleSelectionBehavior extends SelectionBehavior {
@@ -80,18 +52,20 @@ class ToggleSingleSelectionBehavior extends SelectionBehavior {
 
 class BasicSelectionRangeBehavior extends SelectionBehavior {
   final SheetItemIndex hoveredIndex;
+  final SheetItemIndex? startIndex;
 
-  BasicSelectionRangeBehavior(this.hoveredIndex);
+  BasicSelectionRangeBehavior(this.hoveredIndex, {this.startIndex});
 
   @override
   void invoke(SheetController controller) {
-    SheetSelection savedSelection = controller.selectionController.confirmedSelection;
-    CellIndex start = savedSelection.mainCell;
+    SheetSelection previousSelection = controller.selectionController.confirmedSelection;
+    CellIndex previousStart = previousSelection.mainCell;
 
-    SheetSelection? baseSelection = getBaseRangeSelection(start: start, end: hoveredIndex);
-    if (baseSelection == null) return;
+    SheetSelection? newSelection = SelectionFactory.getRangeSelection(start: startIndex ?? previousStart, end: hoveredIndex);
+    if (newSelection == null) return;
 
-    controller.selectionController.customSelection(baseSelection);
+    controller.selectionController.customSelection(newSelection);
+    controller.selectionController.saveLayer();
   }
 }
 
@@ -107,13 +81,12 @@ class AppendSelectionRangeBehavior extends SelectionBehavior {
     }
 
     SheetSelection previousSelection = controller.selectionController.confirmedSelection;
-    SheetSelection? appendedSelection = getBaseRangeSelection(start: previousSelection.end, end: hoveredIndex);
+    CellIndex previousEnd = previousSelection.end;
+
+    SheetSelection? appendedSelection = SelectionFactory.getRangeSelection(start: previousEnd, end: hoveredIndex);
     if (appendedSelection == null) return;
 
-    controller.selectionController.selectMultiple(
-      <CellIndex>[...previousSelection.selectedCells, ...appendedSelection.selectedCells],
-      mainCell: previousSelection.end,
-    );
+    controller.selectionController.combine(previousSelection, appendedSelection);
   }
 }
 
@@ -124,18 +97,17 @@ class ModifySelectionRangeBehavior extends SelectionBehavior {
 
   @override
   void invoke(SheetController controller) {
-    SheetSelection savedSelection = controller.selectionController.confirmedSelection;
-    CellIndex start = savedSelection.mainCell;
-
     if (controller.selectionController.layerSelectionEnabled == false) {
       return;
     }
 
-    SheetSelection? newSelection = getBaseRangeSelection(start: start, end: hoveredIndex);
+    SheetSelection previousSelection = controller.selectionController.confirmedSelection;
+    CellIndex previousStart = previousSelection.mainCell;
+
+    SheetSelection? newSelection = SelectionFactory.getRangeSelection(start: previousStart, end: hoveredIndex);
     if (newSelection == null) return;
 
-    SheetSelection previousSelection = controller.selectionController.confirmedSelection;
-    controller.selectionController.selectRange(start: previousSelection.mainCell, end: newSelection.end, completed: true);
+    controller.selectionController.selectRange(start: previousStart, end: newSelection.end, completed: true);
   }
 }
 
@@ -146,22 +118,75 @@ class ModifyAppendedSelectionBehavior extends SelectionBehavior {
 
   @override
   void invoke(SheetController controller) {
-    SheetSelection savedSelection = controller.selectionController.confirmedSelection;
-    CellIndex start = savedSelection.mainCell;
-
     if (controller.selectionController.layerSelectionEnabled == false) {
       return;
     }
 
-    SheetSelection? newSelection = getBaseRangeSelection(start: start, end: end);
+    SheetSelection previousSelection = controller.selectionController.confirmedSelection;
+    CellIndex previousStart = previousSelection.mainCell;
+
+    SheetSelection? newSelection = SelectionFactory.getRangeSelection(start: previousStart, end: end);
     if (newSelection == null) return;
 
-    SheetSelection previousSelection = controller.selectionController.confirmedSelection;
-    SheetSelection appendedSelection = SelectionUtils.getRangeSelection(start: previousSelection.mainCell, end: newSelection.end, completed: true);
+    SheetSelection? appendedSelection = SheetRangeSelection(start: previousSelection.mainCell, end: newSelection.end, completed: true);
 
-    controller.selectionController.selectMultiple(
-      <CellIndex>[...previousSelection.selectedCells, ...appendedSelection.selectedCells],
-      mainCell: previousSelection.mainCell,
+    controller.selectionController.combine(previousSelection, appendedSelection);
+  }
+}
+
+class SelectionFillBehavior extends SelectionBehavior {
+  final SheetItemIndex hoveredIndex;
+
+  SelectionFillBehavior(this.hoveredIndex);
+
+  @override
+  void invoke(SheetController controller) {
+    if (this.hoveredIndex is! CellIndex) return;
+    CellIndex hoveredIndex = this.hoveredIndex as CellIndex;
+
+    SheetSelection baseSelection = (controller.selectionController.visibleSelection is SheetFillSelection)
+        ? (controller.selectionController.visibleSelection as SheetFillSelection).baseSelection
+        : controller.selectionController.visibleSelection;
+
+    SelectionCellCorners? corners = baseSelection.selectionCellCorners;
+    if (corners == null) return;
+
+    Direction direction = corners.getRelativePosition(hoveredIndex);
+
+    if(baseSelection.contains(hoveredIndex)) {
+      return controller.selectionController.customSelection(baseSelection);
+    }
+
+    late CellIndex start;
+    late CellIndex end;
+
+    switch (direction) {
+      case Direction.top:
+        start = corners.topLeft.move(-1, 0);
+        end = CellIndex(rowIndex: hoveredIndex.rowIndex, columnIndex: corners.topRight.columnIndex);
+        break;
+      case Direction.bottom:
+        start = CellIndex(rowIndex: hoveredIndex.rowIndex, columnIndex: corners.bottomLeft.columnIndex);
+        end = corners.bottomRight.move(1, 0);
+        break;
+      case Direction.left:
+        start = corners.topLeft.move(0, -1);
+        end = CellIndex(rowIndex: corners.bottomLeft.rowIndex, columnIndex: hoveredIndex.columnIndex);
+        break;
+      case Direction.right:
+        start = CellIndex(rowIndex: corners.topRight.rowIndex, columnIndex: hoveredIndex.columnIndex);
+        end = corners.bottomRight.move(0, 1);
+        break;
+    }
+
+    SheetFillSelection sheetFillSelection = SheetFillSelection(
+      fillDirection: direction,
+      baseSelection: baseSelection,
+      start: start,
+      end: end,
+      completed: false,
     );
+
+    controller.selectionController.customSelection(sheetFillSelection);
   }
 }

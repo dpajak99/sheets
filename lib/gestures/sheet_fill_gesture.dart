@@ -1,9 +1,7 @@
+import 'package:sheets/behaviors/selection_behaviors.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
-import 'package:sheets/recognizers/selection_fill_recognizer.dart';
-import 'package:sheets/selection/types/sheet_fill_selection.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
 
 abstract class SheetFillGesture extends SheetGesture {}
 
@@ -23,11 +21,7 @@ class SheetFillUpdateGesture extends SheetFillGesture {
   @override
   void resolve(SheetController controller) {
     if (endDetails.hoveredItem == null) return;
-
-    SheetSelection sheetSelection = (controller.selectionController.visibleSelection is SheetFillSelection)
-        ? (controller.selectionController.visibleSelection as SheetFillSelection).baseSelection
-        : controller.selectionController.visibleSelection;
-    SelectionFillRecognizer.from(sheetSelection, controller).handle(endDetails.hoveredItem!);
+    SelectionFillBehavior(endDetails.hoveredItem!.index).invoke(controller);
   }
 
   @override

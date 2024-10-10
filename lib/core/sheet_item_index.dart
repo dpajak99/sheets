@@ -62,7 +62,7 @@ class ColumnIndex extends SheetItemIndex with NumericIndexMixin implements Compa
     String result = '';
 
     while (number > 0) {
-      number--; // Excel columns start from 1, not 0, hence this adjustment
+      number--;
       result = String.fromCharCode(65 + (number % 26)) + result;
       number = (number ~/ 26);
     }

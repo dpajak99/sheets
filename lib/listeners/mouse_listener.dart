@@ -41,14 +41,6 @@ class SheetMouseListener {
     this.cursor.value = cursor;
   }
 
-  // void tap() {
-  //   print('tap');
-  //   if (customTapHovered) return;
-  //   if (nativeDragging) return;
-  //   SheetGesture tapGesture = tapRecognizer.onTap(SheetTapDetails.create(mousePosition.value, hoveredItem.value));
-  //   _addGesture(tapGesture);
-  // }
-
   SheetDragDetails? _activeStartDragDetails;
 
   void dragStart(SheetItemConfig draggedItem) {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/selection/selection_factory.dart';
 import 'package:sheets/selection/selection_status.dart';
-import 'package:sheets/selection/selection_utils.dart';
 import 'package:sheets/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
@@ -25,10 +27,16 @@ class SelectionController extends ChangeNotifier {
     notifyListeners();
   }
 
+  late final SheetProperties properties;
+
+  void applyTo(SheetController controller) {
+    properties = controller.sheetProperties;
+  }
+
   bool layerSelectionActive = false;
   bool layerSelectionEnabled = false;
 
-  void openNewLayer() {
+  void openLayer() {
     layerSelectionActive = true;
     layerSelectionEnabled = true;
     notifyListeners();
@@ -50,36 +58,39 @@ class SelectionController extends ChangeNotifier {
   }
 
   void selectSingle(CellIndex cellIndex, {bool completed = false}) {
-    selection = SelectionUtils.getSingleSelection(cellIndex, completed: completed);
+    selection = SelectionFactory.getSingleSelection(cellIndex, completed: completed);
   }
 
   void selectColumn(ColumnIndex columnIndex, {bool completed = false}) {
-    selection = SelectionUtils.getColumnSelection(columnIndex, completed: completed);
+    selection = SelectionFactory.getColumnSelection(columnIndex, completed: completed);
   }
 
   void selectRow(RowIndex rowIndex, {bool completed = false}) {
-    selection = SelectionUtils.getRowSelection(rowIndex, completed: completed);
+    selection = SelectionFactory.getRowSelection(rowIndex, completed: completed);
   }
 
-  void selectRange({required CellIndex start, required CellIndex end, bool completed = false}) {
-    selection = SelectionUtils.getRangeSelection(start: start, end: end, completed: completed);
+  void selectRange({required SheetItemIndex start, required SheetItemIndex end, bool completed = false}) {
+    SheetSelection? newSelection = SelectionFactory.getRangeSelection(start: start, end: end, completed: completed);
+    if(newSelection != null) {
+      selection = newSelection;
+    }
   }
 
   void selectColumnRange({required ColumnIndex start, required ColumnIndex end, bool completed = false}) {
-    selection = SelectionUtils.getColumnRangeSelection(start: start, end: end, completed: completed);
+    selection = SelectionFactory.getColumnRangeSelection(start: start, end: end, completed: completed);
   }
 
   void selectRowRange({required RowIndex start, required RowIndex end, bool completed = false}) {
-    selection = SelectionUtils.getRowRangeSelection(start: start, end: end, completed: completed);
+    selection = SelectionFactory.getRowRangeSelection(start: start, end: end, completed: completed);
   }
 
-  void selectMultiple(List<CellIndex> selectedCells, {required CellIndex mainCell}) {
-    Set<CellIndex> cells = selectedCells.toSet();
-    selection = SheetMultiSelection(selectedCells: cells, mainCell: mainCell);
+  void combine(SheetSelection previousSelection, SheetSelection appendedSelection) {
+    Set<CellIndex> cells = {...previousSelection.selectedCells, ...appendedSelection.selectedCells};
+    selection = SheetMultiSelection(selectedCells: cells, mainCell: appendedSelection.mainCell);
   }
-
+  
   void selectAll() {
-    selection = SelectionUtils.getAllSelection();
+    selection = SelectionFactory.getAllSelection();
   }
 
   void toggleCellSelection(CellIndex cellIndex) {
@@ -102,7 +113,7 @@ class SelectionController extends ChangeNotifier {
     SelectionStatus columnSelectionStatus = _unconfirmedSelection.isColumnSelected(columnIndex);
     if (columnSelectionStatus.isFullySelected == false) {
       selectedCells.addAll(List.generate(defaultRowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
-      selection = SheetMultiSelection(selectedCells: selectedCells);
+      selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex));
       return true;
     } else if (selectedColumns.length == 1 && selectedColumns.first == columnIndex) {
       return null;
@@ -120,7 +131,7 @@ class SelectionController extends ChangeNotifier {
     SelectionStatus rowSelectionStatus = _unconfirmedSelection.isRowSelected(rowIndex);
     if (rowSelectionStatus.isFullySelected == false) {
       selectedCells.addAll(List.generate(defaultColumnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
-      selection = SheetMultiSelection(selectedCells: selectedCells);
+      selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)));
       return true;
     } else if (selectedRows.length == 1 && selectedRows.first == rowIndex) {
       return null;

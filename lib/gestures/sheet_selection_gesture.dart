@@ -52,7 +52,7 @@ class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
       ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else {
-      BasicSelectionRangeBehavior(hoveredIndex).invoke(controller);
+      BasicSelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
     }
   }
 }

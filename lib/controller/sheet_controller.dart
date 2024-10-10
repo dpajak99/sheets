@@ -47,10 +47,10 @@ class SheetController {
 
     keyboard.onKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectionController.selectAll);
     keyboard.onKeyPressed(LogicalKeyboardKey.shiftLeft, () {
-      selectionController.openNewLayer();
+      selectionController.openLayer();
     });
     keyboard.onKeyPressed(LogicalKeyboardKey.controlLeft, () {
-      selectionController.openNewLayer();
+      selectionController.openLayer();
     });
     keyboard.onKeyReleased(LogicalKeyboardKey.shiftLeft, () {
       selectionController.closeLayer();

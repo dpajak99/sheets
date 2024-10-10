@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/utils/directional_values.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
@@ -18,6 +19,8 @@ class SheetScrollController extends ChangeNotifier {
     SheetScrollMetrics.zero(SheetAxisDirection.vertical),
     SheetScrollMetrics.zero(SheetAxisDirection.horizontal),
   );
+
+  late final SheetProperties properties;
 
   SheetScrollController() {
     physics.applyTo(this);

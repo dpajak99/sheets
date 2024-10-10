@@ -151,10 +151,11 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
         SheetRangeSelectionRenderer sheetRangeSelectionRenderer = mergedSelection.createRenderer(paintConfig);
         SelectionBounds? selectionBounds = sheetRangeSelectionRenderer.selectionBounds;
         if (selectionBounds == null) {
-          return;
+          continue;
         }
 
         Rect selectionRect = selectionBounds.selectionRect;
+
         paintSelectionBackground(canvas, selectionRect);
 
         paintSelectionBorder(
