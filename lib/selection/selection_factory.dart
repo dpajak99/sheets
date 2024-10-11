@@ -1,6 +1,6 @@
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/types/sheet_range_selection.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
 
 class SelectionFactory {

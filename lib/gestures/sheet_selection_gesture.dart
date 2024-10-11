@@ -19,11 +19,11 @@ class SheetSelectionStartGesture extends SheetDragGesture {
     if (hoveredIndex == null) return;
 
     if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
-      return ModifyAppendedSelectionBehavior(hoveredIndex).invoke(controller);
+      return ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      return ToggleSingleSelectionBehavior(hoveredIndex).invoke(controller);
+      return ToggleSelectionBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      return BasicSelectionRangeBehavior(hoveredIndex).invoke(controller);
+      return SelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else {
       return SingleSelectionBehavior(hoveredIndex).invoke(controller);
     }
@@ -46,13 +46,13 @@ class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
     if (hoveredIndex == null) return;
 
     if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
-      ModifyAppendedSelectionBehavior(hoveredIndex).invoke(controller);
+      ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
       AppendSelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
       ModifySelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
     } else {
-      BasicSelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
+      SelectionRangeBehavior(hoveredIndex, startIndex: startDetails.hoveredItemIndex).invoke(controller);
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/selection/sheet_selection_renderer.dart';
 import 'package:sheets/widgets/sheet_draggable.dart';
 
 class SheetFillHandleLayer extends StatefulWidget {

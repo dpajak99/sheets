@@ -1,14 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/selection/renderers/sheet_multi_selection_renderer.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
-import 'package:sheets/selection/selection_bounds.dart';
 import 'package:sheets/selection/selection_corners.dart';
-import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/selection/types/sheet_range_selection.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
-import 'package:sheets/selection/types/sheet_single_selection.dart';
-import 'package:sheets/utils/extensions/set_extensions.dart';
+import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/sheet_selection_renderer.dart';
+import 'package:sheets/utils/extensions/iterable_extensions.dart';
 
 class SheetMultiSelection extends SheetSelection {
   final List<SheetSelection> mergedSelections;
@@ -28,6 +26,17 @@ class SheetMultiSelection extends SheetSelection {
       mergedSelections: mergedSelections,
       mainCell: mainCell,
     );
+  }
+
+  SheetMultiSelection copyWith({
+    List<SheetSelection>? mergedSelections,
+    CellIndex? mainCell,
+    bool? completed,
+  }) {
+    return SheetMultiSelection(
+      mergedSelections: mergedSelections ?? this.mergedSelections,
+      mainCell: mainCell ?? _mainCell,
+    )..applyProperties(sheetProperties);
   }
 
   @override
@@ -78,37 +87,6 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  SheetSelection simplify() {
-    return this;
-    // if (selectedCells.length == 1) {
-    //   return SheetSingleSelection(cellIndex: selectedCells.first, completed: true)..applyProperties(sheetProperties);
-    // }
-    //
-    // List<SheetSelection> mergedSelections = [];
-    // Map<ColumnIndex, List<CellIndex>> groupedByColumn = selectedCells.groupListsBy((cell) => cell.columnIndex);
-    //
-    // for (List<CellIndex> columnCells in groupedByColumn.values) {
-    //   columnCells.sort((a, b) => a.rowIndex.compareTo(b.rowIndex));
-    //
-    //   int start = 0;
-    //   for (int i = 0; i < columnCells.length; i++) {
-    //     bool isLastCell = i == columnCells.length - 1;
-    //     bool isNonConsecutive = !isLastCell && columnCells[i].rowIndex.value + 1 != columnCells[i + 1].rowIndex.value;
-    //
-    //     if (isLastCell || isNonConsecutive) {
-    //       mergedSelections.add(
-    //         SheetRangeSelection(start: columnCells[start], end: columnCells[i], completed: true)..applyProperties(sheetProperties),
-    //       );
-    //       start = i + 1;
-    //     }
-    //   }
-    // }
-    //
-    // return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections, mainCell: _mainCell)
-    //   ..applyProperties(sheetProperties);
-  }
-
-  @override
   String stringifySelection() {
     // return selectedCells.map((cellIndex) => cellIndex.stringifyPosition()).join(', ');
     return 'Custom';
@@ -120,73 +98,99 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
+  SheetSelection modifyEnd(CellIndex cellIndex, {required bool completed}) {
+    List<SheetSelection> newMergedSelections = mergedSelections.sublist(0, mergedSelections.length - 1);
+
+    SheetSelection modifiedSelection = mergedSelections.last.modifyEnd(cellIndex, completed: completed);
+    newMergedSelections.add(modifiedSelection);
+
+    return SheetMultiSelection(
+      mergedSelections: newMergedSelections,
+      mainCell: modifiedSelection.mainCell,
+    );
+  }
+
+  @override
+  SheetSelection append(SheetSelection appendedSelection) {
+    return copyWith(
+      mergedSelections: [
+        ...mergedSelections,
+        appendedSelection,
+      ],
+      mainCell: appendedSelection.mainCell,
+    );
+  }
+
+  SheetMultiSelection replaceLast(SheetSelection sheetSelection) {
+    sheetSelection.applyProperties(sheetProperties);
+
+    List<SheetSelection> newMergedSelections = mergedSelections.sublist(0, mergedSelections.length - 1);
+    newMergedSelections.add(sheetSelection);
+
+    return copyWith(
+      mergedSelections: newMergedSelections,
+      mainCell: sheetSelection.mainCell,
+    );
+  }
+
+  @override
+  void applyProperties(SheetProperties properties) {
+    for (SheetSelection selection in mergedSelections) {
+      selection.applyProperties(properties);
+    }
+    super.applyProperties(properties);
+  }
+
+  @override
+  bool containsSelection(SheetSelection nestedSelection) {
+    return mergedSelections.any((selection) => selection.containsSelection(nestedSelection));
+  }
+
+  @override
+  SheetSelection complete() {
+    return this;
+  }
+
+  @override
+  SheetSelection simplify() {
+    SheetSelection lastSelection = mergedSelections.last;
+    List<SheetSelection> previousSelections = mergedSelections.sublist(0, mergedSelections.length - 1);
+    List<SheetSelection> updatedSelections = [];
+    SheetSelection mainSelection = lastSelection;
+
+    bool subtracted = false;
+    for (SheetSelection selection in previousSelections) {
+      if (subtracted == false && selection.containsSelection(lastSelection)) {
+        subtracted = true;
+        List<SheetSelection> subtractedSelection = selection.subtract(lastSelection);
+        if (subtractedSelection.isNotEmpty) {
+          mainSelection = subtractedSelection.last;
+          updatedSelections.addAll(subtractedSelection);
+        }
+      } else {
+        updatedSelections.add(selection);
+      }
+    }
+
+    return copyWith(
+      completed: true,
+      mergedSelections: subtracted ? updatedSelections : mergedSelections,
+      mainCell: mainSelection.mainCell,
+    );
+  }
+
+  @override
+  List<SheetSelection> subtract(SheetSelection subtractedSelection) {
+    List<SheetSelection> updatedSelections = mergedSelections.map((selection) => selection.subtract(subtractedSelection)).whereNotNull().cast();
+    if (updatedSelections.isEmpty) {
+      return [];
+    } else {
+      return updatedSelections;
+    }
+  }
+
+  @override
   List<Object?> get props => [mergedSelections, _mainCell];
 }
 
-class SheetMultiSelectionRenderer extends SheetSelectionRenderer {
-  final SheetMultiSelection selection;
 
-  SheetMultiSelectionRenderer({
-    required super.viewportDelegate,
-    required this.selection,
-  });
-
-  @override
-  bool get fillHandleVisible => false;
-
-  @override
-  Offset? get fillHandleOffset => null;
-
-  @override
-  SheetSelectionPaint get paint => SheetMultiSelectionPaint(this);
-
-  CellConfig? get lastSelectedCell => viewportDelegate.findCell(selection.mainCell);
-}
-
-class SheetMultiSelectionPaint extends SheetSelectionPaint {
-  final SheetMultiSelectionRenderer renderer;
-
-  SheetMultiSelectionPaint(this.renderer);
-
-  @override
-  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
-    for (SheetSelection mergedSelection in renderer.selection.mergedSelections) {
-      if (mergedSelection is SheetRangeSelection) {
-        SheetRangeSelectionRenderer sheetRangeSelectionRenderer = mergedSelection.createRenderer(paintConfig);
-        SelectionBounds? selectionBounds = sheetRangeSelectionRenderer.selectionBounds;
-        if (selectionBounds == null) {
-          continue;
-        }
-
-        Rect selectionRect = selectionBounds.selectionRect;
-
-        paintSelectionBackground(canvas, selectionRect);
-
-        paintSelectionBorder(
-          canvas,
-          selectionRect,
-          top: selectionBounds.isTopBorderVisible,
-          right: selectionBounds.isRightBorderVisible,
-          bottom: selectionBounds.isBottomBorderVisible,
-          left: selectionBounds.isLeftBorderVisible,
-        );
-      } else if (mergedSelection is SheetSingleSelection) {
-        SheetSingleSelectionRenderer sheetSingleSelectionRenderer = mergedSelection.createRenderer(paintConfig);
-        CellConfig? selectedCell = sheetSingleSelectionRenderer.selectedCell;
-        if (selectedCell == null) {
-          return;
-        }
-
-        paintSelectionBackground(canvas, selectedCell.rect);
-        paintSelectionBorder(canvas, selectedCell.rect);
-      } else {}
-    }
-
-    CellConfig? selectedCell = renderer.lastSelectedCell;
-    if (selectedCell == null) {
-      return;
-    }
-
-    paintMainCell(canvas, selectedCell.rect);
-  }
-}

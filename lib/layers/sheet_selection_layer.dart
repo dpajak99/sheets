@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/sheet_selection_paint.dart';
+import 'package:sheets/selection/sheet_selection_renderer.dart';
 
 class SheetSelectionLayer extends StatefulWidget {
   final SheetController sheetController;
@@ -80,7 +82,7 @@ class _SelectionPainter extends ChangeNotifier implements CustomPainter {
 
     SheetSelectionRenderer selectionRenderer = _sheetSelection.createRenderer(_viewportDelegate);
 
-    SheetSelectionPaint selectionPaint = selectionRenderer.paint;
+    SheetSelectionPaint selectionPaint = selectionRenderer.getPaint();
     selectionPaint.paint(_viewportDelegate, canvas, size);
   }
 

@@ -76,6 +76,13 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
         cellIndex.columnIndex.value <= topRight.columnIndex.value;
   }
 
+  bool isNestedIn(SelectionCellCorners corners) {
+    return topLeft.rowIndex.value >= corners.topLeft.rowIndex.value &&
+        topLeft.columnIndex.value >= corners.topLeft.columnIndex.value &&
+        bottomRight.rowIndex.value <= corners.bottomRight.rowIndex.value &&
+        bottomRight.columnIndex.value <= corners.bottomRight.columnIndex.value;
+  }
+
   int get topIndex => topLeft.rowIndex.value;
 
   int get bottomIndex => bottomLeft.rowIndex.value;

@@ -1,12 +1,10 @@
-import 'dart:ui';
-
+import 'package:sheets/selection/renderers/sheet_single_selection_renderer.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_corners.dart';
-import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
-import 'package:sheets/utils/cached_value.dart';
+import 'package:sheets/selection/types/sheet_range_selection.dart';
+import 'package:sheets/selection/sheet_selection.dart';
 
 class SheetSingleSelection extends SheetSelection {
   final CellIndex cellIndex;
@@ -55,44 +53,25 @@ class SheetSingleSelection extends SheetSelection {
   }
 
   @override
+  SheetSelection modifyEnd(CellIndex cellIndex, {required bool completed}) {
+    return SheetRangeSelection(start: start, end: cellIndex, completed: completed);
+  }
+
+  @override
+  bool containsSelection(SheetSelection nestedSelection) {
+    return nestedSelection is SheetSingleSelection && nestedSelection.cellIndex == cellIndex;
+  }
+
+  @override
+  List<SheetSelection> subtract(SheetSelection subtractedSelection) {
+    if (subtractedSelection.contains(cellIndex)) {
+      return [];
+    } else {
+      return [this];
+    }
+  }
+
+  @override
   List<Object?> get props => <Object?>[cellIndex, isCompleted];
 }
 
-class SheetSingleSelectionRenderer extends SheetSelectionRenderer {
-  final SheetSingleSelection selection;
-  late final CachedValue<CellConfig?> _selectedCell;
-
-  SheetSingleSelectionRenderer({
-    required super.viewportDelegate,
-    required this.selection,
-  }) {
-    _selectedCell = CachedValue<CellConfig?>(() => viewportDelegate.findCell(selection.trueStart));
-  }
-
-  @override
-  bool get fillHandleVisible => selection.isCompleted == true;
-
-  @override
-  Offset? get fillHandleOffset => selectedCell?.rect.bottomRight;
-
-  @override
-  SheetSelectionPaint get paint => SheetSingleSelectionPaint(this);
-
-  CellConfig? get selectedCell => _selectedCell.value;
-}
-
-class SheetSingleSelectionPaint extends SheetSelectionPaint {
-  final SheetSingleSelectionRenderer renderer;
-
-  SheetSingleSelectionPaint(this.renderer);
-
-  @override
-  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
-    CellConfig? selectedCell = renderer.selectedCell;
-    if (selectedCell == null) {
-      return;
-    }
-
-    paintMainCell(canvas, selectedCell.rect);
-  }
-}

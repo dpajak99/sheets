@@ -21,7 +21,7 @@ class SheetGestureDetector extends StatefulWidget {
 
 class _SheetGestureDetectorState extends State<SheetGestureDetector> {
   bool _pressActive = false;
-  
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -49,7 +49,7 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    if(widget.mouseListener.customTapHovered) return;
+    if (widget.mouseListener.customTapHovered) return;
     _notifyOffsetChanged(event.localPosition);
     _pressActive = true;
     _onPanStart();
@@ -61,27 +61,32 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
 
   void _handlePointerMove(PointerMoveEvent event) {
     _notifyOffsetChanged(event.localPosition);
-    if(_pressActive) {
+    if (_pressActive) {
       _onPanUpdate();
     }
   }
-  
+
   void _handlePointerUp(PointerUpEvent event) {
     _notifyOffsetChanged(event.localPosition);
     _pressActive = false;
     _onPanEnd();
   }
-  
+
+  SheetItemConfig? notifiedItem;
 
   void _onPanStart() {
     SheetItemConfig? hoveredItem = widget.mouseListener.hoveredItem.value;
     if (hoveredItem != null) {
+      notifiedItem = hoveredItem;
       widget.mouseListener.dragStart(hoveredItem);
     }
   }
 
   void _onPanUpdate() {
+    SheetItemConfig? hoveredItem = widget.mouseListener.hoveredItem.value;
+    if (notifiedItem == hoveredItem) return;
     widget.mouseListener.dragUpdate();
+    notifiedItem = hoveredItem;
   }
 
   void _onPanEnd() {

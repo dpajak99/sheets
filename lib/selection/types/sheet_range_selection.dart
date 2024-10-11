@@ -1,17 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:sheets/selection/renderers/sheet_range_selection_renderer.dart';
+import 'package:sheets/selection/types/sheet_single_selection.dart';
 import 'package:sheets/utils/range.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
-import 'package:sheets/selection/selection_bounds.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/selection_direction.dart';
-import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/utils/closest_visible.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
-import 'package:sheets/selection/types/sheet_single_selection.dart';
-import 'package:sheets/utils/cached_value.dart';
-import 'package:sheets/utils/direction.dart';
+import 'package:sheets/selection/sheet_selection.dart';
 
 class SheetRangeSelection extends SheetSelection {
   final CellIndex _start;
@@ -96,14 +91,6 @@ class SheetRangeSelection extends SheetSelection {
   SheetSelection complete() => copyWith(completed: true);
 
   @override
-  SheetSelection simplify() {
-    if (trueStart == trueEnd) {
-      return SheetSingleSelection(cellIndex: trueStart, completed: isCompleted)..applyProperties(sheetProperties);
-    }
-    return this;
-  }
-
-  @override
   String stringifySelection() {
     return '${trueStart.stringifyPosition()}:${trueEnd.stringifyPosition()}';
   }
@@ -111,6 +98,11 @@ class SheetRangeSelection extends SheetSelection {
   @override
   SheetRangeSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate) {
     return SheetRangeSelectionRenderer(viewportDelegate: viewportDelegate, selection: this);
+  }
+
+  @override
+  SheetSelection modifyEnd(CellIndex cellIndex, {required bool completed}) {
+    return copyWith(end: cellIndex, completed: completed);
   }
 
   Range<ColumnIndex> get horizontalRange => Range(trueStart.columnIndex, trueEnd.columnIndex);
@@ -129,113 +121,80 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
+  bool containsSelection(SheetSelection nestedSelection) {
+    SelectionCellCorners? nestedCorners = nestedSelection.selectionCellCorners;
+    if (nestedCorners == null) return false;
+
+    SelectionCellCorners currentCorners = selectionCellCorners;
+    return nestedCorners.isNestedIn(currentCorners);
+  }
+
+  @override
+  List<SheetSelection> subtract(SheetSelection subtractedSelection) {
+    if (subtractedSelection.containsCell(trueStart) && subtractedSelection.containsCell(trueEnd)) {
+      return [];
+    }
+    List<SheetRangeSelection> newSelections = [];
+
+    SelectionCellCorners currentCorners = selectionCellCorners;
+    SelectionCellCorners? subtractedCorners = subtractedSelection.selectionCellCorners;
+    if (subtractedCorners == null) {
+      return [this];
+    }
+
+    CellIndex currentStart = currentCorners.topLeft;
+    CellIndex subtractionStart = subtractedCorners.topLeft;
+
+    CellIndex currentEnd = currentCorners.bottomRight;
+    CellIndex subtractionEnd = subtractedCorners.bottomRight;
+
+    if (currentStart.rowIndex != subtractionStart.rowIndex) {
+      newSelections.add(SheetRangeSelection(
+        start: currentStart,
+        end: CellIndex(rowIndex: subtractionStart.rowIndex.move(-1), columnIndex: currentEnd.columnIndex),
+        completed: true,
+      ));
+    }
+
+    if (currentStart.columnIndex != subtractionStart.columnIndex) {
+      newSelections.add(SheetRangeSelection(
+        start: CellIndex(rowIndex: subtractionStart.rowIndex, columnIndex: currentStart.columnIndex),
+        end: CellIndex(rowIndex: subtractionEnd.rowIndex, columnIndex: subtractionStart.columnIndex.move(-1)),
+        completed: true,
+      ));
+    }
+
+    if (currentEnd.rowIndex != subtractionEnd.rowIndex) {
+      newSelections.add(SheetRangeSelection(
+        start: CellIndex(rowIndex: subtractionEnd.rowIndex.move(1), columnIndex: currentStart.columnIndex),
+        end: currentEnd,
+        completed: true,
+      ));
+    }
+
+    if (currentEnd.columnIndex != subtractionEnd.columnIndex) {
+      newSelections.add(SheetRangeSelection(
+        start: CellIndex(rowIndex: subtractionStart.rowIndex, columnIndex: subtractionEnd.columnIndex.move(1)),
+        end: CellIndex(rowIndex: subtractionEnd.rowIndex, columnIndex: currentEnd.columnIndex),
+        completed: true,
+      ));
+    }
+
+    return newSelections;
+  }
+
+  @override
+  SheetSelection simplify() {
+    if (trueStart == trueEnd) {
+      return SheetSingleSelection(cellIndex: trueStart, completed: true);
+    } else {
+      return this;
+    }
+  }
+
+  @override
   List<Object?> get props => [_start, _end, isCompleted];
 }
 
-class SheetRangeSelectionRenderer extends SheetSelectionRenderer {
-  final SheetRangeSelection selection;
-  late final CachedValue<SelectionBounds?> _selectionBounds;
 
-  SheetRangeSelectionRenderer({
-    required super.viewportDelegate,
-    required this.selection,
-  }) {
-    _selectionBounds = CachedValue<SelectionBounds?>(_calculateSelectionBounds);
-  }
 
-  @override
-  bool get fillHandleVisible => selection.isCompleted;
-
-  @override
-  Offset? get fillHandleOffset => selectionBounds?.selectionRect.bottomRight;
-
-  @override
-  SheetSelectionPaint get paint => SheetRangeSelectionPaint(this);
-
-  SelectionBounds? get selectionBounds => _selectionBounds.value;
-
-  SelectionBounds? _calculateSelectionBounds() {
-    CellConfig? startCell = viewportDelegate.findCell(selection.trueStart);
-    CellConfig? endCell = viewportDelegate.findCell(selection.trueEnd);
-
-    if (startCell != null && endCell != null) {
-      return SelectionBounds(startCell, endCell, selection.direction);
-    }
-
-    if (startCell == null && endCell != null) {
-      ClosestVisible<CellIndex> startClosest = viewportDelegate.findClosestVisible(selection.trueStart);
-      CellConfig updatedStartCell = viewportDelegate.findCell(startClosest.item) as CellConfig;
-      return SelectionBounds(updatedStartCell, endCell, selection.direction, hiddenBorders: startClosest.hiddenBorders, startCellVisible: false);
-    }
-
-    if (startCell != null && endCell == null) {
-      ClosestVisible<CellIndex> endClosest = viewportDelegate.findClosestVisible(selection.trueEnd);
-      CellConfig updatedEndCell = viewportDelegate.findCell(endClosest.item) as CellConfig;
-
-      return SelectionBounds(startCell, updatedEndCell, selection.direction, hiddenBorders: endClosest.hiddenBorders, lastCellVisible: false);
-    }
-
-    if (startCell == null && endCell == null && (_isFullHeightSelection || _isFullWidthSelection)) {
-      ClosestVisible<CellIndex> startClosest = viewportDelegate.findClosestVisible(selection.trueStart);
-      ClosestVisible<CellIndex> endClosest = viewportDelegate.findClosestVisible(selection.trueEnd);
-
-      CellConfig updatedStartCell = viewportDelegate.findCell(startClosest.item) as CellConfig;
-      CellConfig updatedEndCell = viewportDelegate.findCell(endClosest.item) as CellConfig;
-
-      List<Direction> hiddenBorders = [...startClosest.hiddenBorders, ...endClosest.hiddenBorders];
-
-      return SelectionBounds(updatedStartCell, updatedEndCell, selection.direction, hiddenBorders: hiddenBorders, startCellVisible: false);
-    }
-
-    return null;
-  }
-
-  bool get _isFullHeightSelection {
-    List<RowConfig> visibleRows = viewportDelegate.visibleRows;
-    bool vertical1 = selection.trueStart.rowIndex < visibleRows.first.rowIndex && selection.trueEnd.rowIndex > visibleRows.last.rowIndex;
-    bool vertical2 = selection.trueEnd.rowIndex < visibleRows.first.rowIndex && selection.trueStart.rowIndex > visibleRows.last.rowIndex;
-
-    return vertical1 || vertical2;
-  }
-
-  bool get _isFullWidthSelection {
-    List<ColumnConfig> visibleColumns = viewportDelegate.visibleColumns;
-    bool horizontal1 = selection.trueStart.columnIndex < visibleColumns.first.columnIndex && selection.trueEnd.columnIndex > visibleColumns.last.columnIndex;
-    bool horizontal2 = selection.trueEnd.columnIndex < visibleColumns.first.columnIndex && selection.trueStart.columnIndex > visibleColumns.last.columnIndex;
-
-    return horizontal1 || horizontal2;
-  }
-}
-
-class SheetRangeSelectionPaint extends SheetSelectionPaint {
-  final SheetRangeSelectionRenderer renderer;
-
-  SheetRangeSelectionPaint(this.renderer);
-
-  @override
-  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
-    SelectionBounds? selectionBounds = renderer.selectionBounds;
-    if (selectionBounds == null) {
-      return;
-    }
-
-    Rect selectionRect = selectionBounds.selectionRect;
-
-    if (selectionBounds.isStartCellVisible) {
-      paintMainCell(canvas, selectionBounds.mainCellRect);
-    }
-
-    paintSelectionBackground(canvas, selectionRect);
-
-    if (renderer.selection.isCompleted) {
-      paintSelectionBorder(
-        canvas,
-        selectionRect,
-        top: selectionBounds.isTopBorderVisible,
-        right: selectionBounds.isRightBorderVisible,
-        bottom: selectionBounds.isBottomBorderVisible,
-        left: selectionBounds.isLeftBorderVisible,
-      );
-    }
-  }
-}

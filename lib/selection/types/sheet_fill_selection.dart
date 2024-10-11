@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:sheets/selection/renderers/sheet_fill_selection_renderer.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/selection/selection_bounds.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/types/sheet_range_selection.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetFillSelection extends SheetRangeSelection {
@@ -44,43 +43,9 @@ class SheetFillSelection extends SheetRangeSelection {
   }
 
   @override
-  SheetSelection simplify() => this;
-
-  @override
   SheetFillSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate) {
     return SheetFillSelectionRenderer(viewportDelegate: viewportDelegate, selection: this);
   }
 }
 
-class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer {
-  SheetFillSelectionRenderer({
-    required super.viewportDelegate,
-    required super.selection,
-  });
 
-  @override
-  SheetFillSelection get selection => super.selection as SheetFillSelection;
-
-  @override
-  SheetSelectionPaint get paint => SheetFillSelectionPaint(this);
-}
-
-class SheetFillSelectionPaint extends SheetSelectionPaint {
-  final SheetFillSelectionRenderer renderer;
-
-  SheetFillSelectionPaint(this.renderer);
-
-  @override
-  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
-    SheetSelectionRenderer sheetSelectionRenderer = renderer.selection.baseSelection.createRenderer(paintConfig);
-    sheetSelectionRenderer.paint.paint(paintConfig, canvas, size);
-
-    SelectionBounds? selectionBounds = renderer.selectionBounds;
-    if (selectionBounds == null) {
-      return;
-    }
-
-    Rect selectionRect = selectionBounds.selectionRect;
-    paintFillBorder(canvas, selectionRect);
-  }
-}

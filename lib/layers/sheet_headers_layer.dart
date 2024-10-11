@@ -3,7 +3,7 @@ import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_config.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/selection/types/sheet_selection.dart';
+import 'package:sheets/selection/sheet_selection.dart';
 
 class SheetHeadersLayer extends StatefulWidget {
   final SheetController sheetController;

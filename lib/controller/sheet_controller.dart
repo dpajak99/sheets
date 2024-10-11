@@ -46,18 +46,6 @@ class SheetController {
     stream.listen(_handleGesture);
 
     keyboard.onKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectionController.selectAll);
-    keyboard.onKeyPressed(LogicalKeyboardKey.shiftLeft, () {
-      selectionController.openLayer();
-    });
-    keyboard.onKeyPressed(LogicalKeyboardKey.controlLeft, () {
-      selectionController.openLayer();
-    });
-    keyboard.onKeyReleased(LogicalKeyboardKey.shiftLeft, () {
-      selectionController.closeLayer();
-    });
-    keyboard.onKeyReleased(LogicalKeyboardKey.controlLeft, () {
-      selectionController.closeLayer();
-    });
     // -------------------
     keyboard.onKeyPressed(LogicalKeyboardKey.keyR, () {
       sheetProperties.addRows(10);

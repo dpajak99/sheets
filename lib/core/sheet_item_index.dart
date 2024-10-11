@@ -26,6 +26,11 @@ sealed class SheetItemIndex with EquatableMixin {
         };
     }
   }
+
+  @override
+  String toString() {
+    return stringifyPosition();
+  }
 }
 
 class CellIndex extends SheetItemIndex {
@@ -49,11 +54,6 @@ class CellIndex extends SheetItemIndex {
   }
 
   @override
-  String toString() {
-    return 'Cell(${rowIndex.value}, ${columnIndex.value})';
-  }
-
-  @override
   String stringifyPosition() {
     return '${columnIndex.stringifyPosition()}${rowIndex.stringifyPosition()}';
   }
@@ -73,6 +73,10 @@ class ColumnIndex extends SheetItemIndex with NumericIndexMixin implements Compa
 
   ColumnIndex operator -(int number) {
     return ColumnIndex(value - number);
+  }
+
+  ColumnIndex move(int number) {
+    return ColumnIndex(value + number);
   }
 
   @override
@@ -119,6 +123,10 @@ class RowIndex extends SheetItemIndex with NumericIndexMixin implements Comparab
 
   @override
   int get value => _value;
+
+  RowIndex move(int number) {
+    return RowIndex(value + number);
+  }
 
   @override
   String stringifyPosition() {
