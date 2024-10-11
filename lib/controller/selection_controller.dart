@@ -3,7 +3,6 @@ import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/selection/selection_factory.dart';
-import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/selection/types/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
@@ -19,7 +18,7 @@ class SelectionController extends ChangeNotifier {
     sheetSelection.applyProperties(properties);
     SheetSelection simplifiedSelection = sheetSelection.simplify();
 
-    if(_unconfirmedSelection == simplifiedSelection) return;
+    if (_unconfirmedSelection == simplifiedSelection) return;
 
     _unconfirmedSelection = simplifiedSelection;
 
@@ -72,8 +71,24 @@ class SelectionController extends ChangeNotifier {
     previousSelection.applyProperties(properties);
     appendedSelection.applyProperties(properties);
 
-    Set<CellIndex> cells = {...previousSelection.selectedCells, ...appendedSelection.selectedCells};
-    selection = SheetMultiSelection(selectedCells: cells, mainCell: appendedSelection.mainCell);
+    List<SheetSelection> previousSelections = switch (previousSelection) {
+      SheetMultiSelection multiSelection => multiSelection.mergedSelections,
+      _ => [previousSelection],
+    };
+
+    SheetSelection recentSelection = previousSelections.last;
+
+    if(recentSelection is SheetSingleSelection && recentSelection.contains(appendedSelection.start)) {
+      previousSelections.removeLast();
+    }
+
+    selection = SheetMultiSelection(
+      mergedSelections: [
+        ...previousSelections,
+        appendedSelection,
+      ],
+      mainCell: appendedSelection.mainCell,
+    );
   }
 
   void selectAll() {
@@ -81,49 +96,47 @@ class SelectionController extends ChangeNotifier {
   }
 
   void toggleCellSelection(CellIndex cellIndex) {
-    Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
-    if (selectedCells.contains(cellIndex) && selectedCells.length > 1) {
-      selectedCells.remove(cellIndex);
-      selection = SheetMultiSelection(selectedCells: selectedCells);
-      layerSelectionEnabled = false;
+    if (visibleSelection.contains(cellIndex)) {
+      // selectedCells.remove(cellIndex);
+      // selection = SheetMultiSelection(selectedCells: selectedCells);
+      // layerSelectionEnabled = false;
     } else {
-      selectedCells.add(cellIndex);
-      selection = SheetMultiSelection(selectedCells: selectedCells);
+      combine(visibleSelection, SheetSingleSelection(cellIndex: cellIndex, completed: true));
       layerSelectionEnabled = true;
     }
   }
 
   void toggleColumnSelection(ColumnIndex columnIndex) {
-    Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
-    List<ColumnIndex> selectedColumns = selectedCells.map((CellIndex cellIndex) => cellIndex.columnIndex).toSet().toList();
-
-    SelectionStatus columnSelectionStatus = _unconfirmedSelection.isColumnSelected(columnIndex);
-    if (columnSelectionStatus.isFullySelected == false) {
-      selectedCells.addAll(List.generate(properties.rowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
-      selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex));
-    } else if (selectedColumns.length == 1 && selectedColumns.first == columnIndex) {
-      return;
-    } else {
-      selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.columnIndex == columnIndex);
-      selection = SheetMultiSelection(selectedCells: selectedCells);
-      return;
-    }
+    // Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
+    // List<ColumnIndex> selectedColumns = selectedCells.map((CellIndex cellIndex) => cellIndex.columnIndex).toSet().toList();
+    //
+    // SelectionStatus columnSelectionStatus = _unconfirmedSelection.isColumnSelected(columnIndex);
+    // if (columnSelectionStatus.isFullySelected == false) {
+    //   selectedCells.addAll(List.generate(properties.rowCount, (int index) => CellIndex(rowIndex: RowIndex(index), columnIndex: columnIndex)));
+    //   selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: RowIndex(0), columnIndex: columnIndex));
+    // } else if (selectedColumns.length == 1 && selectedColumns.first == columnIndex) {
+    //   return;
+    // } else {
+    //   selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.columnIndex == columnIndex);
+    //   selection = SheetMultiSelection(selectedCells: selectedCells);
+    //   return;
+    // }
   }
 
   void toggleRowSelection(RowIndex rowIndex) {
-    Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
-    List<RowIndex> selectedRows = selectedCells.map((CellIndex cellIndex) => cellIndex.rowIndex).toSet().toList();
-
-    SelectionStatus rowSelectionStatus = _unconfirmedSelection.isRowSelected(rowIndex);
-    if (rowSelectionStatus.isFullySelected == false) {
-      selectedCells.addAll(List.generate(properties.columnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
-      selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)));
-    } else if (selectedRows.length == 1 && selectedRows.first == rowIndex) {
-      return;
-    } else {
-      selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.rowIndex == rowIndex);
-      selection = SheetMultiSelection(selectedCells: selectedCells);
-    }
+    // Set<CellIndex> selectedCells = _unconfirmedSelection.selectedCells;
+    // List<RowIndex> selectedRows = selectedCells.map((CellIndex cellIndex) => cellIndex.rowIndex).toSet().toList();
+    //
+    // SelectionStatus rowSelectionStatus = _unconfirmedSelection.isRowSelected(rowIndex);
+    // if (rowSelectionStatus.isFullySelected == false) {
+    //   selectedCells.addAll(List.generate(properties.columnCount, (int index) => CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(index))));
+    //   selection = SheetMultiSelection(selectedCells: selectedCells, mainCell: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(0)));
+    // } else if (selectedRows.length == 1 && selectedRows.first == rowIndex) {
+    //   return;
+    // } else {
+    //   selectedCells.removeWhere((CellIndex cellIndex) => cellIndex.rowIndex == rowIndex);
+    //   selection = SheetMultiSelection(selectedCells: selectedCells);
+    // }
   }
 
   void completeSelection() {

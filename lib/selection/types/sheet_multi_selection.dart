@@ -11,38 +11,30 @@ import 'package:sheets/selection/types/sheet_single_selection.dart';
 import 'package:sheets/utils/extensions/set_extensions.dart';
 
 class SheetMultiSelection extends SheetSelection {
-  // TODO: Current way to store selected cells is not efficient and generates lags when using app on Chrome
-  // TODO: Need to find a way to store selected cells in a more efficient way (How?)
-  final Set<CellIndex> _selectedCells;
   final List<SheetSelection> mergedSelections;
   final CellIndex? _mainCell;
 
   SheetMultiSelection._({
-    required Set<CellIndex> selectedCells,
     required this.mergedSelections,
     CellIndex? mainCell,
-  })  : _selectedCells = selectedCells,
-        _mainCell = mainCell,
+  })  : _mainCell = mainCell,
         super(completed: true);
 
   factory SheetMultiSelection({
-    required Set<CellIndex> selectedCells,
-    List<SheetSelection>? mergedSelections,
+    required List<SheetSelection> mergedSelections,
     CellIndex? mainCell,
   }) {
     return SheetMultiSelection._(
-      selectedCells: selectedCells,
-      mergedSelections:
-          mergedSelections ?? selectedCells.map((CellIndex cellIndex) => SheetSingleSelection(cellIndex: cellIndex, completed: false)).toList(),
+      mergedSelections: mergedSelections,
       mainCell: mainCell,
     );
   }
 
   @override
-  CellIndex get start => _selectedCells.first;
+  CellIndex get start => mergedSelections.last.start;
 
   @override
-  CellIndex get end => _selectedCells.last;
+  CellIndex get end => mergedSelections.last.end;
 
   @override
   CellIndex get mainCell {
@@ -54,64 +46,72 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  Set<CellIndex> get selectedCells => _selectedCells;
+  bool containsCell(CellIndex cellIndex) {
+    return mergedSelections.any((selection) => selection.containsCell(cellIndex));
+  }
+
+  @override
+  Set<CellIndex> get selectedCells {
+    return mergedSelections.fold(<CellIndex>{}, (Set<CellIndex> acc, SheetSelection selection) {
+      acc.addAll(selection.selectedCells);
+      return acc;
+    });
+  }
 
   @override
   SelectionCellCorners? get selectionCellCorners => null;
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    Set<CellIndex> columnCells = selectedCells.where((cell) => cell.columnIndex == columnIndex).toSet();
-
-    bool selected = columnCells.isNotEmpty;
-    bool fullySelected = columnCells.length == sheetProperties.rowCount;
-
-    return SelectionStatus(selected, fullySelected);
+    return mergedSelections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
+      SelectionStatus columnStatus = selection.isColumnSelected(columnIndex);
+      return SelectionStatus(acc.isSelected || columnStatus.isSelected, acc.isFullySelected && columnStatus.isFullySelected);
+    });
   }
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
-    Set<CellIndex> rowCells = selectedCells.where((cell) => cell.rowIndex == rowIndex).toSet();
-
-    bool selected = rowCells.isNotEmpty;
-    bool fullySelected = rowCells.length == sheetProperties.columnCount;
-
-    return SelectionStatus(selected, fullySelected);
+    return mergedSelections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
+      SelectionStatus rowStatus = selection.isRowSelected(rowIndex);
+      return SelectionStatus(acc.isSelected || rowStatus.isSelected, acc.isFullySelected && rowStatus.isFullySelected);
+    });
   }
 
   @override
   SheetSelection simplify() {
-    if (selectedCells.length == 1) {
-      return SheetSingleSelection(cellIndex: selectedCells.first, completed: true)..applyProperties(sheetProperties);
-    }
-
-    List<SheetSelection> mergedSelections = [];
-    Map<ColumnIndex, List<CellIndex>> groupedByColumn = selectedCells.groupListsBy((cell) => cell.columnIndex);
-
-    for (List<CellIndex> columnCells in groupedByColumn.values) {
-      columnCells.sort((a, b) => a.rowIndex.compareTo(b.rowIndex));
-
-      int start = 0;
-      for (int i = 0; i < columnCells.length; i++) {
-        bool isLastCell = i == columnCells.length - 1;
-        bool isNonConsecutive = !isLastCell && columnCells[i].rowIndex.value + 1 != columnCells[i + 1].rowIndex.value;
-
-        if (isLastCell || isNonConsecutive) {
-          mergedSelections.add(
-            SheetRangeSelection(start: columnCells[start], end: columnCells[i], completed: true)..applyProperties(sheetProperties),
-          );
-          start = i + 1;
-        }
-      }
-    }
-
-    return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections, mainCell: _mainCell)
-      ..applyProperties(sheetProperties);
+    return this;
+    // if (selectedCells.length == 1) {
+    //   return SheetSingleSelection(cellIndex: selectedCells.first, completed: true)..applyProperties(sheetProperties);
+    // }
+    //
+    // List<SheetSelection> mergedSelections = [];
+    // Map<ColumnIndex, List<CellIndex>> groupedByColumn = selectedCells.groupListsBy((cell) => cell.columnIndex);
+    //
+    // for (List<CellIndex> columnCells in groupedByColumn.values) {
+    //   columnCells.sort((a, b) => a.rowIndex.compareTo(b.rowIndex));
+    //
+    //   int start = 0;
+    //   for (int i = 0; i < columnCells.length; i++) {
+    //     bool isLastCell = i == columnCells.length - 1;
+    //     bool isNonConsecutive = !isLastCell && columnCells[i].rowIndex.value + 1 != columnCells[i + 1].rowIndex.value;
+    //
+    //     if (isLastCell || isNonConsecutive) {
+    //       mergedSelections.add(
+    //         SheetRangeSelection(start: columnCells[start], end: columnCells[i], completed: true)..applyProperties(sheetProperties),
+    //       );
+    //       start = i + 1;
+    //     }
+    //   }
+    // }
+    //
+    // return SheetMultiSelection(selectedCells: selectedCells, mergedSelections: mergedSelections, mainCell: _mainCell)
+    //   ..applyProperties(sheetProperties);
   }
 
   @override
   String stringifySelection() {
-    return selectedCells.map((cellIndex) => cellIndex.stringifyPosition()).join(', ');
+    // return selectedCells.map((cellIndex) => cellIndex.stringifyPosition()).join(', ');
+    return 'Custom';
   }
 
   @override
@@ -120,7 +120,7 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => [selectedCells, mergedSelections, _mainCell];
+  List<Object?> get props => [mergedSelections, _mainCell];
 }
 
 class SheetMultiSelectionRenderer extends SheetSelectionRenderer {

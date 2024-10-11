@@ -59,6 +59,8 @@ abstract class SheetSelection with EquatableMixin {
 
   SelectionStatus isRowSelected(RowIndex rowIndex);
 
+  bool containsCell(CellIndex cellIndex);
+
   SheetSelection complete() => this;
 
   SheetSelection simplify() => this;

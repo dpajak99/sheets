@@ -39,6 +39,9 @@ class SheetSingleSelection extends SheetSelection {
   SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(cellIndex.rowIndex == rowIndex, false);
 
   @override
+  bool containsCell(CellIndex cellIndex) => this.cellIndex == cellIndex;
+
+  @override
   String stringifySelection() => cellIndex.stringifyPosition();
 
   @override

@@ -55,6 +55,15 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
+  bool containsCell(CellIndex cellIndex) {
+    SelectionCellCorners selectionCorners = selectionCellCorners;
+    return cellIndex.rowIndex.value >= selectionCorners.topLeft.rowIndex.value &&
+        cellIndex.rowIndex.value <= selectionCorners.bottomLeft.rowIndex.value &&
+        cellIndex.columnIndex.value >= selectionCorners.topLeft.columnIndex.value &&
+        cellIndex.columnIndex.value <= selectionCorners.topRight.columnIndex.value;
+  }
+
+  @override
   SelectionCellCorners get selectionCellCorners {
     return SelectionCellCorners.fromDirection(
       topLeft: trueStart,
