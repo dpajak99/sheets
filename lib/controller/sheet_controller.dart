@@ -95,10 +95,6 @@ class SheetController {
     }
   }
 
-  void onMouseOffsetChanged(Offset offset) {
-    mouse.updateOffset(offset, viewport.findByOffset(offset));
-  }
-
   void setCursor(SystemMouseCursor cursor) {
     mouse.setCursor(cursor);
   }

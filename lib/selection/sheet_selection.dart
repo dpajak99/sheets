@@ -94,7 +94,7 @@ abstract class SheetSelection with EquatableMixin {
       case RowIndex endRowIndex:
         return SheetRangeSelection(
           start: startCellIndex,
-          end: CellIndex(rowIndex: endRowIndex, columnIndex: ColumnIndex.max),
+          end: CellIndex(rowIndex: endRowIndex, columnIndex: ColumnIndex.zero),
           completed: completed,
         );
     }

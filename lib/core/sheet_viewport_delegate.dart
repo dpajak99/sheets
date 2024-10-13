@@ -9,6 +9,7 @@ import 'package:sheets/utils/directional_values.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/utils/direction.dart';
+import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 abstract class SheetViewportDelegate extends ChangeNotifier {
   CellConfig? findCell(CellIndex cellIndex);
@@ -28,6 +29,8 @@ abstract class SheetViewportDelegate extends ChangeNotifier {
   List<SheetItemConfig> get visibleItems => [...visibleRows, ...visibleColumns, ...visibleCells];
 
   SheetProperties get properties;
+
+  Rect get localBounds;
 }
 
 class SheetViewportBaseDelegate extends SheetViewportDelegate {
@@ -86,7 +89,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
   SheetItemConfig? findByOffset(Offset mousePosition) {
     try {
       SheetItemConfig sheetItemConfig = visibleItems.firstWhere(
-        (element) => element.rect.contains(mousePosition),
+        (element) => element.rect.within(mousePosition),
       );
       return sheetItemConfig;
     } catch (e) {
@@ -112,7 +115,17 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     return visibleCells.any((cell) => cell.cellIndex == cellIndex);
   }
 
-  (RowIndex, double) get _firstVisibleRow {
+  @override
+  Rect get localBounds {
+    return Rect.fromLTRB(
+      visibleColumns.first.rect.left,
+      visibleRows.first.rect.top,
+      visibleColumns.last.rect.right,
+      visibleRows.last.rect.bottom,
+    );
+  }
+
+  (RowIndex, double) calculateFirstVisibleRow() {
     double contentHeight = 0;
     int hiddenRows = 0;
 
@@ -132,7 +145,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     }
   }
 
-  (ColumnIndex, double) get _firstVisibleColumn {
+  (ColumnIndex, double) calculateFirstVisibleColumn() {
     double contentWidth = 0;
     int hiddenColumns = 0;
 
@@ -158,7 +171,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
 
     RowIndex firstVisibleRow;
     double hiddenHeight;
-    (firstVisibleRow, hiddenHeight) = _firstVisibleRow;
+    (firstVisibleRow, hiddenHeight) = calculateFirstVisibleRow();
 
     double cursorSheetHeight = hiddenHeight;
 
@@ -186,7 +199,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
 
     ColumnIndex firstVisibleColumn;
     double hiddenWidth;
-    (firstVisibleColumn, hiddenWidth) = _firstVisibleColumn;
+    (firstVisibleColumn, hiddenWidth) = calculateFirstVisibleColumn();
 
     double cursorSheetWidth = hiddenWidth;
     int index = 0;

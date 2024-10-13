@@ -125,8 +125,7 @@ class SheetState extends State<Sheet> {
               ),
               Positioned.fill(
                 child: SheetGestureDetector(
-                  mouseListener: sheetController.mouse,
-                  onMouseOffsetChanged: sheetController.onMouseOffsetChanged,
+                  sheetController: sheetController,
                 ),
               ),
             ],

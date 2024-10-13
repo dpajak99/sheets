@@ -32,7 +32,7 @@ class SheetMouseListener {
     _gesturesStream.close();
   }
 
-  void updateOffset(Offset offset, SheetItemConfig? element) {
+  void updateHover(Offset offset, SheetItemConfig? element) {
     mousePosition.value = offset;
     hoveredItem.value = element;
   }
