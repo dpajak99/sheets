@@ -8,34 +8,22 @@ import 'package:sheets/selection/selection_direction.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 
-class SheetRangeSelection extends SheetSelection {
-  final CellIndex _start;
-  final CellIndex _end;
+class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
+  final T _start;
+  final T _end;
 
   SheetRangeSelection({
-    required CellIndex start,
-    required CellIndex end,
+    required T start,
+    required T end,
     required super.completed,
   })  : _end = end,
         _start = start;
 
-  SheetRangeSelection copyWith({
-    CellIndex? start,
-    CellIndex? end,
-    bool? completed,
-  }) {
-    return SheetRangeSelection(
-      start: start ?? _start,
-      end: end ?? _end,
-      completed: completed ?? isCompleted,
-    );
-  }
+  @override
+  T get start => _start;
 
   @override
-  CellIndex get start => _start;
-
-  @override
-  CellIndex get end => _end;
+  T get end => _end;
 
   @override
   Set<CellIndex> get selectedCells {
@@ -72,10 +60,13 @@ class SheetRangeSelection extends SheetSelection {
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
     bool selected = horizontalRange.contains(columnIndex);
-    return SelectionStatus(
+
+    SelectionStatus selectionStatus = SelectionStatus(
       selected,
-      selected && verticalRange.containsRange(Range<RowIndex>(RowIndex.zero, RowIndex(sheetProperties.rowCount - 1))),
+      selected && T == ColumnIndex,
     );
+
+    return selectionStatus;
   }
 
   @override
@@ -88,11 +79,11 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
-  SheetSelection complete() => copyWith(completed: true);
+  SheetSelection complete() => SheetRangeSelection(start: start, end: end, completed: true)..applyProperties(sheetProperties);
 
   @override
   String stringifySelection() {
-    return '${trueStart.stringifyPosition()}:${trueEnd.stringifyPosition()}';
+    return '${start.stringifyPosition()}:${end.stringifyPosition()}';
   }
 
   @override
@@ -101,8 +92,8 @@ class SheetRangeSelection extends SheetSelection {
   }
 
   @override
-  SheetSelection modifyEnd(CellIndex cellIndex, {required bool completed}) {
-    return copyWith(end: cellIndex, completed: completed);
+  SheetSelection modifyEnd(SheetItemIndex itemIndex, {required bool completed}) {
+    return SheetSelection.range(start: start, end: itemIndex, completed: completed);
   }
 
   Range<ColumnIndex> get horizontalRange => Range(trueStart.columnIndex, trueEnd.columnIndex);
@@ -186,7 +177,7 @@ class SheetRangeSelection extends SheetSelection {
   @override
   SheetSelection simplify() {
     if (trueStart == trueEnd) {
-      return SheetSingleSelection(selectedIndex: trueStart, completed: true);
+      return SheetSingleSelection(selectedIndex: trueStart, completed: true)..applyProperties(sheetProperties);
     } else {
       return this;
     }
@@ -195,6 +186,3 @@ class SheetRangeSelection extends SheetSelection {
   @override
   List<Object?> get props => [_start, _end, isCompleted];
 }
-
-
-

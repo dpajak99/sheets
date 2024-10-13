@@ -27,16 +27,8 @@ abstract class SheetSelection with EquatableMixin {
   }) {
     return switch (selectedIndex) {
       CellIndex cellIndex => SheetSingleSelection(selectedIndex: cellIndex, completed: false),
-      ColumnIndex columnIndex => SheetRangeSelection(
-          start: CellIndex(rowIndex: RowIndex.zero, columnIndex: columnIndex),
-          end: CellIndex(rowIndex: RowIndex.max, columnIndex: columnIndex),
-          completed: completed,
-        ),
-      RowIndex rowIndex => SheetRangeSelection(
-          start: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.zero),
-          end: CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.max),
-          completed: completed,
-        ),
+      ColumnIndex columnIndex => SheetRangeSelection(start: columnIndex, end: columnIndex, completed: completed),
+      RowIndex rowIndex => SheetRangeSelection(start: rowIndex, end: rowIndex, completed: completed),
     };
   }
 
@@ -128,11 +120,7 @@ abstract class SheetSelection with EquatableMixin {
     ColumnIndex endColumnIndex,
     bool completed,
   ) {
-    return SheetRangeSelection(
-      start: CellIndex(rowIndex: RowIndex.zero, columnIndex: startColumnIndex),
-      end: CellIndex(rowIndex: RowIndex.max, columnIndex: endColumnIndex),
-      completed: completed,
-    );
+    return SheetRangeSelection(start: startColumnIndex, end: endColumnIndex, completed: completed);
   }
 
   factory SheetSelection._rowRangeDynamic(
@@ -155,40 +143,50 @@ abstract class SheetSelection with EquatableMixin {
     RowIndex endRowIndex,
     bool completed,
   ) {
-    return SheetRangeSelection(
-      start: CellIndex(rowIndex: startRowIndex, columnIndex: ColumnIndex.zero),
-      end: CellIndex(rowIndex: endRowIndex, columnIndex: ColumnIndex.max),
-      completed: completed,
-    );
+    return SheetRangeSelection(start: startRowIndex, end: endRowIndex, completed: completed);
   }
 
   bool get isCompleted => _completed;
 
-  CellIndex get start;
+  SheetItemIndex get start;
 
-  CellIndex get end;
+  SheetItemIndex get end;
 
   CellIndex get trueStart {
-    if (start == CellIndex.max) {
-      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
-    } else if (start.columnIndex == ColumnIndex.max) {
-      return CellIndex(rowIndex: start.rowIndex, columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
-    } else if (start.rowIndex == RowIndex.max) {
-      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: start.columnIndex);
-    } else {
-      return start;
+    switch (start) {
+      case ColumnIndex columnIndex:
+        return CellIndex(rowIndex: RowIndex.zero, columnIndex: columnIndex);
+      case RowIndex rowIndex:
+        return CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.zero);
+      case CellIndex cellIndex:
+        if (cellIndex == CellIndex.max) {
+          return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+        } else if (cellIndex.columnIndex == ColumnIndex.max) {
+          return CellIndex(rowIndex: cellIndex.rowIndex, columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+        } else if (cellIndex.rowIndex == RowIndex.max) {
+          return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: cellIndex.columnIndex);
+        } else {
+          return cellIndex;
+        }
     }
   }
 
   CellIndex get trueEnd {
-    if (end == CellIndex.max) {
-      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
-    } else if (end.columnIndex == ColumnIndex.max) {
-      return CellIndex(rowIndex: end.rowIndex, columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
-    } else if (end.rowIndex == RowIndex.max) {
-      return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: end.columnIndex);
-    } else {
-      return end;
+    switch (end) {
+      case ColumnIndex columnIndex:
+        return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: columnIndex);
+      case RowIndex rowIndex:
+        return CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+      case CellIndex cellIndex:
+        if (cellIndex == CellIndex.max) {
+          return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+        } else if (cellIndex.columnIndex == ColumnIndex.max) {
+          return CellIndex(rowIndex: cellIndex.rowIndex, columnIndex: ColumnIndex(sheetProperties.columnCount - 1));
+        } else if (cellIndex.rowIndex == RowIndex.max) {
+          return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: cellIndex.columnIndex);
+        } else {
+          return cellIndex;
+        }
     }
   }
 
@@ -217,7 +215,7 @@ abstract class SheetSelection with EquatableMixin {
     return corners.contains(cellIndex);
   }
 
-  SheetSelection modifyEnd(CellIndex cellIndex, {required bool completed});
+  SheetSelection modifyEnd(SheetItemIndex itemIndex, {required bool completed});
 
   SheetSelection append(SheetSelection appendedSelection) {
     return SheetMultiSelection(

@@ -3,7 +3,6 @@ import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/core/sheet_viewport_delegate.dart';
-import 'package:sheets/selection/types/sheet_range_selection.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 
 class SheetSingleSelection extends SheetSelection {
@@ -37,7 +36,7 @@ class SheetSingleSelection extends SheetSelection {
   SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(selectedIndex.rowIndex == rowIndex, false);
 
   @override
-  bool containsCell(CellIndex cellIndex) => this.selectedIndex == cellIndex;
+  bool containsCell(CellIndex cellIndex) => selectedIndex == cellIndex;
 
   @override
   String stringifySelection() => selectedIndex.stringifyPosition();
@@ -53,8 +52,8 @@ class SheetSingleSelection extends SheetSelection {
   }
 
   @override
-  SheetSelection modifyEnd(CellIndex cellIndex, {required bool completed}) {
-    return SheetRangeSelection(start: start, end: cellIndex, completed: completed);
+  SheetSelection modifyEnd(SheetItemIndex itemIndex, {required bool completed}) {
+    return SheetSelection.range(start: start, end: itemIndex, completed: completed);
   }
 
   @override

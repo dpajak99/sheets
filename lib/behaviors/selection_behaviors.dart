@@ -2,8 +2,8 @@ import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/types/sheet_fill_selection.dart';
-import 'package:sheets/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/utils/direction.dart';
 
 abstract class SelectionBehavior {
@@ -29,70 +29,39 @@ class ToggleSelectionBehavior extends SelectionBehavior {
   @override
   void invoke(SheetController controller) {
     SheetSelection selection = controller.selectionController.visibleSelection;
-    if(pressedIndex is! CellIndex) return;
 
-    SheetSelection updatedSelection = selection.append(SheetSelection.single(pressedIndex as CellIndex, completed: false));
+    SheetSelection updatedSelection = selection.append(SheetSelection.single(pressedIndex, completed: false));
     controller.selectionController.customSelection(updatedSelection);
   }
 }
 
 class SelectionRangeBehavior extends SelectionBehavior {
   final SheetItemIndex hoveredIndex;
-  final SheetItemIndex? startIndex;
 
-  SelectionRangeBehavior(this.hoveredIndex, {this.startIndex});
-
-  @override
-  void invoke(SheetController controller) {
-    SheetSelection selection = controller.selectionController.visibleSelection;
-    if(hoveredIndex is! CellIndex) return;
-
-    // TODO: Handle rows and columns
-    SheetSelection updatedSelection = selection.modifyEnd(hoveredIndex as CellIndex, completed: false);
-
-    controller.selectionController.customSelection(updatedSelection);
-  }
-}
-
-class AppendSelectionRangeBehavior extends SelectionBehavior {
-  final SheetItemIndex hoveredIndex;
-  final SheetItemIndex? startIndex;
-
-  AppendSelectionRangeBehavior(this.hoveredIndex, {this.startIndex});
+  SelectionRangeBehavior(this.hoveredIndex);
 
   @override
   void invoke(SheetController controller) {
     SheetSelection selection = controller.selectionController.visibleSelection;
-    if(hoveredIndex is! CellIndex || startIndex is! CellIndex?) return;
-
-    CellIndex previousEnd = (startIndex as CellIndex?)  ?? selection.end;
-
-    SheetSelection appendedSelection = SheetSelection.range(start: previousEnd, end: hoveredIndex, completed: false);
-
-
-    if( selection is SheetMultiSelection ) {
-      SheetMultiSelection updatedSelection = selection.replaceLast(appendedSelection);
-      controller.selectionController.customSelection(updatedSelection);
-    } else {
-      SheetSelection updatedSelection = selection.append(appendedSelection);
-      controller.selectionController.customSelection(updatedSelection);
+    if(selection is SheetMultiSelection) {
+      selection = selection.mergedSelections.last;
     }
+
+    SheetSelection updatedSelection = selection.modifyEnd(hoveredIndex, completed: false);
+    controller.selectionController.customSelection(updatedSelection);
   }
 }
 
 class ModifySelectionRangeBehavior extends SelectionBehavior {
   final SheetItemIndex hoveredIndex;
-  final SheetItemIndex? startIndex;
 
-  ModifySelectionRangeBehavior(this.hoveredIndex, {this.startIndex});
+  ModifySelectionRangeBehavior(this.hoveredIndex);
 
   @override
   void invoke(SheetController controller) {
     SheetSelection selection = controller.selectionController.visibleSelection;
-    if(hoveredIndex is! CellIndex) return;
 
-    // TODO: Handle rows and columns
-    SheetSelection updatedSelection = selection.modifyEnd(hoveredIndex as CellIndex, completed: false);
+    SheetSelection updatedSelection = selection.modifyEnd(hoveredIndex, completed: false);
     controller.selectionController.customSelection(updatedSelection);
   }
 }

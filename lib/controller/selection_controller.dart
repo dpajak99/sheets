@@ -15,8 +15,10 @@ class SelectionState extends ChangeNotifier {
   }
 
   void save() {
-    selection = selection.complete().simplify();
-    selection.applyProperties(properties);
+    SheetSelection completedSelection = selection.complete();
+    completedSelection.applyProperties(properties);
+
+    selection = completedSelection.simplify();
 
     notifyListeners();
   }

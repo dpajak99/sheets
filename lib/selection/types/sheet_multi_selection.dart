@@ -30,17 +30,17 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  CellIndex get start => mergedSelections.last.start;
+  SheetItemIndex get start => mergedSelections.last.start;
 
   @override
-  CellIndex get end => mergedSelections.last.end;
+  SheetItemIndex get end => mergedSelections.last.end;
 
   @override
   CellIndex get mainCell {
     if (_mainCell != null) {
       return _mainCell;
     } else {
-      return end;
+      return trueEnd;
     }
   }
 
@@ -64,7 +64,7 @@ class SheetMultiSelection extends SheetSelection {
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
     return mergedSelections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
       SelectionStatus columnStatus = selection.isColumnSelected(columnIndex);
-      return SelectionStatus(acc.isSelected || columnStatus.isSelected, acc.isFullySelected && columnStatus.isFullySelected);
+      return SelectionStatus(acc.isSelected || columnStatus.isSelected, acc.isFullySelected || columnStatus.isFullySelected);
     });
   }
 
@@ -72,14 +72,13 @@ class SheetMultiSelection extends SheetSelection {
   SelectionStatus isRowSelected(RowIndex rowIndex) {
     return mergedSelections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
       SelectionStatus rowStatus = selection.isRowSelected(rowIndex);
-      return SelectionStatus(acc.isSelected || rowStatus.isSelected, acc.isFullySelected && rowStatus.isFullySelected);
+      return SelectionStatus(acc.isSelected || rowStatus.isSelected, acc.isFullySelected || rowStatus.isFullySelected);
     });
   }
 
   @override
   String stringifySelection() {
-    // return selectedCells.map((cellIndex) => cellIndex.stringifyPosition()).join(', ');
-    return 'Custom';
+    return mergedSelections.last.stringifySelection();
   }
 
   @override
@@ -88,10 +87,9 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  SheetSelection modifyEnd(CellIndex cellIndex, {required bool completed}) {
+  SheetSelection modifyEnd(SheetItemIndex itemIndex, {required bool completed}) {
     List<SheetSelection> newMergedSelections = mergedSelections.sublist(0, mergedSelections.length - 1);
-
-    SheetSelection modifiedSelection = mergedSelections.last.modifyEnd(cellIndex, completed: completed);
+    SheetSelection modifiedSelection = mergedSelections.last.modifyEnd(itemIndex, completed: completed);
     newMergedSelections.add(modifiedSelection);
 
     return SheetMultiSelection(
@@ -182,5 +180,3 @@ class SheetMultiSelection extends SheetSelection {
   @override
   List<Object?> get props => [mergedSelections, _mainCell];
 }
-
-
