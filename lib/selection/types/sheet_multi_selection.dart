@@ -12,21 +12,11 @@ class SheetMultiSelection extends SheetSelection {
   final List<SheetSelection> mergedSelections;
   final CellIndex? _mainCell;
 
-  SheetMultiSelection._({
+  SheetMultiSelection({
     required this.mergedSelections,
     CellIndex? mainCell,
   })  : _mainCell = mainCell,
         super(completed: true);
-
-  factory SheetMultiSelection({
-    required List<SheetSelection> mergedSelections,
-    CellIndex? mainCell,
-  }) {
-    return SheetMultiSelection._(
-      mergedSelections: mergedSelections,
-      mainCell: mainCell,
-    );
-  }
 
   SheetMultiSelection copyWith({
     List<SheetSelection>? mergedSelections,

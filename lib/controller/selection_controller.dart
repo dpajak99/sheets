@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/selection/selection_factory.dart';
 import 'package:sheets/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/selection/types/sheet_single_selection.dart';
@@ -53,11 +52,11 @@ class SelectionController extends ChangeNotifier {
   }
 
   void selectSingle(SheetItemIndex sheetItemIndex, {bool completed = false}) {
-    state.update(SelectionFactory.getSingleSelection(sheetItemIndex, completed: completed));
+    state.update(SheetSelection.single(sheetItemIndex, completed: completed));
   }
 
   void selectRange({required SheetItemIndex start, required SheetItemIndex end, bool completed = false}) {
-    state.update(SelectionFactory.getRangeSelection(start: start, end: end, completed: completed));
+    state.update(SheetSelection.range(start: start, end: end, completed: completed));
   }
 
   void combine(SheetSelection selection, SheetSelection appendedSelection) {
@@ -66,8 +65,8 @@ class SelectionController extends ChangeNotifier {
 
     if (selection is SheetMultiSelection) {
       List<SheetSelection> previousSelections = selection.mergedSelections;
-      state.update(SheetMultiSelection(
-        mergedSelections: [
+      state.update(SheetSelection.multi(
+        selections: [
           ...previousSelections,
           appendedSelection,
         ],
@@ -75,22 +74,19 @@ class SelectionController extends ChangeNotifier {
       ));
     } else {
       SheetSelection? previousSelection = selection;
-      if( previousSelection is SheetSingleSelection ) {
-        previousSelection = SheetMultiSelection(mergedSelections: [previousSelection], mainCell: previousSelection.mainCell);
+      if (previousSelection is SheetSingleSelection) {
+        previousSelection = SheetSelection.multi(selections: [previousSelection], mainCell: previousSelection.mainCell);
       }
 
-      state.update(SheetMultiSelection(
-        mergedSelections: [
-          previousSelection,
-          appendedSelection,
-        ],
+      state.update(SheetSelection.multi(
+        selections: [previousSelection, appendedSelection],
         mainCell: appendedSelection.mainCell,
       ));
     }
   }
 
   void selectAll() {
-    state.update(SelectionFactory.getAllSelection());
+    state.update(SheetSelection.all());
   }
 
   void completeSelection() {

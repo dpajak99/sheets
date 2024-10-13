@@ -186,7 +186,7 @@ class SheetRangeSelection extends SheetSelection {
   @override
   SheetSelection simplify() {
     if (trueStart == trueEnd) {
-      return SheetSingleSelection(cellIndex: trueStart, completed: true);
+      return SheetSingleSelection(selectedIndex: trueStart, completed: true);
     } else {
       return this;
     }

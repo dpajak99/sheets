@@ -7,40 +7,40 @@ import 'package:sheets/selection/types/sheet_range_selection.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 
 class SheetSingleSelection extends SheetSelection {
-  final CellIndex cellIndex;
+  final CellIndex selectedIndex;
 
   SheetSingleSelection({
-    required this.cellIndex,
+    required this.selectedIndex,
     required super.completed,
   });
 
   SheetSingleSelection.defaultSelection()
-      : cellIndex = CellIndex.zero,
+      : selectedIndex = CellIndex.zero,
         super(completed: true);
 
   @override
-  CellIndex get start => cellIndex;
+  CellIndex get start => selectedIndex;
 
   @override
-  CellIndex get end => cellIndex;
+  CellIndex get end => selectedIndex;
 
   @override
-  Set<CellIndex> get selectedCells => {cellIndex};
+  Set<CellIndex> get selectedCells => {selectedIndex};
 
   @override
-  SelectionCellCorners get selectionCellCorners => SelectionCellCorners.single(cellIndex);
+  SelectionCellCorners get selectionCellCorners => SelectionCellCorners.single(selectedIndex);
 
   @override
-  SelectionStatus isColumnSelected(ColumnIndex columnIndex) => SelectionStatus(cellIndex.columnIndex == columnIndex, false);
+  SelectionStatus isColumnSelected(ColumnIndex columnIndex) => SelectionStatus(selectedIndex.columnIndex == columnIndex, false);
 
   @override
-  SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(cellIndex.rowIndex == rowIndex, false);
+  SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(selectedIndex.rowIndex == rowIndex, false);
 
   @override
-  bool containsCell(CellIndex cellIndex) => this.cellIndex == cellIndex;
+  bool containsCell(CellIndex cellIndex) => this.selectedIndex == cellIndex;
 
   @override
-  String stringifySelection() => cellIndex.stringifyPosition();
+  String stringifySelection() => selectedIndex.stringifyPosition();
 
   @override
   SheetSingleSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate) {
@@ -49,7 +49,7 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   SheetSelection complete() {
-    return SheetSingleSelection(cellIndex: cellIndex, completed: true);
+    return SheetSingleSelection(selectedIndex: selectedIndex, completed: true);
   }
 
   @override
@@ -59,12 +59,12 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   bool containsSelection(SheetSelection nestedSelection) {
-    return nestedSelection is SheetSingleSelection && nestedSelection.cellIndex == cellIndex;
+    return nestedSelection is SheetSingleSelection && nestedSelection.selectedIndex == selectedIndex;
   }
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    if (subtractedSelection.contains(cellIndex)) {
+    if (subtractedSelection.contains(selectedIndex)) {
       return [];
     } else {
       return [this];
@@ -72,6 +72,6 @@ class SheetSingleSelection extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => <Object?>[cellIndex, isCompleted];
+  List<Object?> get props => <Object?>[selectedIndex, isCompleted];
 }
 

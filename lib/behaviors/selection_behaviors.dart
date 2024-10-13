@@ -1,11 +1,9 @@
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_corners.dart';
-import 'package:sheets/selection/selection_factory.dart';
 import 'package:sheets/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/selection/sheet_selection.dart';
-import 'package:sheets/selection/types/sheet_single_selection.dart';
 import 'package:sheets/utils/direction.dart';
 
 abstract class SelectionBehavior {
@@ -33,7 +31,7 @@ class ToggleSelectionBehavior extends SelectionBehavior {
     SheetSelection selection = controller.selectionController.visibleSelection;
     if(pressedIndex is! CellIndex) return;
 
-    SheetSelection updatedSelection = selection.append(SheetSingleSelection(cellIndex: pressedIndex as CellIndex, completed: false));
+    SheetSelection updatedSelection = selection.append(SheetSelection.single(pressedIndex as CellIndex, completed: false));
     controller.selectionController.customSelection(updatedSelection);
   }
 }
@@ -69,7 +67,7 @@ class AppendSelectionRangeBehavior extends SelectionBehavior {
 
     CellIndex previousEnd = (startIndex as CellIndex?)  ?? selection.end;
 
-    SheetSelection appendedSelection = SelectionFactory.getRangeSelection(start: previousEnd, end: hoveredIndex);
+    SheetSelection appendedSelection = SheetSelection.range(start: previousEnd, end: hoveredIndex, completed: false);
 
 
     if( selection is SheetMultiSelection ) {
@@ -144,7 +142,7 @@ class SelectionFillBehavior extends SelectionBehavior {
         break;
     }
 
-    SheetFillSelection sheetFillSelection = SheetFillSelection(
+    SheetSelection selection = SheetSelection.fill(
       fillDirection: direction,
       baseSelection: baseSelection,
       start: start,
@@ -152,6 +150,6 @@ class SelectionFillBehavior extends SelectionBehavior {
       completed: false,
     );
 
-    controller.selectionController.customSelection(sheetFillSelection);
+    controller.selectionController.customSelection(selection);
   }
 }
