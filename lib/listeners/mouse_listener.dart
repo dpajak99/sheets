@@ -90,7 +90,6 @@ class SheetMouseListener {
   }
 
   void resetCursor() {
-    print('reset cursor');
     cursor.value = SystemMouseCursors.basic;
   }
 

@@ -49,10 +49,10 @@ class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
   @override
   SelectionCellCorners get selectionCellCorners {
     return SelectionCellCorners.fromDirection(
-      topLeft: trueStart,
-      topRight: CellIndex(rowIndex: trueStart.rowIndex, columnIndex: trueEnd.columnIndex),
-      bottomLeft: CellIndex(rowIndex: trueEnd.rowIndex, columnIndex: trueStart.columnIndex),
-      bottomRight: trueEnd,
+      topLeft: startCellIndex,
+      topRight: CellIndex(rowIndex: startCellIndex.rowIndex, columnIndex: endCellIndex.columnIndex),
+      bottomLeft: CellIndex(rowIndex: endCellIndex.rowIndex, columnIndex: startCellIndex.columnIndex),
+      bottomRight: endCellIndex,
       direction: direction,
     );
   }
@@ -61,21 +61,28 @@ class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
     bool selected = horizontalRange.contains(columnIndex);
 
-    SelectionStatus selectionStatus = SelectionStatus(
+    return SelectionStatus(
       selected,
-      selected && T == ColumnIndex,
+      allSelected || selected && T == ColumnIndex,
     );
-
-    return selectionStatus;
   }
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
     bool selected = verticalRange.contains(rowIndex);
+
     return SelectionStatus(
       selected,
-      selected && horizontalRange.containsRange(Range<ColumnIndex>(ColumnIndex.zero, ColumnIndex(sheetProperties.columnCount - 1))),
+      allSelected || selected && T == RowIndex,
     );
+
+  }
+
+  bool get allSelected {
+    bool startIsZero = start == CellIndex(rowIndex: RowIndex.zero, columnIndex: ColumnIndex.zero);
+    bool endIsMax = end == CellIndex(rowIndex: RowIndex.max, columnIndex: ColumnIndex.max);
+
+    return startIsZero && endIsMax;
   }
 
   @override
@@ -96,13 +103,13 @@ class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
     return SheetSelection.range(start: start, end: itemIndex, completed: completed);
   }
 
-  Range<ColumnIndex> get horizontalRange => Range(trueStart.columnIndex, trueEnd.columnIndex);
+  Range<ColumnIndex> get horizontalRange => Range(startCellIndex.columnIndex, endCellIndex.columnIndex);
 
-  Range<RowIndex> get verticalRange => Range(trueStart.rowIndex, trueEnd.rowIndex);
+  Range<RowIndex> get verticalRange => Range(startCellIndex.rowIndex, endCellIndex.rowIndex);
 
   SelectionDirection get direction {
-    bool startBeforeEndRow = trueStart.rowIndex.value < trueEnd.rowIndex.value;
-    bool startBeforeEndColumn = trueStart.columnIndex.value < trueEnd.columnIndex.value;
+    bool startBeforeEndRow = startCellIndex.rowIndex.value < endCellIndex.rowIndex.value;
+    bool startBeforeEndColumn = startCellIndex.columnIndex.value < endCellIndex.columnIndex.value;
 
     if (startBeforeEndRow) {
       return startBeforeEndColumn ? SelectionDirection.bottomRight : SelectionDirection.bottomLeft;
@@ -122,7 +129,7 @@ class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    if (subtractedSelection.containsCell(trueStart) && subtractedSelection.containsCell(trueEnd)) {
+    if (subtractedSelection.containsCell(startCellIndex) && subtractedSelection.containsCell(endCellIndex)) {
       return [];
     }
     List<SheetRangeSelection> newSelections = [];
@@ -176,8 +183,8 @@ class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
 
   @override
   SheetSelection simplify() {
-    if (trueStart == trueEnd) {
-      return SheetSingleSelection(selectedIndex: trueStart, completed: true)..applyProperties(sheetProperties);
+    if (startCellIndex == endCellIndex) {
+      return SheetSingleSelection(selectedIndex: startCellIndex, completed: true)..applyProperties(sheetProperties);
     } else {
       return this;
     }

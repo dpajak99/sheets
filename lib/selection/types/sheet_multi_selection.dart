@@ -40,7 +40,7 @@ class SheetMultiSelection extends SheetSelection {
     if (_mainCell != null) {
       return _mainCell;
     } else {
-      return trueEnd;
+      return endCellIndex;
     }
   }
 

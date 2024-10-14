@@ -152,7 +152,7 @@ abstract class SheetSelection with EquatableMixin {
 
   SheetItemIndex get end;
 
-  CellIndex get trueStart {
+  CellIndex get startCellIndex {
     switch (start) {
       case ColumnIndex columnIndex:
         return CellIndex(rowIndex: RowIndex.zero, columnIndex: columnIndex);
@@ -171,7 +171,7 @@ abstract class SheetSelection with EquatableMixin {
     }
   }
 
-  CellIndex get trueEnd {
+  CellIndex get endCellIndex {
     switch (end) {
       case ColumnIndex columnIndex:
         return CellIndex(rowIndex: RowIndex(sheetProperties.rowCount - 1), columnIndex: columnIndex);
@@ -190,7 +190,7 @@ abstract class SheetSelection with EquatableMixin {
     }
   }
 
-  CellIndex get mainCell => trueStart;
+  CellIndex get mainCell => startCellIndex;
 
   Set<CellIndex> get selectedCells;
 

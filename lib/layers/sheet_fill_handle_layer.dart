@@ -21,8 +21,6 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   late bool _visible;
   Offset? _offset;
 
-  bool _dragInProgress = false;
-
   @override
   void initState() {
     super.initState();
@@ -55,14 +53,12 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
               actionSize: const Size(_size, _size),
               cursor: SystemMouseCursors.precise,
               onDragStart: (_) {
-                _dragInProgress = true;
                 widget.sheetController.mouse.fillStart();
               },
               onDragDeltaChanged: (_) {
                 widget.sheetController.mouse.fillUpdate();
               },
               onDragEnd: (_) {
-                _dragInProgress = false;
                 widget.sheetController.mouse.fillEnd();
               },
               child: const FillHandle(size: _size),
