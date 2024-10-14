@@ -5,7 +5,7 @@ import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/selection_direction.dart';
-import 'package:sheets/core/sheet_viewport_delegate.dart';
+import 'package:sheets/core/sheet_viewport.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 
 class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
@@ -87,7 +87,7 @@ class SheetRangeSelection<T extends SheetItemIndex> extends SheetSelection {
   }
 
   @override
-  SheetRangeSelectionRenderer createRenderer(SheetViewportDelegate viewportDelegate) {
+  SheetRangeSelectionRenderer createRenderer(SheetViewport viewportDelegate) {
     return SheetRangeSelectionRenderer(viewportDelegate: viewportDelegate, selection: this);
   }
 

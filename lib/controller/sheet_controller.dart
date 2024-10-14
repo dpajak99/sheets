@@ -8,7 +8,7 @@ import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/core/sheet_viewport_delegate.dart';
+import 'package:sheets/core/sheet_viewport.dart';
 import 'package:sheets/gestures/sheet_resize_gestures.dart';
 import 'package:sheets/gestures/sheet_selection_gesture.dart';
 import 'package:sheets/listeners/keyboard_listener.dart';
@@ -25,12 +25,12 @@ class SheetController {
   );
 
   final SheetScrollController scrollController = SheetScrollController();
-  late final SheetViewportDelegate viewport = SheetViewportBaseDelegate(
+  late final SheetViewport viewport = SheetViewport(
     sheetProperties: sheetProperties,
     scrollController: scrollController,
   );
   late final SheetKeyboardListener keyboard = SheetKeyboardListener();
-  late final SheetMouseListener mouse = SheetMouseListener();
+  late final SheetMouseListener mouse = SheetMouseListener(viewport);
 
   SelectionController selectionController = SelectionController();
 
@@ -61,8 +61,19 @@ class SheetController {
     keyboard.dispose();
   }
 
+
+  final List<Type> _lockedGestures = [];
   void _handleGesture(SheetGesture gesture) {
+    if(_lockedGestures.contains(gesture.runtimeType)) return;
+
     gesture.resolve(this);
+    Duration? lockdownDuration = gesture.lockdownDuration;
+    if(lockdownDuration != null) {
+      _lockedGestures.add(gesture.runtimeType);
+      Future.delayed(lockdownDuration, () {
+        _lockedGestures.remove(gesture.runtimeType);
+      });
+    }
   }
 
   bool fillInProgress = false;

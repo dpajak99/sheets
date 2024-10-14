@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_item_config.dart';
@@ -6,68 +8,71 @@ import 'package:sheets/controller/sheet_scroll_controller.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/directional_values.dart';
-import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/utils/direction.dart';
+import 'package:sheets/utils/extensions/offset_extensions.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
-abstract class SheetViewportDelegate extends ChangeNotifier {
-  CellConfig? findCell(CellIndex cellIndex);
+class SheetViewport extends ChangeNotifier {
+  final SheetScrollController scrollController;
 
-  SheetItemConfig? findByOffset(Offset mousePosition);
+  Rect _sheetRect = Rect.zero;
 
-  ClosestVisible<CellIndex> findClosestVisible(CellIndex cellIndex);
+  void setViewportSize(Rect rect) {
+    if (rect == _sheetRect) return;
+    _sheetRect = rect;
+    scrollController.setViewportSize(rect.size);
+    _recalculateVisibleElements();
+  }
 
-  bool containsCell(CellIndex cellIndex);
+  Rect get sheetRect => _sheetRect;
 
-  List<RowConfig> get visibleRows;
+  Rect get visibleGridRect {
+    return Rect.fromLTRB(
+      max(visibleColumns.first.rect.left, sheetRect.left),
+      min(visibleRows.first.rect.top, sheetRect.top),
+      min(visibleColumns.last.rect.right, sheetRect.right),
+      min(visibleRows.last.rect.bottom, sheetRect.bottom),
+    );
+  }
 
-  List<ColumnConfig> get visibleColumns;
+  Offset globalOffsetToLocal(Offset globalOffset) {
+    Offset localOffset = globalOffset - Offset(sheetRect.left, sheetRect.top);
+    return localOffset.limit(
+      Offset(0, visibleGridRect.right),
+      Offset(0, visibleGridRect.bottom),
+    );
+  }
 
-  List<CellConfig> get visibleCells;
-
-  List<SheetItemConfig> get visibleItems => [...visibleRows, ...visibleColumns, ...visibleCells];
-
-  SheetProperties get properties;
-
-  Rect get localBounds;
-}
-
-class SheetViewportBaseDelegate extends SheetViewportDelegate {
-  SheetViewportBaseDelegate({
+  SheetViewport({
     required SheetProperties sheetProperties,
-    required SheetScrollController scrollController,
+    required this.scrollController,
   }) {
     _sheetProperties = sheetProperties;
     _scrollPosition = scrollController.position;
-    _scrollMetrics = scrollController.metrics;
     _recalculateVisibleElements();
 
     sheetProperties.addListener(() => _updateSheetProperties(sheetProperties));
     scrollController.addListener(() => _updateScrollPosition(scrollController));
   }
 
-  @override
   SheetProperties get properties => _sheetProperties;
 
-  @override
   List<RowConfig> get visibleRows => _visibleRows;
   List<RowConfig> _visibleRows = <RowConfig>[];
 
-  @override
   List<ColumnConfig> get visibleColumns => _visibleColumns;
   List<ColumnConfig> _visibleColumns = <ColumnConfig>[];
 
-  @override
   List<CellConfig> get visibleCells => _visibleCells;
   List<CellConfig> _visibleCells = <CellConfig>[];
 
+  List<SheetItemConfig> get visibleItems => [...visibleRows, ...visibleColumns, ...visibleCells];
+
   late DirectionalValues<SheetScrollPosition> _scrollPosition;
-  late DirectionalValues<SheetScrollMetrics> _scrollMetrics;
 
   void _updateScrollPosition(SheetScrollController scrollController) {
     _scrollPosition = scrollController.position;
-    _scrollMetrics = scrollController.metrics;
     _recalculateVisibleElements();
   }
 
@@ -85,7 +90,6 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     notifyListeners();
   }
 
-  @override
   SheetItemConfig? findByOffset(Offset mousePosition) {
     try {
       SheetItemConfig sheetItemConfig = visibleItems.firstWhere(
@@ -97,7 +101,6 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     }
   }
 
-  @override
   ClosestVisible<CellIndex> findClosestVisible(CellIndex cellIndex) {
     ClosestVisible<RowIndex> closestVisibleRowIndex = _findClosestVisibleRowIndex(cellIndex);
     ClosestVisible<ColumnIndex> closestVisibleColumnIndex = _findVisibleColumnIndex(cellIndex);
@@ -105,24 +108,12 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     return ClosestVisible.combineCellIndex(closestVisibleRowIndex, closestVisibleColumnIndex);
   }
 
-  @override
   CellConfig? findCell(CellIndex cellIndex) {
     return visibleCells.where((cell) => cell.cellIndex == cellIndex).firstOrNull;
   }
 
-  @override
   bool containsCell(CellIndex cellIndex) {
     return visibleCells.any((cell) => cell.cellIndex == cellIndex);
-  }
-
-  @override
-  Rect get localBounds {
-    return Rect.fromLTRB(
-      visibleColumns.first.rect.left,
-      visibleRows.first.rect.top,
-      visibleColumns.last.rect.right,
-      visibleRows.last.rect.bottom,
-    );
   }
 
   (RowIndex, double) calculateFirstVisibleRow() {
@@ -177,7 +168,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
 
     int index = 0;
 
-    while (cursorSheetHeight < _scrollMetrics.vertical.viewportDimension && firstVisibleRow.value + index < properties.rowCount) {
+    while (cursorSheetHeight < _sheetRect.height && firstVisibleRow.value + index < properties.rowCount) {
       RowIndex rowIndex = RowIndex(firstVisibleRow.value + index);
       RowStyle rowStyle = _sheetProperties.getRowStyle(rowIndex);
 
@@ -204,7 +195,7 @@ class SheetViewportBaseDelegate extends SheetViewportDelegate {
     double cursorSheetWidth = hiddenWidth;
     int index = 0;
 
-    while (cursorSheetWidth < _scrollMetrics.horizontal.viewportDimension && firstVisibleColumn.value + index < properties.columnCount) {
+    while (cursorSheetWidth < _sheetRect.width && firstVisibleColumn.value + index < properties.columnCount) {
       ColumnIndex columnIndex = ColumnIndex(firstVisibleColumn.value + index);
       ColumnStyle columnStyle = _sheetProperties.getColumnStyle(columnIndex);
 

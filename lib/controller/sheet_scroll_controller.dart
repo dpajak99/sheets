@@ -35,6 +35,13 @@ class SheetScrollController extends ChangeNotifier {
     _handlePropertiesUpdated();
   }
 
+  void setViewportSize(Size size) {
+    metrics.update(
+      horizontal: metrics.horizontal.copyWith(viewportDimension: size.width),
+      vertical: metrics.vertical.copyWith(viewportDimension: size.height),
+    );
+  }
+
   @override
   void dispose() {
     metrics.dispose();
@@ -53,13 +60,6 @@ class SheetScrollController extends ChangeNotifier {
 
     position.horizontal.offset = newOffset.dx;
     position.vertical.offset = newOffset.dy;
-  }
-
-  set viewportSize(Size size) {
-    metrics.update(
-      horizontal: metrics.horizontal.copyWith(viewportDimension: size.width),
-      vertical: metrics.vertical.copyWith(viewportDimension: size.height),
-    );
   }
 
   void _handlePropertiesUpdated() {

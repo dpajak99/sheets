@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_viewport_delegate.dart';
+import 'package:sheets/core/sheet_viewport.dart';
 import 'package:sheets/selection/renderers/sheet_fill_selection_renderer.dart';
 import 'package:sheets/selection/selection_bounds.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
@@ -15,7 +15,7 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
       ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? true);
 
   @override
-  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
+  void paint(SheetViewport paintConfig, Canvas canvas, Size size) {
     SheetSelectionRenderer sheetSelectionRenderer = renderer.selection.baseSelection.createRenderer(paintConfig);
     sheetSelectionRenderer.getPaint().paint(paintConfig, canvas, size);
 

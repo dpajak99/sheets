@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_item_config.dart';
-import 'package:sheets/core/sheet_viewport_delegate.dart';
+import 'package:sheets/core/sheet_viewport.dart';
 import 'package:sheets/selection/renderers/sheet_single_selection_renderer.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
 
@@ -14,7 +14,7 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
   ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? false);
 
   @override
-  void paint(SheetViewportDelegate paintConfig, Canvas canvas, Size size) {
+  void paint(SheetViewport paintConfig, Canvas canvas, Size size) {
     CellConfig? selectedCell = renderer.selectedCell;
     if (selectedCell == null) return;
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/core/sheet_viewport_delegate.dart';
+import 'package:sheets/core/sheet_viewport.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
@@ -58,7 +58,7 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
 class _SelectionPainter extends ChangeNotifier implements CustomPainter {
   _SelectionPainter({
     required SheetSelection sheetSelection,
-    required SheetViewportDelegate viewportDelegate,
+    required SheetViewport viewportDelegate,
   })  : _sheetSelection = sheetSelection,
         _viewportDelegate = viewportDelegate;
 
@@ -69,9 +69,9 @@ class _SelectionPainter extends ChangeNotifier implements CustomPainter {
     notifyListeners();
   }
 
-  late SheetViewportDelegate _viewportDelegate;
+  late SheetViewport _viewportDelegate;
 
-  set viewportDelegate(SheetViewportDelegate value) {
+  set viewportDelegate(SheetViewport value) {
     _viewportDelegate = value;
     notifyListeners();
   }

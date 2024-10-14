@@ -47,7 +47,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        if (_dragInProgress || (_visible && _offset != null))
+        if (_visible && _offset != null)
           Positioned(
             left: _offset!.dx - _size / 2,
             top: _offset!.dy - _size / 2,
@@ -73,9 +73,6 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 
   void _updateFillHandle() {
-    if(_dragInProgress) {
-      return;
-    }
     SheetSelectionRenderer selectionRenderer = widget.sheetController.selectionController.visibleSelection.createRenderer(widget.sheetController.viewport);
 
     setState(() {
