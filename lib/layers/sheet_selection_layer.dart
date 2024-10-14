@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
@@ -26,7 +26,7 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
     super.initState();
     _selectionPainter = _SelectionPainter(
       sheetSelection: widget.sheetController.selectionController.visibleSelection,
-      viewportDelegate: widget.sheetController.viewport,
+      viewport: widget.sheetController.viewport,
     );
     widget.sheetController.selectionController.addListener(_updateSelection);
     widget.sheetController.viewport.addListener(_updateViewport);
@@ -51,16 +51,16 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
   }
 
   void _updateViewport() {
-    _selectionPainter.viewportDelegate = widget.sheetController.viewport;
+    _selectionPainter.viewport = widget.sheetController.viewport;
   }
 }
 
 class _SelectionPainter extends ChangeNotifier implements CustomPainter {
   _SelectionPainter({
     required SheetSelection sheetSelection,
-    required SheetViewport viewportDelegate,
+    required SheetViewport viewport,
   })  : _sheetSelection = sheetSelection,
-        _viewportDelegate = viewportDelegate;
+        _viewport = viewport;
 
   late SheetSelection _sheetSelection;
 
@@ -69,10 +69,10 @@ class _SelectionPainter extends ChangeNotifier implements CustomPainter {
     notifyListeners();
   }
 
-  late SheetViewport _viewportDelegate;
+  late SheetViewport _viewport;
 
-  set viewportDelegate(SheetViewport value) {
-    _viewportDelegate = value;
+  set viewport(SheetViewport value) {
+    _viewport = value;
     notifyListeners();
   }
 
@@ -80,15 +80,15 @@ class _SelectionPainter extends ChangeNotifier implements CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth - borderWidth, columnHeadersHeight - borderWidth, size.width, size.height));
 
-    SheetSelectionRenderer selectionRenderer = _sheetSelection.createRenderer(_viewportDelegate);
+    SheetSelectionRenderer selectionRenderer = _sheetSelection.createRenderer(_viewport);
 
     SheetSelectionPaint selectionPaint = selectionRenderer.getPaint();
-    selectionPaint.paint(_viewportDelegate, canvas, size);
+    selectionPaint.paint(_viewport, canvas, size);
   }
 
   @override
   bool shouldRepaint(covariant _SelectionPainter oldDelegate) {
-    return _sheetSelection != oldDelegate._sheetSelection || _viewportDelegate != oldDelegate._viewportDelegate;
+    return _sheetSelection != oldDelegate._sheetSelection || _viewport != oldDelegate._viewport;
   }
 
   @override

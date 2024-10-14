@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sheets/selection/selection_status.dart';
-import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/selection/sheet_selection.dart';
@@ -25,23 +25,23 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   void initState() {
     super.initState();
     columnHeadersPainter = _ColumnHeadersPainter(
-      visibleColumns: widget.sheetController.viewport.visibleColumns,
+      visibleColumns: widget.sheetController.viewport.visibleContent.columns,
       selection: widget.sheetController.selectionController.visibleSelection,
     );
     rowHeadersPainter = _RowHeadersPainter(
-      visibleRows: widget.sheetController.viewport.visibleRows,
+      visibleRows: widget.sheetController.viewport.visibleContent.rows,
       selection: widget.sheetController.selectionController.visibleSelection,
     );
 
-    widget.sheetController.viewport.addListener(_updateVisibleColumns);
-    widget.sheetController.viewport.addListener(_updateVisibleRows);
+    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleColumns);
+    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleRows);
     widget.sheetController.selectionController.addListener(_updateSelection);
   }
 
   @override
   void dispose() {
-    widget.sheetController.viewport.removeListener(_updateVisibleColumns);
-    widget.sheetController.viewport.removeListener(_updateVisibleRows);
+    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleColumns);
+    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleRows);
     widget.sheetController.selectionController.removeListener(_updateSelection);
     super.dispose();
   }
@@ -62,11 +62,11 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   }
 
   void _updateVisibleColumns() {
-    columnHeadersPainter.visibleColumns = widget.sheetController.viewport.visibleColumns;
+    columnHeadersPainter.visibleColumns = widget.sheetController.viewport.visibleContent.columns;
   }
 
   void _updateVisibleRows() {
-    rowHeadersPainter.visibleRows = widget.sheetController.viewport.visibleRows;
+    rowHeadersPainter.visibleRows = widget.sheetController.viewport.visibleContent.rows;
   }
 
   void _updateSelection() {
@@ -135,14 +135,14 @@ abstract class _HeadersPainter extends ChangeNotifier implements CustomPainter {
 
 class _ColumnHeadersPainter extends _HeadersPainter {
   _ColumnHeadersPainter({
-    required List<ColumnConfig> visibleColumns,
+    required List<ViewportColumn> visibleColumns,
     required SheetSelection selection,
   })  : _visibleColumns = visibleColumns,
         _selection = selection;
 
-  late List<ColumnConfig> _visibleColumns;
+  late List<ViewportColumn> _visibleColumns;
 
-  set visibleColumns(List<ColumnConfig> value) {
+  set visibleColumns(List<ViewportColumn> value) {
     _visibleColumns = value;
     notifyListeners();
   }
@@ -158,8 +158,8 @@ class _ColumnHeadersPainter extends _HeadersPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    for (ColumnConfig column in _visibleColumns) {
-      SelectionStatus selectionStatus = _selection.isColumnSelected(column.columnIndex);
+    for (ViewportColumn column in _visibleColumns) {
+      SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
 
       paintHeadersBackground(canvas, column.rect, selectionStatus);
       paintHeadersBorder(canvas, column.rect, top: false);
@@ -175,14 +175,14 @@ class _ColumnHeadersPainter extends _HeadersPainter {
 
 class _RowHeadersPainter extends _HeadersPainter {
   _RowHeadersPainter({
-    required List<RowConfig> visibleRows,
+    required List<ViewportRow> visibleRows,
     required SheetSelection selection,
   })  : _visibleRows = visibleRows,
         _selection = selection;
 
-  late List<RowConfig> _visibleRows;
+  late List<ViewportRow> _visibleRows;
 
-  set visibleRows(List<RowConfig> value) {
+  set visibleRows(List<ViewportRow> value) {
     _visibleRows = value;
     notifyListeners();
   }
@@ -198,8 +198,8 @@ class _RowHeadersPainter extends _HeadersPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    for (RowConfig row in _visibleRows) {
-      SelectionStatus selectionStatus = _selection.isRowSelected(row.rowIndex);
+    for (ViewportRow row in _visibleRows) {
+      SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
 
       paintHeadersBackground(canvas, row.rect, selectionStatus);
       paintHeadersBorder(canvas, row.rect);

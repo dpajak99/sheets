@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 
@@ -21,13 +21,13 @@ class _SheetCellsLayerState extends State<SheetCellsLayer> {
   @override
   void initState() {
     super.initState();
-    _sheetCellsPainter = _SheetCellsPainter(visibleCells: widget.sheetController.viewport.visibleCells);
-    widget.sheetController.viewport.addListener(_updateVisibleCells);
+    _sheetCellsPainter = _SheetCellsPainter(visibleCells: widget.sheetController.viewport.visibleContent.cells);
+    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleCells);
   }
 
   @override
   void dispose() {
-    widget.sheetController.viewport.removeListener(_updateVisibleCells);
+    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleCells);
     super.dispose();
   }
 
@@ -39,18 +39,18 @@ class _SheetCellsLayerState extends State<SheetCellsLayer> {
   }
 
   void _updateVisibleCells() {
-    _sheetCellsPainter.visibleCells = widget.sheetController.viewport.visibleCells;
+    _sheetCellsPainter.visibleCells = widget.sheetController.viewport.visibleContent.cells;
   }
 }
 
 class _SheetCellsPainter extends _SheetCellsBasePainter {
   _SheetCellsPainter({
-    required List<CellConfig> visibleCells,
+    required List<ViewportCell> visibleCells,
   }) : _visibleCells = visibleCells;
 
-  late List<CellConfig> _visibleCells;
+  late List<ViewportCell> _visibleCells;
 
-  set visibleCells(List<CellConfig> value) {
+  set visibleCells(List<ViewportCell> value) {
     _visibleCells = value;
     notifyListeners();
   }
@@ -59,7 +59,7 @@ class _SheetCellsPainter extends _SheetCellsBasePainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    for (CellConfig cell in _visibleCells) {
+    for (ViewportCell cell in _visibleCells) {
       paintCellBackground(canvas, cell);
       paintCellBorder(canvas, cell);
       paintCellText(canvas, cell);
@@ -73,7 +73,7 @@ class _SheetCellsPainter extends _SheetCellsBasePainter {
 }
 
 abstract class _SheetCellsBasePainter extends ChangeNotifier implements CustomPainter {
-  void paintCellBackground(Canvas canvas, CellConfig cell) {
+  void paintCellBackground(Canvas canvas, ViewportCell cell) {
     Paint backgroundPaint = Paint()
       ..color = Colors.white
       ..isAntiAlias = false
@@ -82,7 +82,7 @@ abstract class _SheetCellsBasePainter extends ChangeNotifier implements CustomPa
     canvas.drawRect(cell.rect, backgroundPaint);
   }
 
-  void paintCellBorder(Canvas canvas, CellConfig cell) {
+  void paintCellBorder(Canvas canvas, ViewportCell cell) {
     Paint borderPaint = Paint()
       ..color = const Color(0xffe1e1e1)
       ..strokeWidth = borderWidth
@@ -92,7 +92,7 @@ abstract class _SheetCellsBasePainter extends ChangeNotifier implements CustomPa
     canvas.drawRect(cell.rect, borderPaint);
   }
 
-  void paintCellText(Canvas canvas, CellConfig cell) {
+  void paintCellText(Canvas canvas, ViewportCell cell) {
     // TextPainter textPainter = TextPainter(
     //   text: TextSpan(text: cell.value, style: defaultTextStyle),
     //   textDirection: TextDirection.ltr,

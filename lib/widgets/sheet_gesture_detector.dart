@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/core/sheet_item_config.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/viewport_item.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/listeners/mouse_listener.dart';
 import 'package:sheets/recognizers/pan_hold_recognizer.dart';
 
@@ -81,10 +81,10 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
     _onPanEnd();
   }
 
-  SheetItemConfig? notifiedItem;
+  ViewportItem? notifiedItem;
 
   void _onPanStart() {
-    SheetItemConfig? hoveredItem = mouseListener.hoveredItem.value;
+    ViewportItem? hoveredItem = mouseListener.hoveredItem.value;
     if (hoveredItem != null) {
       notifiedItem = hoveredItem;
       mouseListener.dragStart(hoveredItem);
@@ -92,7 +92,7 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
   }
 
   void _onPanUpdate() {
-    SheetItemConfig? hoveredItem = mouseListener.hoveredItem.value;
+    ViewportItem? hoveredItem = mouseListener.hoveredItem.value;
     if (notifiedItem == hoveredItem) {
       return;
     }

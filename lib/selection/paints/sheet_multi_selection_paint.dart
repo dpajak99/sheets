@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_item_config.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/viewport_item.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/selection/renderers/sheet_multi_selection_renderer.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
@@ -16,15 +16,15 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
       ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? true);
 
   @override
-  void paint(SheetViewport paintConfig, Canvas canvas, Size size) {
+  void paint(SheetViewport viewport, Canvas canvas, Size size) {
     for (SheetSelection mergedSelection in renderer.selection.mergedSelections) {
       SheetSelection completedSelection = mergedSelection.complete();
-      SheetSelectionRenderer renderer = completedSelection.createRenderer(paintConfig);
+      SheetSelectionRenderer renderer = completedSelection.createRenderer(viewport);
 
-      renderer.getPaint(mainCellVisible: false, backgroundVisible: true).paint(paintConfig, canvas, size);
+      renderer.getPaint(mainCellVisible: false, backgroundVisible: true).paint(viewport, canvas, size);
     }
 
-    CellConfig? selectedCell = renderer.lastSelectedCell;
+    ViewportCell? selectedCell = renderer.lastSelectedCell;
     if (selectedCell == null) {
       return;
     }

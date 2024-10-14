@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
 
 abstract class SheetSelectionRenderer {
-  final SheetViewport viewportDelegate;
+  final SheetViewport viewport;
 
-  SheetSelectionRenderer({required this.viewportDelegate});
+  SheetSelectionRenderer({required this.viewport});
 
   bool get fillHandleVisible;
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 abstract class SheetSelectionPaint {
@@ -12,7 +12,7 @@ abstract class SheetSelectionPaint {
     this.backgroundVisible = true,
   });
 
-  void paint(SheetViewport paintConfig, Canvas canvas, Size size);
+  void paint(SheetViewport viewport, Canvas canvas, Size size);
 
   void paintMainCell(Canvas canvas, Rect rect) {
     Paint mainCellPaint = Paint()

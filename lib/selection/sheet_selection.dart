@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/sheet_selection_renderer.dart';
 import 'package:sheets/selection/types/sheet_fill_selection.dart';
@@ -206,7 +206,7 @@ abstract class SheetSelection with EquatableMixin {
 
   String stringifySelection();
 
-  SheetSelectionRenderer createRenderer(SheetViewport viewportDelegate);
+  SheetSelectionRenderer createRenderer(SheetViewport viewport);
 
   bool contains(CellIndex cellIndex) {
     SelectionCellCorners? corners = selectionCellCorners;

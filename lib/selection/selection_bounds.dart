@@ -2,12 +2,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/selection/selection_corners.dart';
 import 'package:sheets/selection/selection_direction.dart';
-import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SelectionBounds with EquatableMixin {
   final SelectionCorners<Rect> _corners;
-  final CellConfig startCell;
+  final ViewportCell startCell;
   final bool _startCellVisible;
   final List<Direction> _hiddenBorders;
 
@@ -21,8 +21,8 @@ class SelectionBounds with EquatableMixin {
         _hiddenBorders = hiddenBorders;
 
   factory SelectionBounds(
-    CellConfig startCell,
-    CellConfig endCell,
+    ViewportCell startCell,
+    ViewportCell endCell,
     SelectionDirection direction, {
     List<Direction>? hiddenBorders,
     bool startCellVisible = true,

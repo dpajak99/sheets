@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
-import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 
 abstract class SheetDragGesture extends SheetGesture {
 
@@ -49,7 +49,7 @@ class SheetDragEndGesture extends SheetDragGesture {
 
 class SheetDragDetails with EquatableMixin {
   final Offset mousePosition;
-  final SheetItemConfig? hoveredItem;
+  final ViewportItem? hoveredItem;
 
   SheetDragDetails({
     required this.mousePosition,
@@ -58,7 +58,7 @@ class SheetDragDetails with EquatableMixin {
 
   SheetItemIndex get hoveredItemIndex => hoveredItem!.index;
 
-  SheetDragDetails.create(Offset mousePosition, [SheetItemConfig? hoveredItem])
+  SheetDragDetails.create(Offset mousePosition, [ViewportItem? hoveredItem])
       : this(
           mousePosition: mousePosition,
           hoveredItem: hoveredItem,

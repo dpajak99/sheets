@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 import 'package:sheets/selection/paints/sheet_single_selection_paint.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
 import 'package:sheets/selection/sheet_selection_renderer.dart';
@@ -8,13 +8,13 @@ import 'package:sheets/utils/cached_value.dart';
 
 class SheetSingleSelectionRenderer extends SheetSelectionRenderer {
   final SheetSingleSelection selection;
-  late final CachedValue<CellConfig?> _selectedCell;
+  late final CachedValue<ViewportCell?> _selectedCell;
 
   SheetSingleSelectionRenderer({
-    required super.viewportDelegate,
+    required super.viewport,
     required this.selection,
   }) {
-    _selectedCell = CachedValue<CellConfig?>(() => viewportDelegate.findCell(selection.startCellIndex));
+    _selectedCell = CachedValue<ViewportCell?>(() => viewport.visibleContent.findCell(selection.startCellIndex));
   }
 
   @override
@@ -28,6 +28,6 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer {
     return SheetSingleSelectionPaint(this, mainCellVisible, backgroundVisible);
   }
 
-  CellConfig? get selectedCell => _selectedCell.value;
+  ViewportCell? get selectedCell => _selectedCell.value;
 }
 

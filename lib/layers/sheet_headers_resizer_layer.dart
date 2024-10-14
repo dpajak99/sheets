@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/widgets/sheet_draggable.dart';
 
@@ -37,18 +37,18 @@ class _VerticalHeadersResizerLayer extends StatefulWidget {
 }
 
 class _VerticalHeadersResizerLayerState extends State<_VerticalHeadersResizerLayer> {
-  List<ColumnConfig> _visibleColumns = <ColumnConfig>[];
+  List<ViewportColumn> _visibleColumns = <ViewportColumn>[];
 
   @override
   void initState() {
     super.initState();
     _updateVisibleColumns();
-    widget.sheetController.viewport.addListener(_updateVisibleColumns);
+    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleColumns);
   }
 
   @override
   void dispose() {
-    widget.sheetController.viewport.removeListener(_updateVisibleColumns);
+    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleColumns);
     super.dispose();
   }
 
@@ -56,7 +56,7 @@ class _VerticalHeadersResizerLayerState extends State<_VerticalHeadersResizerLay
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: _visibleColumns.map((ColumnConfig column) {
+      children: _visibleColumns.map((ViewportColumn column) {
         return _VerticalHeaderResizer(
           column: column,
           onResize: (Offset delta) => widget.sheetController.resizeColumnBy(column.index, delta.dx),
@@ -66,12 +66,12 @@ class _VerticalHeadersResizerLayerState extends State<_VerticalHeadersResizerLay
   }
 
   void _updateVisibleColumns() {
-    setState(() => _visibleColumns = widget.sheetController.viewport.visibleColumns);
+    setState(() => _visibleColumns = widget.sheetController.viewport.visibleContent.columns);
   }
 }
 
 class _VerticalHeaderResizer extends StatefulWidget {
-  final ColumnConfig column;
+  final ViewportColumn column;
   final ValueChanged<Offset> onResize;
 
   const _VerticalHeaderResizer({
@@ -98,10 +98,14 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
       bottom: 0,
       width: dividerWidth,
       child: SheetDraggable(
-        dragBarrier: Offset(widget.column.rect.left + 20, 0),
-        onDragStart: (_) {},
+        scrollOnDrag: false,
+        limitDragToBounds: true,
+        dragBarrierStart: Offset(widget.column.rect.left + 20, 0),
         onDragDeltaChanged: _handleDragDeltaChanged,
-        onDragEnd: widget.onResize,
+        onDragEnd: (Offset offset) {
+          widget.onResize(offset);
+          _dragDelta = 0;
+        },
         cursor: SystemMouseCursors.resizeColumn,
         actionSize: Size(dividerWidth, columnRect.height),
         builder: (bool hovered, bool dragged) {
@@ -141,18 +145,18 @@ class _HorizontalHeadersResizerLayer extends StatefulWidget {
 }
 
 class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResizerLayer> {
-  List<RowConfig> _visibleRows = <RowConfig>[];
+  List<ViewportRow> _visibleRows = <ViewportRow>[];
 
   @override
   void initState() {
     super.initState();
     _updateVisibleRows();
-    widget.sheetController.viewport.addListener(_updateVisibleRows);
+    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleRows);
   }
 
   @override
   void dispose() {
-    widget.sheetController.viewport.removeListener(_updateVisibleRows);
+    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleRows);
     super.dispose();
   }
 
@@ -160,7 +164,7 @@ class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResize
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: _visibleRows.map((RowConfig row) {
+      children: _visibleRows.map((ViewportRow row) {
         return _HorizontalHeaderResizer(
           row: row,
           onResize: (Offset delta) => widget.sheetController.resizeRowBy(row.index, delta.dy),
@@ -170,12 +174,12 @@ class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResize
   }
 
   void _updateVisibleRows() {
-    setState(() => _visibleRows = widget.sheetController.viewport.visibleRows);
+    setState(() => _visibleRows = widget.sheetController.viewport.visibleContent.rows);
   }
 }
 
 class _HorizontalHeaderResizer extends StatefulWidget {
-  final RowConfig row;
+  final ViewportRow row;
   final ValueChanged<Offset> onResize;
 
   const _HorizontalHeaderResizer({
@@ -202,10 +206,14 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
       right: 0,
       height: dividerHeight,
       child: SheetDraggable(
-        dragBarrier: Offset(0, widget.row.rect.top + 20),
-        onDragStart: (_) {},
+        scrollOnDrag: false,
+        limitDragToBounds: true,
+        dragBarrierStart: Offset(0, widget.row.rect.top + 20),
         onDragDeltaChanged: _handleDragDeltaChanged,
-        onDragEnd: widget.onResize,
+        onDragEnd: (Offset offset) {
+          widget.onResize(offset);
+          _dragDelta = 0;
+        },
         cursor: SystemMouseCursors.resizeRow,
         actionSize: Size(rowRect.width, dividerHeight),
         builder: (bool hovered, bool dragged) {

@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/gestures/sheet_scroll_gesture.dart';
-import 'package:sheets/core/sheet_item_config.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 
 class SheetMouseListener {
   final SheetViewport viewport;
@@ -20,16 +20,24 @@ class SheetMouseListener {
 
   final ValueNotifier<Offset> localPosition = ValueNotifier(Offset.zero);
   final ValueNotifier<Offset> globalPosition = ValueNotifier(Offset.zero);
-  final ValueNotifier<SheetItemConfig?> hoveredItem = ValueNotifier(null);
+  final ValueNotifier<ViewportItem?> hoveredItem = ValueNotifier(null);
   final ValueNotifier<SystemMouseCursor> cursor = ValueNotifier(SystemMouseCursors.basic);
 
   bool _enabled = true;
+  bool _scrollOnDragDisabled = false;
+
+  bool get scrollOnDragDisabled => _scrollOnDragDisabled;
+
+  void disableScrollOnDrag() => _scrollOnDragDisabled = true;
+
+  void enableScrollOnDrag() => _scrollOnDragDisabled = false;
 
   void disable() => _enabled = false;
 
   void enable() => _enabled = true;
 
   bool get enabled => _enabled;
+
   bool get disabled => !_enabled;
 
   bool nativeDragging = false;
@@ -46,26 +54,27 @@ class SheetMouseListener {
     globalPosition.value = globalOffset;
 
     refreshHoveredItem();
-    
-    Offset mouseOutOffset = this.mouseOutOffset;
 
-    if (mouseOutOffset != Offset.zero) {
-      _addGesture(SheetMouseBoundsScrollGesture(mouseOutOffset), force: true);
+    if (scrollOnDragDisabled == false) {
+      Offset mouseOutOffset = this.mouseOutOffset;
+      if (mouseOutOffset != Offset.zero) {
+        _addGesture(SheetMouseBoundsScrollGesture(mouseOutOffset), force: true);
+      }
     }
   }
 
   void refreshHoveredItem() {
-    hoveredItem.value = viewport.findByOffset(localPosition.value);
+    hoveredItem.value = viewport.visibleContent.findAnyByOffset(localPosition.value);
   }
 
   Offset get mouseOutOffset {
     double globalY = globalPosition.value.dy;
     double globalX = globalPosition.value.dx;
 
-    double viewportTop = viewport.sheetRect.top;
-    double viewportBottom = viewport.sheetRect.bottom;
-    double viewportLeft = viewport.sheetRect.left;
-    double viewportRight = viewport.sheetRect.right;
+    double viewportTop = viewport.viewportRect.top;
+    double viewportBottom = viewport.viewportRect.bottom;
+    double viewportLeft = viewport.viewportRect.left;
+    double viewportRight = viewport.viewportRect.right;
 
     double outX = 0;
     double outY = 0;
@@ -95,7 +104,7 @@ class SheetMouseListener {
 
   SheetDragDetails? _activeStartDragDetails;
 
-  void dragStart(SheetItemConfig draggedItem) {
+  void dragStart(ViewportItem draggedItem) {
     nativeDragging = true;
     _activeStartDragDetails = SheetDragDetails.create(globalPosition.value, draggedItem);
     _addGesture(SheetDragStartGesture(_activeStartDragDetails!));

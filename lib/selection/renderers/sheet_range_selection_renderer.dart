@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_item_config.dart';
-import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 import 'package:sheets/selection/paints/sheet_range_selection_paint.dart';
 import 'package:sheets/selection/selection_bounds.dart';
 import 'package:sheets/selection/selection_corners.dart';
@@ -16,7 +15,7 @@ class SheetRangeSelectionRenderer extends SheetSelectionRenderer {
   late final CachedValue<SelectionBounds?> _selectionBounds;
 
   SheetRangeSelectionRenderer({
-    required super.viewportDelegate,
+    required super.viewport,
     required this.selection,
   }) {
     _selectionBounds = CachedValue<SelectionBounds?>(_calculateSelectionBounds);
@@ -36,49 +35,42 @@ class SheetRangeSelectionRenderer extends SheetSelectionRenderer {
   SelectionBounds? get selectionBounds => _selectionBounds.value;
 
   SelectionBounds? _calculateSelectionBounds() {
-    CellConfig? startCell = viewportDelegate.findCell(selection.startCellIndex);
-    CellConfig? endCell = viewportDelegate.findCell(selection.endCellIndex);
+    ViewportCell? startCell = viewport.visibleContent.findCell(selection.startCellIndex);
+    ViewportCell? endCell = viewport.visibleContent.findCell(selection.endCellIndex);
 
     if (startCell != null && endCell != null) {
       return SelectionBounds(startCell, endCell, selection.direction);
     }
 
     if (startCell == null && endCell != null) {
-      ClosestVisible<CellIndex> startClosest = viewportDelegate.findClosestVisible(selection.startCellIndex);
-      CellConfig updatedStartCell = viewportDelegate.findCell(startClosest.item) as CellConfig;
-      return SelectionBounds(updatedStartCell, endCell, selection.direction, hiddenBorders: startClosest.hiddenBorders, startCellVisible: false);
+      ClosestVisible<ViewportCell> startCell = viewport.visibleContent.findClosestCell(selection.startCellIndex);
+      
+      return SelectionBounds(startCell.value, endCell, selection.direction, hiddenBorders: startCell.hiddenBorders, startCellVisible: false);
     }
 
     if (startCell != null && endCell == null) {
-      ClosestVisible<CellIndex> endClosest = viewportDelegate.findClosestVisible(selection.endCellIndex);
-      CellConfig updatedEndCell = viewportDelegate.findCell(endClosest.item) as CellConfig;
+      ClosestVisible<ViewportCell> endCell = viewport.visibleContent.findClosestCell(selection.endCellIndex);
 
-      return SelectionBounds(startCell, updatedEndCell, selection.direction, hiddenBorders: endClosest.hiddenBorders, lastCellVisible: false);
+      return SelectionBounds(startCell, endCell.value, selection.direction, hiddenBorders: endCell.hiddenBorders, lastCellVisible: false);
     }
 
     if (startCell == null && endCell == null && (_selectionPartiallyVisible)) {
-      ClosestVisible<CellIndex> startClosest = viewportDelegate.findClosestVisible(selection.startCellIndex);
-      ClosestVisible<CellIndex> endClosest = viewportDelegate.findClosestVisible(selection.endCellIndex);
+      ClosestVisible<ViewportCell> startCell = viewport.visibleContent.findClosestCell(selection.startCellIndex);
+      ClosestVisible<ViewportCell> endCell = viewport.visibleContent.findClosestCell(selection.endCellIndex);
+      
+      List<Direction> hiddenBorders = [...startCell.hiddenBorders, ...endCell.hiddenBorders];
 
-      CellConfig updatedStartCell = viewportDelegate.findCell(startClosest.item) as CellConfig;
-      CellConfig updatedEndCell = viewportDelegate.findCell(endClosest.item) as CellConfig;
-
-      List<Direction> hiddenBorders = [...startClosest.hiddenBorders, ...endClosest.hiddenBorders];
-
-      return SelectionBounds(updatedStartCell, updatedEndCell, selection.direction, hiddenBorders: hiddenBorders, startCellVisible: false);
+      return SelectionBounds(startCell.value, endCell.value, selection.direction, hiddenBorders: hiddenBorders, startCellVisible: false);
     }
 
     return null;
   }
 
   bool get _selectionPartiallyVisible {
-    List<RowConfig> visibleRows = viewportDelegate.visibleRows;
-    List<ColumnConfig> visibleColumns = viewportDelegate.visibleColumns;
-
     SelectionCellCorners corners = selection.selectionCellCorners;
 
-    bool rowVisible = visibleRows.any((row) => corners.containsRow(row.index));
-    bool columnVisible = visibleColumns.any((column) => corners.containsColumn(column.index));
+    bool rowVisible = viewport.visibleContent.rows.any((row) => corners.containsRow(row.index));
+    bool columnVisible = viewport.visibleContent.columns.any((column) => corners.containsColumn(column.index));
 
     return rowVisible && columnVisible;
   }

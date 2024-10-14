@@ -2,23 +2,23 @@ import 'package:equatable/equatable.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/utils/direction.dart';
 
-class ClosestVisible<T extends SheetItemIndex> with EquatableMixin {
+class ClosestVisible<T> with EquatableMixin {
   final List<Direction> hiddenBorders;
-  final T item;
+  final T value;
 
-  ClosestVisible._({required this.hiddenBorders, required this.item});
+  ClosestVisible._({required this.hiddenBorders, required this.value});
 
-  ClosestVisible.fullyVisible(this.item) : hiddenBorders = [];
+  ClosestVisible.fullyVisible(this.value) : hiddenBorders = [];
 
-  ClosestVisible.partiallyVisible({required this.hiddenBorders, required this.item});
+  ClosestVisible.partiallyVisible({required this.hiddenBorders, required this.value});
 
   static ClosestVisible<CellIndex> combineCellIndex(ClosestVisible<RowIndex> rowIndex, ClosestVisible<ColumnIndex> columnIndex) {
     return ClosestVisible<CellIndex>._(
       hiddenBorders: [...rowIndex.hiddenBorders, ...columnIndex.hiddenBorders],
-      item: CellIndex(rowIndex: rowIndex.item, columnIndex: columnIndex.item),
+      value: CellIndex(rowIndex: rowIndex.value, columnIndex: columnIndex.value),
     );
   }
 
   @override
-  List<Object?> get props => [hiddenBorders, item];
+  List<Object?> get props => [hiddenBorders, value];
 }

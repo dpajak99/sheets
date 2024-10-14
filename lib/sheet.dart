@@ -155,7 +155,7 @@ class SheetContentState extends State<SheetContent> {
     if (renderBox == null) return;
 
     Offset position = renderBox.localToGlobal(Offset.zero);
-    widget.sheetController.viewport.setViewportSize(Rect.fromLTRB(
+    widget.sheetController.viewport.setViewportRect(Rect.fromLTRB(
       position.dx,
       position.dy,
       renderBox.size.width + position.dx,
@@ -207,27 +207,6 @@ class SheetGrid extends StatelessWidget {
             ),
           ),
         ),
-        // Positioned.fill(
-        //   child: ValueListenableBuilder<CellConfig?>(
-        //     valueListenable: sheetController.editNotifier,
-        //     builder: (BuildContext context, CellConfig? cellConfig, _) {
-        //       return Stack(
-        //         children: [
-        //           if (cellConfig != null)
-        //             Positioned(
-        //               left: cellConfig.rect.left,
-        //               top: cellConfig.rect.top,
-        //               child: Container(
-        //                 height: cellConfig.rect.height,
-        //                 constraints: BoxConstraints(minWidth: cellConfig.rect.width),
-        //                 child: SheetTextField(cellConfig: cellConfig),
-        //               ),
-        //             )
-        //         ],
-        //       );
-        //     },
-        //   ),
-        // ),
       ],
     );
   }

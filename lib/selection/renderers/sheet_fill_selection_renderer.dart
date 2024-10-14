@@ -6,7 +6,7 @@ import 'package:sheets/selection/types/sheet_fill_selection.dart';
 
 class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer {
   SheetFillSelectionRenderer({
-    required super.viewportDelegate,
+    required super.viewport,
     required super.selection,
   });
 
@@ -17,7 +17,7 @@ class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer {
   bool get fillHandleVisible => selection.baseSelection.isCompleted;
 
   @override
-  Offset? get fillHandleOffset => selection.baseSelection.createRenderer(viewportDelegate).fillHandleOffset;
+  Offset? get fillHandleOffset => selection.baseSelection.createRenderer(viewport).fillHandleOffset;
 
   @override
   SheetSelectionPaint getPaint({bool? mainCellVisible, bool? backgroundVisible}) {

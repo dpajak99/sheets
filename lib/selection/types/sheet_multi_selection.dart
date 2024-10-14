@@ -3,7 +3,7 @@ import 'package:sheets/selection/renderers/sheet_multi_selection_renderer.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_corners.dart';
-import 'package:sheets/core/sheet_viewport.dart';
+import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/selection/sheet_selection_renderer.dart';
 import 'package:sheets/utils/extensions/iterable_extensions.dart';
@@ -82,8 +82,8 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  SheetSelectionRenderer createRenderer(SheetViewport viewportDelegate) {
-    return SheetMultiSelectionRenderer(viewportDelegate: viewportDelegate, selection: this);
+  SheetSelectionRenderer createRenderer(SheetViewport viewport) {
+    return SheetMultiSelectionRenderer(viewport: viewport, selection: this);
   }
 
   @override
