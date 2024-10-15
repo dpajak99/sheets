@@ -118,7 +118,7 @@ class _SheetDraggableState extends State<SheetDraggable> {
     bool barrierEndReached = false;
 
     if(widget.limitDragToBounds) {
-      Offset dragBarrierEnd = Offset(mouse.viewport.visibleGridRect.right, mouse.viewport.visibleGridRect.bottom);
+      Offset dragBarrierEnd = Offset(mouse.viewport.visibleGridInnerRect.right, mouse.viewport.visibleGridInnerRect.bottom);
       barrierEndReached = event.position.dy > dragBarrierEnd.dy || event.position.dx > dragBarrierEnd.dx;
 
     }

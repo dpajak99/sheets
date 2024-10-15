@@ -58,6 +58,7 @@ class _VerticalHeadersResizerLayerState extends State<_VerticalHeadersResizerLay
       fit: StackFit.expand,
       children: _visibleColumns.map((ViewportColumn column) {
         return _VerticalHeaderResizer(
+          height: widget.sheetController.viewport.visibleGridOuterRect.height,
           column: column,
           onResize: (Offset delta) => widget.sheetController.resizeColumnBy(column.index, delta.dx),
         );
@@ -71,10 +72,12 @@ class _VerticalHeadersResizerLayerState extends State<_VerticalHeadersResizerLay
 }
 
 class _VerticalHeaderResizer extends StatefulWidget {
+  final double height;
   final ViewportColumn column;
   final ValueChanged<Offset> onResize;
 
   const _VerticalHeaderResizer({
+    required this.height,
     required this.column,
     required this.onResize,
   });
@@ -117,7 +120,7 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
               children: <Widget>[
                 Container(width: _kWeight, height: _kLength, margin: EdgeInsets.only(top: marginTop), color: Colors.black),
                 if (dragged) ...<Widget>[
-                  Container(width: _kGapSize, height: double.infinity, color: const Color(0xffc4c7c5)),
+                  Container(width: _kGapSize, height: widget.height, color: const Color(0xffc4c7c5)),
                 ] else ...<Widget>[
                   SizedBox(width: _kGapSize),
                 ],
@@ -166,6 +169,7 @@ class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResize
       fit: StackFit.expand,
       children: _visibleRows.map((ViewportRow row) {
         return _HorizontalHeaderResizer(
+          width: widget.sheetController.viewport.visibleGridOuterRect.width,
           row: row,
           onResize: (Offset delta) => widget.sheetController.resizeRowBy(row.index, delta.dy),
         );
@@ -179,10 +183,12 @@ class _HorizontalHeadersResizerLayerState extends State<_HorizontalHeadersResize
 }
 
 class _HorizontalHeaderResizer extends StatefulWidget {
+  final double width;
   final ViewportRow row;
   final ValueChanged<Offset> onResize;
 
   const _HorizontalHeaderResizer({
+    required this.width,
     required this.row,
     required this.onResize,
   });
@@ -225,7 +231,7 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
               children: <Widget>[
                 Container(width: _kLength, height: _kWeight, margin: EdgeInsets.only(left: marginLeft), color: Colors.black),
                 if (dragged) ...<Widget>[
-                  Container(height: _kGapSize, width: double.infinity, color: const Color(0xffc4c7c5)),
+                  Container(height: _kGapSize, width: widget.width, color: const Color(0xffc4c7c5)),
                 ] else ...<Widget>[
                   SizedBox(height: _kGapSize),
                 ],

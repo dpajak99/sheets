@@ -67,7 +67,7 @@ class SheetViewport extends ChangeNotifier {
   ///
   /// This is determined by comparing the viewport's bounds with the visible
   /// rows and columns of the sheet.
-  Rect get visibleGridRect {
+  Rect get visibleGridInnerRect {
     return Rect.fromLTRB(
       max(visibleContent.columns.first.rect.left, viewportRect.left),
       min(visibleContent.rows.first.rect.top, viewportRect.top),
@@ -76,10 +76,19 @@ class SheetViewport extends ChangeNotifier {
     );
   }
 
+  Rect get visibleGridOuterRect {
+    return Rect.fromLTRB(
+      max(visibleContent.rows.first.rect.left, viewportRect.left),
+      min(visibleContent.columns.first.rect.top, viewportRect.top),
+      min(visibleContent.columns.last.rect.right, viewportRect.right),
+      min(visibleContent.rows.last.rect.bottom, viewportRect.bottom),
+    );
+  }
+
   /// Converts the given [globalOffset], which is relative to the entire sheet,
   /// to a local offset relative to the visible grid within the viewport.
   Offset globalOffsetToLocal(Offset globalOffset) {
-    ViewportOffsetTransformer transformer = ViewportOffsetTransformer(viewportRect, visibleGridRect);
+    ViewportOffsetTransformer transformer = ViewportOffsetTransformer(viewportRect, visibleGridInnerRect);
     return transformer.globalToLocal(globalOffset);
   }
 
