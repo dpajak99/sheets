@@ -10,7 +10,7 @@ class SheetFillStartGesture extends SheetFillGesture {
   void resolve(SheetController controller) {}
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 class SheetFillUpdateGesture extends SheetFillGesture {
@@ -25,7 +25,7 @@ class SheetFillUpdateGesture extends SheetFillGesture {
   }
 
   @override
-  List<Object?> get props => [endDetails];
+  List<Object?> get props => <Object?>[endDetails];
 }
 
 class SheetFillEndGesture extends SheetFillGesture {
@@ -35,5 +35,5 @@ class SheetFillEndGesture extends SheetFillGesture {
   }
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }

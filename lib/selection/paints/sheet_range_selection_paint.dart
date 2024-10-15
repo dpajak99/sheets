@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_rect.dart';
 import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/selection/renderers/sheet_range_selection_renderer.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
 
-class SheetRangeSelectionPaint extends SheetSelectionPaint {
-  final SheetRangeSelectionRenderer renderer;
+class SheetRangeSelectionPaint<T extends SheetIndex> extends SheetSelectionPaint {
+  final SheetRangeSelectionRenderer<T> renderer;
 
   SheetRangeSelectionPaint(
       this.renderer,

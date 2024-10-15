@@ -21,7 +21,7 @@ class SheetResizeColumnGesture extends SheetGesture {
   }
 
   @override
-  List<Object?> get props => [columnIndex, delta];
+  List<Object?> get props => <Object?>[columnIndex, delta];
 }
 
 class SheetResizeRowGesture extends SheetGesture {
@@ -40,5 +40,5 @@ class SheetResizeRowGesture extends SheetGesture {
   }
 
   @override
-  List<Object?> get props => [rowIndex, delta];
+  List<Object?> get props => <Object?>[rowIndex, delta];
 }

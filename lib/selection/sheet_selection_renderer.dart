@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 
 abstract class SheetSelectionRenderer<T extends SheetSelection> {
   final SheetViewport viewport;
@@ -19,8 +20,8 @@ abstract class SheetSelectionRenderer<T extends SheetSelection> {
   SheetSelectionPaint getPaint({bool? mainCellVisible, bool? backgroundVisible});
 
   bool get isSelectionVisible {
-    bool rowVisible = viewport.visibleContent.rows.any((row) => selection.containsRow(row.index));
-    bool columnVisible = viewport.visibleContent.columns.any((column) => selection.containsColumn(column.index));
+    bool rowVisible = viewport.visibleContent.rows.any((ViewportRow row) => selection.containsRow(row.index));
+    bool columnVisible = viewport.visibleContent.columns.any((ViewportColumn column) => selection.containsColumn(column.index));
 
     return rowVisible && columnVisible;
   }

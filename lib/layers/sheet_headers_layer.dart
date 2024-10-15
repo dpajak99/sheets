@@ -50,7 +50,7 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: [
+      children: <Widget>[
         RepaintBoundary(
           child: CustomPaint(isComplex: true, painter: columnHeadersPainter),
         ),

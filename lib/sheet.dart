@@ -37,15 +37,16 @@ class SheetPageState extends State<SheetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      children: [
-        const SheetSectionToolbar(),
-        SheetSectionDetailsBar(sheetController: sheetController),
-        Expanded(
-          child: Sheet(sheetController: sheetController),
-        ),
-      ],
-    ));
+      body: Column(
+        children: <Widget>[
+          const SheetSectionToolbar(),
+          SheetSectionDetailsBar(sheetController: sheetController),
+          Expanded(
+            child: Sheet(sheetController: sheetController),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -138,7 +139,7 @@ class SheetContentState extends State<SheetContent> {
       key: _sheetViewportKey,
       child: Stack(
         fit: StackFit.expand,
-        children: [
+        children: <Widget>[
           Positioned.fill(
             child: SheetGrid(sheetController: widget.sheetController),
           ),
@@ -175,14 +176,14 @@ class SheetGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
+      children: <Widget>[
         const Positioned(
           bottom: 0,
           left: 50,
           height: 50,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: <Widget>[
               Text('Add more'),
             ],
           ),

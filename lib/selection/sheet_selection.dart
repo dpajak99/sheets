@@ -23,8 +23,8 @@ abstract class SheetSelection with EquatableMixin {
   }) {
     return switch (index) {
       CellIndex cellIndex => SheetSingleSelection(cellIndex, completed: completed),
-      ColumnIndex columnIndex => SheetRangeSelection.single(columnIndex, completed: completed),
-      RowIndex rowIndex => SheetRangeSelection.single(rowIndex, completed: completed),
+      ColumnIndex columnIndex => SheetRangeSelection<ColumnIndex>.single(columnIndex, completed: completed),
+      RowIndex rowIndex => SheetRangeSelection<RowIndex>.single(rowIndex, completed: completed),
     };
   }
 
@@ -57,11 +57,11 @@ abstract class SheetSelection with EquatableMixin {
     required Direction fillDirection,
     bool completed = false,
   }) {
-    return SheetFillSelection(start, end, completed: completed, baseSelection: baseSelection, fillDirection: fillDirection);
+    return SheetFillSelection<SheetIndex>(start, end, completed: completed, baseSelection: baseSelection, fillDirection: fillDirection);
   }
 
   factory SheetSelection.all() {
-    return SheetRangeSelection(CellIndex.zero, CellIndex.max, completed: true);
+    return SheetRangeSelection<CellIndex>(CellIndex.zero, CellIndex.max, completed: true);
   }
 
   factory SheetSelection.cellRange(
@@ -71,11 +71,11 @@ abstract class SheetSelection with EquatableMixin {
   ) {
     switch (endIndex) {
       case CellIndex endCellIndex:
-        return SheetRangeSelection(startCellIndex, endCellIndex, completed: completed);
+        return SheetRangeSelection<CellIndex>(startCellIndex, endCellIndex, completed: completed);
       case ColumnIndex endColumnIndex:
-        return SheetRangeSelection(startCellIndex, CellIndex.fromColumnMin(endColumnIndex), completed: completed);
+        return SheetRangeSelection<CellIndex>(startCellIndex, CellIndex.fromColumnMin(endColumnIndex), completed: completed);
       case RowIndex endRowIndex:
-        return SheetRangeSelection(startCellIndex, CellIndex.fromRowMin(endRowIndex), completed: completed);
+        return SheetRangeSelection<CellIndex>(startCellIndex, CellIndex.fromRowMin(endRowIndex), completed: completed);
     }
   }
 
@@ -86,11 +86,11 @@ abstract class SheetSelection with EquatableMixin {
   ) {
     switch (endIndex) {
       case CellIndex endCellIndex:
-        return SheetRangeSelection(startColumnIndex, endCellIndex.columnIndex, completed: completed);
+        return SheetRangeSelection<ColumnIndex>(startColumnIndex, endCellIndex.columnIndex, completed: completed);
       case ColumnIndex endColumnIndex:
-        return SheetRangeSelection(startColumnIndex, endColumnIndex, completed: completed);
+        return SheetRangeSelection<ColumnIndex>(startColumnIndex, endColumnIndex, completed: completed);
       case RowIndex _:
-        return SheetRangeSelection(startColumnIndex, ColumnIndex.zero, completed: completed);
+        return SheetRangeSelection<ColumnIndex>(startColumnIndex, ColumnIndex.zero, completed: completed);
     }
   }
 
@@ -101,11 +101,11 @@ abstract class SheetSelection with EquatableMixin {
   ) {
     switch (endIndex) {
       case CellIndex endCellIndex:
-        return SheetRangeSelection(startRowIndex, endCellIndex.rowIndex, completed: completed);
+        return SheetRangeSelection<RowIndex>(startRowIndex, endCellIndex.rowIndex, completed: completed);
       case ColumnIndex _:
-        return SheetRangeSelection(startRowIndex, RowIndex.zero, completed: completed);
+        return SheetRangeSelection<RowIndex>(startRowIndex, RowIndex.zero, completed: completed);
       case RowIndex endRowIndex:
-        return SheetRangeSelection(startRowIndex, endRowIndex, completed: completed);
+        return SheetRangeSelection<RowIndex>(startRowIndex, endRowIndex, completed: completed);
     }
   }
 
@@ -212,12 +212,12 @@ abstract class SheetSelection with EquatableMixin {
 
   String stringifySelection();
 
-  SheetSelectionRenderer createRenderer(SheetViewport viewport);
+  SheetSelectionRenderer<SheetSelection> createRenderer(SheetViewport viewport);
 
   SheetSelection modifyEnd(SheetIndex itemIndex);
 
   SheetSelection append(SheetSelection appendedSelection) {
-    return SheetMultiSelection(selections: [this, appendedSelection]);
+    return SheetMultiSelection(selections: <SheetSelection>[this, appendedSelection]);
   }
 
   bool containsSelection(SheetSelection nestedSelection);

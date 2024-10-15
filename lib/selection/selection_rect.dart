@@ -24,7 +24,7 @@ class SelectionRect extends Rect {
         SelectionDirection.topRight => Rect.fromLTRB(startRect.left, endRect.top, endRect.right, startRect.bottom),
         SelectionDirection.topLeft => Rect.fromLTRB(endRect.left, endRect.top, startRect.right, startRect.bottom),
       },
-      hiddenBorders: hiddenBorders ?? [],
+      hiddenBorders: hiddenBorders ?? <Direction>[],
     );
   }
 

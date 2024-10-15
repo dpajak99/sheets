@@ -58,11 +58,11 @@ class SheetProperties extends ChangeNotifier {
   }
 
   Map<int, double> get customRowExtents {
-    return _customRowStyles.map((key, value) => MapEntry(key.value, value.height));
+    return _customRowStyles.map((RowIndex key, RowStyle value) => MapEntry<int, double>(key.value, value.height));
   }
 
   Map<int, double> get customColumnExtents {
-    return _customColumnStyles.map((key, value) => MapEntry(key.value, value.width));
+    return _customColumnStyles.map((ColumnIndex key, ColumnStyle value) => MapEntry<int, double>(key.value, value.width));
   }
 }
 
@@ -84,7 +84,7 @@ class ColumnStyle with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [width];
+  List<Object?> get props => <Object?>[width];
 }
 
 class RowStyle with EquatableMixin {
@@ -105,5 +105,5 @@ class RowStyle with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [height];
+  List<Object?> get props => <Object?>[height];
 }

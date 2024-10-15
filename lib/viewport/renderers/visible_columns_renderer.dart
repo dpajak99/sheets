@@ -39,7 +39,7 @@ class VisibleColumnsRenderer {
   /// to create their viewport configurations, stopping when the viewport width
   /// is filled or there are no more columns.
   List<ViewportColumn> build() {
-    List<ViewportColumn> visibleColumns = [];
+    List<ViewportColumn> visibleColumns = <ViewportColumn>[];
 
     FirstVisible<ColumnIndex> firstColumn = _calculateFirstVisible();
 

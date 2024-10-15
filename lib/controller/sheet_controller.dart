@@ -16,10 +16,10 @@ import 'package:sheets/listeners/mouse_listener.dart';
 
 class SheetController {
   final SheetProperties sheetProperties = SheetProperties(
-    customColumnStyles: {
+    customColumnStyles: <ColumnIndex, ColumnStyle>{
       // ColumnIndex(3): ColumnStyle(width: 200),
     },
-    customRowStyles: {
+    customRowStyles: <RowIndex, RowStyle>{
       // RowIndex(8): RowStyle(height: 100),
     },
   );
@@ -45,7 +45,7 @@ class SheetController {
     mouse.stream.listen(_handleMouseGesture);
     stream.listen(_handleGesture);
 
-    keyboard.onKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectionController.selectAll);
+    keyboard.onKeysPressed(<LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectionController.selectAll);
     // -------------------
     keyboard.onKeyPressed(LogicalKeyboardKey.keyR, () {
       sheetProperties.addRows(10);
@@ -62,7 +62,7 @@ class SheetController {
   }
 
 
-  final List<Type> _lockedGestures = [];
+  final List<Type> _lockedGestures = <Type>[];
   void _handleGesture(SheetGesture gesture) {
     if(_lockedGestures.contains(gesture.runtimeType)) return;
 
@@ -70,7 +70,7 @@ class SheetController {
     Duration? lockdownDuration = gesture.lockdownDuration;
     if(lockdownDuration != null) {
       _lockedGestures.add(gesture.runtimeType);
-      Future.delayed(lockdownDuration, () {
+      Future<void>.delayed(lockdownDuration, () {
         _lockedGestures.remove(gesture.runtimeType);
       });
     }

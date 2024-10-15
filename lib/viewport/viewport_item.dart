@@ -40,7 +40,7 @@ class ViewportRow extends ViewportItem {
   RowStyle get style => _style;
 
   @override
-  List<Object?> get props => [_index, _style, rect];
+  List<Object?> get props => <Object?>[_index, _style, rect];
 }
 
 class ViewportColumn extends ViewportItem {
@@ -82,7 +82,7 @@ class ViewportColumn extends ViewportItem {
   }
 
   @override
-  List<Object?> get props => [_index, _style, rect];
+  List<Object?> get props => <Object?>[_index, _style, rect];
 }
 
 class ViewportCell extends ViewportItem {
@@ -130,5 +130,5 @@ class ViewportCell extends ViewportItem {
   ViewportColumn get column => _column;
 
   @override
-  List<Object?> get props => [rect, _index, _row, _column, _value];
+  List<Object?> get props => <Object?>[rect, _index, _row, _column, _value];
 }

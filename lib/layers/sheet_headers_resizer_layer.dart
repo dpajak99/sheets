@@ -19,7 +19,7 @@ class HeadersResizerLayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
-      children: [
+      children: <Widget>[
         Positioned.fill(child: _VerticalHeadersResizerLayer(sheetController: sheetController)),
         Positioned.fill(child: _HorizontalHeadersResizerLayer(sheetController: sheetController)),
       ],
@@ -114,7 +114,7 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
           return Positioned.fill(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Container(width: _kWeight, height: _kLength, margin: EdgeInsets.only(top: marginTop), color: Colors.black),
                 if (dragged) ...<Widget>[
                   Container(width: _kGapSize, height: double.infinity, color: const Color(0xffc4c7c5)),
@@ -222,7 +222,7 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
           return Positioned.fill(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Container(width: _kLength, height: _kWeight, margin: EdgeInsets.only(left: marginLeft), color: Colors.black),
                 if (dragged) ...<Widget>[
                   Container(height: _kGapSize, width: double.infinity, color: const Color(0xffc4c7c5)),

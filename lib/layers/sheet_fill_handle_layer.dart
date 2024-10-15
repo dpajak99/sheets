@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/selection/sheet_selection_renderer.dart';
 import 'package:sheets/widgets/sheet_draggable.dart';
 
@@ -16,7 +17,7 @@ class SheetFillHandleLayer extends StatefulWidget {
 }
 
 class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
-  static const double _size = 10.0;
+  static const double _size = 10;
 
   late bool _visible;
   Offset? _offset;
@@ -24,7 +25,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   @override
   void initState() {
     super.initState();
-    SheetSelectionRenderer selectionRenderer = widget.sheetController.selectionController.visibleSelection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selectionController.visibleSelection.createRenderer(widget.sheetController.viewport);
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
@@ -44,7 +45,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
+      children: <Widget>[
         if (_visible && _offset != null)
           Positioned(
             left: _offset!.dx - _size / 2,
@@ -69,7 +70,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 
   void _updateFillHandle() {
-    SheetSelectionRenderer selectionRenderer = widget.sheetController.selectionController.visibleSelection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selectionController.visibleSelection.createRenderer(widget.sheetController.viewport);
 
     setState(() {
       _visible = selectionRenderer.fillHandleVisible;

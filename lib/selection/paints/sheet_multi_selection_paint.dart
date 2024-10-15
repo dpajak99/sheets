@@ -19,7 +19,7 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
   void paint(SheetViewport viewport, Canvas canvas, Size size) {
     for (SheetSelection mergedSelection in renderer.selection.selections) {
       SheetSelection completedSelection = mergedSelection.copyWith(completed: true);
-      SheetSelectionRenderer renderer = completedSelection.createRenderer(viewport);
+      SheetSelectionRenderer<SheetSelection> renderer = completedSelection.createRenderer(viewport);
 
       renderer.getPaint(mainCellVisible: false, backgroundVisible: true).paint(viewport, canvas, size);
     }

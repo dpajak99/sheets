@@ -39,7 +39,7 @@ class VisibleRowsRenderer {
   /// their viewport configurations, stopping when the viewport height is filled
   /// or there are no more rows.
   List<ViewportRow> build() {
-    List<ViewportRow> visibleRows = [];
+    List<ViewportRow> visibleRows = <ViewportRow>[];
 
     FirstVisible<RowIndex> firstVisibleRowInfo = _calculateFirstVisible();
 

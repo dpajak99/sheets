@@ -49,7 +49,7 @@ class _SheetDraggableState extends State<SheetDraggable> {
     Widget? child = widget.child ?? widget.builder!.call(_hoverInProgress, _dragInProgress);
 
     return Stack(
-      children: [
+      children: <Widget>[
         if (child != null) child,
         Positioned(
           width: widget.actionSize.width,

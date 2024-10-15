@@ -35,7 +35,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
                 width: 98,
                 padding: const EdgeInsets.only(left: 14, right: 12),
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: Text(
                         widget.sheetController.selectionController.visibleSelection.stringifySelection(),
@@ -52,7 +52,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 11),
             child: const Row(
-              children: [
+              children: <Widget>[
                 AssetIcon(SheetIcons.function, size: 16, color: Color(0xff989a99)),
               ],
             ),

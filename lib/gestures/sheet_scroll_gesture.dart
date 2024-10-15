@@ -21,7 +21,7 @@ class SheetScrollGesture extends SheetGesture {
   }
 
   @override
-  List<Object?> get props => [delta];
+  List<Object?> get props => <Object?>[delta];
 }
 
 class SheetMouseBoundsScrollGesture extends SheetGesture {
@@ -50,5 +50,5 @@ class SheetMouseBoundsScrollGesture extends SheetGesture {
   }
 
   @override
-  List<Object?> get props => [delta];
+  List<Object?> get props => <Object?>[delta];
 }

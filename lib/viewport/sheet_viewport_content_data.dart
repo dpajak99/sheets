@@ -12,13 +12,13 @@ import 'package:sheets/viewport/calculators/closest_visible_cell_index_calculato
 /// specific items, such as finding a cell by its index or finding the
 /// closest visible cell.
 class SheetViewportContentData {
-  List<ViewportRow> rows = [];
-  List<ViewportColumn> columns = [];
-  List<ViewportCell> cells = [];
+  List<ViewportRow> rows = <ViewportRow>[];
+  List<ViewportColumn> columns = <ViewportColumn>[];
+  List<ViewportCell> cells = <ViewportCell>[];
 
   /// Returns a combined list of all visible sheet items (rows, columns, cells).
   List<ViewportItem> get all {
-    return [...rows, ...columns, ...cells];
+    return <ViewportItem>[...rows, ...columns, ...cells];
   }
 
   /// Updates the lists of visible rows, columns, and cells with the provided
@@ -34,7 +34,7 @@ class SheetViewportContentData {
   ///
   /// Returns `true` if the cell is visible, otherwise returns `false`.
   bool containsCell(CellIndex cellIndex) {
-    return cells.any((cell) => cell.index == cellIndex);
+    return cells.any((ViewportCell cell) => cell.index == cellIndex);
   }
 
   ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
@@ -47,14 +47,14 @@ class SheetViewportContentData {
   /// Finds and returns the visible cell with the given [cellIndex],
   /// or `null` if the cell is not found.
   ViewportCell? findCell(CellIndex cellIndex) {
-    return cells.where((cell) => cell.index == cellIndex).firstOrNull;
+    return cells.where((ViewportCell cell) => cell.index == cellIndex).firstOrNull;
   }
 
   /// Finds and returns the sheet item at the given [mousePosition],
   /// or `null` if no item is found.
   ViewportItem? findAnyByOffset(Offset mousePosition) {
     try {
-      return all.firstWhere((element) => element.rect.within(mousePosition));
+      return all.firstWhere((ViewportItem element) => element.rect.within(mousePosition));
     } catch (e) {
       return null;
     }

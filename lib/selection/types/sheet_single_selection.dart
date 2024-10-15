@@ -78,9 +78,9 @@ class SheetSingleSelection extends SheetSelection {
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
     if (subtractedSelection.contains(selectedIndex)) {
-      return [];
+      return <SheetSelection>[];
     } else {
-      return [this];
+      return <SheetSelection>[this];
     }
   }
 

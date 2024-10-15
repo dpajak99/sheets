@@ -8,7 +8,7 @@ import 'package:sheets/viewport/viewport_item.dart';
 abstract class SheetDragGesture extends SheetGesture {
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 class SheetDragStartGesture extends SheetDragGesture {
@@ -20,7 +20,7 @@ class SheetDragStartGesture extends SheetDragGesture {
   void resolve(SheetController controller) {}
 
   @override
-  List<Object?> get props => [startDetails];
+  List<Object?> get props => <Object?>[startDetails];
 }
 
 class SheetDragUpdateGesture extends SheetDragGesture {
@@ -34,7 +34,7 @@ class SheetDragUpdateGesture extends SheetDragGesture {
   }
 
   @override
-  List<Object?> get props => [endDetails, startDetails];
+  List<Object?> get props => <Object?>[endDetails, startDetails];
 }
 
 class SheetDragEndGesture extends SheetDragGesture {
@@ -44,7 +44,7 @@ class SheetDragEndGesture extends SheetDragGesture {
   }
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 class SheetDragDetails with EquatableMixin {
@@ -65,6 +65,6 @@ class SheetDragDetails with EquatableMixin {
         );
 
   @override
-  List<Object?> get props => [mousePosition, hoveredItem];
+  List<Object?> get props => <Object?>[mousePosition, hoveredItem];
 }
 

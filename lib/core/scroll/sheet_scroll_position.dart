@@ -17,5 +17,5 @@ class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [_offset];
+  List<Object?> get props => <Object?>[_offset];
 }

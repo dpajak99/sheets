@@ -20,14 +20,14 @@ class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
   }) : assert(baseSelection is! SheetFillSelection);
 
   @override
-  SheetFillSelection copyWith({
+  SheetFillSelection<T> copyWith({
     T? start,
     T? end,
     bool? completed,
     SheetSelection? baseSelection,
     Direction? fillDirection,
   }) {
-    return SheetFillSelection(
+    return SheetFillSelection<T>(
       start ?? selectionStart,
       end ?? selectionEnd,
       completed: completed ?? isCompleted,
@@ -49,18 +49,18 @@ class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
 
     switch (fillDirection) {
       case Direction.top:
-        return SheetRangeSelection(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
       case Direction.bottom:
-        return SheetRangeSelection(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
       case Direction.left:
-        return SheetRangeSelection(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
       case Direction.right:
-        return SheetRangeSelection(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
     }
   }
 
   @override
-  SheetFillSelectionRenderer createRenderer(SheetViewport viewport) {
-    return SheetFillSelectionRenderer(viewport: viewport, selection: this);
+  SheetFillSelectionRenderer<T> createRenderer(SheetViewport viewport) {
+    return SheetFillSelectionRenderer<T>(viewport: viewport, selection: this);
   }
 }

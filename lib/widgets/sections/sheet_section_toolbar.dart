@@ -24,7 +24,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
           borderRadius: BorderRadius.circular(45),
         ),
         child: Row(
-          children: [
+          children: <Widget>[
             Container(
               width: 100,
               height: double.infinity,
@@ -34,7 +34,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                 borderRadius: BorderRadius.circular(45),
               ),
               child: const Row(
-                children: [
+                children: <Widget>[
                   Icon(Icons.search, size: 18),
                   SizedBox(width: 8),
                   Text(

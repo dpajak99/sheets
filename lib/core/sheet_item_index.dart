@@ -7,21 +7,21 @@ sealed class SheetIndex with EquatableMixin {
   String stringifyPosition();
 
   static SheetIndex matchType(SheetIndex base, SheetIndex other) {
-    switch(base) {
+    switch (base) {
       case CellIndex _:
-        return switch(other) {
+        return switch (other) {
           CellIndex other => other,
           ColumnIndex other => CellIndex(columnIndex: other, rowIndex: RowIndex.zero),
           RowIndex other => CellIndex(rowIndex: other, columnIndex: ColumnIndex.zero),
         };
       case ColumnIndex _:
-        return switch(other) {
+        return switch (other) {
           CellIndex other => other.columnIndex,
           ColumnIndex other => other,
           RowIndex _ => ColumnIndex.zero,
         };
       case RowIndex _:
-        return switch(other) {
+        return switch (other) {
           CellIndex other => other.rowIndex,
           ColumnIndex _ => RowIndex.zero,
           RowIndex other => other,
@@ -87,10 +87,10 @@ class CellIndex extends SheetIndex {
   }
 
   @override
-  List<Object?> get props => [rowIndex, columnIndex];
+  List<Object?> get props => <Object?>[rowIndex, columnIndex];
 }
 
-class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparable {
+class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparable<ColumnIndex> {
   final int _value;
 
   ColumnIndex(this._value);
@@ -137,7 +137,7 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
   }
 
   @override
-  int compareTo(other) {
+  int compareTo(NumericIndexMixin other) {
     if (other is ColumnIndex) {
       return value.compareTo(other.value);
     } else {
@@ -146,10 +146,10 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
   }
 
   @override
-  List<Object?> get props => [value];
+  List<Object?> get props => <Object?>[value];
 }
 
-class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable {
+class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<RowIndex> {
   final int _value;
 
   RowIndex(this._value);
@@ -180,7 +180,7 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable {
   }
 
   @override
-  int compareTo(other) {
+  int compareTo(NumericIndexMixin other) {
     if (other is RowIndex) {
       return value.compareTo(other.value);
     } else {
@@ -189,5 +189,5 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable {
   }
 
   @override
-  List<Object?> get props => [_value];
+  List<Object?> get props => <Object?>[_value];
 }

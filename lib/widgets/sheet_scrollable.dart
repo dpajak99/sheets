@@ -9,13 +9,13 @@ import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/widgets/mouse_state_listener.dart';
 
 class SheetScrollable extends StatefulWidget {
-  final SheetScrollController scrollController;
   final Widget child;
+  final SheetScrollController scrollController;
 
   const SheetScrollable({
-    super.key,
     required this.child,
     required this.scrollController,
+    super.key,
   });
 
   @override
@@ -59,7 +59,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
     return _ScrollbarLayout(
       scrollbarWeight: scrollbarWeight,
       verticalScrollbar: Column(
-        children: [
+        children: <Widget>[
           Container(height: columnHeadersHeight),
           Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
           Expanded(
@@ -89,7 +89,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
         ],
       ),
       horizontalScrollbar: Row(
-        children: [
+        children: <Widget>[
           Container(width: rowHeadersWidth),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
           Expanded(
@@ -187,10 +187,10 @@ class _ScrollbarLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         Expanded(
           child: Row(
-            children: [
+            children: <Widget>[
               Expanded(child: child),
               Container(
                 width: scrollbarWeight,

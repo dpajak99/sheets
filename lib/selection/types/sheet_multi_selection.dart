@@ -35,12 +35,12 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   bool containsRow(RowIndex index) {
-    return selections.any((selection) => selection.containsRow(index));
+    return selections.any((SheetSelection selection) => selection.containsRow(index));
   }
 
   @override
   bool containsColumn(ColumnIndex index) {
-    return selections.any((selection) => selection.containsColumn(index));
+    return selections.any((SheetSelection selection) => selection.containsColumn(index));
   }
 
   @override
@@ -68,7 +68,7 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  SheetSelectionRenderer createRenderer(SheetViewport viewport) {
+  SheetSelectionRenderer<SheetMultiSelection> createRenderer(SheetViewport viewport) {
     return SheetMultiSelectionRenderer(viewport: viewport, selection: this);
   }
 
@@ -83,7 +83,7 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   SheetSelection append(SheetSelection appendedSelection) {
-    return copyWith(selections: {...selections, appendedSelection});
+    return copyWith(selections: <SheetSelection>{...selections, appendedSelection});
   }
 
   SheetMultiSelection replaceLast(SheetSelection sheetSelection) {
@@ -95,14 +95,14 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   bool containsSelection(SheetSelection nestedSelection) {
-    return selections.any((selection) => selection.containsSelection(nestedSelection));
+    return selections.any((SheetSelection selection) => selection.containsSelection(nestedSelection));
   }
 
   @override
   SheetSelection complete() {
     SheetSelection lastSelection = selections.last;
     List<SheetSelection> previousSelections = selections.sublist(0, selections.length - 1);
-    List<SheetSelection> updatedSelections = [];
+    List<SheetSelection> updatedSelections = <SheetSelection>[];
 
     bool subtracted = false;
     for (SheetSelection selection in previousSelections) {
@@ -134,14 +134,14 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    List<SheetSelection> updatedSelections = selections.map((selection) => selection.subtract(subtractedSelection)).whereNotNull().cast();
+    List<SheetSelection> updatedSelections = selections.map((SheetSelection selection) => selection.subtract(subtractedSelection)).whereNotNull().cast();
     if (updatedSelections.isEmpty) {
-      return [];
+      return <SheetSelection>[];
     } else {
       return updatedSelections;
     }
   }
 
   @override
-  List<Object?> get props => [selections];
+  List<Object?> get props => <Object?>[selections];
 }

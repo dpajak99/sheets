@@ -44,5 +44,5 @@ class SheetScrollMetrics with EquatableMixin {
   final double _viewportDimension;
 
   @override
-  List<Object?> get props => [_axisDirection, _viewportDimension, _contentSize];
+  List<Object?> get props => <Object?>[_axisDirection, _viewportDimension, _contentSize];
 }

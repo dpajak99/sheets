@@ -18,7 +18,7 @@ class SheetSelectionStartGesture extends SheetDragGesture {
     SheetIndex? hoveredIndex = startDetails.hoveredItem?.index;
     if (hoveredIndex == null) return;
 
-    if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
+    if (controller.keyboard.areKeysPressed(<LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
       return ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
       return ToggleSelectionBehavior(hoveredIndex).invoke(controller);
@@ -38,14 +38,14 @@ class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
   }
 
   @override
-  List<Object?> get props => [endDetails, startDetails];
+  List<Object?> get props => <Object?>[endDetails, startDetails];
 
   @override
   void resolve(SheetController controller) {
     SheetIndex? hoveredIndex = endDetails.hoveredItem?.index;
     if (hoveredIndex == null) return;
 
-    if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
+    if (controller.keyboard.areKeysPressed(<LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
       ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
       ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
@@ -66,5 +66,5 @@ class SheetSelectionEndGesture extends SheetDragGesture {
   }
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }

@@ -18,10 +18,10 @@ class SheetMouseListener {
 
   Stream<SheetGesture> get stream => _gesturesStream.stream;
 
-  final ValueNotifier<Offset> localPosition = ValueNotifier(Offset.zero);
-  final ValueNotifier<Offset> globalPosition = ValueNotifier(Offset.zero);
-  final ValueNotifier<ViewportItem?> hoveredItem = ValueNotifier(null);
-  final ValueNotifier<SystemMouseCursor> cursor = ValueNotifier(SystemMouseCursors.basic);
+  final ValueNotifier<Offset> localPosition = ValueNotifier<Offset>(Offset.zero);
+  final ValueNotifier<Offset> globalPosition = ValueNotifier<Offset>(Offset.zero);
+  final ValueNotifier<ViewportItem?> hoveredItem = ValueNotifier<ViewportItem?>(null);
+  final ValueNotifier<SystemMouseCursor> cursor = ValueNotifier<SystemMouseCursor>(SystemMouseCursors.basic);
 
   bool _enabled = true;
   bool _scrollOnDragDisabled = false;

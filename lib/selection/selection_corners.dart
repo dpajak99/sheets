@@ -20,13 +20,13 @@ class SelectionCorners<T> with EquatableMixin {
   }) {
     switch (direction) {
       case SelectionDirection.bottomRight:
-        return SelectionCorners(topLeft, topRight, bottomLeft, bottomRight);
+        return SelectionCorners<T>(topLeft, topRight, bottomLeft, bottomRight);
       case SelectionDirection.bottomLeft:
-        return SelectionCorners(topRight, topLeft, bottomRight, bottomLeft);
+        return SelectionCorners<T>(topRight, topLeft, bottomRight, bottomLeft);
       case SelectionDirection.topRight:
-        return SelectionCorners(bottomLeft, bottomRight, topLeft, topRight);
+        return SelectionCorners<T>(bottomLeft, bottomRight, topLeft, topRight);
       case SelectionDirection.topLeft:
-        return SelectionCorners(bottomRight, bottomLeft, topRight, topLeft);
+        return SelectionCorners<T>(bottomRight, bottomLeft, topRight, topLeft);
     }
   }
 
@@ -59,14 +59,14 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
   }
 
   Direction getRelativePosition(CellIndex cellIndex) {
-    Map<Direction, int> directionSpaces = {
+    Map<Direction, int> directionSpaces = <Direction, int>{
       Direction.top: cellIndex.rowIndex.value - topLeft.rowIndex.value,
       Direction.left: cellIndex.columnIndex.value - topLeft.columnIndex.value,
       Direction.bottom: bottomRight.rowIndex.value - cellIndex.rowIndex.value,
       Direction.right: bottomRight.columnIndex.value - cellIndex.columnIndex.value,
     };
 
-    return directionSpaces.entries.reduce((a, b) => a.value < b.value ? a : b).key;
+    return directionSpaces.entries.reduce((MapEntry<Direction, int> a, MapEntry<Direction, int> b) => a.value < b.value ? a : b).key;
   }
 
   bool isNestedIn(SelectionCellCorners corners) {

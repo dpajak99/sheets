@@ -49,5 +49,5 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
   }
 
   @override
-  List<Object?> get props => [_vertical, _horizontal];
+  List<Object?> get props => <Object?>[_vertical, _horizontal];
 }

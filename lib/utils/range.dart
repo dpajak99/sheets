@@ -13,9 +13,9 @@ class Range<A extends NumericIndexMixin> with EquatableMixin {
 
   factory Range(A value1, A value2) {
     if (value1 < value2) {
-      return Range._(value1, value2);
+      return Range<A>._(value1, value2);
     } else {
-      return Range._(value2, value1);
+      return Range<A>._(value2, value1);
     }
   }
 
@@ -28,5 +28,5 @@ class Range<A extends NumericIndexMixin> with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [start, end];
+  List<Object?> get props => <Object?>[start, end];
 }

@@ -23,7 +23,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
   }
 
   @override
-  SheetRangeSelection copyWith({T? start, T? end, bool? completed}) {
+  SheetRangeSelection<T> copyWith({T? start, T? end, bool? completed}) {
     return SheetRangeSelection<T>(start ?? _start, end ?? _end, completed: completed ?? isCompleted);
   }
 
@@ -72,8 +72,6 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
   }
 
   SheetSelection simplify() {
-    print('Sinplifyint $T Selection Range');
-    print('Simplifying Range (${T == CellIndex} && $selectionStart == $selectionEnd)');
     if (T == CellIndex && selectionStart == selectionEnd) {
       return SheetSingleSelection(cellStart, completed: isCompleted);
     } else {
@@ -87,8 +85,8 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
   }
 
   @override
-  SheetRangeSelectionRenderer createRenderer(SheetViewport viewport) {
-    return SheetRangeSelectionRenderer(viewport: viewport, selection: this);
+  SheetRangeSelectionRenderer<T> createRenderer(SheetViewport viewport) {
+    return SheetRangeSelectionRenderer<T>(viewport: viewport, selection: this);
   }
 
   @override
@@ -118,12 +116,12 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    List<SheetRangeSelection> newSelections = [];
+    List<SheetRangeSelection<CellIndex>> newSelections = <SheetRangeSelection<CellIndex>>[];
 
     SelectionCellCorners currentCorners = cellCorners;
     SelectionCellCorners? subtractedCorners = subtractedSelection.cellCorners;
     if (subtractedCorners == null) {
-      return [this];
+      return <SheetSelection>[this];
     }
 
     CellIndex currentStart = currentCorners.topLeft;
@@ -133,7 +131,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
     CellIndex subtractionEnd = subtractedCorners.bottomRight;
 
     if (currentStart.rowIndex != subtractionStart.rowIndex) {
-      newSelections.add(SheetRangeSelection(
+      newSelections.add(SheetRangeSelection<CellIndex>(
         currentStart,
         CellIndex(rowIndex: subtractionStart.rowIndex.move(-1), columnIndex: currentEnd.columnIndex),
         completed: true,
@@ -141,7 +139,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
     }
 
     if (currentStart.columnIndex != subtractionStart.columnIndex) {
-      newSelections.add(SheetRangeSelection(
+      newSelections.add(SheetRangeSelection<CellIndex>(
         CellIndex(rowIndex: subtractionStart.rowIndex, columnIndex: currentStart.columnIndex),
         CellIndex(rowIndex: subtractionEnd.rowIndex, columnIndex: subtractionStart.columnIndex.move(-1)),
         completed: true,
@@ -149,7 +147,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
     }
 
     if (currentEnd.rowIndex != subtractionEnd.rowIndex) {
-      newSelections.add(SheetRangeSelection(
+      newSelections.add(SheetRangeSelection<CellIndex>(
         CellIndex(rowIndex: subtractionEnd.rowIndex.move(1), columnIndex: currentStart.columnIndex),
         currentEnd,
         completed: true,
@@ -157,7 +155,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
     }
 
     if (currentEnd.columnIndex != subtractionEnd.columnIndex) {
-      newSelections.add(SheetRangeSelection(
+      newSelections.add(SheetRangeSelection<CellIndex>(
         CellIndex(rowIndex: subtractionStart.rowIndex, columnIndex: subtractionEnd.columnIndex.move(1)),
         CellIndex(rowIndex: subtractionEnd.rowIndex, columnIndex: currentEnd.columnIndex),
         completed: true,
@@ -168,5 +166,5 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => [_start, _end, isCompleted];
+  List<Object?> get props => <Object?>[_start, _end, isCompleted];
 }

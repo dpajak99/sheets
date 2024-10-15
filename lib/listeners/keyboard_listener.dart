@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class SheetKeyboardListener {
-  List<int> activeKeys = [];
+  List<int> activeKeys = <int>[];
 
-  final Map<List<int>, Function> _keyPressedListeners = {};
-  final Map<int, Function> _keyReleasedListeners = {};
+  final Map<List<int>, Function> _keyPressedListeners = <List<int>, Function>{};
+  final Map<int, Function> _keyReleasedListeners = <int, Function>{};
 
   void dispose() {
     activeKeys.clear();
@@ -13,7 +13,7 @@ class SheetKeyboardListener {
 
   void addKey(LogicalKeyboardKey logicalKeyboardKey) {
     activeKeys.add(logicalKeyboardKey.keyId);
-    _keyPressedListeners.forEach((keys, callback) {
+    _keyPressedListeners.forEach((List<int> keys, Function callback) {
       if (areKeyIdsPressed(keys)) {
         callback();
       }
@@ -23,7 +23,7 @@ class SheetKeyboardListener {
   void removeKey(LogicalKeyboardKey logicalKeyboardKey) {
     activeKeys.remove(logicalKeyboardKey.keyId);
     if(activeKeys.isNotEmpty) return;
-    _keyReleasedListeners.forEach((keys, callback) {
+    _keyReleasedListeners.forEach((int keys, Function callback) {
       if (keys == logicalKeyboardKey.keyId) {
         callback();
       }
@@ -35,7 +35,7 @@ class SheetKeyboardListener {
   }
 
   bool areKeysPressed(List<LogicalKeyboardKey> keys) {
-    List<int> checkedKeys = keys.map((key) => key.keyId).toList();
+    List<int> checkedKeys = keys.map((LogicalKeyboardKey key) => key.keyId).toList();
     return listEquals(activeKeys, checkedKeys);
   }
 
@@ -44,11 +44,11 @@ class SheetKeyboardListener {
   }
 
   void onKeyPressed(LogicalKeyboardKey key, Function callback) {
-    _keyPressedListeners[[key.keyId]] = callback;
+    _keyPressedListeners[<int>[key.keyId]] = callback;
   }
 
   void onKeysPressed(List<LogicalKeyboardKey> keys, Function callback) {
-    List<int> keyIds = keys.map((key) => key.keyId).toList();
+    List<int> keyIds = keys.map((LogicalKeyboardKey key) => key.keyId).toList();
     _keyPressedListeners[keyIds] = callback;
   }
 

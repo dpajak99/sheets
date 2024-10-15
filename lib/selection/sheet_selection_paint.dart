@@ -33,7 +33,7 @@ abstract class SheetSelectionPaint {
     canvas.drawRect(rect, backgroundPaint);
   }
 
-  void paintSelectionBorder(Canvas canvas, Rect rect, {top = true, right = true, bottom = true, left = true}) {
+  void paintSelectionBorder(Canvas canvas, Rect rect, {bool top = true, bool right = true, bool bottom = true, bool left = true}) {
     Paint selectionPaint = Paint()
       ..color = const Color(0xff3572e3)
       ..strokeWidth = borderWidth

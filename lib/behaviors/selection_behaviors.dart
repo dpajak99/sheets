@@ -82,9 +82,8 @@ class SelectionFillBehavior extends SelectionBehavior {
     if (this.hoveredIndex is! CellIndex) return;
     CellIndex hoveredIndex = this.hoveredIndex as CellIndex;
 
-    SheetSelection baseSelection = (controller.selectionController.visibleSelection is SheetFillSelection)
-        ? (controller.selectionController.visibleSelection as SheetFillSelection).baseSelection
-        : controller.selectionController.visibleSelection;
+    SheetSelection visibleSelection = controller.selectionController.visibleSelection;
+    SheetSelection baseSelection = visibleSelection is SheetFillSelection ? visibleSelection.baseSelection : visibleSelection;
 
     SelectionCellCorners? corners = baseSelection.cellCorners;
     if (corners == null) return;

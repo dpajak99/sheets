@@ -80,7 +80,7 @@ class _SelectionPainter extends ChangeNotifier implements CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth - borderWidth, columnHeadersHeight - borderWidth, size.width, size.height));
 
-    SheetSelectionRenderer selectionRenderer = _sheetSelection.createRenderer(_viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer = _sheetSelection.createRenderer(_viewport);
 
     SheetSelectionPaint selectionPaint = selectionRenderer.getPaint();
     selectionPaint.paint(_viewport, canvas, size);

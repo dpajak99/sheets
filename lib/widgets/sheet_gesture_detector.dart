@@ -25,7 +25,7 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<SystemMouseCursor>(
       valueListenable: mouseListener.cursor,
       builder: (BuildContext context, SystemMouseCursor cursor, _) {
         return Listener(
@@ -34,7 +34,7 @@ class _SheetGestureDetectorState extends State<SheetGestureDetector> {
           onPointerHover: _handlePointerHover,
           onPointerMove: _handlePointerMove,
           onPointerUp: _handlePointerUp,
-          onPointerSignal: (event) {
+          onPointerSignal: (PointerSignalEvent event) {
             if (event is PointerScrollEvent) {
               mouseListener.scroll(event.scrollDelta);
             }

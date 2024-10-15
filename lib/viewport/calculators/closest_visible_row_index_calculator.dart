@@ -36,12 +36,12 @@ class ClosestVisibleRowIndexCalculator {
       return ClosestVisible<RowIndex>.fullyVisible(cellRow);
     } else if (missingTop) {
       return ClosestVisible<RowIndex>.partiallyVisible(
-        hiddenBorders: [Direction.top],
+        hiddenBorders: <Direction>[Direction.top],
         value: firstVisibleRow,
       );
     } else {
       return ClosestVisible<RowIndex>.partiallyVisible(
-        hiddenBorders: [Direction.bottom],
+        hiddenBorders: <Direction>[Direction.bottom],
         value: lastVisibleRow,
       );
     }

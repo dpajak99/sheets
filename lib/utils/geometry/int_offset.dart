@@ -13,5 +13,5 @@ class IntOffset with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [dx, dy];
+  List<Object?> get props => <Object?>[dx, dy];
 }

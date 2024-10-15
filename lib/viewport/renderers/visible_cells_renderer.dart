@@ -26,7 +26,7 @@ class VisibleCellsRenderer {
   /// created using [ViewportCell.fromColumnRow] and added to the list of
   /// visible cells.
   List<ViewportCell> build() {
-    List<ViewportCell> visibleCells = [];
+    List<ViewportCell> visibleCells = <ViewportCell>[];
 
     for (ViewportRow row in visibleRows) {
       for (ViewportColumn column in visibleColumns) {

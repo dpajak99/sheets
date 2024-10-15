@@ -57,14 +57,14 @@ class SelectionController extends ChangeNotifier {
   void combine(SheetSelection selection, SheetSelection appendedSelection) {
     if (selection is SheetMultiSelection) {
       List<SheetSelection> previousSelections = selection.selections.toList();
-      state.update(SheetSelection.multi(selections: [...previousSelections, appendedSelection]));
+      state.update(SheetSelection.multi(selections: <SheetSelection>[...previousSelections, appendedSelection]));
     } else {
       SheetSelection? previousSelection = selection;
       if (previousSelection is SheetSingleSelection) {
-        previousSelection = SheetSelection.multi(selections: [previousSelection]);
+        previousSelection = SheetSelection.multi(selections: <SheetSelection>[previousSelection]);
       }
 
-      state.update(SheetSelection.multi(selections: [previousSelection, appendedSelection]));
+      state.update(SheetSelection.multi(selections: <SheetSelection>[previousSelection, appendedSelection]));
     }
   }
 

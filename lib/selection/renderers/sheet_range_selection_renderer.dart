@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/selection/selection_rect.dart';
 import 'package:sheets/viewport/viewport_item.dart';
 import 'package:sheets/selection/paints/sheet_range_selection_paint.dart';
@@ -9,7 +10,7 @@ import 'package:sheets/utils/cached_value.dart';
 import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SheetRangeSelectionRenderer extends SheetSelectionRenderer<SheetRangeSelection> {
+class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRenderer<SheetRangeSelection<T>> {
   late final CachedValue<SelectionRect?> _selectionRect;
 
   SheetRangeSelectionRenderer({
@@ -27,7 +28,7 @@ class SheetRangeSelectionRenderer extends SheetSelectionRenderer<SheetRangeSelec
 
   @override
   SheetSelectionPaint getPaint({bool? mainCellVisible, bool? backgroundVisible}) {
-    return SheetRangeSelectionPaint(this, mainCellVisible, backgroundVisible);
+    return SheetRangeSelectionPaint<T>(this, mainCellVisible, backgroundVisible);
   }
 
   SelectionRect? get selectionRect => _selectionRect.value;
@@ -39,7 +40,7 @@ class SheetRangeSelectionRenderer extends SheetSelectionRenderer<SheetRangeSelec
       ClosestVisible<ViewportCell> startCell = viewport.visibleContent.findCellOrClosest(selection.cellStart);
       ClosestVisible<ViewportCell> endCell = viewport.visibleContent.findCellOrClosest(selection.cellEnd);
       
-      List<Direction> hiddenBorders = [...startCell.hiddenBorders, ...endCell.hiddenBorders];
+      List<Direction> hiddenBorders = <Direction>[...startCell.hiddenBorders, ...endCell.hiddenBorders];
       return SelectionRect(startCell.value.rect, endCell.value.rect, selection.direction, hiddenBorders: hiddenBorders);
     } else {
       return null;

@@ -34,12 +34,12 @@ class ClosestVisibleColumnIndexCalculator {
       return ClosestVisible<ColumnIndex>.fullyVisible(cellColumn);
     } else if (cellColumn < firstVisibleColumn) {
       return ClosestVisible<ColumnIndex>.partiallyVisible(
-        hiddenBorders: [Direction.left],
+        hiddenBorders: <Direction>[Direction.left],
         value: firstVisibleColumn,
       );
     } else {
       return ClosestVisible<ColumnIndex>.partiallyVisible(
-        hiddenBorders: [Direction.right],
+        hiddenBorders: <Direction>[Direction.right],
         value: lastVisibleColumn,
       );
     }

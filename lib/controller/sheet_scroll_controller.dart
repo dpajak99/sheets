@@ -11,12 +11,12 @@ import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 class SheetScrollController extends ChangeNotifier {
   final SheetScrollPhysics physics = SmoothScrollPhysics();
 
-  final DirectionalValues<SheetScrollPosition> position = DirectionalValues(
+  final DirectionalValues<SheetScrollPosition> position = DirectionalValues<SheetScrollPosition>(
     SheetScrollPosition(),
     SheetScrollPosition(),
   );
 
-  late final DirectionalValues<SheetScrollMetrics> metrics = DirectionalValues(
+  late final DirectionalValues<SheetScrollMetrics> metrics = DirectionalValues<SheetScrollMetrics>(
     SheetScrollMetrics.zero(SheetAxisDirection.vertical),
     SheetScrollMetrics.zero(SheetAxisDirection.horizontal),
   );
