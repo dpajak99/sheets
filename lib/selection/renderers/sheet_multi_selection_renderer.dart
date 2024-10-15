@@ -5,12 +5,10 @@ import 'package:sheets/selection/sheet_selection_paint.dart';
 import 'package:sheets/selection/sheet_selection_renderer.dart';
 import 'package:sheets/selection/types/sheet_multi_selection.dart';
 
-class SheetMultiSelectionRenderer extends SheetSelectionRenderer {
-  final SheetMultiSelection selection;
-
+class SheetMultiSelectionRenderer extends SheetSelectionRenderer<SheetMultiSelection> {
   SheetMultiSelectionRenderer({
+    required super.selection,
     required super.viewport,
-    required this.selection,
   });
 
   @override

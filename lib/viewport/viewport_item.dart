@@ -12,7 +12,7 @@ abstract class ViewportItem with EquatableMixin {
 
   String get value;
 
-  SheetItemIndex get index;
+  SheetIndex get index;
 }
 
 class ViewportRow extends ViewportItem {

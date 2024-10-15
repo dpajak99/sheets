@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/selection/selection_rect.dart';
 import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/selection/renderers/sheet_range_selection_renderer.dart';
-import 'package:sheets/selection/selection_bounds.dart';
 import 'package:sheets/selection/sheet_selection_paint.dart';
 
 class SheetRangeSelectionPaint extends SheetSelectionPaint {
@@ -15,22 +15,20 @@ class SheetRangeSelectionPaint extends SheetSelectionPaint {
 
   @override
   void paint(SheetViewport viewport, Canvas canvas, Size size) {
-    SelectionBounds? selectionBounds = renderer.selectionBounds;
-    if (selectionBounds == null) return;
+    SelectionRect? selectionRect = renderer.selectionRect;
+    if (selectionRect == null) return;
 
-    Rect selectionRect = selectionBounds.selectionRect;
-
-    if (mainCellVisible && selectionBounds.isStartCellVisible) paintMainCell(canvas, selectionBounds.mainCellRect);
+    if (mainCellVisible && renderer.mainCell != null) paintMainCell(canvas, renderer.mainCell!.rect);
     if (backgroundVisible) paintSelectionBackground(canvas, selectionRect);
 
     if (renderer.selection.isCompleted) {
       paintSelectionBorder(
         canvas,
         selectionRect,
-        top: selectionBounds.isTopBorderVisible,
-        right: selectionBounds.isRightBorderVisible,
-        bottom: selectionBounds.isBottomBorderVisible,
-        left: selectionBounds.isLeftBorderVisible,
+        top: selectionRect.isTopBorderVisible,
+        right: selectionRect.isRightBorderVisible,
+        bottom: selectionRect.isBottomBorderVisible,
+        left: selectionRect.isLeftBorderVisible,
       );
     }
   }

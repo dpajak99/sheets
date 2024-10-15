@@ -37,6 +37,13 @@ class SheetViewportContentData {
     return cells.any((cell) => cell.index == cellIndex);
   }
 
+  ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
+    if (containsCell(cellIndex)) {
+      return ClosestVisible<ViewportCell>.fullyVisible(findCell(cellIndex)!);
+    }
+    return findClosestCell(cellIndex);
+  }
+
   /// Finds and returns the visible cell with the given [cellIndex],
   /// or `null` if the cell is not found.
   ViewportCell? findCell(CellIndex cellIndex) {

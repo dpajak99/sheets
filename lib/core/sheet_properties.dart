@@ -12,8 +12,8 @@ class SheetProperties extends ChangeNotifier {
 
   Map<RowIndex, RowStyle> get customRowStyles => _customRowStyles;
 
-  int columnCount = 1400;
-  int rowCount = 1000;
+  int columnCount = 10;
+  int rowCount = 10;
 
   void addRows(int count) {
     rowCount += count;

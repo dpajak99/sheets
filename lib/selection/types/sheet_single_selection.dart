@@ -8,9 +8,9 @@ import 'package:sheets/selection/sheet_selection.dart';
 class SheetSingleSelection extends SheetSelection {
   final CellIndex selectedIndex;
 
-  SheetSingleSelection({
-    required this.selectedIndex,
-    required super.completed,
+  SheetSingleSelection(
+    this.selectedIndex, {
+    super.completed = false,
   });
 
   SheetSingleSelection.defaultSelection()
@@ -18,25 +18,33 @@ class SheetSingleSelection extends SheetSelection {
         super(completed: true);
 
   @override
-  CellIndex get start => selectedIndex;
+  SheetSingleSelection copyWith({
+    CellIndex? selectedIndex,
+    bool? completed,
+  }) {
+    return SheetSingleSelection(
+      selectedIndex ?? this.selectedIndex,
+      completed: completed ?? isCompleted,
+    );
+  }
 
   @override
-  CellIndex get end => selectedIndex;
+  CellIndex get mainCell => selectedIndex;
 
   @override
-  Set<CellIndex> get selectedCells => {selectedIndex};
+  CellIndex get selectionStart => selectedIndex;
 
   @override
-  SelectionCellCorners get selectionCellCorners => SelectionCellCorners.single(selectedIndex);
+  CellIndex get selectionEnd => selectedIndex;
+
+  @override
+  SelectionCellCorners get cellCorners => SelectionCellCorners.single(selectedIndex);
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) => SelectionStatus(selectedIndex.columnIndex == columnIndex, false);
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(selectedIndex.rowIndex == rowIndex, false);
-
-  @override
-  bool containsCell(CellIndex cellIndex) => selectedIndex == cellIndex;
 
   @override
   String stringifySelection() => selectedIndex.stringifyPosition();
@@ -48,13 +56,19 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   SheetSelection complete() {
-    return SheetSingleSelection(selectedIndex: selectedIndex, completed: true);
+    return SheetSingleSelection(selectedIndex, completed: true);
   }
 
   @override
-  SheetSelection modifyEnd(SheetItemIndex itemIndex, {required bool completed}) {
-    return SheetSelection.range(start: start, end: itemIndex, completed: completed);
+  SheetSelection modifyEnd(SheetIndex itemIndex) {
+    return SheetSelection.range(start: selectionStart, end: itemIndex);
   }
+
+  @override
+  bool containsColumn(ColumnIndex index) => selectedIndex.columnIndex == index;
+
+  @override
+  bool containsRow(RowIndex index) => selectedIndex.rowIndex == index;
 
   @override
   bool containsSelection(SheetSelection nestedSelection) {
@@ -73,4 +87,3 @@ class SheetSingleSelection extends SheetSelection {
   @override
   List<Object?> get props => <Object?>[selectedIndex, isCompleted];
 }
-

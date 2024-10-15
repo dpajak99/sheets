@@ -56,7 +56,7 @@ class SheetDragDetails with EquatableMixin {
     required this.hoveredItem,
   });
 
-  SheetItemIndex get hoveredItemIndex => hoveredItem!.index;
+  SheetIndex get hoveredItemIndex => hoveredItem!.index;
 
   SheetDragDetails.create(Offset mousePosition, [ViewportItem? hoveredItem])
       : this(

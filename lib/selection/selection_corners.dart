@@ -69,38 +69,11 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
     return directionSpaces.entries.reduce((a, b) => a.value < b.value ? a : b).key;
   }
 
-  bool contains(CellIndex cellIndex) {
-    return cellIndex.rowIndex.value >= topLeft.rowIndex.value &&
-        cellIndex.rowIndex.value <= bottomLeft.rowIndex.value &&
-        cellIndex.columnIndex.value >= topLeft.columnIndex.value &&
-        cellIndex.columnIndex.value <= topRight.columnIndex.value;
-  }
-
-  bool containsRow(RowIndex rowIndex) {
-    return rowIndex.value >= topLeft.rowIndex.value && rowIndex.value <= bottomLeft.rowIndex.value;
-  }
-
-  bool containsColumn(ColumnIndex columnIndex) {
-    return columnIndex.value >= topLeft.columnIndex.value && columnIndex.value <= topRight.columnIndex.value;
-  }
-
   bool isNestedIn(SelectionCellCorners corners) {
     return topLeft.rowIndex.value >= corners.topLeft.rowIndex.value &&
         topLeft.columnIndex.value >= corners.topLeft.columnIndex.value &&
         bottomRight.rowIndex.value <= corners.bottomRight.rowIndex.value &&
         bottomRight.columnIndex.value <= corners.bottomRight.columnIndex.value;
-  }
-
-  int get topIndex => topLeft.rowIndex.value;
-
-  int get bottomIndex => bottomLeft.rowIndex.value;
-
-  int get leftIndex => topLeft.columnIndex.value;
-
-  int get rightIndex => topRight.columnIndex.value;
-
-  String stringifyCorners() {
-    return '${topLeft.stringifyPosition()}, ${topRight.stringifyPosition()}, ${bottomLeft.stringifyPosition()}, ${bottomRight.stringifyPosition()}';
   }
 
   @override

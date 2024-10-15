@@ -1,4 +1,3 @@
-import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/selection/renderers/sheet_multi_selection_renderer.dart';
 import 'package:sheets/selection/selection_status.dart';
 import 'package:sheets/core/sheet_item_index.dart';
@@ -9,60 +8,47 @@ import 'package:sheets/selection/sheet_selection_renderer.dart';
 import 'package:sheets/utils/extensions/iterable_extensions.dart';
 
 class SheetMultiSelection extends SheetSelection {
-  final List<SheetSelection> mergedSelections;
-  final CellIndex? _mainCell;
+  final List<SheetSelection> selections;
 
   SheetMultiSelection({
-    required this.mergedSelections,
-    CellIndex? mainCell,
-  })  : _mainCell = mainCell,
+    required Iterable<SheetSelection> selections,
+  })  : selections = selections.toSet().toList(),
+        assert(selections.isNotEmpty, 'Merged selections cannot be empty'),
         super(completed: true);
 
+  @override
   SheetMultiSelection copyWith({
-    List<SheetSelection>? mergedSelections,
-    CellIndex? mainCell,
     bool? completed,
+    Iterable<SheetSelection>? selections,
   }) {
-    return SheetMultiSelection(
-      mergedSelections: mergedSelections ?? this.mergedSelections,
-      mainCell: mainCell ?? _mainCell,
-    )..applyProperties(sheetProperties);
+    return SheetMultiSelection(selections: selections ?? this.selections);
   }
 
   @override
-  SheetItemIndex get start => mergedSelections.last.start;
+  CellIndex get mainCell => selections.last.mainCell;
 
   @override
-  SheetItemIndex get end => mergedSelections.last.end;
+  SheetIndex get selectionStart => selections.last.selectionStart;
 
   @override
-  CellIndex get mainCell {
-    if (_mainCell != null) {
-      return _mainCell;
-    } else {
-      return endCellIndex;
-    }
+  SheetIndex get selectionEnd => selections.last.selectionEnd;
+
+  @override
+  bool containsRow(RowIndex index) {
+    return selections.any((selection) => selection.containsRow(index));
   }
 
   @override
-  bool containsCell(CellIndex cellIndex) {
-    return mergedSelections.any((selection) => selection.containsCell(cellIndex));
+  bool containsColumn(ColumnIndex index) {
+    return selections.any((selection) => selection.containsColumn(index));
   }
 
   @override
-  Set<CellIndex> get selectedCells {
-    return mergedSelections.fold(<CellIndex>{}, (Set<CellIndex> acc, SheetSelection selection) {
-      acc.addAll(selection.selectedCells);
-      return acc;
-    });
-  }
-
-  @override
-  SelectionCellCorners? get selectionCellCorners => null;
+  SelectionCellCorners? get cellCorners => null;
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    return mergedSelections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
+    return selections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
       SelectionStatus columnStatus = selection.isColumnSelected(columnIndex);
       return SelectionStatus(acc.isSelected || columnStatus.isSelected, acc.isFullySelected || columnStatus.isFullySelected);
     });
@@ -70,7 +56,7 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
-    return mergedSelections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
+    return selections.fold(SelectionStatus(false, false), (SelectionStatus acc, SheetSelection selection) {
       SelectionStatus rowStatus = selection.isRowSelected(rowIndex);
       return SelectionStatus(acc.isSelected || rowStatus.isSelected, acc.isFullySelected || rowStatus.isFullySelected);
     });
@@ -78,7 +64,7 @@ class SheetMultiSelection extends SheetSelection {
 
   @override
   String stringifySelection() {
-    return mergedSelections.last.stringifySelection();
+    return selections.last.stringifySelection();
   }
 
   @override
@@ -87,64 +73,36 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  SheetSelection modifyEnd(SheetItemIndex itemIndex, {required bool completed}) {
-    List<SheetSelection> newMergedSelections = mergedSelections.sublist(0, mergedSelections.length - 1);
-    SheetSelection modifiedSelection = mergedSelections.last.modifyEnd(itemIndex, completed: completed);
+  SheetSelection modifyEnd(SheetIndex itemIndex) {
+    List<SheetSelection> newMergedSelections = selections.sublist(0, selections.length - 1);
+    SheetSelection modifiedSelection = selections.last.modifyEnd(itemIndex);
     newMergedSelections.add(modifiedSelection);
 
-    return SheetMultiSelection(
-      mergedSelections: newMergedSelections,
-      mainCell: modifiedSelection.mainCell,
-    );
+    return SheetMultiSelection(selections: newMergedSelections);
   }
 
   @override
   SheetSelection append(SheetSelection appendedSelection) {
-    return copyWith(
-      mergedSelections: [
-        ...mergedSelections,
-        appendedSelection,
-      ],
-      mainCell: appendedSelection.mainCell,
-    );
+    return copyWith(selections: {...selections, appendedSelection});
   }
 
   SheetMultiSelection replaceLast(SheetSelection sheetSelection) {
-    sheetSelection.applyProperties(sheetProperties);
-
-    List<SheetSelection> newMergedSelections = mergedSelections.sublist(0, mergedSelections.length - 1);
+    List<SheetSelection> newMergedSelections = selections.sublist(0, selections.length - 1);
     newMergedSelections.add(sheetSelection);
 
-    return copyWith(
-      mergedSelections: newMergedSelections,
-      mainCell: sheetSelection.mainCell,
-    );
-  }
-
-  @override
-  void applyProperties(SheetProperties properties) {
-    for (SheetSelection selection in mergedSelections) {
-      selection.applyProperties(properties);
-    }
-    super.applyProperties(properties);
+    return copyWith(selections: newMergedSelections);
   }
 
   @override
   bool containsSelection(SheetSelection nestedSelection) {
-    return mergedSelections.any((selection) => selection.containsSelection(nestedSelection));
+    return selections.any((selection) => selection.containsSelection(nestedSelection));
   }
 
   @override
   SheetSelection complete() {
-    return this;
-  }
-
-  @override
-  SheetSelection simplify() {
-    SheetSelection lastSelection = mergedSelections.last;
-    List<SheetSelection> previousSelections = mergedSelections.sublist(0, mergedSelections.length - 1);
+    SheetSelection lastSelection = selections.last;
+    List<SheetSelection> previousSelections = selections.sublist(0, selections.length - 1);
     List<SheetSelection> updatedSelections = [];
-    SheetSelection mainSelection = lastSelection;
 
     bool subtracted = false;
     for (SheetSelection selection in previousSelections) {
@@ -152,7 +110,6 @@ class SheetMultiSelection extends SheetSelection {
         subtracted = true;
         List<SheetSelection> subtractedSelection = selection.subtract(lastSelection);
         if (subtractedSelection.isNotEmpty) {
-          mainSelection = subtractedSelection.last;
           updatedSelections.addAll(subtractedSelection);
         }
       } else {
@@ -160,16 +117,24 @@ class SheetMultiSelection extends SheetSelection {
       }
     }
 
-    return copyWith(
-      completed: true,
-      mergedSelections: subtracted ? updatedSelections : mergedSelections,
-      mainCell: mainSelection.mainCell,
-    );
+    if (subtracted && updatedSelections.isNotEmpty) {
+      return copyWith(selections: updatedSelections.complete(), completed: true).simplify();
+    } else {
+      return copyWith(selections: selections.complete(), completed: true).simplify();
+    }
+  }
+
+  SheetSelection simplify() {
+    if (selections.length == 1) {
+      return selections.first.complete();
+    } else {
+      return this;
+    }
   }
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    List<SheetSelection> updatedSelections = mergedSelections.map((selection) => selection.subtract(subtractedSelection)).whereNotNull().cast();
+    List<SheetSelection> updatedSelections = selections.map((selection) => selection.subtract(subtractedSelection)).whereNotNull().cast();
     if (updatedSelections.isEmpty) {
       return [];
     } else {
@@ -178,5 +143,5 @@ class SheetMultiSelection extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => [mergedSelections, _mainCell];
+  List<Object?> get props => [selections];
 }

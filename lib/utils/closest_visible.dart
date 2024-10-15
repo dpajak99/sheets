@@ -19,6 +19,7 @@ class ClosestVisible<T> with EquatableMixin {
     );
   }
 
+
   @override
   List<Object?> get props => [hiddenBorders, value];
 }

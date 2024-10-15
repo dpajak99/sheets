@@ -6,8 +6,8 @@ import 'package:sheets/selection/types/sheet_fill_selection.dart';
 
 class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer {
   SheetFillSelectionRenderer({
+    required SheetFillSelection super.selection,
     required super.viewport,
-    required super.selection,
   });
 
   @override

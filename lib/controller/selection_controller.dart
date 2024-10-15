@@ -15,24 +15,17 @@ class SelectionState extends ChangeNotifier {
   }
 
   void save() {
-    SheetSelection completedSelection = selection.complete();
-    completedSelection.applyProperties(properties);
-
-    selection = completedSelection.simplify();
-
+    selection = selection.complete();
     notifyListeners();
   }
 
   void update(SheetSelection selection) {
     this.selection = selection;
-    this.selection.applyProperties(properties);
-
     notifyListeners();
   }
 
   void updateProperties(SheetProperties properties) {
     this.properties = properties;
-    selection.applyProperties(properties);
   }
 }
 
@@ -53,37 +46,25 @@ class SelectionController extends ChangeNotifier {
     state.update(customSelection);
   }
 
-  void selectSingle(SheetItemIndex sheetItemIndex, {bool completed = false}) {
+  void selectSingle(SheetIndex sheetItemIndex, {bool completed = false}) {
     state.update(SheetSelection.single(sheetItemIndex, completed: completed));
   }
 
-  void selectRange({required SheetItemIndex start, required SheetItemIndex end, bool completed = false}) {
+  void selectRange({required SheetIndex start, required SheetIndex end, bool completed = false}) {
     state.update(SheetSelection.range(start: start, end: end, completed: completed));
   }
 
   void combine(SheetSelection selection, SheetSelection appendedSelection) {
-    selection.applyProperties(state.properties);
-    appendedSelection.applyProperties(state.properties);
-
     if (selection is SheetMultiSelection) {
-      List<SheetSelection> previousSelections = selection.mergedSelections;
-      state.update(SheetSelection.multi(
-        selections: [
-          ...previousSelections,
-          appendedSelection,
-        ],
-        mainCell: appendedSelection.mainCell,
-      ));
+      List<SheetSelection> previousSelections = selection.selections.toList();
+      state.update(SheetSelection.multi(selections: [...previousSelections, appendedSelection]));
     } else {
       SheetSelection? previousSelection = selection;
       if (previousSelection is SheetSingleSelection) {
-        previousSelection = SheetSelection.multi(selections: [previousSelection], mainCell: previousSelection.mainCell);
+        previousSelection = SheetSelection.multi(selections: [previousSelection]);
       }
 
-      state.update(SheetSelection.multi(
-        selections: [previousSelection, appendedSelection],
-        mainCell: appendedSelection.mainCell,
-      ));
+      state.update(SheetSelection.multi(selections: [previousSelection, appendedSelection]));
     }
   }
 

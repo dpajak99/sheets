@@ -7,17 +7,34 @@ import 'package:sheets/selection/types/sheet_range_selection.dart';
 import 'package:sheets/selection/sheet_selection.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SheetFillSelection extends SheetRangeSelection {
+class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
   final SheetSelection baseSelection;
   final Direction fillDirection;
 
-  SheetFillSelection({
+  SheetFillSelection(
+    super.start,
+    super.end, {
     required this.baseSelection,
     required this.fillDirection,
-    required super.start,
-    required super.end,
     required super.completed,
   }) : assert(baseSelection is! SheetFillSelection);
+
+  @override
+  SheetFillSelection copyWith({
+    T? start,
+    T? end,
+    bool? completed,
+    SheetSelection? baseSelection,
+    Direction? fillDirection,
+  }) {
+    return SheetFillSelection(
+      start ?? selectionStart,
+      end ?? selectionEnd,
+      completed: completed ?? isCompleted,
+      baseSelection: baseSelection ?? this.baseSelection,
+      fillDirection: fillDirection ?? this.fillDirection,
+    );
+  }
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) => baseSelection.isColumnSelected(columnIndex);
@@ -27,18 +44,18 @@ class SheetFillSelection extends SheetRangeSelection {
 
   @override
   SheetSelection complete() {
-    SelectionCellCorners parentCorners = baseSelection.selectionCellCorners!;
-    SelectionCellCorners currentCorners = selectionCellCorners;
+    SelectionCellCorners parentCorners = baseSelection.cellCorners!;
+    SelectionCellCorners currentCorners = cellCorners;
 
     switch (fillDirection) {
       case Direction.top:
-        return SheetRangeSelection(start: currentCorners.topLeft, end: parentCorners.bottomRight, completed: true);
+        return SheetRangeSelection(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
       case Direction.bottom:
-        return SheetRangeSelection(start: parentCorners.topLeft, end: currentCorners.bottomRight, completed: true);
+        return SheetRangeSelection(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
       case Direction.left:
-        return SheetRangeSelection(start: currentCorners.topLeft, end: parentCorners.bottomRight, completed: true);
+        return SheetRangeSelection(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
       case Direction.right:
-        return SheetRangeSelection(start: parentCorners.topLeft, end: currentCorners.bottomRight, completed: true);
+        return SheetRangeSelection(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
     }
   }
 
@@ -47,5 +64,3 @@ class SheetFillSelection extends SheetRangeSelection {
     return SheetFillSelectionRenderer(viewport: viewport, selection: this);
   }
 }
-
-

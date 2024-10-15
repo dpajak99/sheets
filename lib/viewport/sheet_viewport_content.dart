@@ -59,11 +59,15 @@ class SheetViewportContent extends ChangeNotifier {
   ///
   /// Returns `true` if a cell with the specified index is visible, otherwise
   /// returns `false`.
-  bool containsCell(CellIndex cellIndex) => _data.containsCell(cellIndex);
+  bool containsCell(CellIndex cellIndex) => _data.containsCell(cellIndex.toRealIndex(_properties));
+
+  ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
+    return _data.findCellOrClosest(cellIndex.toRealIndex(_properties));
+  }
 
   /// Finds and returns the cell corresponding to the given [cellIndex],
   /// or `null` if the cell is not visible.
-  ViewportCell? findCell(CellIndex cellIndex) => _data.findCell(cellIndex);
+  ViewportCell? findCell(CellIndex cellIndex) => _data.findCell(cellIndex.toRealIndex(_properties));
 
   /// Finds and returns any sheet item at the given [mousePosition], or `null`
   /// if no item is found.
@@ -77,7 +81,7 @@ class SheetViewportContent extends ChangeNotifier {
   /// The closest visible cell may be partially hidden depending on the
   /// viewport, and this method provides access to the closest fully or
   /// partially visible cell.
-  ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) => _data.findClosestCell(cellIndex);
+  ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) => _data.findClosestCell(cellIndex.toRealIndex(_properties));
 
   /// Calculates the list of visible rows in the viewport based on the
   /// [viewportRect] and [scrollPosition].
@@ -85,11 +89,7 @@ class SheetViewportContent extends ChangeNotifier {
   /// This method uses the [VisibleRowsRenderer] to determine which rows should
   /// be visible on the screen.
   List<ViewportRow> _calculateRows(Rect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
-    return VisibleRowsRenderer(
-      properties: _properties,
-      viewportRect: viewportRect,
-      scrollPosition: scrollPosition,
-    ).build();
+    return VisibleRowsRenderer(properties: _properties, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
   }
 
   /// Calculates the list of visible columns in the viewport based on the
@@ -98,11 +98,7 @@ class SheetViewportContent extends ChangeNotifier {
   /// This method uses the [VisibleColumnsRenderer] to determine which columns
   /// should be visible on the screen.
   List<ViewportColumn> _calculateColumns(Rect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
-    return VisibleColumnsRenderer(
-      properties: _properties,
-      viewportRect: viewportRect,
-      scrollPosition: scrollPosition,
-    ).build();
+    return VisibleColumnsRenderer(properties: _properties, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
   }
 
   /// Calculates the list of visible cells in the viewport based on the
@@ -111,9 +107,6 @@ class SheetViewportContent extends ChangeNotifier {
   /// This method uses the [VisibleCellsRenderer] to determine which cells
   /// should be visible on the screen.
   List<ViewportCell> _calculateCells(List<ViewportRow> visibleRows, List<ViewportColumn> visibleColumns) {
-    return VisibleCellsRenderer(
-      visibleRows: visibleRows,
-      visibleColumns: visibleColumns,
-    ).build();
+    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build();
   }
 }

@@ -15,7 +15,7 @@ class SheetSelectionStartGesture extends SheetDragGesture {
 
   @override
   void resolve(SheetController controller) {
-    SheetItemIndex? hoveredIndex = startDetails.hoveredItem?.index;
+    SheetIndex? hoveredIndex = startDetails.hoveredItem?.index;
     if (hoveredIndex == null) return;
 
     if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
@@ -42,7 +42,7 @@ class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
 
   @override
   void resolve(SheetController controller) {
-    SheetItemIndex? hoveredIndex = endDetails.hoveredItem?.index;
+    SheetIndex? hoveredIndex = endDetails.hoveredItem?.index;
     if (hoveredIndex == null) return;
 
     if (controller.keyboard.areKeysPressed([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {

@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/utils/extensions/int.dart';
 import 'package:sheets/utils/numeric_index_mixin.dart';
 
-sealed class SheetItemIndex with EquatableMixin {
+sealed class SheetIndex with EquatableMixin {
   String stringifyPosition();
 
-  static SheetItemIndex matchType(SheetItemIndex base, SheetItemIndex other) {
+  static SheetIndex matchType(SheetIndex base, SheetIndex other) {
     switch(base) {
       case CellIndex _:
         return switch(other) {
@@ -27,13 +29,15 @@ sealed class SheetItemIndex with EquatableMixin {
     }
   }
 
+  SheetIndex toRealIndex(SheetProperties properties);
+
   @override
   String toString() {
     return stringifyPosition();
   }
 }
 
-class CellIndex extends SheetItemIndex {
+class CellIndex extends SheetIndex {
   final RowIndex rowIndex;
   final ColumnIndex columnIndex;
 
@@ -42,9 +46,33 @@ class CellIndex extends SheetItemIndex {
     required this.columnIndex,
   });
 
+  factory CellIndex.fromColumnMin(ColumnIndex columnIndex) {
+    return CellIndex(rowIndex: RowIndex.zero, columnIndex: columnIndex);
+  }
+
+  factory CellIndex.fromColumnMax(ColumnIndex columnIndex) {
+    return CellIndex(rowIndex: RowIndex.max, columnIndex: columnIndex);
+  }
+
+  factory CellIndex.fromRowMin(RowIndex rowIndex) {
+    return CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.zero);
+  }
+
+  factory CellIndex.fromRowMax(RowIndex rowIndex) {
+    return CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.max);
+  }
+
   static CellIndex zero = CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0));
 
   static CellIndex max = CellIndex(rowIndex: RowIndex.max, columnIndex: ColumnIndex.max);
+
+  @override
+  CellIndex toRealIndex(SheetProperties properties) {
+    ColumnIndex realColumnIndex = columnIndex.toRealIndex(properties);
+    RowIndex realRowIndex = rowIndex.toRealIndex(properties);
+
+    return CellIndex(rowIndex: realRowIndex, columnIndex: realColumnIndex);
+  }
 
   CellIndex move(int row, int column) {
     return CellIndex(
@@ -62,14 +90,23 @@ class CellIndex extends SheetItemIndex {
   List<Object?> get props => [rowIndex, columnIndex];
 }
 
-class ColumnIndex extends SheetItemIndex with NumericIndexMixin implements Comparable {
+class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparable {
   final int _value;
 
   ColumnIndex(this._value);
 
   static ColumnIndex zero = ColumnIndex(0);
 
-  static ColumnIndex max = ColumnIndex(-1);
+  static ColumnIndex max = ColumnIndex(Int.max);
+
+  @override
+  ColumnIndex toRealIndex(SheetProperties properties) {
+    if (this == max) {
+      return ColumnIndex(properties.columnCount - 1);
+    } else {
+      return this;
+    }
+  }
 
   ColumnIndex operator -(int number) {
     return ColumnIndex(value - number);
@@ -112,14 +149,23 @@ class ColumnIndex extends SheetItemIndex with NumericIndexMixin implements Compa
   List<Object?> get props => [value];
 }
 
-class RowIndex extends SheetItemIndex with NumericIndexMixin implements Comparable {
+class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable {
   final int _value;
 
   RowIndex(this._value);
 
   static RowIndex zero = RowIndex(0);
 
-  static RowIndex max = RowIndex(-1);
+  static RowIndex max = RowIndex(Int.max);
+
+  @override
+  RowIndex toRealIndex(SheetProperties properties) {
+    if (this == max) {
+      return RowIndex(properties.rowCount - 1);
+    } else {
+      return this;
+    }
+  }
 
   @override
   int get value => _value;
