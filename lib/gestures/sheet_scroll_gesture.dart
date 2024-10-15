@@ -14,9 +14,9 @@ class SheetScrollGesture extends SheetGesture {
   @override
   void resolve(SheetController controller) {
     if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      controller.scrollController.scrollBy(delta.reverse());
+      controller.scroll.scrollBy(delta.reverse());
     } else {
-      controller.scrollController.scrollBy(delta);
+      controller.scroll.scrollBy(delta);
     }
   }
 
@@ -33,10 +33,10 @@ class SheetMouseBoundsScrollGesture extends SheetGesture {
   void resolve(SheetController controller) {
     if(delta.dx != 0) {
       int multiplier = delta.dx > 0 ? 1 : -1;
-      controller.scrollController.scrollBy(Offset(defaultColumnWidth * multiplier, 0));
+      controller.scroll.scrollBy(Offset(defaultColumnWidth * multiplier, 0));
     } else {
       int multiplier = delta.dy > 0 ? 1 : -1;
-      controller.scrollController.scrollBy(Offset(0, defaultRowHeight * multiplier));
+      controller.scroll.scrollBy(Offset(0, defaultRowHeight * multiplier));
     }
   }
 

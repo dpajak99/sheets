@@ -3,6 +3,7 @@ import 'package:sheets/behaviors/selection_behaviors.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/gestures/sheet_drag_gesture.dart';
+import 'package:sheets/selection/sheet_selection.dart';
 
 class SheetSelectionStartGesture extends SheetDragGesture {
   final SheetDragDetails startDetails;
@@ -21,9 +22,9 @@ class SheetSelectionStartGesture extends SheetDragGesture {
     if (controller.keyboard.areKeysPressed(<LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
       return ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      return ToggleSelectionBehavior(hoveredIndex).invoke(controller);
+      return AppendSelectionBehavior(hoveredIndex).invoke(controller);
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      return SelectionRangeBehavior(hoveredIndex).invoke(controller);
+      return RangeSelectionBehavior(hoveredIndex).invoke(controller);
     } else {
       return SingleSelectionBehavior(hoveredIndex).invoke(controller);
     }
@@ -52,7 +53,7 @@ class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
     } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
       ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
     } else {
-      SelectionRangeBehavior(hoveredIndex).invoke(controller);
+      RangeSelectionBehavior(hoveredIndex).invoke(controller);
     }
   }
 }
@@ -62,9 +63,36 @@ class SheetSelectionEndGesture extends SheetDragGesture {
 
   @override
   void resolve(SheetController controller) {
-    controller.selectionController.completeSelection();
+    controller.selection.complete();
   }
 
   @override
   List<Object?> get props => <Object?>[];
+}
+
+class SheetSelectionMoveGesture extends SheetDragGesture {
+  final int dx;
+  final int dy;
+
+  SheetSelectionMoveGesture(this.dx, this.dy);
+
+  @override
+  void resolve(SheetController controller) {
+    SheetSelection selection = controller.selection.value;
+
+    CellIndex maxIndex = CellIndex.max.toRealIndex(controller.properties);
+
+    if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
+      CellIndex newIndex = selection.cellEnd.move(dx, dy).clamp(maxIndex);
+      RangeSelectionBehavior(newIndex).invoke(controller);
+    } else {
+      CellIndex newIndex = selection.mainCell.move(dx, dy).clamp(maxIndex);
+      SingleSelectionBehavior(newIndex).invoke(controller);
+    }
+
+    controller.selection.complete();
+  }
+
+  @override
+  List<Object?> get props => <Object?>[dx, dy];
 }

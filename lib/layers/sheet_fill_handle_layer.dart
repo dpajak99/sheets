@@ -25,20 +25,20 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   @override
   void initState() {
     super.initState();
-    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selectionController.visibleSelection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
-    widget.sheetController.sheetProperties.addListener(_updateFillHandle);
-    widget.sheetController.selectionController.addListener(_updateFillHandle);
-    widget.sheetController.scrollController.addListener(_updateFillHandle);
+    widget.sheetController.properties.addListener(_updateFillHandle);
+    widget.sheetController.selection.addListener(_updateFillHandle);
+    widget.sheetController.scroll.addListener(_updateFillHandle);
   }
 
   @override
   void dispose() {
-    widget.sheetController.sheetProperties.removeListener(_updateFillHandle);
-    widget.sheetController.selectionController.removeListener(_updateFillHandle);
-    widget.sheetController.scrollController.removeListener(_updateFillHandle);
+    widget.sheetController.properties.removeListener(_updateFillHandle);
+    widget.sheetController.selection.removeListener(_updateFillHandle);
+    widget.sheetController.scroll.removeListener(_updateFillHandle);
     super.dispose();
   }
 
@@ -70,7 +70,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 
   void _updateFillHandle() {
-    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selectionController.visibleSelection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
 
     setState(() {
       _visible = selectionRenderer.fillHandleVisible;

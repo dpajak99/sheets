@@ -1,109 +1,56 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/selection_controller.dart';
+import 'package:sheets/gestures/sheet_selection_gesture.dart';
+import 'package:sheets/selection/selection_state.dart';
 import 'package:sheets/core/sheet_item_index.dart';
-import 'package:sheets/gestures/sheet_drag_gesture.dart';
-import 'package:sheets/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
+import 'package:sheets/gestures/sheet_gesture_mapper.dart';
+import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/utils/streamable.dart';
 import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/gestures/sheet_resize_gestures.dart';
-import 'package:sheets/gestures/sheet_selection_gesture.dart';
 import 'package:sheets/listeners/keyboard_listener.dart';
 import 'package:sheets/listeners/mouse_listener.dart';
 
 class SheetController {
-  final SheetProperties sheetProperties = SheetProperties(
-    customColumnStyles: <ColumnIndex, ColumnStyle>{
-      // ColumnIndex(3): ColumnStyle(width: 200),
-    },
-    customRowStyles: <RowIndex, RowStyle>{
-      // RowIndex(8): RowStyle(height: 100),
-    },
-  );
+  SheetController({
+    required this.properties,
+  }) {
+    gestures = Streamable<SheetGesture>();
 
-  final SheetScrollController scrollController = SheetScrollController();
-  late final SheetViewport viewport = SheetViewport(
-    properties: sheetProperties,
-    scrollController: scrollController,
-  );
-  late final SheetKeyboardListener keyboard = SheetKeyboardListener();
-  late final SheetMouseListener mouse = SheetMouseListener(viewport);
+    scroll = SheetScrollController();
+    viewport = SheetViewport(properties, scroll);
+    keyboard = SheetKeyboardListener();
+    mouse = SheetMouseListener(viewport);
+    selection = SelectionState.defaultSelection();
 
-  SelectionController selectionController = SelectionController();
+    gestures.listen(_handleGesture);
+    mouse.stream.listen((SheetGesture gesture) => _handleGesture(gesture, SheetMouseGestureMapper()));
 
-  final StreamController<SheetGesture> _gesturesStream = StreamController<SheetGesture>();
-
-  Stream<SheetGesture> get stream => _gesturesStream.stream;
-
-  SheetController() {
-    scrollController.applyTo(this);
-    selectionController.applyTo(this);
-
-    mouse.stream.listen(_handleMouseGesture);
-    stream.listen(_handleGesture);
-
-    keyboard.onKeysPressed(<LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA], selectionController.selectAll);
-    // -------------------
-    keyboard.onKeyPressed(LogicalKeyboardKey.keyR, () {
-      sheetProperties.addRows(10);
-    });
-    keyboard.onKeyPressed(LogicalKeyboardKey.keyC, () {
-      sheetProperties.addColumns(10);
-    });
+    _setupKeyboardShortcuts();
   }
 
-  void dispose() {
-    _gesturesStream.close();
-    mouse.dispose();
-    keyboard.dispose();
-  }
-
+  final SheetProperties properties;
+  late final Streamable<SheetGesture> gestures;
+  late final SheetViewport viewport;
+  late final SheetScrollController scroll;
+  late final SheetKeyboardListener keyboard;
+  late final SheetMouseListener mouse;
+  late SelectionState selection;
 
   final List<Type> _lockedGestures = <Type>[];
-  void _handleGesture(SheetGesture gesture) {
-    if(_lockedGestures.contains(gesture.runtimeType)) return;
 
-    gesture.resolve(this);
-    Duration? lockdownDuration = gesture.lockdownDuration;
-    if(lockdownDuration != null) {
-      _lockedGestures.add(gesture.runtimeType);
-      Future<void>.delayed(lockdownDuration, () {
-        _lockedGestures.remove(gesture.runtimeType);
-      });
-    }
+  void dispose() {
+    mouse.dispose();
+    keyboard.dispose();
+    gestures.dispose();
   }
 
-  bool fillInProgress = false;
-
-  void _handleMouseGesture(SheetGesture gesture) {
-    switch (gesture) {
-      case SheetDragStartGesture sheetDragStartGesture:
-        return _gesturesStream.add(SheetSelectionStartGesture.from(sheetDragStartGesture));
-
-      case SheetDragUpdateGesture dragUpdateGesture:
-        return _gesturesStream.add(SheetSelectionUpdateGesture.from(dragUpdateGesture));
-
-      case SheetDragEndGesture _:
-        return _gesturesStream.add(SheetSelectionEndGesture());
-
-      case SheetFillStartGesture fillStartGesture:
-        fillInProgress = true;
-        return _gesturesStream.add(fillStartGesture);
-
-      case SheetFillUpdateGesture fillUpdateGesture:
-        if (fillInProgress == false) return;
-        return _gesturesStream.add(fillUpdateGesture);
-
-      case SheetFillEndGesture fillEndGesture:
-        fillInProgress = false;
-        return _gesturesStream.add(fillEndGesture);
-
-      default:
-        return _gesturesStream.add(gesture);
-    }
+  void select(SheetSelection customSelection) {
+    selection.update(customSelection);
   }
 
   void setCursor(SystemMouseCursor cursor) {
@@ -111,10 +58,51 @@ class SheetController {
   }
 
   void resizeColumnBy(ColumnIndex column, double delta) {
-    _gesturesStream.add(SheetResizeColumnGesture(column, delta));
+    gestures.add(SheetResizeColumnGesture(column, delta));
   }
 
   void resizeRowBy(RowIndex row, double delta) {
-    _gesturesStream.add(SheetResizeRowGesture(row, delta));
+    gestures.add(SheetResizeRowGesture(row, delta));
+  }
+
+  void _setupKeyboardShortcuts() {
+    keyboard.onKeysPressed(
+      <LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA],
+      () => select(SheetSelection.all()),
+    );
+    // -------------------
+    keyboard.onKeyPressed(LogicalKeyboardKey.keyR, () {
+      properties.addRows(10);
+    });
+    keyboard.onKeyPressed(LogicalKeyboardKey.keyC, () {
+      properties.addColumns(10);
+    });
+    // -------------------
+    keyboard.onKeyHold(LogicalKeyboardKey.arrowUp, () {
+      gestures.add(SheetSelectionMoveGesture(-1, 0));
+    });
+    keyboard.onKeyHold(LogicalKeyboardKey.arrowDown, () {
+      gestures.add(SheetSelectionMoveGesture(1, 0));
+    });
+    keyboard.onKeyHold(LogicalKeyboardKey.arrowLeft, () {
+      gestures.add(SheetSelectionMoveGesture(0, -1));
+    });
+    keyboard.onKeyHold(LogicalKeyboardKey.arrowRight, () {
+      gestures.add(SheetSelectionMoveGesture(0, 1));
+    });
+  }
+
+  void _handleGesture(SheetGesture gesture, [SheetGestureMapper? mapper]) {
+    SheetGesture convertedGesture = mapper?.convert(gesture) ?? gesture;
+    if (_lockedGestures.contains(convertedGesture.runtimeType)) return;
+
+    convertedGesture.resolve(this);
+    Duration? lockdownDuration = convertedGesture.lockdownDuration;
+    if (lockdownDuration != null) {
+      _lockedGestures.add(convertedGesture.runtimeType);
+      Future<void>.delayed(lockdownDuration, () {
+        _lockedGestures.remove(convertedGesture.runtimeType);
+      });
+    }
   }
 }

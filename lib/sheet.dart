@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/layers/sheet_cells_layer.dart';
 import 'package:sheets/layers/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/sheet_headers_layer.dart';
@@ -21,7 +23,12 @@ class SheetPage extends StatefulWidget {
 }
 
 class SheetPageState extends State<SheetPage> {
-  final SheetController sheetController = SheetController();
+  final SheetController sheetController = SheetController(
+    properties: SheetProperties(
+      customColumnStyles: <ColumnIndex, ColumnStyle>{},
+      customRowStyles: <RowIndex, RowStyle>{},
+    ),
+  );
 
   @override
   void initState() {
@@ -83,7 +90,7 @@ class SheetState extends State<Sheet> {
           color: Color(0xfff8faf8),
         ),
         child: SheetScrollable(
-          scrollController: sheetController.scrollController,
+          scrollController: sheetController.scroll,
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return SheetContent(sheetController: sheetController);

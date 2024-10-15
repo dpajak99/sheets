@@ -38,10 +38,8 @@ class SheetViewport extends ChangeNotifier {
   /// provided [properties] and [scrollController].
   ///
   /// The content within the viewport is initialized and rebuilt when necessary.
-  SheetViewport({
-    required SheetProperties properties,
-    required SheetScrollController scrollController,
-  })  : _scrollController = scrollController,
+  SheetViewport(SheetProperties properties, SheetScrollController scrollController)
+      : _scrollController = scrollController,
         _properties = properties {
     _scrollPosition = _scrollController.position;
 

@@ -13,8 +13,8 @@ class SheetResizeColumnGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    ColumnStyle columnStyle = controller.sheetProperties.getColumnStyle(columnIndex);
-    controller.sheetProperties.setColumnStyle(
+    ColumnStyle columnStyle = controller.properties.getColumnStyle(columnIndex);
+    controller.properties.setColumnStyle(
       columnIndex,
       columnStyle.copyWith(width: max(10, columnStyle.width + delta)),
     );
@@ -32,8 +32,8 @@ class SheetResizeRowGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    RowStyle rowStyle = controller.sheetProperties.getRowStyle(rowIndex);
-    controller.sheetProperties.setRowStyle(
+    RowStyle rowStyle = controller.properties.getRowStyle(rowIndex);
+    controller.properties.setRowStyle(
       rowIndex,
       rowStyle.copyWith(height: max(10, rowStyle.height + delta)),
     );

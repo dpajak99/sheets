@@ -18,18 +18,18 @@ class SingleSelectionBehavior extends SelectionBehavior {
   @override
   void invoke(SheetController controller) {
     SheetSelection selection = SheetSelection.single(hoveredIndex);
-    controller.selectionController.customSelection(selection);
+    controller.select(selection);
   }
 }
 
-class ToggleSelectionBehavior extends SelectionBehavior {
+class AppendSelectionBehavior extends SelectionBehavior {
   final SheetIndex pressedIndex;
 
-  ToggleSelectionBehavior(this.pressedIndex);
+  AppendSelectionBehavior(this.pressedIndex);
 
   @override
   void invoke(SheetController controller) {
-    SheetSelection selection = controller.selectionController.visibleSelection;
+    SheetSelection selection = controller.selection.value;
     SheetSelection appendedSelection = SheetSelection.single(pressedIndex);
 
     if (selection == appendedSelection) {
@@ -37,24 +37,24 @@ class ToggleSelectionBehavior extends SelectionBehavior {
     }
 
     SheetSelection updatedSelection = selection.append(appendedSelection);
-    controller.selectionController.customSelection(updatedSelection);
+    controller.select(updatedSelection);
   }
 }
 
-class SelectionRangeBehavior extends SelectionBehavior {
+class RangeSelectionBehavior extends SelectionBehavior {
   final SheetIndex hoveredIndex;
 
-  SelectionRangeBehavior(this.hoveredIndex);
+  RangeSelectionBehavior(this.hoveredIndex);
 
   @override
   void invoke(SheetController controller) {
-    SheetSelection selection = controller.selectionController.visibleSelection;
+    SheetSelection selection = controller.selection.value;
     if (selection is SheetMultiSelection) {
       selection = selection.selections.last;
     }
 
     SheetSelection updatedSelection = selection.modifyEnd(hoveredIndex);
-    controller.selectionController.customSelection(updatedSelection);
+    controller.select(updatedSelection);
   }
 }
 
@@ -65,24 +65,24 @@ class ModifySelectionRangeBehavior extends SelectionBehavior {
 
   @override
   void invoke(SheetController controller) {
-    SheetSelection selection = controller.selectionController.visibleSelection;
+    SheetSelection selection = controller.selection.value;
 
     SheetSelection updatedSelection = selection.modifyEnd(hoveredIndex);
-    controller.selectionController.customSelection(updatedSelection);
+    controller.select(updatedSelection);
   }
 }
 
-class SelectionFillBehavior extends SelectionBehavior {
+class FillSelectionBehavior extends SelectionBehavior {
   final SheetIndex hoveredIndex;
 
-  SelectionFillBehavior(this.hoveredIndex);
+  FillSelectionBehavior(this.hoveredIndex);
 
   @override
   void invoke(SheetController controller) {
     if (this.hoveredIndex is! CellIndex) return;
     CellIndex hoveredIndex = this.hoveredIndex as CellIndex;
 
-    SheetSelection visibleSelection = controller.selectionController.visibleSelection;
+    SheetSelection visibleSelection = controller.selection.value;
     SheetSelection baseSelection = visibleSelection is SheetFillSelection ? visibleSelection.baseSelection : visibleSelection;
 
     SelectionCellCorners? corners = baseSelection.cellCorners;
@@ -91,7 +91,7 @@ class SelectionFillBehavior extends SelectionBehavior {
     Direction direction = corners.getRelativePosition(hoveredIndex);
 
     if (baseSelection.contains(hoveredIndex)) {
-      return controller.selectionController.customSelection(baseSelection);
+      return controller.select(baseSelection);
     }
 
     late CellIndex start;
@@ -118,6 +118,6 @@ class SelectionFillBehavior extends SelectionBehavior {
 
     SheetSelection selection = SheetSelection.fill(start, end, fillDirection: direction, baseSelection: baseSelection);
 
-    controller.selectionController.customSelection(selection);
+    controller.select(selection);
   }
 }

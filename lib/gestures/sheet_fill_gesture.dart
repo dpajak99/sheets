@@ -21,7 +21,7 @@ class SheetFillUpdateGesture extends SheetFillGesture {
   @override
   void resolve(SheetController controller) {
     if (endDetails.hoveredItem == null) return;
-    SelectionFillBehavior(endDetails.hoveredItem!.index).invoke(controller);
+    FillSelectionBehavior(endDetails.hoveredItem!.index).invoke(controller);
   }
 
   @override
@@ -31,7 +31,7 @@ class SheetFillUpdateGesture extends SheetFillGesture {
 class SheetFillEndGesture extends SheetFillGesture {
   @override
   void resolve(SheetController controller) {
-    controller.selectionController.completeSelection();
+    controller.selection.complete();
   }
 
   @override

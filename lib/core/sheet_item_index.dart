@@ -81,6 +81,10 @@ class CellIndex extends SheetIndex {
     );
   }
 
+  CellIndex clamp(CellIndex max) {
+    return CellIndex(rowIndex: rowIndex.clamp(max.rowIndex), columnIndex: columnIndex.clamp(max.columnIndex));
+  }
+
   @override
   String stringifyPosition() {
     return '${columnIndex.stringifyPosition()}${rowIndex.stringifyPosition()}';
@@ -136,6 +140,10 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
     return result;
   }
 
+  ColumnIndex clamp(ColumnIndex max) {
+    return ColumnIndex(value.clamp(0, max.value));
+  }
+
   @override
   int compareTo(NumericIndexMixin other) {
     if (other is ColumnIndex) {
@@ -172,6 +180,10 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
 
   RowIndex move(int number) {
     return RowIndex(value + number);
+  }
+
+  RowIndex clamp(RowIndex max) {
+    return RowIndex(value.clamp(0, max.value));
   }
 
   @override

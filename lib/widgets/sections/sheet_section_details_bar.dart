@@ -29,7 +29,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
       child: Row(
         children: <Widget>[
           ListenableBuilder(
-            listenable: widget.sheetController.selectionController,
+            listenable: widget.sheetController.selection,
             builder: (BuildContext context, _) {
               return Container(
                 width: 98,
@@ -38,7 +38,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        widget.sheetController.selectionController.visibleSelection.stringifySelection(),
+                        widget.sheetController.selection.stringify(),
                         style: const TextStyle(color: Colors.black, fontSize: 12, height: 1),
                       ),
                     ),
