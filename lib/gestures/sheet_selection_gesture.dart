@@ -2,63 +2,74 @@ import 'package:flutter/services.dart';
 import 'package:sheets/behaviors/selection_behaviors.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
-import 'package:sheets/gestures/sheet_drag_gesture.dart';
+import 'package:sheets/gestures/sheet_gesture.dart';
+import 'package:sheets/listeners/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/viewport/viewport_item.dart';
 
-class SheetSelectionStartGesture extends SheetDragGesture {
-  final SheetDragDetails startDetails;
+class SheetSelectionStartGesture extends SheetGesture {
+  final ViewportItem selectionStart;
 
-  SheetSelectionStartGesture(this.startDetails);
-
-  factory SheetSelectionStartGesture.from(SheetDragStartGesture dragGesture) {
-    return SheetSelectionStartGesture(dragGesture.startDetails);
-  }
+  SheetSelectionStartGesture(this.selectionStart);
 
   @override
   void resolve(SheetController controller) {
-    SheetIndex? hoveredIndex = startDetails.hoveredItem?.index;
-    if (hoveredIndex == null) return;
+    SheetIndex? hoveredIndex = selectionStart.index;
 
-    if (controller.keyboard.areKeysPressed(<LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
-      return ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
-    } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      return AppendSelectionBehavior(hoveredIndex).invoke(controller);
-    } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      return RangeSelectionBehavior(hoveredIndex).invoke(controller);
-    } else {
-      return SingleSelectionBehavior(hoveredIndex).invoke(controller);
-    }
-  }
-}
-
-class SheetSelectionUpdateGesture extends SheetDragUpdateGesture {
-  SheetSelectionUpdateGesture(super.endDetails, {required super.startDetails});
-
-  factory SheetSelectionUpdateGesture.from(SheetDragUpdateGesture dragGesture) {
-    return SheetSelectionUpdateGesture(dragGesture.endDetails, startDetails: dragGesture.startDetails);
-  }
-
-  @override
-  List<Object?> get props => <Object?>[endDetails, startDetails];
-
-  @override
-  void resolve(SheetController controller) {
-    SheetIndex? hoveredIndex = endDetails.hoveredItem?.index;
-    if (hoveredIndex == null) return;
-
-    if (controller.keyboard.areKeysPressed(<LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.shiftLeft])) {
+    if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
       ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
-    } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
-    } else if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
-    } else {
+    } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
+      AppendSelectionBehavior(hoveredIndex).invoke(controller);
+    } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
       RangeSelectionBehavior(hoveredIndex).invoke(controller);
+    } else {
+      SingleSelectionBehavior(hoveredIndex).invoke(controller);
     }
+
+    controller.viewport.ensureIndexFullyVisible(hoveredIndex);
   }
+
+  @override
+  List<Object?> get props => <Object?>[selectionStart];
 }
 
-class SheetSelectionEndGesture extends SheetDragGesture {
+class SheetSelectionUpdateGesture extends SheetGesture {
+  final ViewportItem selectionStart;
+  final ViewportItem selectionEnd;
+
+  SheetSelectionUpdateGesture(this.selectionStart, this.selectionEnd);
+
+  @override
+  void resolve(SheetController controller) {
+    SheetIndex selectionEndIndex = selectionEnd.index;
+
+    SheetSelection selection = controller.selection.value;
+    if (selection.selectionStart is CellIndex) {
+      if (selectionEndIndex is ColumnIndex) {
+        selectionEndIndex = CellIndex(rowIndex: controller.viewport.visibleContent.rows.first.index, columnIndex: selectionEndIndex).move(-1, 0);
+      } else if (selectionEndIndex is RowIndex) {
+        selectionEndIndex = CellIndex(rowIndex: selectionEndIndex, columnIndex: controller.viewport.visibleContent.columns.first.index).move(0, -1);
+      }
+    }
+
+    if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
+      ModifySelectionRangeBehavior(selectionEndIndex).invoke(controller);
+    } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
+      ModifySelectionRangeBehavior(selectionEndIndex).invoke(controller);
+    } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
+      ModifySelectionRangeBehavior(selectionEndIndex).invoke(controller);
+    } else {
+      RangeSelectionBehavior(selectionEndIndex).invoke(controller);
+    }
+
+    controller.viewport.ensureIndexFullyVisible(selectionEndIndex);
+  }
+
+  @override
+  List<Object?> get props => <Object?>[selectionStart, selectionEnd];
+}
+
+class SheetSelectionEndGesture extends SheetGesture {
   SheetSelectionEndGesture();
 
   @override
@@ -70,7 +81,7 @@ class SheetSelectionEndGesture extends SheetDragGesture {
   List<Object?> get props => <Object?>[];
 }
 
-class SheetSelectionMoveGesture extends SheetDragGesture {
+class SheetSelectionMoveGesture extends SheetGesture {
   final int dx;
   final int dy;
 
@@ -81,15 +92,17 @@ class SheetSelectionMoveGesture extends SheetDragGesture {
     SheetSelection selection = controller.selection.value;
 
     CellIndex maxIndex = CellIndex.max.toRealIndex(controller.properties);
+    CellIndex newIndex;
 
-    if (controller.keyboard.isKeyPressed(LogicalKeyboardKey.shiftLeft)) {
-      CellIndex newIndex = selection.cellEnd.move(dx, dy).clamp(maxIndex);
+    if (controller.keyboard.state.containsState(KeyboardShortcuts.modifySelection)) {
+      newIndex = selection.cellEnd.move(dx, dy).clamp(maxIndex);
       RangeSelectionBehavior(newIndex).invoke(controller);
     } else {
-      CellIndex newIndex = selection.mainCell.move(dx, dy).clamp(maxIndex);
+      newIndex = selection.mainCell.move(dx, dy).clamp(maxIndex);
       SingleSelectionBehavior(newIndex).invoke(controller);
     }
 
+    controller.viewport.ensureIndexFullyVisible(newIndex);
     controller.selection.complete();
   }
 

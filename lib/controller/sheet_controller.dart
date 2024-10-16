@@ -1,108 +1,71 @@
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:sheets/gestures/sheet_selection_gesture.dart';
+import 'package:sheets/listeners/keyboard/keyboard_listener.dart';
+import 'package:sheets/listeners/keyboard/keyboard_shortcuts.dart';
+import 'package:sheets/listeners/mouse_listener.dart';
+import 'package:sheets/recognizers/mouse_action_recognizer.dart';
 import 'package:sheets/selection/selection_state.dart';
 import 'package:sheets/core/sheet_item_index.dart';
-import 'package:sheets/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/gestures/sheet_gesture_mapper.dart';
 import 'package:sheets/selection/sheet_selection.dart';
-import 'package:sheets/utils/streamable.dart';
 import 'package:sheets/viewport/sheet_viewport.dart';
 import 'package:sheets/gestures/sheet_resize_gestures.dart';
-import 'package:sheets/listeners/keyboard_listener.dart';
-import 'package:sheets/listeners/mouse_listener.dart';
 
 class SheetController {
   SheetController({
     required this.properties,
   }) {
-    gestures = Streamable<SheetGesture>();
-
     scroll = SheetScrollController();
     viewport = SheetViewport(properties, scroll);
-    keyboard = SheetKeyboardListener();
-    mouse = SheetMouseListener(viewport);
+    keyboard = KeyboardListener();
+    mouse = MouseListener(
+      mouseActionRecognizers: <MouseActionRecognizer>[MouseSelectionRecognizer()],
+      sheetController: this,
+    );
     selection = SelectionState.defaultSelection();
-
-    gestures.listen(_handleGesture);
-    mouse.stream.listen((SheetGesture gesture) => _handleGesture(gesture, SheetMouseGestureMapper()));
 
     _setupKeyboardShortcuts();
   }
 
   final SheetProperties properties;
-  late final Streamable<SheetGesture> gestures;
   late final SheetViewport viewport;
   late final SheetScrollController scroll;
-  late final SheetKeyboardListener keyboard;
-  late final SheetMouseListener mouse;
+  late final KeyboardListener keyboard;
+  late final MouseListener mouse;
+
   late SelectionState selection;
 
-  final List<Type> _lockedGestures = <Type>[];
-
   void dispose() {
-    mouse.dispose();
     keyboard.dispose();
-    gestures.dispose();
   }
 
   void select(SheetSelection customSelection) {
     selection.update(customSelection);
   }
 
-  void setCursor(SystemMouseCursor cursor) {
-    mouse.setCursor(cursor);
+  void resizeColumn(ColumnIndex column, double width) {
+    SheetResizeColumnGesture(column, width).resolve(this);
   }
 
-  void resizeColumnBy(ColumnIndex column, double delta) {
-    gestures.add(SheetResizeColumnGesture(column, delta));
-  }
-
-  void resizeRowBy(RowIndex row, double delta) {
-    gestures.add(SheetResizeRowGesture(row, delta));
+  void resizeRow(RowIndex row, double height) {
+    SheetResizeRowGesture(row, height).resolve(this);
   }
 
   void _setupKeyboardShortcuts() {
-    keyboard.onKeysPressed(
-      <LogicalKeyboardKey>[LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA],
-      () => select(SheetSelection.all()),
-    );
-    // -------------------
-    keyboard.onKeyPressed(LogicalKeyboardKey.keyR, () {
-      properties.addRows(10);
+    keyboard.pressStream.listen((KeyboardState state) {
+      return switch (state) {
+        KeyboardShortcuts.selectAll => select(SheetSelection.all()),
+        KeyboardShortcuts.addRows => properties.addRows(10),
+        KeyboardShortcuts.addColumns => properties.addColumns(10),
+        (_) => null,
+      };
     });
-    keyboard.onKeyPressed(LogicalKeyboardKey.keyC, () {
-      properties.addColumns(10);
-    });
-    // -------------------
-    keyboard.onKeyHold(LogicalKeyboardKey.arrowUp, () {
-      gestures.add(SheetSelectionMoveGesture(-1, 0));
-    });
-    keyboard.onKeyHold(LogicalKeyboardKey.arrowDown, () {
-      gestures.add(SheetSelectionMoveGesture(1, 0));
-    });
-    keyboard.onKeyHold(LogicalKeyboardKey.arrowLeft, () {
-      gestures.add(SheetSelectionMoveGesture(0, -1));
-    });
-    keyboard.onKeyHold(LogicalKeyboardKey.arrowRight, () {
-      gestures.add(SheetSelectionMoveGesture(0, 1));
-    });
-  }
 
-  void _handleGesture(SheetGesture gesture, [SheetGestureMapper? mapper]) {
-    SheetGesture convertedGesture = mapper?.convert(gesture) ?? gesture;
-    if (_lockedGestures.contains(convertedGesture.runtimeType)) return;
-
-    convertedGesture.resolve(this);
-    Duration? lockdownDuration = convertedGesture.lockdownDuration;
-    if (lockdownDuration != null) {
-      _lockedGestures.add(convertedGesture.runtimeType);
-      Future<void>.delayed(lockdownDuration, () {
-        _lockedGestures.remove(convertedGesture.runtimeType);
-      });
-    }
+    keyboard.pressOrHoldStream.listen((KeyboardState state) {
+      if (state.containsState(KeyboardShortcuts.moveUp)) SheetSelectionMoveGesture(-1, 0).resolve(this);
+      if (state.containsState(KeyboardShortcuts.moveDown)) SheetSelectionMoveGesture(1, 0).resolve(this);
+      if (state.containsState(KeyboardShortcuts.moveLeft)) SheetSelectionMoveGesture(0, -1).resolve(this);
+      if (state.containsState(KeyboardShortcuts.moveRight)) SheetSelectionMoveGesture(0, 1).resolve(this);
+    });
   }
 }

@@ -6,7 +6,7 @@ class Streamable<T> {
   Streamable() {
     _streamController = StreamController<T>();
   }
-  
+
   void listen(void Function(T) onData) {
     _streamController.stream.listen(onData);
   }
@@ -15,7 +15,7 @@ class Streamable<T> {
     _streamController.close();
   }
 
-  void add(T event) {
+  void addEvent(T event) {
     _streamController.add(event);
   }
 

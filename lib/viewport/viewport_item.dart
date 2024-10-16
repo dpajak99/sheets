@@ -13,6 +13,15 @@ abstract class ViewportItem with EquatableMixin {
   String get value;
 
   SheetIndex get index;
+
+  Rect getSheetRect(Offset scrollOffset) {
+    return Rect.fromLTWH(
+      rect.left + scrollOffset.dx,
+      rect.top + scrollOffset.dy,
+      rect.width,
+      rect.height,
+    );
+  }
 }
 
 class ViewportRow extends ViewportItem {

@@ -1,169 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sheets/listeners/mouse_listener.dart';
-import 'package:sheets/recognizers/pan_hold_recognizer.dart';
-import 'package:sheets/sheet.dart';
+import 'package:sheets/recognizers/mouse_action_recognizer.dart';
 
 class SheetDraggable extends StatefulWidget {
-  final Size actionSize;
-  final SystemMouseCursor cursor;
-  final SystemMouseCursor? dragCursor;
-  final ValueChanged<Offset>? onDragStart;
-  final ValueChanged<Offset>? onDragDeltaChanged;
-  final ValueChanged<Offset>? onDragEnd;
-  final Positioned? Function(bool hovered, bool dragged)? builder;
-  final Widget? child;
-  final Offset? dragBarrierStart;
-  final bool scrollOnDrag;
-  final bool limitDragToBounds;
+  final Rect draggableAreaRect;
+  final MouseListener mouseListener;
+  final CustomDragAction action;
+  final Widget child;
 
   const SheetDraggable({
-    required this.actionSize,
-    required this.cursor,
-    this.onDragStart,
-    this.onDragDeltaChanged,
-    this.onDragEnd,
-    SystemMouseCursor? dragCursor,
-    this.builder,
-    this.child,
-    this.dragBarrierStart,
-    this.scrollOnDrag = true,
-    this.limitDragToBounds = false,
+    required this.draggableAreaRect,
+    required this.mouseListener,
+    required this.action,
+    required this.child,
     super.key,
-  }) : dragCursor = dragCursor ?? cursor;
+  });
 
   @override
   State<StatefulWidget> createState() => _SheetDraggableState();
 }
 
 class _SheetDraggableState extends State<SheetDraggable> {
-  final PanHoldRecognizer _panHoldRecognizer = PanHoldRecognizer();
-  late final SheetMouseListener mouse = Sheet.of(context).mouseListener;
+  late final CustomDragRecognizer recognizer;
 
-  Offset _dragDelta = Offset.zero;
-  bool _hoverInProgress = false;
-  bool _dragInProgress = false;
+  @override
+  void initState() {
+    super.initState();
+    recognizer = CustomDragRecognizer(widget.action);
+    recognizer.setDraggableArea(widget.draggableAreaRect);
+
+    widget.mouseListener.insertRecognizer(recognizer);
+  }
+
+  @override
+  void didUpdateWidget(covariant SheetDraggable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if(oldWidget.draggableAreaRect != widget.draggableAreaRect) {
+      recognizer.setDraggableArea(widget.draggableAreaRect);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.mouseListener.removeRecognizer(recognizer);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Widget? child = widget.child ?? widget.builder!.call(_hoverInProgress, _dragInProgress);
-
-    return Stack(
-      children: <Widget>[
-        if (child != null) child,
-        Positioned(
-          width: widget.actionSize.width,
-          height: widget.actionSize.height,
-          child: MouseRegion(
-            opaque: false,
-            hitTestBehavior: HitTestBehavior.translucent,
-            onHover: _handlePointerHover,
-            onExit: (_) {
-              if (_dragInProgress) return;
-              _resetCursor();
-            },
-            child: Listener(
-              onPointerDown: _handlePointerDown,
-              onPointerMove: _handlePointerMove,
-              onPointerUp: _handlePointerUp,
-              behavior: HitTestBehavior.translucent,
-              child: const SizedBox.expand(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _handlePointerHover(PointerHoverEvent event) {
-    _setHovered();
-  }
-
-  void _handlePointerDown(PointerDownEvent event) {
-    if (widget.scrollOnDrag == false) {
-      mouse.disableScrollOnDrag();
-    }
-    mouse.disable();
-    mouse.setCursor(widget.cursor);
-    mouse.setGlobalOffset(event.position);
-
-    _onPanStart(event);
-  }
-
-  void _handlePointerMove(PointerMoveEvent event) {
-    if (_dragInProgress == false) return;
-
-    _panHoldRecognizer.reset();
-
-    _onPanUpdate(event);
-
-    if (widget.scrollOnDrag && mouse.mouseOutOffset != Offset.zero) {
-      _panHoldRecognizer.start(() => _handlePointerMove(event));
-    }
-  }
-
-  void _handlePointerUp(PointerUpEvent details) {
-    mouse.enableScrollOnDrag();
-    _onPanEnd();
-    _resetCursor();
-  }
-
-  void _onPanStart(PointerDownEvent event) {
-    _dragInProgress = true;
-    widget.onDragStart?.call(event.position);
-  }
-
-  void _onPanUpdate(PointerMoveEvent event) {
-    bool barrierStartReached = widget.dragBarrierStart != null && (event.position.dy < widget.dragBarrierStart!.dy || event.position.dx < widget.dragBarrierStart!.dx);
-    bool barrierEndReached = false;
-
-    if(widget.limitDragToBounds) {
-      Offset dragBarrierEnd = Offset(mouse.viewport.visibleGridInnerRect.right, mouse.viewport.visibleGridInnerRect.bottom);
-      barrierEndReached = event.position.dy > dragBarrierEnd.dy || event.position.dx > dragBarrierEnd.dx;
-
-    }
-
-    if (barrierStartReached || barrierEndReached) {
-      mouse.resetCursor();
-      return;
-    } else {
-      mouse.setCursor(widget.cursor);
-    }
-
-    _dragDelta += event.delta;
-    widget.onDragDeltaChanged?.call(_dragDelta);
-  }
-
-  void _onPanEnd() {
-    widget.onDragEnd?.call(_dragDelta);
-    _dragDelta = Offset.zero;
-  }
-
-  void _setHovered() {
-    if (_dragInProgress) return;
-    if (mouse.nativeDragging) return;
-    if (mouse.disabled) return;
-
-    mouse.customTapHovered = true;
-    if (_hoverInProgress == false) {
-      setState(() {
-        _hoverInProgress = true;
-        _dragInProgress = false;
-      });
-      mouse.setCursor(widget.cursor);
-    }
-  }
-
-  void _resetCursor() {
-    mouse.enable();
-    mouse.customTapHovered = false;
-    mouse.resetCursor();
-
-    _hoverInProgress = false;
-    _dragInProgress = false;
-
-    if (mounted) {
-      setState(() {});
-    }
+    return widget.child;
   }
 }

@@ -19,7 +19,7 @@ linter:
     - avoid_annotating_with_dynamic
     - avoid_bool_literals_in_conditional_expressions
     # TODO: enable this rule    - avoid_catches_without_on_clauses
-    - avoid_classes_with_only_static_members
+#    - avoid_classes_with_only_static_members
     - avoid_empty_else
     - avoid_equals_and_hash_code_on_mutable_classes
     - avoid_function_literals_in_foreach_calls
