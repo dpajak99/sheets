@@ -1,5 +1,6 @@
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -12,14 +13,14 @@ abstract interface class SelectionStrategy {
 class SelectionStrategySingle implements SelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
-    return SheetSelection.single(selectedIndex);
+    return SheetSelectionFactory.single(selectedIndex);
   }
 }
 
 class SelectionStrategyAppend implements SelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
-    SheetSelection appendedSelection = SheetSelection.single(selectedIndex);
+    SheetSelection appendedSelection = SheetSelectionFactory.single(selectedIndex);
 
     if (previousSelection == appendedSelection) {
       return previousSelection;
@@ -85,7 +86,7 @@ class SelectionStrategyFill implements SelectionStrategy {
         break;
     }
 
-    return SheetSelection.fill(
+    return SheetSelectionFactory.fill(
       start,
       end,
       fillDirection: direction,

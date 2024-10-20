@@ -2,112 +2,16 @@ import 'package:equatable/equatable.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
-import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
-import 'package:sheets/core/selection/types/sheet_range_selection.dart';
-import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
-import 'package:sheets/utils/direction.dart';
 
 abstract class SheetSelection with EquatableMixin {
-  final bool _completed;
-
   SheetSelection({required bool completed}) : _completed = completed;
 
   SheetSelection copyWith({bool? completed});
 
-  factory SheetSelection.single(
-    SheetIndex index, {
-    bool completed = false,
-  }) {
-    return switch (index) {
-      CellIndex cellIndex => SheetSingleSelection(cellIndex, completed: completed),
-      ColumnIndex columnIndex => SheetRangeSelection<ColumnIndex>.single(columnIndex, completed: completed),
-      RowIndex rowIndex => SheetRangeSelection<RowIndex>.single(rowIndex, completed: completed),
-    };
-  }
-
-  factory SheetSelection.range({
-    required SheetIndex start,
-    required SheetIndex end,
-    bool completed = false,
-  }) {
-    if (start is CellIndex && start == end) {
-      return SheetSingleSelection(start, completed: completed);
-    }
-
-    return switch (start) {
-      CellIndex start => SheetSelection.cellRange(start, end, completed),
-      ColumnIndex start => SheetSelection.columnRange(start, end, completed),
-      RowIndex start => SheetSelection.rowRange(start, end, completed),
-    };
-  }
-
-  factory SheetSelection.multi({
-    required List<SheetSelection> selections,
-  }) {
-    return SheetMultiSelection(selections: selections);
-  }
-
-  factory SheetSelection.fill(
-    SheetIndex start,
-    SheetIndex end, {
-    required SheetSelection baseSelection,
-    required Direction fillDirection,
-    bool completed = false,
-  }) {
-    return SheetFillSelection<SheetIndex>(start, end, completed: completed, baseSelection: baseSelection, fillDirection: fillDirection);
-  }
-
-  factory SheetSelection.all() {
-    return SheetRangeSelection<CellIndex>(CellIndex.zero, CellIndex.max, completed: true);
-  }
-
-  factory SheetSelection.cellRange(
-    CellIndex startCellIndex,
-    SheetIndex endIndex,
-    bool completed,
-  ) {
-    switch (endIndex) {
-      case CellIndex endCellIndex:
-        return SheetRangeSelection<CellIndex>(startCellIndex, endCellIndex, completed: completed);
-      case ColumnIndex endColumnIndex:
-        return SheetRangeSelection<CellIndex>(startCellIndex, CellIndex.fromColumnMin(endColumnIndex), completed: completed);
-      case RowIndex endRowIndex:
-        return SheetRangeSelection<CellIndex>(startCellIndex, CellIndex.fromRowMin(endRowIndex), completed: completed);
-    }
-  }
-
-  factory SheetSelection.columnRange(
-    ColumnIndex startColumnIndex,
-    SheetIndex endIndex,
-    bool completed,
-  ) {
-    switch (endIndex) {
-      case CellIndex endCellIndex:
-        return SheetRangeSelection<ColumnIndex>(startColumnIndex, endCellIndex.column, completed: completed);
-      case ColumnIndex endColumnIndex:
-        return SheetRangeSelection<ColumnIndex>(startColumnIndex, endColumnIndex, completed: completed);
-      case RowIndex _:
-        return SheetRangeSelection<ColumnIndex>(startColumnIndex, ColumnIndex.zero, completed: completed);
-    }
-  }
-
-  factory SheetSelection.rowRange(
-    RowIndex startRowIndex,
-    SheetIndex endIndex,
-    bool completed,
-  ) {
-    switch (endIndex) {
-      case CellIndex endCellIndex:
-        return SheetRangeSelection<RowIndex>(startRowIndex, endCellIndex.row, completed: completed);
-      case ColumnIndex _:
-        return SheetRangeSelection<RowIndex>(startRowIndex, RowIndex.zero, completed: completed);
-      case RowIndex endRowIndex:
-        return SheetRangeSelection<RowIndex>(startRowIndex, endRowIndex, completed: completed);
-    }
-  }
+  final bool _completed;
 
   bool get isCompleted => _completed;
 
@@ -224,3 +128,4 @@ abstract class SheetSelection with EquatableMixin {
 
   List<SheetSelection> subtract(SheetSelection subtractedSelection);
 }
+

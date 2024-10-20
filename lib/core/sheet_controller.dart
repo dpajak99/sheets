@@ -5,7 +5,7 @@ import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/mouse/mouse_listener.dart';
 import 'package:sheets/core/selection/selection_state.dart';
-import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
@@ -52,7 +52,7 @@ class SheetController {
   void _setupKeyboardShortcuts() {
     keyboard.pressStream.listen((KeyboardState state) {
       return switch (state) {
-        KeyboardShortcuts.selectAll => selection.update(SheetSelection.all()),
+        KeyboardShortcuts.selectAll => selection.update(SheetSelectionFactory.all()),
         KeyboardShortcuts.addRows => properties.addRows(10),
         KeyboardShortcuts.addColumns => properties.addColumns(10),
         (_) => null,

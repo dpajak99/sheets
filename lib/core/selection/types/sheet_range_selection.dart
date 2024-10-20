@@ -3,6 +3,7 @@ import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
@@ -91,7 +92,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
 
   @override
   SheetSelection modifyEnd(SheetIndex itemIndex) {
-    return SheetSelection.range(start: selectionStart, end: itemIndex);
+    return SheetSelectionFactory.range(start: selectionStart, end: itemIndex);
   }
 
   SelectionDirection get direction {

@@ -2,6 +2,7 @@ import 'package:sheets/core/selection/renderers/sheet_single_selection_renderer.
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 
@@ -61,7 +62,7 @@ class SheetSingleSelection extends SheetSelection {
 
   @override
   SheetSelection modifyEnd(SheetIndex itemIndex) {
-    return SheetSelection.range(start: selectionStart, end: itemIndex);
+    return SheetSelectionFactory.range(start: selectionStart, end: itemIndex);
   }
 
   @override
