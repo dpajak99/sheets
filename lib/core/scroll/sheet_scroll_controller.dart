@@ -91,8 +91,8 @@ class SheetScrollController extends ChangeNotifier {
 
   void setViewportSize(Size size) {
     metrics.update(
-      horizontal: metrics.horizontal.copyWith(viewportDimension: size.width),
-      vertical: metrics.vertical.copyWith(viewportDimension: size.height),
+      horizontal: metrics.horizontal.copyWith(viewportDimension: size.width - rowHeadersWidth),
+      vertical: metrics.vertical.copyWith(viewportDimension: size.height - columnHeadersHeight),
     );
   }
 

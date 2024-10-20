@@ -1,10 +1,10 @@
+import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
+import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
+import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
-import 'package:sheets/core/selection/selection_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
-import 'package:sheets/core/selection/strategies/selection_strategy.dart';
-import 'package:sheets/core/selection/strategies/selection_strategy_context.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -18,16 +18,16 @@ class SheetSelectionStartGesture extends SheetGesture {
     SheetIndex? selectedIndex = selectionStart.index;
     SheetSelection previousSelection = controller.selection.value;
 
-    SelectionBuilder selectionBuilder = SelectionBuilder(previousSelection);
+    GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
     if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
-      selectionBuilder.setStrategy(SelectionStrategyModify());
+      selectionBuilder.setStrategy(GestureSelectionStrategyModify());
     } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
-      selectionBuilder.setStrategy(SelectionStrategyAppend());
+      selectionBuilder.setStrategy(GestureSelectionStrategyAppend());
     } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
-      selectionBuilder.setStrategy(SelectionStrategyRange());
+      selectionBuilder.setStrategy(GestureSelectionStrategyRange());
     } else {
-      selectionBuilder.setStrategy(SelectionStrategySingle());
+      selectionBuilder.setStrategy(GestureSelectionStrategySingle());
     }
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
@@ -48,19 +48,23 @@ class SheetSelectionUpdateGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    SheetIndex selectedIndex = SelectionIndexAdapter.adaptToCellIndex(selectionEnd.index, controller.viewport.visibleContent);
+    SheetIndex selectedIndex = SelectionOverflowIndexAdapter.adaptToCellIndex(
+      selectionEnd.index,
+      controller.viewport.firstVisibleRow,
+      controller.viewport.firstVisibleColumn,
+    );
+    
     SheetSelection previousSelection = controller.selection.value;
-
-    SelectionBuilder selectionBuilder = SelectionBuilder(previousSelection);
+    GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
     if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
-      selectionBuilder.setStrategy(SelectionStrategyModify());
+      selectionBuilder.setStrategy(GestureSelectionStrategyModify());
     } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
-      selectionBuilder.setStrategy(SelectionStrategyModify());
+      selectionBuilder.setStrategy(GestureSelectionStrategyModify());
     } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
-      selectionBuilder.setStrategy(SelectionStrategyModify());
+      selectionBuilder.setStrategy(GestureSelectionStrategyModify());
     } else {
-      selectionBuilder.setStrategy(SelectionStrategyRange());
+      selectionBuilder.setStrategy(GestureSelectionStrategyRange());
     }
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
@@ -96,14 +100,14 @@ class SheetSelectionMoveGesture extends SheetGesture {
     CellIndex selectedIndex;
     SheetSelection previousSelection = controller.selection.value;
 
-    SelectionBuilder selectionBuilder = SelectionBuilder(previousSelection);
+    GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
     if (controller.keyboard.state.containsState(KeyboardShortcuts.modifySelection)) {
       selectedIndex = previousSelection.start.cell;
-      selectionBuilder.setStrategy(SelectionStrategyRange());
+      selectionBuilder.setStrategy(GestureSelectionStrategyRange());
     } else {
       selectedIndex = previousSelection.mainCell;
-      selectionBuilder.setStrategy(SelectionStrategySingle());
+      selectionBuilder.setStrategy(GestureSelectionStrategySingle());
     }
 
     CellIndex maxIndex = CellIndex.max.toRealIndex(controller.properties);

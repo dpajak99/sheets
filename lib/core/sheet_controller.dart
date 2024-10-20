@@ -1,5 +1,5 @@
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
-import 'package:sheets/core/gestures/sheet_selection_gesture.dart';
+import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/keyboard/keyboard_listener.dart';
 import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';

@@ -51,14 +51,14 @@ class SelectionEndDetails with EquatableMixin {
     return switch (index) {
       CellIndex cellIndex => cellIndex.column,
       ColumnIndex columnIndex => columnIndex,
-      RowIndex _ => ColumnIndex.zero,
+      RowIndex _ => ColumnIndex.max,
     };
   }
 
   RowIndex get row {
     return switch (index) {
       CellIndex cellIndex => cellIndex.row,
-      ColumnIndex _ => RowIndex.zero,
+      ColumnIndex _ => RowIndex.max,
       RowIndex rowIndex => rowIndex,
     };
   }

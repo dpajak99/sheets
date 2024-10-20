@@ -1,5 +1,6 @@
 import 'package:sheets/core/selection/renderers/sheet_multi_selection_renderer.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
+import 'package:sheets/core/selection/selection_extensions.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
@@ -8,7 +9,7 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/utils/extensions/iterable_extensions.dart';
 
 class SheetMultiSelection extends SheetSelectionBase {
-  SheetMultiSelection({
+  SheetMultiSelection._({
     required Iterable<SheetSelection> selections,
   })  : selections = selections.toSet().toList(),
         assert(selections.isNotEmpty, 'Merged selections cannot be empty'),
@@ -17,6 +18,15 @@ class SheetMultiSelection extends SheetSelectionBase {
           startIndex: selections.last.start.index,
           endIndex: selections.last.end.index,
         );
+
+  factory SheetMultiSelection({
+    required Iterable<SheetSelection> selections,
+  }) {
+    return SheetMultiSelection._(selections: <SheetSelection>{
+      for (SheetSelection selection in selections)
+        if (selection is SheetMultiSelection) ...selection.selections else selection
+    });
+  }
 
   final List<SheetSelection> selections;
 
@@ -66,7 +76,7 @@ class SheetMultiSelection extends SheetSelectionBase {
   }
 
   @override
-  SheetSelection append(SheetSelection appendedSelection) {
+  SheetMultiSelection append(SheetSelection appendedSelection) {
     return copyWith(selections: <SheetSelection>{...selections, appendedSelection});
   }
 
@@ -107,8 +117,17 @@ class SheetMultiSelection extends SheetSelectionBase {
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    List<SheetSelection> updatedSelections =
-        selections.map((SheetSelection selection) => selection.subtract(subtractedSelection)).whereNotNull().cast();
+    List<SheetSelection> updatedSelections = selections
+        .map((SheetSelection selection) {
+          return selection.subtract(subtractedSelection);
+        })
+        .fold(<SheetSelection>[], (List<SheetSelection> acc, List<SheetSelection> selection) {
+          return <SheetSelection>[...acc, ...selection];
+        })
+        .whereNotNull()
+        .whereNotNull()
+        .cast();
+
     if (updatedSelections.isEmpty) {
       return <SheetSelection>[];
     } else {

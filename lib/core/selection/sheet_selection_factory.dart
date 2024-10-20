@@ -38,16 +38,15 @@ class SheetSelectionFactory {
   }
 
   static SheetSelection fill(
-    SheetIndex start,
-    SheetIndex end, {
+    CellIndex start,
+    CellIndex end, {
     required SheetSelection baseSelection,
     required Direction fillDirection,
     bool completed = false,
   }) {
-    return SheetFillSelection<SheetIndex>(
+    return SheetFillSelection(
       start,
       end,
-      completed: completed,
       baseSelection: baseSelection,
       fillDirection: fillDirection,
     );

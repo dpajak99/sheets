@@ -9,7 +9,7 @@ class SheetScrollMetrics with EquatableMixin {
     required double contentSize,
     required double viewportDimension,
   })  : _axisDirection = axisDirection,
-        _contentSize = contentSize + 100,
+        _contentSize = contentSize,
         _viewportDimension = viewportDimension;
 
   SheetScrollMetrics.zero(SheetAxisDirection axisDirection)

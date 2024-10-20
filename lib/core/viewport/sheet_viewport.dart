@@ -69,6 +69,14 @@ class SheetViewport extends ChangeNotifier {
     return viewportRect.local;
   }
 
+  ColumnIndex get firstVisibleColumn {
+    return visibleContent.columns.first.index;
+  }
+
+  RowIndex get firstVisibleRow {
+    return visibleContent.rows.first.index;
+  }
+
   Offset globalOffsetToLocal(Offset globalOffset) {
     return viewportRect.globalOffsetToLocal(globalOffset);
   }

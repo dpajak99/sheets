@@ -6,18 +6,18 @@ import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
-abstract interface class SelectionStrategy {
+abstract interface class GestureSelectionStrategy {
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex);
 }
 
-class SelectionStrategySingle implements SelectionStrategy {
+class GestureSelectionStrategySingle implements GestureSelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
     return SheetSelectionFactory.single(selectedIndex);
   }
 }
 
-class SelectionStrategyAppend implements SelectionStrategy {
+class GestureSelectionStrategyAppend implements GestureSelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
     SheetSelection appendedSelection = SheetSelectionFactory.single(selectedIndex);
@@ -30,7 +30,7 @@ class SelectionStrategyAppend implements SelectionStrategy {
   }
 }
 
-class SelectionStrategyRange implements SelectionStrategy {
+class GestureSelectionStrategyRange implements GestureSelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
     SheetSelection baseSelection = previousSelection is SheetMultiSelection
@@ -41,14 +41,14 @@ class SelectionStrategyRange implements SelectionStrategy {
   }
 }
 
-class SelectionStrategyModify implements SelectionStrategy {
+class GestureSelectionStrategyModify implements GestureSelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
     return previousSelection.modifyEnd(selectedIndex);
   }
 }
 
-class SelectionStrategyFill implements SelectionStrategy {
+class GestureSelectionStrategyFill implements GestureSelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
     if (selectedIndex is! CellIndex) return previousSelection;

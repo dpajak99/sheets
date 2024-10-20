@@ -4,11 +4,10 @@ import 'package:sheets/core/selection/selection_rect.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 
-class SheetFillSelectionPaint<T extends SheetIndex> extends SheetSelectionPaint {
-  final SheetFillSelectionRenderer<T> renderer;
+class SheetFillSelectionPaint extends SheetSelectionPaint {
+  final SheetFillSelectionRenderer renderer;
 
   SheetFillSelectionPaint(
       this.renderer,

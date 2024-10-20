@@ -1,16 +1,16 @@
 import 'package:sheets/core/selection/sheet_selection.dart';
-import 'package:sheets/core/selection/strategies/selection_strategy.dart';
+import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/sheet_index.dart';
 
-class SelectionBuilder {
+class GestureSelectionBuilder {
   final SheetSelection _previousSelection;
-  late SelectionStrategy _selectionStrategy;
+  late GestureSelectionStrategy _selectionStrategy;
 
-  SelectionBuilder(
+  GestureSelectionBuilder(
     SheetSelection previousSelection,
   ) : _previousSelection = previousSelection;
 
-  void setStrategy(SelectionStrategy selectionStrategy) {
+  void setStrategy(GestureSelectionStrategy selectionStrategy) {
     _selectionStrategy = selectionStrategy;
   }
 

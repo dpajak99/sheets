@@ -7,16 +7,10 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 class SelectionState extends ChangeNotifier {
   late SheetSelection value;
 
+  SelectionState(this.value);
+
   SelectionState.defaultSelection() {
     value = SheetSingleSelection.defaultSelection();
-  }
-
-  void complete() {
-    SheetSelection completedSelection = value.complete();
-    if( value != completedSelection ) {
-      value = completedSelection;
-      notifyListeners();
-    }
   }
 
   void update(SheetSelection selection) {
@@ -26,11 +20,19 @@ class SelectionState extends ChangeNotifier {
     }
   }
 
-  SheetSelectionRenderer<SheetSelection> createRenderer(SheetViewport viewport) {
-    return value.createRenderer(viewport);
+  void complete() {
+    SheetSelection completedSelection = value.complete();
+    if( value != completedSelection ) {
+      value = completedSelection;
+      notifyListeners();
+    }
   }
   
   String stringify() {
     return value.stringifySelection();
+  }
+
+  SheetSelectionRenderer<SheetSelection> createRenderer(SheetViewport viewport) {
+    return value.createRenderer(viewport);
   }
 }

@@ -1,9 +1,9 @@
+import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
+import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
+import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
-import 'package:sheets/core/selection/selection_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
-import 'package:sheets/core/selection/strategies/selection_strategy.dart';
-import 'package:sheets/core/selection/strategies/selection_strategy_context.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -25,11 +25,15 @@ class SheetFillUpdateGesture extends SheetFillGesture {
 
   @override
   void resolve(SheetController controller) {
-    SheetIndex selectedIndex = SelectionIndexAdapter.adaptToCellIndex(selectionEnd.index, controller.viewport.visibleContent);
+    SheetIndex selectedIndex = SelectionOverflowIndexAdapter.adaptToCellIndex(
+      selectionEnd.index,
+      controller.viewport.firstVisibleRow,
+      controller.viewport.firstVisibleColumn,
+    );
+    
     SheetSelection previousSelection = controller.selection.value;
-
-    SelectionBuilder selectionBuilder = SelectionBuilder(previousSelection);
-    selectionBuilder.setStrategy(SelectionStrategyFill());
+    GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
+    selectionBuilder.setStrategy(GestureSelectionStrategyFill());
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
     controller.selection.update(updatedSelection);

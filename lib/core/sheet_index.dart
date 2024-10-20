@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/utils/extensions/int.dart';
+import 'package:sheets/utils/extensions/int_extensions.dart';
 import 'package:sheets/utils/numeric_index_mixin.dart';
 
 sealed class SheetIndex with EquatableMixin {
@@ -54,6 +54,8 @@ class CellIndex extends SheetIndex {
   final ColumnIndex column;
 
   CellIndex({required this.row, required this.column});
+
+  CellIndex.raw(int row, int column) : row = RowIndex(row), column = ColumnIndex(column);
 
   factory CellIndex.fromColumnMin(ColumnIndex columnIndex) {
     return CellIndex(row: RowIndex.zero, column: columnIndex);

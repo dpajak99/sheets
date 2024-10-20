@@ -3,41 +3,15 @@ import 'package:sheets/core/selection/selection_direction.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SelectionCorners<T> with EquatableMixin {
-  final T topLeft;
-  final T topRight;
-  final T bottomLeft;
-  final T bottomRight;
+class SelectionCellCorners with EquatableMixin {
+  final CellIndex topLeft;
+  final CellIndex topRight;
+  final CellIndex bottomLeft;
+  final CellIndex bottomRight;
 
-  SelectionCorners(this.topLeft, this.topRight, this.bottomLeft, this.bottomRight);
+  SelectionCellCorners(this.topLeft, this.topRight, this.bottomLeft, this.bottomRight);
 
-  factory SelectionCorners.fromDirection({
-    required T topLeft,
-    required T topRight,
-    required T bottomLeft,
-    required T bottomRight,
-    required SelectionDirection direction,
-  }) {
-    switch (direction) {
-      case SelectionDirection.bottomRight:
-        return SelectionCorners<T>(topLeft, topRight, bottomLeft, bottomRight);
-      case SelectionDirection.bottomLeft:
-        return SelectionCorners<T>(topRight, topLeft, bottomRight, bottomLeft);
-      case SelectionDirection.topRight:
-        return SelectionCorners<T>(bottomLeft, bottomRight, topLeft, topRight);
-      case SelectionDirection.topLeft:
-        return SelectionCorners<T>(bottomRight, bottomLeft, topRight, topLeft);
-    }
-  }
-
-  @override
-  List<Object?> get props => <Object?>[topLeft, topRight, bottomLeft, bottomRight];
-}
-
-class SelectionCellCorners extends SelectionCorners<CellIndex> {
-  SelectionCellCorners(super.topLeft, super.topRight, super.bottomLeft, super.bottomRight);
-
-  SelectionCellCorners.single(CellIndex cellIndex) : super(cellIndex, cellIndex, cellIndex, cellIndex);
+  SelectionCellCorners.single(CellIndex cellIndex) : this(cellIndex, cellIndex, cellIndex, cellIndex);
 
   factory SelectionCellCorners.fromDirection({
     required CellIndex topLeft,
@@ -66,7 +40,9 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
       Direction.right: bottomRight.column.value - cellIndex.column.value,
     };
 
-    return directionSpaces.entries.reduce((MapEntry<Direction, int> a, MapEntry<Direction, int> b) => a.value < b.value ? a : b).key;
+    return directionSpaces.entries
+        .reduce((MapEntry<Direction, int> a, MapEntry<Direction, int> b) => a.value < b.value ? a : b)
+        .key;
   }
 
   bool isNestedIn(SelectionCellCorners corners) {

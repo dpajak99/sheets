@@ -5,14 +5,14 @@ import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 
-class SheetFillSelectionRenderer<T extends SheetIndex> extends SheetRangeSelectionRenderer<T> {
+class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer<CellIndex> {
   SheetFillSelectionRenderer({
-    required SheetFillSelection<T> super.selection,
+    required SheetFillSelection super.selection,
     required super.viewport,
   });
 
   @override
-  SheetFillSelection<T> get selection => super.selection as SheetFillSelection<T>;
+  SheetFillSelection get selection => super.selection as SheetFillSelection;
 
   @override
   bool get fillHandleVisible => selection.baseSelection.isCompleted;
@@ -22,7 +22,7 @@ class SheetFillSelectionRenderer<T extends SheetIndex> extends SheetRangeSelecti
 
   @override
   SheetSelectionPaint getPaint({bool? mainCellVisible, bool? backgroundVisible}) {
-    return SheetFillSelectionPaint<T>(this, mainCellVisible, backgroundVisible);
+    return SheetFillSelectionPaint(this, mainCellVisible, backgroundVisible);
   }
 }
 

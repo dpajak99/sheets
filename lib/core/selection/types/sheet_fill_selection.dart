@@ -7,30 +7,28 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/utils/direction.dart';
 
-class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
+class SheetFillSelection extends SheetRangeSelection<CellIndex> {
   SheetFillSelection(
     super.start,
     super.end, {
     required this.baseSelection,
     required this.fillDirection,
-    required super.completed,
-  }) : assert(baseSelection is! SheetFillSelection);
+  }) : assert(baseSelection is! SheetFillSelection), super(completed: false);
 
   final SheetSelection baseSelection;
   final Direction fillDirection;
 
   @override
-  SheetFillSelection<T> copyWith({
-    T? startIndex,
-    T? endIndex,
+  SheetFillSelection copyWith({
+    CellIndex? startIndex,
+    CellIndex? endIndex,
     bool? completed,
     SheetSelection? baseSelection,
     Direction? fillDirection,
   }) {
-    return SheetFillSelection<T>(
-      startIndex ?? start.index as T,
-      endIndex ?? end.index as T,
-      completed: completed ?? isCompleted,
+    return SheetFillSelection(
+      startIndex ?? start.index as CellIndex,
+      endIndex ?? end.index as CellIndex,
       baseSelection: baseSelection ?? this.baseSelection,
       fillDirection: fillDirection ?? this.fillDirection,
     );
@@ -41,6 +39,9 @@ class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) => baseSelection.isRowSelected(rowIndex);
+
+  @override
+  SheetSelection modifyEnd(SheetIndex itemIndex) => this;
 
   @override
   SheetSelection complete() {
@@ -60,7 +61,13 @@ class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
   }
 
   @override
-  SheetFillSelectionRenderer<T> createRenderer(SheetViewport viewport) {
-    return SheetFillSelectionRenderer<T>(viewport: viewport, selection: this);
+  List<SheetSelection> subtract(SheetSelection subtractedSelection) => <SheetSelection>[this];
+
+  @override
+  SheetFillSelectionRenderer createRenderer(SheetViewport viewport) {
+    return SheetFillSelectionRenderer(viewport: viewport, selection: this);
   }
+
+  @override
+  List<Object?> get props => super.props..addAll(<Object?>[baseSelection, fillDirection]);
 }
