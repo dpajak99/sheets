@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/mouse/scroll/sheet_scrollable.dart';
+import 'package:sheets/core/mouse/sheet_mouse_gesture_detector.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/layers/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/sheet_headers_layer.dart';
@@ -11,8 +13,6 @@ import 'package:sheets/layers/sheet_selection_layer.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
 import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
-import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
-import 'package:sheets/widgets/sheet_scrollable.dart';
 
 class SheetPage extends StatefulWidget {
   const SheetPage({super.key});

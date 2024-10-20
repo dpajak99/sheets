@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/viewport/sheet_viewport.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection_paint.dart';
+import 'package:sheets/core/selection/sheet_selection_renderer.dart';
+import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/selection/sheet_selection.dart';
-import 'package:sheets/selection/sheet_selection_paint.dart';
-import 'package:sheets/selection/sheet_selection_renderer.dart';
 
 class SheetSelectionLayer extends StatefulWidget {
   final SheetController sheetController;

@@ -1,4 +1,4 @@
-import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/sheet_index.dart';
 
 class FirstVisible<T extends SheetIndex> {
   final T index;

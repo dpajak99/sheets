@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/recognizers/mouse_action_recognizer.dart';
-import 'package:sheets/selection/sheet_selection.dart';
-import 'package:sheets/selection/sheet_selection_renderer.dart';
-import 'package:sheets/widgets/sheet_draggable.dart';
+import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
+import 'package:sheets/core/mouse/sheet_draggable.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 
 class SheetFillHandleLayer extends StatefulWidget {
   final SheetController sheetController;
@@ -56,9 +56,9 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
                 left: draggableAreaRect.left,
                 top: draggableAreaRect.top,
                 child: SheetDraggable(
+                  handler: MouseFillGestureHandler(),
                   draggableAreaRect: draggableAreaRect,
                   mouseListener: widget.sheetController.mouse,
-                  action: MouseFillAction(),
                   child: const FillHandle(size: _size),
                 ),
               );

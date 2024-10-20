@@ -1,15 +1,15 @@
-import 'package:sheets/gestures/sheet_selection_gesture.dart';
-import 'package:sheets/listeners/keyboard/keyboard_listener.dart';
-import 'package:sheets/listeners/keyboard/keyboard_shortcuts.dart';
-import 'package:sheets/listeners/mouse_listener.dart';
-import 'package:sheets/recognizers/mouse_action_recognizer.dart';
-import 'package:sheets/selection/selection_state.dart';
-import 'package:sheets/core/sheet_item_index.dart';
+import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
+import 'package:sheets/core/gestures/sheet_selection_gesture.dart';
+import 'package:sheets/core/keyboard/keyboard_listener.dart';
+import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
+import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
+import 'package:sheets/core/mouse/mouse_listener.dart';
+import 'package:sheets/core/selection/selection_state.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/controller/sheet_scroll_controller.dart';
-import 'package:sheets/selection/sheet_selection.dart';
-import 'package:sheets/viewport/sheet_viewport.dart';
-import 'package:sheets/gestures/sheet_resize_gestures.dart';
+import 'package:sheets/core/viewport/sheet_viewport.dart';
 
 class SheetController {
   SheetController({
@@ -19,7 +19,9 @@ class SheetController {
     viewport = SheetViewport(properties, scroll);
     keyboard = KeyboardListener();
     mouse = MouseListener(
-      mouseActionRecognizers: <MouseActionRecognizer>[MouseSelectionRecognizer()],
+      mouseActionRecognizers: <MouseGestureRecognizer>[
+        MouseSelectionGestureRecognizer(),
+      ],
       sheetController: this,
     );
     selection = SelectionState.defaultSelection();
@@ -39,10 +41,6 @@ class SheetController {
     keyboard.dispose();
   }
 
-  void select(SheetSelection customSelection) {
-    selection.update(customSelection);
-  }
-
   void resizeColumn(ColumnIndex column, double width) {
     SheetResizeColumnGesture(column, width).resolve(this);
   }
@@ -54,7 +52,7 @@ class SheetController {
   void _setupKeyboardShortcuts() {
     keyboard.pressStream.listen((KeyboardState state) {
       return switch (state) {
-        KeyboardShortcuts.selectAll => select(SheetSelection.all()),
+        KeyboardShortcuts.selectAll => selection.update(SheetSelection.all()),
         KeyboardShortcuts.addRows => properties.addRows(10),
         KeyboardShortcuts.addColumns => properties.addColumns(10),
         (_) => null,

@@ -1,4 +1,4 @@
-import 'package:sheets/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
 
 extension IterableExtensions<E> on Iterable<E> {
   List<E> whereNotNull() {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/recognizers/mouse_action_recognizer.dart';
-import 'package:sheets/viewport/viewport_item.dart';
+import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
+import 'package:sheets/core/mouse/sheet_draggable.dart';
+import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/widgets/sheet_draggable.dart';
 
 double _kGapSize = 5;
 double _kWeight = 3;
@@ -91,19 +91,19 @@ class _VerticalHeaderResizer extends StatefulWidget {
 }
 
 class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
-  late final ResizeColumnMouseAction action = ResizeColumnMouseAction(widget.column);
+  late final MouseColumnResizeGestureHandler _handler = MouseColumnResizeGestureHandler(widget.column);
 
   @override
   Widget build(BuildContext context) {
 
     return ListenableBuilder(
-      listenable: action,
+      listenable: _handler,
       builder: (BuildContext context, _) {
         Rect columnRect = widget.column.rect;
         double marginTop = columnRect.top + (columnRect.height - _kLength) / 2;
         double dividerWidth = _kGapSize + _kWeight * 2;
 
-        double columnRightX = action.newWidth != null ? widget.column.rect.left + action.newWidth! : widget.column.rect.right;
+        double columnRightX = _handler.newWidth != null ? widget.column.rect.left + _handler.newWidth! : widget.column.rect.right;
 
         Rect draggableAreaRect = Rect.fromLTWH(
           columnRightX - (_kGapSize / 2) - _kWeight,
@@ -120,14 +120,14 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
           child: SheetDraggable(
             draggableAreaRect: draggableAreaRect,
             mouseListener: widget.sheetController.mouse,
-            action: action,
+            handler: _handler,
             child: SizedBox.expand(
-              child: action.isHovered
+              child: _handler.isHovered
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(width: _kWeight, height: _kLength, margin: EdgeInsets.only(top: marginTop), color: Colors.black),
-                        if (action.isActive) ...<Widget>[
+                        if (_handler.isActive) ...<Widget>[
                           Container(width: _kGapSize, height: widget.height, color: const Color(0xffc4c7c5)),
                         ] else ...<Widget>[
                           SizedBox(width: _kGapSize),
@@ -207,18 +207,18 @@ class _HorizontalHeaderResizer extends StatefulWidget {
 }
 
 class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
-  late final ResizeRowMouseAction action = ResizeRowMouseAction(widget.row);
+  late final MouseRowResizeGestureHandler _handler = MouseRowResizeGestureHandler(widget.row);
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: action,
+      listenable: _handler,
       builder: (BuildContext context, _) {
         Rect rowRect = widget.row.rect;
         double marginLeft = rowRect.left + (rowRect.width - _kLength) / 2;
         double dividerHeight = _kGapSize + _kWeight * 2;
 
-        double rowBottomY = action.newHeight != null ? widget.row.rect.top + action.newHeight! : widget.row.rect.bottom;
+        double rowBottomY = _handler.newHeight != null ? widget.row.rect.top + _handler.newHeight! : widget.row.rect.bottom;
 
         Rect draggableAreaRect = Rect.fromLTWH(
           widget.row.rect.left,
@@ -235,15 +235,15 @@ class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
           child: SheetDraggable(
             draggableAreaRect: draggableAreaRect,
             mouseListener: widget.sheetController.mouse,
-            action: action,
+            handler: _handler,
             child: SizedBox.expand(
-                child: action.isHovered
+                child: _handler.isHovered
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(height: _kWeight, width: _kLength, margin: EdgeInsets.only(left: marginLeft), color: Colors.black),
-                          if (action.isActive) ...<Widget>[
+                          if (_handler.isActive) ...<Widget>[
                             Container(height: _kGapSize, width: widget.width, color: const Color(0xffc4c7c5)),
                           ] else ...<Widget>[
                             SizedBox(height: _kGapSize),
