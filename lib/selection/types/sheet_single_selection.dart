@@ -41,10 +41,10 @@ class SheetSingleSelection extends SheetSelection {
   SelectionCellCorners get cellCorners => SelectionCellCorners.single(selectedIndex);
 
   @override
-  SelectionStatus isColumnSelected(ColumnIndex columnIndex) => SelectionStatus(selectedIndex.columnIndex == columnIndex, false);
+  SelectionStatus isColumnSelected(ColumnIndex columnIndex) => SelectionStatus(selectedIndex.column == columnIndex, false);
 
   @override
-  SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(selectedIndex.rowIndex == rowIndex, false);
+  SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(selectedIndex.row == rowIndex, false);
 
   @override
   String stringifySelection() => selectedIndex.stringifyPosition();
@@ -65,10 +65,10 @@ class SheetSingleSelection extends SheetSelection {
   }
 
   @override
-  bool containsColumn(ColumnIndex index) => selectedIndex.columnIndex == index;
+  bool containsColumn(ColumnIndex index) => selectedIndex.column == index;
 
   @override
-  bool containsRow(RowIndex index) => selectedIndex.rowIndex == index;
+  bool containsRow(RowIndex index) => selectedIndex.row == index;
 
   @override
   bool containsSelection(SheetSelection nestedSelection) {

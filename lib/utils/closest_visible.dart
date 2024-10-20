@@ -15,7 +15,7 @@ class ClosestVisible<T> with EquatableMixin {
   static ClosestVisible<CellIndex> combineCellIndex(ClosestVisible<RowIndex> rowIndex, ClosestVisible<ColumnIndex> columnIndex) {
     return ClosestVisible<CellIndex>._(
       hiddenBorders: <Direction>[...rowIndex.hiddenBorders, ...columnIndex.hiddenBorders],
-      value: CellIndex(rowIndex: rowIndex.value, columnIndex: columnIndex.value),
+      value: CellIndex(row: rowIndex.value, column: columnIndex.value),
     );
   }
 

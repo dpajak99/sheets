@@ -116,7 +116,7 @@ class ViewportCell extends ViewportItem {
       value: value,
       row: row,
       column: column,
-      index: CellIndex(rowIndex: row.index, columnIndex: column.index),
+      index: CellIndex(row: row.index, column: column.index),
       rect: Rect.fromLTWH(
         column.rect.left,
         row.rect.top,

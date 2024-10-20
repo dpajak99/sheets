@@ -40,8 +40,8 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
   SelectionCellCorners get cellCorners {
     return SelectionCellCorners.fromDirection(
       topLeft: cellStart,
-      topRight: CellIndex(rowIndex: rowStart, columnIndex: columnEnd),
-      bottomLeft: CellIndex(rowIndex: rowEnd, columnIndex: columnStart),
+      topRight: CellIndex(row: rowStart, column: columnEnd),
+      bottomLeft: CellIndex(row: rowEnd, column: columnStart),
       bottomRight: cellEnd,
       direction: direction,
     );
@@ -60,8 +60,8 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
   }
 
   bool get allSelected {
-    bool startIsZero = selectionStart == CellIndex(rowIndex: RowIndex.zero, columnIndex: ColumnIndex.zero);
-    bool endIsMax = selectionEnd == CellIndex(rowIndex: RowIndex.max, columnIndex: ColumnIndex.max);
+    bool startIsZero = selectionStart == CellIndex(row: RowIndex.zero, column: ColumnIndex.zero);
+    bool endIsMax = selectionEnd == CellIndex(row: RowIndex.max, column: ColumnIndex.max);
 
     return startIsZero && endIsMax;
   }
@@ -130,34 +130,34 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
     CellIndex currentEnd = currentCorners.bottomRight;
     CellIndex subtractionEnd = subtractedCorners.bottomRight;
 
-    if (currentStart.rowIndex != subtractionStart.rowIndex) {
+    if (currentStart.row != subtractionStart.row) {
       newSelections.add(SheetRangeSelection<CellIndex>(
         currentStart,
-        CellIndex(rowIndex: subtractionStart.rowIndex.move(-1), columnIndex: currentEnd.columnIndex),
+        CellIndex(row: subtractionStart.row.move(-1), column: currentEnd.column),
         completed: true,
       ));
     }
 
-    if (currentStart.columnIndex != subtractionStart.columnIndex) {
+    if (currentStart.column != subtractionStart.column) {
       newSelections.add(SheetRangeSelection<CellIndex>(
-        CellIndex(rowIndex: subtractionStart.rowIndex, columnIndex: currentStart.columnIndex),
-        CellIndex(rowIndex: subtractionEnd.rowIndex, columnIndex: subtractionStart.columnIndex.move(-1)),
+        CellIndex(row: subtractionStart.row, column: currentStart.column),
+        CellIndex(row: subtractionEnd.row, column: subtractionStart.column.move(-1)),
         completed: true,
       ));
     }
 
-    if (currentEnd.rowIndex != subtractionEnd.rowIndex) {
+    if (currentEnd.row != subtractionEnd.row) {
       newSelections.add(SheetRangeSelection<CellIndex>(
-        CellIndex(rowIndex: subtractionEnd.rowIndex.move(1), columnIndex: currentStart.columnIndex),
+        CellIndex(row: subtractionEnd.row.move(1), column: currentStart.column),
         currentEnd,
         completed: true,
       ));
     }
 
-    if (currentEnd.columnIndex != subtractionEnd.columnIndex) {
+    if (currentEnd.column != subtractionEnd.column) {
       newSelections.add(SheetRangeSelection<CellIndex>(
-        CellIndex(rowIndex: subtractionStart.rowIndex, columnIndex: subtractionEnd.columnIndex.move(1)),
-        CellIndex(rowIndex: subtractionEnd.rowIndex, columnIndex: currentEnd.columnIndex),
+        CellIndex(row: subtractionStart.row, column: subtractionEnd.column.move(1)),
+        CellIndex(row: subtractionEnd.row, column: currentEnd.column),
         completed: true,
       ));
     }

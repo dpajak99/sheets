@@ -13,18 +13,18 @@ sealed class SheetIndex with EquatableMixin {
       case CellIndex _:
         return switch (other) {
           CellIndex other => other,
-          ColumnIndex other => CellIndex(columnIndex: other, rowIndex: RowIndex.zero),
-          RowIndex other => CellIndex(rowIndex: other, columnIndex: ColumnIndex.zero),
+          ColumnIndex other => CellIndex(row: RowIndex.zero, column: other),
+          RowIndex other => CellIndex(row: other, column: ColumnIndex.zero),
         };
       case ColumnIndex _:
         return switch (other) {
-          CellIndex other => other.columnIndex,
+          CellIndex other => other.column,
           ColumnIndex other => other,
           RowIndex _ => ColumnIndex.zero,
         };
       case RowIndex _:
         return switch (other) {
-          CellIndex other => other.rowIndex,
+          CellIndex other => other.row,
           ColumnIndex _ => RowIndex.zero,
           RowIndex other => other,
         };
@@ -50,84 +50,81 @@ sealed class SheetIndex with EquatableMixin {
 }
 
 class CellIndex extends SheetIndex {
-  final RowIndex rowIndex;
-  final ColumnIndex columnIndex;
+  final RowIndex row;
+  final ColumnIndex column;
 
-  CellIndex({
-    required this.rowIndex,
-    required this.columnIndex,
-  });
+  CellIndex({required this.row, required this.column});
 
   factory CellIndex.fromColumnMin(ColumnIndex columnIndex) {
-    return CellIndex(rowIndex: RowIndex.zero, columnIndex: columnIndex);
+    return CellIndex(row: RowIndex.zero, column: columnIndex);
   }
 
   factory CellIndex.fromColumnMax(ColumnIndex columnIndex) {
-    return CellIndex(rowIndex: RowIndex.max, columnIndex: columnIndex);
+    return CellIndex(row: RowIndex.max, column: columnIndex);
   }
 
   factory CellIndex.fromRowMin(RowIndex rowIndex) {
-    return CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.zero);
+    return CellIndex(row: rowIndex, column: ColumnIndex.zero);
   }
 
   factory CellIndex.fromRowMax(RowIndex rowIndex) {
-    return CellIndex(rowIndex: rowIndex, columnIndex: ColumnIndex.max);
+    return CellIndex(row: rowIndex, column: ColumnIndex.max);
   }
 
-  static CellIndex zero = CellIndex(rowIndex: RowIndex(0), columnIndex: ColumnIndex(0));
+  static CellIndex zero = CellIndex(row: RowIndex(0), column: ColumnIndex(0));
 
-  static CellIndex max = CellIndex(rowIndex: RowIndex.max, columnIndex: ColumnIndex.max);
+  static CellIndex max = CellIndex(row: RowIndex.max, column: ColumnIndex.max);
 
   @override
   CellIndex toRealIndex(SheetProperties properties) {
-    ColumnIndex realColumnIndex = columnIndex.toRealIndex(properties);
-    RowIndex realRowIndex = rowIndex.toRealIndex(properties);
+    ColumnIndex realColumnIndex = column.toRealIndex(properties);
+    RowIndex realRowIndex = row.toRealIndex(properties);
 
-    return CellIndex(rowIndex: realRowIndex, columnIndex: realColumnIndex);
+    return CellIndex(row: realRowIndex, column: realColumnIndex);
   }
 
   @override
   Rect getSheetCoordinates(SheetProperties properties) {
     double x = 0;
-    for (int i = 0; i < columnIndex.value; i++) {
+    for (int i = 0; i < column.value; i++) {
       double columnWidth = properties.getColumnWidth(ColumnIndex(i));
       x += columnWidth;
     }
 
-    double width = properties.getColumnWidth(columnIndex);
+    double width = properties.getColumnWidth(column);
 
     double y = 0;
-    for (int i = 0; i < rowIndex.value; i++) {
+    for (int i = 0; i < row.value; i++) {
       double rowHeight = properties.getRowHeight(RowIndex(i));
       y += rowHeight;
     }
 
-    double height = properties.getRowHeight(rowIndex);
+    double height = properties.getRowHeight(row);
 
     return Rect.fromLTWH(x, y, width, height);
   }
 
   CellIndex move(int rowOffset, int columnOffset) {
-    int movedRow = rowIndex.value + rowOffset;
-    int movedColumn = columnIndex.value + columnOffset;
+    int movedRow = row.value + rowOffset;
+    int movedColumn = column.value + columnOffset;
 
     return CellIndex(
-      rowIndex: RowIndex(movedRow < 0 ? 0 : movedRow),
-      columnIndex: ColumnIndex(movedColumn < 0 ? 0 : movedColumn),
+      row: RowIndex(movedRow < 0 ? 0 : movedRow),
+      column: ColumnIndex(movedColumn < 0 ? 0 : movedColumn),
     );
   }
 
   CellIndex clamp(CellIndex max) {
-    return CellIndex(rowIndex: rowIndex.clamp(max.rowIndex), columnIndex: columnIndex.clamp(max.columnIndex));
+    return CellIndex(row: row.clamp(max.row), column: column.clamp(max.column));
   }
 
   @override
   String stringifyPosition() {
-    return '${columnIndex.stringifyPosition()}${rowIndex.stringifyPosition()}';
+    return '${column.stringifyPosition()}${row.stringifyPosition()}';
   }
 
   @override
-  List<Object?> get props => <Object?>[rowIndex, columnIndex];
+  List<Object?> get props => <Object?>[row, column];
 }
 
 class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparable<ColumnIndex> {

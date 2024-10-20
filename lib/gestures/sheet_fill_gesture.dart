@@ -1,4 +1,4 @@
-import 'package:sheets/behaviors/selection_behaviors.dart';
+import 'package:sheets/behaviors/selection_strategy.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
@@ -28,14 +28,13 @@ class SheetFillUpdateGesture extends SheetFillGesture {
     SheetSelection selection = controller.selection.value;
     if (selection.selectionStart is CellIndex) {
       if (selectionEndIndex is ColumnIndex) {
-        selectionEndIndex = CellIndex(rowIndex: controller.viewport.visibleContent.rows.first.index, columnIndex: selectionEndIndex).move(-1, 0);
+        selectionEndIndex = CellIndex(row: controller.viewport.visibleContent.rows.first.index, column: selectionEndIndex).move(-1, 0);
       } else if (selectionEndIndex is RowIndex) {
-        selectionEndIndex = CellIndex(rowIndex: selectionEndIndex, columnIndex: controller.viewport.visibleContent.columns.first.index).move(0, -1);
+        selectionEndIndex = CellIndex(row: selectionEndIndex, column: controller.viewport.visibleContent.columns.first.index).move(0, -1);
       }
     }
 
-    FillSelectionBehavior(selectionEndIndex).invoke(controller);
-
+    controller.select(FillSelectionStrategy(selectionEndIndex).execute(controller.selection.value));
     controller.viewport.ensureIndexFullyVisible(selectionEndIndex);
   }
 

@@ -1,4 +1,4 @@
-import 'package:sheets/behaviors/selection_behaviors.dart';
+import 'package:sheets/behaviors/selection_strategy.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/gestures/sheet_gesture.dart';
@@ -15,16 +15,20 @@ class SheetSelectionStartGesture extends SheetGesture {
   void resolve(SheetController controller) {
     SheetIndex? hoveredIndex = selectionStart.index;
 
+    SheetSelection previousSelection = controller.selection.value;
+    SheetSelection updatedSelection;
+
     if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
-      ModifySelectionRangeBehavior(hoveredIndex).invoke(controller);
+      updatedSelection = ModifySelectionRangeStrategy(hoveredIndex).execute(previousSelection);
     } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
-      AppendSelectionBehavior(hoveredIndex).invoke(controller);
+      updatedSelection = AppendSelectionStrategy(hoveredIndex).execute(previousSelection);
     } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
-      RangeSelectionBehavior(hoveredIndex).invoke(controller);
+      updatedSelection = RangeSelectionStrategy(hoveredIndex).execute(previousSelection);
     } else {
-      SingleSelectionBehavior(hoveredIndex).invoke(controller);
+      updatedSelection = SingleSelectionStrategy(hoveredIndex).execute(previousSelection);
     }
 
+    controller.select(updatedSelection);
     controller.viewport.ensureIndexFullyVisible(hoveredIndex);
   }
 
@@ -42,25 +46,28 @@ class SheetSelectionUpdateGesture extends SheetGesture {
   void resolve(SheetController controller) {
     SheetIndex selectionEndIndex = selectionEnd.index;
 
-    SheetSelection selection = controller.selection.value;
-    if (selection.selectionStart is CellIndex) {
+    SheetSelection previousSelection = controller.selection.value;
+    if (previousSelection.selectionStart is CellIndex) {
       if (selectionEndIndex is ColumnIndex) {
-        selectionEndIndex = CellIndex(rowIndex: controller.viewport.visibleContent.rows.first.index, columnIndex: selectionEndIndex).move(-1, 0);
+        selectionEndIndex = CellIndex(row: controller.viewport.visibleContent.rows.first.index, column: selectionEndIndex).move(-1, 0);
       } else if (selectionEndIndex is RowIndex) {
-        selectionEndIndex = CellIndex(rowIndex: selectionEndIndex, columnIndex: controller.viewport.visibleContent.columns.first.index).move(0, -1);
+        selectionEndIndex = CellIndex(row: selectionEndIndex, column: controller.viewport.visibleContent.columns.first.index).move(0, -1);
       }
     }
 
+    SheetSelection updatedSelection;
+
     if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
-      ModifySelectionRangeBehavior(selectionEndIndex).invoke(controller);
+      updatedSelection = ModifySelectionRangeStrategy(selectionEndIndex).execute(previousSelection);
     } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
-      ModifySelectionRangeBehavior(selectionEndIndex).invoke(controller);
+      updatedSelection= ModifySelectionRangeStrategy(selectionEndIndex).execute(previousSelection);
     } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
-      ModifySelectionRangeBehavior(selectionEndIndex).invoke(controller);
+      updatedSelection = ModifySelectionRangeStrategy(selectionEndIndex).execute(previousSelection);
     } else {
-      RangeSelectionBehavior(selectionEndIndex).invoke(controller);
+      updatedSelection = RangeSelectionStrategy(selectionEndIndex).execute(previousSelection);
     }
 
+    controller.select(updatedSelection);
     controller.viewport.ensureIndexFullyVisible(selectionEndIndex);
   }
 
@@ -88,20 +95,23 @@ class SheetSelectionMoveGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    SheetSelection selection = controller.selection.value;
+    SheetSelection previousSelection = controller.selection.value;
+    SheetSelection updatedSelection;
 
     CellIndex maxIndex = CellIndex.max.toRealIndex(controller.properties);
     CellIndex newIndex;
 
     if (controller.keyboard.state.containsState(KeyboardShortcuts.modifySelection)) {
-      newIndex = selection.cellEnd.move(dx, dy).clamp(maxIndex);
-      RangeSelectionBehavior(newIndex).invoke(controller);
+      newIndex = previousSelection.cellEnd.move(dx, dy).clamp(maxIndex);
+      updatedSelection = RangeSelectionStrategy(newIndex).execute(previousSelection);
     } else {
-      newIndex = selection.mainCell.move(dx, dy).clamp(maxIndex);
-      SingleSelectionBehavior(newIndex).invoke(controller);
+      newIndex = previousSelection.mainCell.move(dx, dy).clamp(maxIndex);
+      updatedSelection = SingleSelectionStrategy(newIndex).execute(previousSelection);
     }
 
     controller.viewport.ensureIndexFullyVisible(newIndex);
+
+    controller.select(updatedSelection);
     controller.selection.complete();
   }
 

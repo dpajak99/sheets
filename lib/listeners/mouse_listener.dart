@@ -83,7 +83,6 @@ class MouseListener extends Streamable<SheetMouseGesture> {
   /// Notifies that the mouse is hovering over the sheet at the given [event] position.
   void notifyMouseHovered(PointerHoverEvent event) {
     _updateGlobalOffset(event.position);
-    addEvent(SheetMouseMoveGesture(_localOffset));
   }
 
   /// Notifies that a drag gesture has started at the given [event] position.

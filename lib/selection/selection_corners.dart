@@ -60,20 +60,20 @@ class SelectionCellCorners extends SelectionCorners<CellIndex> {
 
   Direction getRelativePosition(CellIndex cellIndex) {
     Map<Direction, int> directionSpaces = <Direction, int>{
-      Direction.top: cellIndex.rowIndex.value - topLeft.rowIndex.value,
-      Direction.left: cellIndex.columnIndex.value - topLeft.columnIndex.value,
-      Direction.bottom: bottomRight.rowIndex.value - cellIndex.rowIndex.value,
-      Direction.right: bottomRight.columnIndex.value - cellIndex.columnIndex.value,
+      Direction.top: cellIndex.row.value - topLeft.row.value,
+      Direction.left: cellIndex.column.value - topLeft.column.value,
+      Direction.bottom: bottomRight.row.value - cellIndex.row.value,
+      Direction.right: bottomRight.column.value - cellIndex.column.value,
     };
 
     return directionSpaces.entries.reduce((MapEntry<Direction, int> a, MapEntry<Direction, int> b) => a.value < b.value ? a : b).key;
   }
 
   bool isNestedIn(SelectionCellCorners corners) {
-    return topLeft.rowIndex.value >= corners.topLeft.rowIndex.value &&
-        topLeft.columnIndex.value >= corners.topLeft.columnIndex.value &&
-        bottomRight.rowIndex.value <= corners.bottomRight.rowIndex.value &&
-        bottomRight.columnIndex.value <= corners.bottomRight.columnIndex.value;
+    return topLeft.row.value >= corners.topLeft.row.value &&
+        topLeft.column.value >= corners.topLeft.column.value &&
+        bottomRight.row.value <= corners.bottomRight.row.value &&
+        bottomRight.column.value <= corners.bottomRight.column.value;
   }
 
   @override

@@ -86,7 +86,7 @@ abstract class SheetSelection with EquatableMixin {
   ) {
     switch (endIndex) {
       case CellIndex endCellIndex:
-        return SheetRangeSelection<ColumnIndex>(startColumnIndex, endCellIndex.columnIndex, completed: completed);
+        return SheetRangeSelection<ColumnIndex>(startColumnIndex, endCellIndex.column, completed: completed);
       case ColumnIndex endColumnIndex:
         return SheetRangeSelection<ColumnIndex>(startColumnIndex, endColumnIndex, completed: completed);
       case RowIndex _:
@@ -101,7 +101,7 @@ abstract class SheetSelection with EquatableMixin {
   ) {
     switch (endIndex) {
       case CellIndex endCellIndex:
-        return SheetRangeSelection<RowIndex>(startRowIndex, endCellIndex.rowIndex, completed: completed);
+        return SheetRangeSelection<RowIndex>(startRowIndex, endCellIndex.row, completed: completed);
       case ColumnIndex _:
         return SheetRangeSelection<RowIndex>(startRowIndex, RowIndex.zero, completed: completed);
       case RowIndex endRowIndex:
@@ -135,7 +135,7 @@ abstract class SheetSelection with EquatableMixin {
 
   ColumnIndex get columnStart {
     return switch (selectionStart) {
-      CellIndex cellIndex => cellIndex.columnIndex,
+      CellIndex cellIndex => cellIndex.column,
       ColumnIndex columnIndex => columnIndex,
       RowIndex _ => ColumnIndex.zero,
     };
@@ -143,7 +143,7 @@ abstract class SheetSelection with EquatableMixin {
 
   ColumnIndex get columnEnd {
     return switch (selectionEnd) {
-      CellIndex cellIndex => cellIndex.columnIndex,
+      CellIndex cellIndex => cellIndex.column,
       ColumnIndex columnIndex => columnIndex,
       RowIndex _ => ColumnIndex.zero,
     };
@@ -151,7 +151,7 @@ abstract class SheetSelection with EquatableMixin {
 
   RowIndex get rowStart {
     return switch (selectionStart) {
-      CellIndex cellIndex => cellIndex.rowIndex,
+      CellIndex cellIndex => cellIndex.row,
       ColumnIndex _ => RowIndex.zero,
       RowIndex rowIndex => rowIndex,
     };
@@ -159,7 +159,7 @@ abstract class SheetSelection with EquatableMixin {
 
   RowIndex get rowEnd {
     return switch (selectionEnd) {
-      CellIndex cellIndex => cellIndex.rowIndex,
+      CellIndex cellIndex => cellIndex.row,
       ColumnIndex _ => RowIndex.zero,
       RowIndex rowIndex => rowIndex,
     };
@@ -180,8 +180,8 @@ abstract class SheetSelection with EquatableMixin {
   }
 
   bool containsCell(CellIndex index) {
-    bool rowSelected = containsRow(index.rowIndex);
-    bool columnSelected = containsColumn(index.columnIndex);
+    bool rowSelected = containsRow(index.row);
+    bool columnSelected = containsColumn(index.column);
 
     return rowSelected && columnSelected;
   }

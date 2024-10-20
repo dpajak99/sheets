@@ -28,7 +28,7 @@ class ClosestVisibleColumnIndexCalculator {
   ClosestVisible<ColumnIndex> findFor(CellIndex cellIndex) {
     ColumnIndex firstVisibleColumn = visibleColumns.first.index;
     ColumnIndex lastVisibleColumn = visibleColumns.last.index;
-    ColumnIndex cellColumn = cellIndex.columnIndex;
+    ColumnIndex cellColumn = cellIndex.column;
 
     if (cellColumn >= firstVisibleColumn && cellColumn <= lastVisibleColumn) {
       return ClosestVisible<ColumnIndex>.fullyVisible(cellColumn);

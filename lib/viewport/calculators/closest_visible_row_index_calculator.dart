@@ -27,7 +27,7 @@ class ClosestVisibleRowIndexCalculator {
   ClosestVisible<RowIndex> findFor(CellIndex cellIndex) {
     RowIndex firstVisibleRow = visibleRows.first.index;
     RowIndex lastVisibleRow = visibleRows.last.index;
-    RowIndex cellRow = cellIndex.rowIndex;
+    RowIndex cellRow = cellIndex.row;
 
     bool visible = cellRow >= firstVisibleRow && cellRow <= lastVisibleRow;
     bool missingTop = cellRow < firstVisibleRow;
