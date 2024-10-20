@@ -95,6 +95,7 @@ class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
 
   @override
   Widget build(BuildContext context) {
+
     return ListenableBuilder(
       listenable: action,
       builder: (BuildContext context, _) {

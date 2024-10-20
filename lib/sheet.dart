@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:sheets/controller/sheet_controller.dart';
 import 'package:sheets/core/sheet_item_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/layers/sheet_cells_layer.dart';
 import 'package:sheets/layers/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/sheet_headers_layer.dart';
 import 'package:sheets/layers/sheet_headers_resizer_layer.dart';
+import 'package:sheets/layers/sheet_mesh_layer.dart';
 import 'package:sheets/layers/sheet_selection_layer.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
@@ -185,7 +185,7 @@ class SheetGrid extends StatelessWidget {
             ],
           ),
         ),
-        Positioned.fill(child: SheetCellsLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetMeshLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetHeadersLayer(sheetController: sheetController)),
         Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetSelectionLayer(sheetController: sheetController)),

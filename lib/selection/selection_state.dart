@@ -12,13 +12,18 @@ class SelectionState extends ChangeNotifier {
   }
 
   void complete() {
-    value = value.complete();
-    notifyListeners();
+    SheetSelection completedSelection = value.complete();
+    if( value != completedSelection ) {
+      value = completedSelection;
+      notifyListeners();
+    }
   }
 
   void update(SheetSelection selection) {
-    value = selection;
-    notifyListeners();
+    if( value != selection ) {
+      value = selection;
+      notifyListeners();
+    }
   }
 
   SheetSelectionRenderer<SheetSelection> createRenderer(SheetViewport viewport) {
