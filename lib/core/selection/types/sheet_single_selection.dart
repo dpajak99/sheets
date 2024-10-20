@@ -6,17 +6,17 @@ import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 
-class SheetSingleSelection extends SheetSelection {
-  final CellIndex selectedIndex;
-
+class SheetSingleSelection extends SheetSelectionBase {
   SheetSingleSelection(
-    this.selectedIndex, {
+    this._selectedIndex, {
     super.completed = false,
-  });
+  }) : super(startIndex: _selectedIndex, endIndex: _selectedIndex);
 
-  SheetSingleSelection.defaultSelection()
-      : selectedIndex = CellIndex.zero,
-        super(completed: true);
+  factory SheetSingleSelection.defaultSelection() {
+    return SheetSingleSelection(CellIndex.zero, completed: true);
+  }
+
+  final CellIndex _selectedIndex;
 
   @override
   SheetSingleSelection copyWith({
@@ -24,61 +24,57 @@ class SheetSingleSelection extends SheetSelection {
     bool? completed,
   }) {
     return SheetSingleSelection(
-      selectedIndex ?? this.selectedIndex,
+      selectedIndex ?? _selectedIndex,
       completed: completed ?? isCompleted,
     );
   }
 
   @override
-  CellIndex get mainCell => selectedIndex;
+  CellIndex get mainCell => _selectedIndex;
 
   @override
-  CellIndex get selectionStart => selectedIndex;
-
-  @override
-  CellIndex get selectionEnd => selectedIndex;
-
-  @override
-  SelectionCellCorners get cellCorners => SelectionCellCorners.single(selectedIndex);
-
-  @override
-  SelectionStatus isColumnSelected(ColumnIndex columnIndex) => SelectionStatus(selectedIndex.column == columnIndex, false);
-
-  @override
-  SelectionStatus isRowSelected(RowIndex rowIndex) => SelectionStatus(selectedIndex.row == rowIndex, false);
-
-  @override
-  String stringifySelection() => selectedIndex.stringifyPosition();
-
-  @override
-  SheetSingleSelectionRenderer createRenderer(SheetViewport viewport) {
-    return SheetSingleSelectionRenderer(viewport: viewport, selection: this);
+  SelectionCellCorners get cellCorners {
+    return SelectionCellCorners.single(_selectedIndex);
   }
 
   @override
-  SheetSelection complete() {
-    return SheetSingleSelection(selectedIndex, completed: true);
+  bool containsRow(RowIndex index) {
+    return _selectedIndex.row == index;
+  }
+
+  @override
+  bool containsColumn(ColumnIndex index) {
+    return _selectedIndex.column == index;
+  }
+
+  @override
+  bool containsSelection(SheetSelection nestedSelection) {
+    return nestedSelection is SheetSingleSelection && nestedSelection._selectedIndex == _selectedIndex;
+  }
+
+  @override
+  SelectionStatus isRowSelected(RowIndex rowIndex) {
+    return SelectionStatus(_selectedIndex.row == rowIndex, false);
+  }
+
+  @override
+  SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
+    return SelectionStatus(_selectedIndex.column == columnIndex, false);
   }
 
   @override
   SheetSelection modifyEnd(SheetIndex itemIndex) {
-    return SheetSelectionFactory.range(start: selectionStart, end: itemIndex);
+    return SheetSelectionFactory.range(start: start.index, end: itemIndex);
   }
 
   @override
-  bool containsColumn(ColumnIndex index) => selectedIndex.column == index;
-
-  @override
-  bool containsRow(RowIndex index) => selectedIndex.row == index;
-
-  @override
-  bool containsSelection(SheetSelection nestedSelection) {
-    return nestedSelection is SheetSingleSelection && nestedSelection.selectedIndex == selectedIndex;
+  SheetSelection complete() {
+    return SheetSingleSelection(_selectedIndex, completed: true);
   }
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    if (subtractedSelection.contains(selectedIndex)) {
+    if (subtractedSelection.contains(_selectedIndex)) {
       return <SheetSelection>[];
     } else {
       return <SheetSelection>[this];
@@ -86,5 +82,15 @@ class SheetSingleSelection extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => <Object?>[selectedIndex, isCompleted];
+  SheetSingleSelectionRenderer createRenderer(SheetViewport viewport) {
+    return SheetSingleSelectionRenderer(viewport: viewport, selection: this);
+  }
+
+  @override
+  String stringifySelection() {
+    return _selectedIndex.stringifyPosition();
+  }
+
+  @override
+  List<Object?> get props => <Object?>[_selectedIndex, isCompleted];
 }

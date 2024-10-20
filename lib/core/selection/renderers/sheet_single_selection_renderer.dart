@@ -13,7 +13,7 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSel
     required super.selection,
     required super.viewport,
   }) {
-    _selectedCell = CachedValue<ViewportCell?>(() => viewport.visibleContent.findCell(selection.cellStart));
+    _selectedCell = CachedValue<ViewportCell?>(() => viewport.visibleContent.findCell(selection.start.cell));
   }
 
   @override

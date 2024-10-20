@@ -8,9 +8,6 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
-  final SheetSelection baseSelection;
-  final Direction fillDirection;
-
   SheetFillSelection(
     super.start,
     super.end, {
@@ -19,17 +16,20 @@ class SheetFillSelection<T extends SheetIndex> extends SheetRangeSelection<T> {
     required super.completed,
   }) : assert(baseSelection is! SheetFillSelection);
 
+  final SheetSelection baseSelection;
+  final Direction fillDirection;
+
   @override
   SheetFillSelection<T> copyWith({
-    T? start,
-    T? end,
+    T? startIndex,
+    T? endIndex,
     bool? completed,
     SheetSelection? baseSelection,
     Direction? fillDirection,
   }) {
     return SheetFillSelection<T>(
-      start ?? selectionStart,
-      end ?? selectionEnd,
+      startIndex ?? start.index as T,
+      endIndex ?? end.index as T,
       completed: completed ?? isCompleted,
       baseSelection: baseSelection ?? this.baseSelection,
       fillDirection: fillDirection ?? this.fillDirection,

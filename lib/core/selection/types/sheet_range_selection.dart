@@ -8,102 +8,38 @@ import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 
-class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
-  final T _start;
-  final T _end;
-
+class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
   SheetRangeSelection(
-    T start,
-    T end, {
+    T startIndex,
+    T endIndex, {
     super.completed = true,
-  })  : _end = end,
-        _start = start;
+  }) : super(startIndex: startIndex, endIndex: endIndex);
 
   factory SheetRangeSelection.single(T index, {required bool completed}) {
     return SheetRangeSelection<T>(index, index, completed: completed);
   }
 
   @override
-  SheetRangeSelection<T> copyWith({T? start, T? end, bool? completed}) {
-    return SheetRangeSelection<T>(start ?? _start, end ?? _end, completed: completed ?? isCompleted);
-  }
-
-  @override
-  CellIndex get mainCell => cellStart;
-
-  @override
-  T get selectionStart => _start;
-
-  @override
-  T get selectionEnd => _end;
-
-  @override
-  SelectionCellCorners get cellCorners {
-    return SelectionCellCorners.fromDirection(
-      topLeft: cellStart,
-      topRight: CellIndex(row: rowStart, column: columnEnd),
-      bottomLeft: CellIndex(row: rowEnd, column: columnStart),
-      bottomRight: cellEnd,
-      direction: direction,
+  SheetRangeSelection<T> copyWith({T? startIndex, T? endIndex, bool? completed}) {
+    return SheetRangeSelection<T>(
+      startIndex ?? start.index as T,
+      endIndex ?? end.index as T,
+      completed: completed ?? isCompleted,
     );
   }
 
   @override
-  SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    bool selected = containsColumn(columnIndex);
-    return SelectionStatus(selected, allSelected || selected && T == ColumnIndex);
-  }
+  CellIndex get mainCell => start.cell;
 
   @override
-  SelectionStatus isRowSelected(RowIndex rowIndex) {
-    bool selected = containsRow(rowIndex);
-    return SelectionStatus(selected, allSelected || selected && T == RowIndex);
-  }
-
-  bool get allSelected {
-    bool startIsZero = selectionStart == CellIndex(row: RowIndex.zero, column: ColumnIndex.zero);
-    bool endIsMax = selectionEnd == CellIndex(row: RowIndex.max, column: ColumnIndex.max);
-
-    return startIsZero && endIsMax;
-  }
-
-  @override
-  SheetSelection complete() {
-    return copyWith(completed: true).simplify();
-  }
-
-  SheetSelection simplify() {
-    if (T == CellIndex && selectionStart == selectionEnd) {
-      return SheetSingleSelection(cellStart, completed: isCompleted);
-    } else {
-      return this;
-    }
-  }
-
-  @override
-  String stringifySelection() {
-    return '${selectionStart.stringifyPosition()}:${selectionEnd.stringifyPosition()}';
-  }
-
-  @override
-  SheetRangeSelectionRenderer<T> createRenderer(SheetViewport viewport) {
-    return SheetRangeSelectionRenderer<T>(viewport: viewport, selection: this);
-  }
-
-  @override
-  SheetSelection modifyEnd(SheetIndex itemIndex) {
-    return SheetSelectionFactory.range(start: selectionStart, end: itemIndex);
-  }
-
-  SelectionDirection get direction {
-    bool rowStartBeforeEnd = rowStart.value <= rowEnd.value;
-    bool columnStartBeforeEndC = columnStart.value <= columnEnd.value;
-
-    if (rowStartBeforeEnd) {
-      return columnStartBeforeEndC ? SelectionDirection.bottomRight : SelectionDirection.bottomLeft;
-    } else {
-      return columnStartBeforeEndC ? SelectionDirection.topRight : SelectionDirection.topLeft;
-    }
+  SelectionCellCorners get cellCorners {
+    return SelectionCellCorners.fromDirection(
+      topLeft: start.cell,
+      topRight: CellIndex(row: start.row, column: end.column),
+      bottomLeft: CellIndex(row: end.row, column: start.column),
+      bottomRight: end.cell,
+      direction: direction,
+    );
   }
 
   @override
@@ -113,6 +49,28 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
 
     SelectionCellCorners currentCorners = cellCorners;
     return nestedCorners.isNestedIn(currentCorners);
+  }
+
+  @override
+  SelectionStatus isRowSelected(RowIndex rowIndex) {
+    bool selected = containsRow(rowIndex);
+    return SelectionStatus(selected, _allSelected || selected && T == RowIndex);
+  }
+
+  @override
+  SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
+    bool selected = containsColumn(columnIndex);
+    return SelectionStatus(selected, _allSelected || selected && T == ColumnIndex);
+  }
+
+  @override
+  SheetSelection modifyEnd(SheetIndex itemIndex) {
+    return SheetSelectionFactory.range(start: start.index, end: itemIndex);
+  }
+
+  @override
+  SheetSelection complete() {
+    return copyWith(completed: true)._simplify();
   }
 
   @override
@@ -167,5 +125,41 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelection {
   }
 
   @override
-  List<Object?> get props => <Object?>[_start, _end, isCompleted];
+  SheetRangeSelectionRenderer<T> createRenderer(SheetViewport viewport) {
+    return SheetRangeSelectionRenderer<T>(viewport: viewport, selection: this);
+  }
+
+  @override
+  String stringifySelection() {
+    return '${start.index.stringifyPosition()}:${end.index.stringifyPosition()}';
+  }
+
+  SelectionDirection get direction {
+    bool rowStartBeforeEnd = start.row.value <= end.row.value;
+    bool columnStartBeforeEndC = start.column.value <= end.column.value;
+
+    if (rowStartBeforeEnd) {
+      return columnStartBeforeEndC ? SelectionDirection.bottomRight : SelectionDirection.bottomLeft;
+    } else {
+      return columnStartBeforeEndC ? SelectionDirection.topRight : SelectionDirection.topLeft;
+    }
+  }
+
+  SheetSelection _simplify() {
+    if (T == CellIndex && start.index == end.index) {
+      return SheetSingleSelection(start.cell, completed: isCompleted);
+    } else {
+      return this;
+    }
+  }
+
+  bool get _allSelected {
+    bool startIsZero = start.index == CellIndex(row: RowIndex.zero, column: ColumnIndex.zero);
+    bool endIsMax = end.index == CellIndex(row: RowIndex.max, column: ColumnIndex.max);
+
+    return startIsZero && endIsMax;
+  }
+
+  @override
+  List<Object?> get props => <Object?>[start, end, isCompleted];
 }
