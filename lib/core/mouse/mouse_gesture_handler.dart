@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/gestures/sheet_fill_gesture.dart';
 import 'package:sheets/core/gestures/sheet_selection_gesture.dart';

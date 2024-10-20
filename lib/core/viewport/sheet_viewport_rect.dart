@@ -39,12 +39,12 @@ class SheetViewportRect with EquatableMixin {
     return transformer.globalToLocal(rect);
   }
 
-  void _updateLocalRect() {
-    local = Rect.fromLTWH(0, 0, global.width, global.height);
-  }
-
   bool isEquivalent(Rect rect) {
     return global == rect;
+  }
+
+  void _updateLocalRect() {
+    local = Rect.fromLTWH(0, 0, global.width, global.height);
   }
 
   @override

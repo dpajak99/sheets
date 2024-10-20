@@ -8,7 +8,7 @@ import 'package:sheets/core/selection/selection_state.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/controller/sheet_scroll_controller.dart';
+import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 
 class SheetController {

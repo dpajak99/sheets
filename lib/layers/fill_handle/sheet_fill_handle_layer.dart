@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/mouse/sheet_draggable.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
@@ -26,7 +26,8 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   @override
   void initState() {
     super.initState();
-    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer =
+        widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
@@ -59,7 +60,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
                   handler: MouseFillGestureHandler(),
                   draggableAreaRect: draggableAreaRect,
                   mouseListener: widget.sheetController.mouse,
-                  child: const FillHandle(size: _size),
+                  child: const _FillHandle(size: _size),
                 ),
               );
             },
@@ -69,7 +70,8 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 
   void _updateFillHandle() {
-    SheetSelectionRenderer<SheetSelection> selectionRenderer = widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer =
+        widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
 
     setState(() {
       _visible = selectionRenderer.fillHandleVisible;
@@ -78,13 +80,10 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 }
 
-class FillHandle extends StatelessWidget {
+class _FillHandle extends StatelessWidget {
   final double size;
 
-  const FillHandle({
-    required this.size,
-    super.key,
-  });
+  const _FillHandle({required this.size});
 
   @override
   Widget build(BuildContext context) {

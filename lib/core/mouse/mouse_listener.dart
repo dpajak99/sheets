@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/mouse/mouse_cursor_details.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';

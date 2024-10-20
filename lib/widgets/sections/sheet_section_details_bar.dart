@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 
 class SheetSectionDetailsBar extends StatefulWidget {

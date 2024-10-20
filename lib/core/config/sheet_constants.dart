@@ -13,6 +13,10 @@ double rowHeadersWidth = 46;
 double defaultColumnWidth = 100;
 double defaultRowHeight = 21;
 
+double resizerGapSize = 5;
+double resizerWeight = 3;
+double resizerLength = 16;
+
 TextStyle defaultTextStyle = const TextStyle(
   color: Color(0xff000000),
   fontSize: 13,

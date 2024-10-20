@@ -1,4 +1,4 @@
-import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/selection/selection_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';

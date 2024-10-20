@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/controller/sheet_controller.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 

@@ -1,81 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 
-class SheetHeadersLayer extends StatefulWidget {
-  final SheetController sheetController;
-
-  const SheetHeadersLayer({
-    required this.sheetController,
-    super.key,
-  });
-
-  @override
-  State<StatefulWidget> createState() => _SheetHeadersLayerState();
-}
-
-class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
-  late final _ColumnHeadersPainter columnHeadersPainter;
-  late final _RowHeadersPainter rowHeadersPainter;
-
-  @override
-  void initState() {
-    super.initState();
-    columnHeadersPainter = _ColumnHeadersPainter(
-      visibleColumns: widget.sheetController.viewport.visibleContent.columns,
-      selection: widget.sheetController.selection.value,
-    );
-    rowHeadersPainter = _RowHeadersPainter(
-      visibleRows: widget.sheetController.viewport.visibleContent.rows,
-      selection: widget.sheetController.selection.value,
-    );
-
-    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleColumns);
-    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleRows);
-    widget.sheetController.selection.addListener(_updateSelection);
-  }
-
-  @override
-  void dispose() {
-    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleColumns);
-    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleRows);
-    widget.sheetController.selection.removeListener(_updateSelection);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        RepaintBoundary(
-          child: CustomPaint(isComplex: true, painter: columnHeadersPainter),
-        ),
-        RepaintBoundary(
-          child: CustomPaint(isComplex: true, painter: rowHeadersPainter),
-        ),
-      ],
-    );
-  }
-
-  void _updateVisibleColumns() {
-    columnHeadersPainter.visibleColumns = widget.sheetController.viewport.visibleContent.columns;
-  }
-
-  void _updateVisibleRows() {
-    rowHeadersPainter.visibleRows = widget.sheetController.viewport.visibleContent.rows;
-  }
-
-  void _updateSelection() {
-    columnHeadersPainter.selection = widget.sheetController.selection.value;
-    rowHeadersPainter.selection = widget.sheetController.selection.value;
-  }
-}
-
-abstract class _HeadersPainter extends ChangeNotifier implements CustomPainter {
+abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPainter {
   void paintHeadersBackground(Canvas canvas, Rect rect, SelectionStatus selectionStatus) {
     Color backgroundColor = selectionStatus.selectValue(
       fullySelected: const Color(0xff2456cb),
@@ -133,8 +62,8 @@ abstract class _HeadersPainter extends ChangeNotifier implements CustomPainter {
   bool shouldRebuildSemantics(covariant CustomPainter oldDelegate) => false;
 }
 
-class _ColumnHeadersPainter extends _HeadersPainter {
-  _ColumnHeadersPainter({
+class SheetHorizontalHeadersPainter extends SheetHeadersPainter {
+  SheetHorizontalHeadersPainter({
     required List<ViewportColumn> visibleColumns,
     required SheetSelection selection,
   })  : _visibleColumns = visibleColumns,
@@ -168,13 +97,13 @@ class _ColumnHeadersPainter extends _HeadersPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _ColumnHeadersPainter oldDelegate) {
+  bool shouldRepaint(covariant SheetHorizontalHeadersPainter oldDelegate) {
     return oldDelegate._visibleColumns != _visibleColumns || oldDelegate._selection != _selection;
   }
 }
 
-class _RowHeadersPainter extends _HeadersPainter {
-  _RowHeadersPainter({
+class SheetVerticalHeadersPainter extends SheetHeadersPainter {
+  SheetVerticalHeadersPainter({
     required List<ViewportRow> visibleRows,
     required SheetSelection selection,
   })  : _visibleRows = visibleRows,
@@ -208,7 +137,7 @@ class _RowHeadersPainter extends _HeadersPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _RowHeadersPainter oldDelegate) {
+  bool shouldRepaint(covariant SheetVerticalHeadersPainter oldDelegate) {
     return oldDelegate._visibleRows != _visibleRows || oldDelegate._selection != _selection;
   }
 }
