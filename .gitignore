@@ -1,3 +1,6 @@
+# Custom
+coverage/html/*
+
 # Miscellaneous
 *.class
 *.log
