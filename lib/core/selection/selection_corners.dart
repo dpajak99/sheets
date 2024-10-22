@@ -45,6 +45,13 @@ class SelectionCellCorners with EquatableMixin {
         .key;
   }
 
+  bool isAdjacent(SelectionCellCorners corners) {
+    return topLeft.row.value == corners.bottomRight.row.value + 1 ||
+        bottomRight.row.value == corners.topLeft.row.value - 1 ||
+        topLeft.column.value == corners.bottomRight.column.value + 1 ||
+        bottomRight.column.value == corners.topLeft.column.value - 1;
+  }
+
   bool isNestedIn(SelectionCellCorners corners) {
     return topLeft.row.value >= corners.topLeft.row.value &&
         topLeft.column.value >= corners.topLeft.column.value &&

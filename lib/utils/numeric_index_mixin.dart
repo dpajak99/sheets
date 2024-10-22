@@ -21,3 +21,11 @@ mixin NumericIndexMixin {
     return value.compareTo(other.value);
   }
 }
+
+T min<T extends NumericIndexMixin>(T a, T b) {
+  return a.value < b.value ? a : b;
+}
+
+T max<T extends NumericIndexMixin>(T a, T b) {
+  return a.value > b.value ? a : b;
+}

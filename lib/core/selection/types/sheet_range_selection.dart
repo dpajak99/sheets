@@ -12,12 +12,16 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
   SheetRangeSelection(
     T startIndex,
     T endIndex, {
+    CellIndex? customMainCell,
     super.completed = true,
-  }) : super(startIndex: startIndex, endIndex: endIndex);
+  })  : _customMainCell = customMainCell,
+        super(startIndex: startIndex, endIndex: endIndex);
 
   factory SheetRangeSelection.single(T index, {bool completed = true}) {
     return SheetRangeSelection<T>(index, index, completed: completed);
   }
+
+  final CellIndex? _customMainCell;
 
   @override
   SheetRangeSelection<T> copyWith({T? startIndex, T? endIndex, bool? completed}) {
@@ -25,11 +29,12 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
       startIndex ?? start.index as T,
       endIndex ?? end.index as T,
       completed: completed ?? isCompleted,
+      customMainCell: _customMainCell,
     );
   }
 
   @override
-  CellIndex get mainCell => start.cell;
+  CellIndex get mainCell => _customMainCell ?? start.cell;
 
   @override
   SelectionCellCorners get cellCorners {

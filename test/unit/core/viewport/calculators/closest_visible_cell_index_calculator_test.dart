@@ -12,12 +12,12 @@ void main() {
     group('Tests of ClosestVisibleCellIndexCalculator.findFor()', () {
       test('Should [return fully visible cell] when [cell is within visible rows and columns]', () {
         // Arrange
-        List<ViewportRow> visibleRows = [
+        List<ViewportRow> visibleRows = <ViewportRow>[
           ViewportRow(index: RowIndex(2), rect: Rect.zero, style: RowStyle.defaults()),
           ViewportRow(index: RowIndex(3), rect: Rect.zero, style: RowStyle.defaults()),
           ViewportRow(index: RowIndex(4), rect: Rect.zero, style: RowStyle.defaults()),
         ];
-        List<ViewportColumn> visibleColumns = [
+        List<ViewportColumn> visibleColumns = <ViewportColumn>[
           ViewportColumn(index: ColumnIndex(2), rect: Rect.zero, style: ColumnStyle.defaults()),
           ViewportColumn(index: ColumnIndex(3), rect: Rect.zero, style: ColumnStyle.defaults()),
           ViewportColumn(index: ColumnIndex(4), rect: Rect.zero, style: ColumnStyle.defaults()),
@@ -41,10 +41,10 @@ void main() {
 
       test('Should [return partially visible cell from top-left] when [cell is before visible rows and columns]', () {
         // Arrange
-        List<ViewportRow> visibleRows = [
+        List<ViewportRow> visibleRows = <ViewportRow>[
           ViewportRow(index: RowIndex(5), rect: Rect.zero, style: RowStyle.defaults()),
         ];
-        List<ViewportColumn> visibleColumns = [
+        List<ViewportColumn> visibleColumns = <ViewportColumn>[
           ViewportColumn(index: ColumnIndex(5), rect: Rect.zero, style: ColumnStyle.defaults()),
         ];
         ClosestVisibleCellIndexCalculator calculator = ClosestVisibleCellIndexCalculator(
@@ -67,10 +67,10 @@ void main() {
 
       test('Should [return partially visible cell from bottom-right] when [cell is after visible rows and columns]', () {
         // Arrange
-        List<ViewportRow> visibleRows = [
+        List<ViewportRow> visibleRows = <ViewportRow>[
           ViewportRow(index: RowIndex(2), rect: Rect.zero, style: RowStyle.defaults()),
         ];
-        List<ViewportColumn> visibleColumns = [
+        List<ViewportColumn> visibleColumns = <ViewportColumn>[
           ViewportColumn(index: ColumnIndex(2), rect: Rect.zero, style: ColumnStyle.defaults()),
         ];
         ClosestVisibleCellIndexCalculator calculator = ClosestVisibleCellIndexCalculator(
@@ -93,10 +93,10 @@ void main() {
 
       test('Should [return partially visible cell from top-right] when [cell row before and column after visible ones]', () {
         // Arrange
-        List<ViewportRow> visibleRows = [
+        List<ViewportRow> visibleRows = <ViewportRow>[
           ViewportRow(index: RowIndex(5), rect: Rect.zero, style: RowStyle.defaults()),
         ];
-        List<ViewportColumn> visibleColumns = [
+        List<ViewportColumn> visibleColumns = <ViewportColumn>[
           ViewportColumn(index: ColumnIndex(2), rect: Rect.zero, style: ColumnStyle.defaults()),
         ];
         ClosestVisibleCellIndexCalculator calculator = ClosestVisibleCellIndexCalculator(
@@ -119,10 +119,10 @@ void main() {
 
       test('Should [return partially visible cell from bottom-left] when [cell row after and column before visible ones]', () {
         // Arrange
-        List<ViewportRow> visibleRows = [
+        List<ViewportRow> visibleRows = <ViewportRow>[
           ViewportRow(index: RowIndex(2), rect: Rect.zero, style: RowStyle.defaults()),
         ];
-        List<ViewportColumn> visibleColumns = [
+        List<ViewportColumn> visibleColumns = <ViewportColumn>[
           ViewportColumn(index: ColumnIndex(5), rect: Rect.zero, style: ColumnStyle.defaults()),
         ];
         ClosestVisibleCellIndexCalculator calculator = ClosestVisibleCellIndexCalculator(

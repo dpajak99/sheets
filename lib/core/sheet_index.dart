@@ -125,6 +125,15 @@ class CellIndex extends SheetIndex {
     return '${column.stringifyPosition()}${row.stringifyPosition()}';
   }
 
+  int compareTo(CellIndex other) {
+    int rowComparison = row.compareTo(other.row);
+    if (rowComparison != 0) {
+      return rowComparison;
+    } else {
+      return column.compareTo(other.column);
+    }
+  }
+
   @override
   List<Object?> get props => <Object?>[row, column];
 }

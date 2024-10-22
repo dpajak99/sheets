@@ -22,5 +22,5 @@ class SheetMultiSelectionRenderer extends SheetSelectionRenderer<SheetMultiSelec
     return SheetMultiSelectionPaint(this, mainCellVisible, backgroundVisible);
   }
 
-  ViewportCell? get lastSelectedCell => viewport.visibleContent.findCell(selection.mainCell);
+  ViewportCell? get mainCell => viewport.visibleContent.findCell(selection.mainCell);
 }

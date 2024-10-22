@@ -4,6 +4,7 @@ import 'package:sheets/core/selection/selection_extensions.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/utils/extensions/iterable_extensions.dart';
@@ -22,10 +23,12 @@ class SheetMultiSelection extends SheetSelectionBase {
   factory SheetMultiSelection({
     required Iterable<SheetSelection> selections,
   }) {
-    return SheetMultiSelection._(selections: <SheetSelection>{
-      for (SheetSelection selection in selections)
-        if (selection is SheetMultiSelection) ...selection.selections else selection
-    });
+    return SheetMultiSelection._(
+      selections: <SheetSelection>{
+        for (SheetSelection selection in selections)
+          if (selection is SheetMultiSelection) ...selection.selections else selection
+      },
+    );
   }
 
   final List<SheetSelection> selections;
@@ -91,28 +94,14 @@ class SheetMultiSelection extends SheetSelectionBase {
 
   @override
   SheetSelection complete() {
-    SheetSelection lastSelection = selections.last;
-    List<SheetSelection> previousSelections = selections.sublist(0, selections.length - 1);
-    List<SheetSelection> updatedSelections = <SheetSelection>[];
-
-    bool subtracted = false;
-    for (SheetSelection selection in previousSelections) {
-      if (subtracted == false && selection.containsSelection(lastSelection)) {
-        subtracted = true;
-        List<SheetSelection> subtractedSelection = selection.subtract(lastSelection);
-        if (subtractedSelection.isNotEmpty) {
-          updatedSelections.addAll(subtractedSelection);
-        }
-      } else {
-        updatedSelections.add(selection);
-      }
+    if (selections.length == 1) {
+      return selections.first.complete();
     }
 
-    if (subtracted && updatedSelections.isNotEmpty) {
-      return copyWith(selections: updatedSelections.complete(), completed: true)._simplify();
-    } else {
-      return copyWith(selections: selections.complete(), completed: true)._simplify();
-    }
+    SheetMultiSelection updatedSelection = _removeOverlappingSelections();
+    SheetSelection mergedSelection = updatedSelection._mergeSelections();
+
+    return mergedSelection.copyWith(completed: true);
   }
 
   @override
@@ -140,11 +129,68 @@ class SheetMultiSelection extends SheetSelectionBase {
     return selections.last.stringifySelection();
   }
 
-  SheetSelection _simplify() {
-    if (selections.length == 1) {
-      return selections.first.complete();
+  SheetMultiSelection _removeOverlappingSelections() {
+    SheetSelection lastSelection = selections.last;
+    List<SheetSelection> previousSelections = selections.sublist(0, selections.length - 1);
+    List<SheetSelection> updatedSelections = <SheetSelection>[];
+
+    bool subtracted = false;
+    for (SheetSelection selection in previousSelections) {
+      if (subtracted == false && selection.containsSelection(lastSelection)) {
+        subtracted = true;
+        List<SheetSelection> subtractedSelection = selection.subtract(lastSelection);
+        if (subtractedSelection.isNotEmpty) {
+          updatedSelections.addAll(subtractedSelection);
+        }
+      } else {
+        updatedSelections.add(selection);
+      }
+    }
+
+    if (subtracted && updatedSelections.isNotEmpty) {
+      return copyWith(selections: updatedSelections.complete());
     } else {
-      return this;
+      return copyWith(selections: selections.complete());
+    }
+  }
+
+  SheetSelection _mergeSelections() {
+    List<SheetSelection> unmodifiedSelections = List<SheetSelection>.from(selections);
+    List<SheetSelection> simplifiedSelections = <SheetSelection>[];
+
+    CellIndex? customMainCell = unmodifiedSelections.last.mainCell;
+
+    for (int i = 0; i < selections.length; i++) {
+      SheetSelection selectionA = selections[i];
+      if (!unmodifiedSelections.contains(selectionA)) continue;
+
+      for (int j = i + 1; j < selections.length; j++) {
+        SheetSelection selectionB = selections[j];
+
+        if (selectionA == selectionB) continue;
+        if (!unmodifiedSelections.contains(selectionB)) continue;
+
+        if (selectionA.canMerge(selectionB)) {
+          unmodifiedSelections.remove(selectionA);
+          unmodifiedSelections.remove(selectionB);
+
+          SheetRangeSelection<CellIndex> mergedSelection = selectionA.merge(selectionB, customMainCell);
+
+          simplifiedSelections.add(mergedSelection);
+          break;
+        }
+      }
+    }
+
+    List<SheetSelection> finalSelections = <SheetSelection>[
+      ...unmodifiedSelections,
+      ...simplifiedSelections,
+    ];
+
+    if (simplifiedSelections.isEmpty) {
+      return SheetMultiSelection(selections: finalSelections);
+    } else {
+      return SheetMultiSelection(selections: finalSelections)._mergeSelections();
     }
   }
 

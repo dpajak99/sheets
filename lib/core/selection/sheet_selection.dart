@@ -4,8 +4,10 @@ import 'package:sheets/core/selection/selection_details.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
+import 'package:sheets/utils/numeric_index_mixin.dart';
 
 abstract interface class SheetSelection {
   SheetSelection copyWith({bool? completed});
@@ -24,6 +26,8 @@ abstract interface class SheetSelection {
 
   SelectionCellCorners? get cellCorners;
 
+  bool canMerge(SheetSelection other);
+
   bool contains(SheetIndex index);
 
   bool containsCell(CellIndex index);
@@ -39,6 +43,8 @@ abstract interface class SheetSelection {
   SelectionStatus isColumnSelected(ColumnIndex columnIndex);
 
   SheetMultiSelection append(SheetSelection appendedSelection);
+
+  SheetRangeSelection<CellIndex> merge(SheetSelection other, CellIndex? customMainCell);
 
   SheetSelection modifyEnd(SheetIndex itemIndex);
 
@@ -78,7 +84,21 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
 
   @override
   SelectionEndDetails get end => _endDetails;
-  
+
+  @override
+  bool canMerge(SheetSelection other) {
+    SelectionCellCorners? a = cellCorners;
+    SelectionCellCorners? b = other.cellCorners;
+
+    if (a == null || b == null) return false;
+
+    bool adjacent = a.isAdjacent(b);
+    bool sameColumn = a.topLeft.column == b.topLeft.column && a.bottomRight.column == b.bottomRight.column;
+    bool sameRow = a.topLeft.row == b.topLeft.row && a.bottomRight.row == b.bottomRight.row;
+
+    return adjacent && (sameColumn || sameRow);
+  }
+
   @override
   bool contains(SheetIndex index) {
     return switch (index) {
@@ -119,5 +139,29 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
   @override
   SheetMultiSelection append(SheetSelection appendedSelection) {
     return SheetMultiSelection(selections: <SheetSelection>[this, appendedSelection]);
+  }
+
+  @override
+  SheetRangeSelection<CellIndex> merge(SheetSelection other, CellIndex? customMainCell) {
+    bool mainCellContained = customMainCell != null && other.containsCell(customMainCell);
+
+    SelectionCellCorners cornersA = cellCorners!;
+    SelectionCellCorners cornersB = other.cellCorners!;
+
+    CellIndex newTopLeft = CellIndex(
+      row: min(cornersA.topLeft.row, cornersB.topLeft.row),
+      column: min(cornersA.topLeft.column, cornersB.topLeft.column),
+    );
+
+    CellIndex newBottomRight = CellIndex(
+      row: max(cornersA.bottomRight.row, cornersB.bottomRight.row),
+      column: max(cornersA.bottomRight.column, cornersB.bottomRight.column),
+    );
+
+    return SheetRangeSelection<CellIndex>(
+      newTopLeft,
+      newBottomRight,
+      customMainCell: mainCellContained ? customMainCell : null,
+    );
   }
 }

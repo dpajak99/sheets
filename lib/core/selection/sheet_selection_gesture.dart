@@ -103,7 +103,7 @@ class SheetSelectionMoveGesture extends SheetGesture {
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
     if (controller.keyboard.state.containsState(KeyboardShortcuts.modifySelection)) {
-      selectedIndex = previousSelection.start.cell;
+      selectedIndex = previousSelection.end.cell;
       selectionBuilder.setStrategy(GestureSelectionStrategyRange());
     } else {
       selectedIndex = previousSelection.mainCell;

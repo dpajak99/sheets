@@ -24,7 +24,7 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
       renderer.getPaint(mainCellVisible: false, backgroundVisible: true).paint(viewport, canvas, size);
     }
 
-    ViewportCell? selectedCell = renderer.lastSelectedCell;
+    ViewportCell? selectedCell = renderer.mainCell;
     if (selectedCell == null) {
       return;
     }
