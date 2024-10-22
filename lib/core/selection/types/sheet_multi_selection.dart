@@ -117,16 +117,11 @@ class SheetMultiSelection extends SheetSelectionBase {
 
   @override
   List<SheetSelection> subtract(SheetSelection subtractedSelection) {
-    List<SheetSelection> updatedSelections = selections
-        .map((SheetSelection selection) {
-          return selection.subtract(subtractedSelection);
-        })
-        .fold(<SheetSelection>[], (List<SheetSelection> acc, List<SheetSelection> selection) {
-          return <SheetSelection>[...acc, ...selection];
-        })
-        .whereNotNull()
-        .whereNotNull()
-        .cast();
+    List<SheetSelection> updatedSelections = selections.map((SheetSelection selection) {
+      return selection.subtract(subtractedSelection);
+    }).fold(<SheetSelection>[], (List<SheetSelection> acc, List<SheetSelection> selection) {
+      return <SheetSelection>[...acc, ...selection];
+    }).whereNotNull();
 
     if (updatedSelections.isEmpty) {
       return <SheetSelection>[];
