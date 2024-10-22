@@ -10,10 +10,10 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
   final SheetMultiSelectionRenderer renderer;
 
   SheetMultiSelectionPaint(
-      this.renderer,
-      bool? mainCellVisible,
-      bool? backgroundVisible,
-      ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? true);
+    this.renderer,
+    bool? mainCellVisible,
+    bool? backgroundVisible,
+  ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? true);
 
   @override
   void paint(SheetViewport viewport, Canvas canvas, Size size) {

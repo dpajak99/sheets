@@ -14,7 +14,7 @@ class SelectionState extends ChangeNotifier {
   }
 
   void update(SheetSelection selection) {
-    if( value != selection ) {
+    if (value != selection) {
       value = selection;
       notifyListeners();
     }
@@ -22,12 +22,12 @@ class SelectionState extends ChangeNotifier {
 
   void complete() {
     SheetSelection completedSelection = value.complete();
-    if( value != completedSelection ) {
+    if (value != completedSelection) {
       value = completedSelection;
       notifyListeners();
     }
   }
-  
+
   String stringify() {
     return value.stringifySelection();
   }

@@ -5,6 +5,7 @@ import 'package:sheets/core/mouse/mouse_cursor_details.dart';
 
 abstract class SheetMouseGesture extends SheetGesture {
   Offset get startOffset;
+
   Offset get currentOffset;
 
   @override
@@ -45,7 +46,7 @@ class SheetDragUpdateGesture extends SheetMouseGesture {
   final MouseCursorDetails startDetails;
   final MouseCursorDetails updateDetails;
 
-  SheetDragUpdateGesture({ required this.startDetails, required this.updateDetails});
+  SheetDragUpdateGesture({required this.startDetails, required this.updateDetails});
 
   @override
   Offset get startOffset => startDetails.localOffset;
@@ -60,9 +61,9 @@ class SheetDragUpdateGesture extends SheetMouseGesture {
 class SheetDragEndGesture extends SheetMouseGesture {
   final MouseCursorDetails startDetails;
   final MouseCursorDetails endDetails;
-  
-  SheetDragEndGesture({ required this.startDetails, required this.endDetails});
-  
+
+  SheetDragEndGesture({required this.startDetails, required this.endDetails});
+
   @override
   Offset get startOffset => startDetails.localOffset;
 
@@ -72,4 +73,3 @@ class SheetDragEndGesture extends SheetMouseGesture {
   @override
   List<Object?> get props => <Object?>[];
 }
-

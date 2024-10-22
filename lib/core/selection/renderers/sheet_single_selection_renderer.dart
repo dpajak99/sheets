@@ -29,4 +29,3 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSel
 
   ViewportCell? get selectedCell => _selectedCell.value;
 }
-

@@ -39,7 +39,7 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
     if (isSelectionVisible) {
       ClosestVisible<ViewportCell> startCell = viewport.visibleContent.findCellOrClosest(selection.start.cell);
       ClosestVisible<ViewportCell> endCell = viewport.visibleContent.findCellOrClosest(selection.end.cell);
-      
+
       List<Direction> hiddenBorders = <Direction>[...startCell.hiddenBorders, ...endCell.hiddenBorders];
       return SelectionRect(startCell.value.rect, endCell.value.rect, selection.direction, hiddenBorders: hiddenBorders);
     } else {

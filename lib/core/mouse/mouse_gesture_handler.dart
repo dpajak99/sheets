@@ -206,7 +206,7 @@ class MouseColumnResizeGestureHandler extends DraggableGestureHandler {
 
   void _refreshColumnSize(SheetController controller) {
     viewportColumn = controller.viewport.visibleContent.columns.firstWhere(
-          (ViewportColumn column) => column.index == viewportColumn.index,
+      (ViewportColumn column) => column.index == viewportColumn.index,
     );
   }
 }
@@ -268,7 +268,7 @@ class MouseRowResizeGestureHandler extends DraggableGestureHandler {
 
   void _refreshRowSize(SheetController controller) {
     viewportRow = controller.viewport.visibleContent.rows.firstWhere(
-          (ViewportRow row) => row.index == viewportRow.index,
+      (ViewportRow row) => row.index == viewportRow.index,
     );
   }
 }

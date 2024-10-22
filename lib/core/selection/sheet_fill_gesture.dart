@@ -30,7 +30,7 @@ class SheetFillUpdateGesture extends SheetFillGesture {
       controller.viewport.firstVisibleRow,
       controller.viewport.firstVisibleColumn,
     );
-    
+
     SheetSelection previousSelection = controller.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
     selectionBuilder.setStrategy(GestureSelectionStrategyFill());

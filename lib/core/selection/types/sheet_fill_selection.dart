@@ -13,7 +13,8 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
     super.end, {
     required this.baseSelection,
     required this.fillDirection,
-  }) : assert(baseSelection is! SheetFillSelection), super(completed: false);
+  })  : assert(baseSelection is! SheetFillSelection),
+        super(completed: false);
 
   final SheetSelection baseSelection;
   final Direction fillDirection;

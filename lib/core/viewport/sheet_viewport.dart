@@ -104,13 +104,13 @@ class SheetViewport extends ChangeNotifier {
     double leftMargin = sheetCoords.left;
     double rightMargin = sheetCoords.right;
 
-    if(topMargin < scrollOffset.dy) {
+    if (topMargin < scrollOffset.dy) {
       _scrollController.scrollToVertical(sheetCoords.top - 1);
-    } else if(bottomMargin > scrollOffset.dy + sheetHeight) {
+    } else if (bottomMargin > scrollOffset.dy + sheetHeight) {
       _scrollController.scrollToVertical(sheetCoords.bottom - sheetHeight + 1);
-    } else if(leftMargin < scrollOffset.dx) {
+    } else if (leftMargin < scrollOffset.dx) {
       _scrollController.scrollToHorizontal(sheetCoords.left - 1);
-    } else if(rightMargin > scrollOffset.dx + sheetWidth) {
+    } else if (rightMargin > scrollOffset.dx + sheetWidth) {
       _scrollController.scrollToHorizontal(sheetCoords.right - sheetWidth + 1);
     }
   }

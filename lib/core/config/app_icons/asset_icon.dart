@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 part 'asset_icon_data.dart';
+
 part 'sheet_icons.dart';
 
 class AssetIcon extends StatelessWidget {

@@ -25,4 +25,3 @@ class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer<CellIndex> 
     return SheetFillSelectionPaint(this, mainCellVisible, backgroundVisible);
   }
 }
-

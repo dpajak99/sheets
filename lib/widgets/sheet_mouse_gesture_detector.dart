@@ -50,5 +50,3 @@ class SheetMouseGestureDetectorState extends State<SheetMouseGestureDetector> {
     );
   }
 }
-
-

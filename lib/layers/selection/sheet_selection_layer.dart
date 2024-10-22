@@ -50,4 +50,3 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
     _layerPainter.viewport = widget.sheetController.viewport;
   }
 }
-

@@ -36,7 +36,7 @@ class _SheetDraggableState extends State<SheetDraggable> {
   @override
   void didUpdateWidget(covariant SheetDraggable oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(oldWidget.draggableAreaRect != widget.draggableAreaRect) {
+    if (oldWidget.draggableAreaRect != widget.draggableAreaRect) {
       recognizer.setDraggableArea(widget.draggableAreaRect);
     }
   }

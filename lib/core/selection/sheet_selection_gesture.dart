@@ -53,7 +53,7 @@ class SheetSelectionUpdateGesture extends SheetGesture {
       controller.viewport.firstVisibleRow,
       controller.viewport.firstVisibleColumn,
     );
-    
+
     SheetSelection previousSelection = controller.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
