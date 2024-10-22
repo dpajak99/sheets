@@ -35,11 +35,28 @@ abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPaint
     canvas.drawLine(rect.topLeft, rect.bottomLeft, borderPaint);
   }
 
-  void paintHeadersLabel(Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
+  void paintRowLabel(Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
     TextStyle textStyle = selectionStatus.selectValue(
-      fullySelected: defaultHeaderTextStyleSelectedAll,
-      selected: defaultHeaderTextStyleSelected,
-      notSelected: defaultHeaderTextStyle,
+      fullySelected: defaultHeaderTextStyleSelectedAll.copyWith(height: 1.2),
+      selected: defaultHeaderTextStyleSelected.copyWith(height: 1.2),
+      notSelected: defaultHeaderTextStyle.copyWith(height: 1.2),
+    );
+
+    TextPainter textPainter = TextPainter(
+      textAlign: TextAlign.center,
+      text: TextSpan(text: value, style: textStyle),
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout(minWidth: rect.width, maxWidth: rect.width);
+    textPainter.paint(canvas, rect.center - Offset(textPainter.width / 2, textPainter.height / 2));
+  }
+
+  void paintColumnLabel(Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
+    TextStyle textStyle = selectionStatus.selectValue(
+      fullySelected: defaultHeaderTextStyleSelectedAll.copyWith(height: 1),
+      selected: defaultHeaderTextStyleSelected.copyWith(height: 1),
+      notSelected: defaultHeaderTextStyle.copyWith(height: 1),
     );
 
     TextPainter textPainter = TextPainter(
@@ -92,7 +109,7 @@ class SheetHorizontalHeadersPainter extends SheetHeadersPainter {
 
       paintHeadersBackground(canvas, column.rect, selectionStatus);
       paintHeadersBorder(canvas, column.rect, top: false);
-      paintHeadersLabel(canvas, column.rect, column.value, selectionStatus);
+      paintColumnLabel(canvas, column.rect, column.value, selectionStatus);
     }
   }
 
@@ -132,7 +149,7 @@ class SheetVerticalHeadersPainter extends SheetHeadersPainter {
 
       paintHeadersBackground(canvas, row.rect, selectionStatus);
       paintHeadersBorder(canvas, row.rect);
-      paintHeadersLabel(canvas, row.rect, row.value, selectionStatus);
+      paintRowLabel(canvas, row.rect, row.value, selectionStatus);
     }
   }
 

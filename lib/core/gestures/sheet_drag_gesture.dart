@@ -14,6 +14,18 @@ abstract class SheetMouseGesture extends SheetGesture {
   List<Object?> get props => <Object?>[];
 }
 
+class SheetMouseHoverGesture extends SheetMouseGesture {
+  final Offset localOffset;
+
+  SheetMouseHoverGesture(this.localOffset);
+
+  @override
+  Offset get startOffset => localOffset;
+
+  @override
+  Offset get currentOffset => localOffset;
+}
+
 class SheetDragStartGesture extends SheetMouseGesture {
   final MouseCursorDetails startDetails;
 

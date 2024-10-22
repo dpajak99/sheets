@@ -71,6 +71,7 @@ class MouseListener extends Streamable<SheetMouseGesture> {
 
   void notifyMouseHovered(PointerHoverEvent event) {
     _updateGlobalOffset(event.position);
+    addEvent(SheetMouseHoverGesture(_localOffset));
   }
 
   void notifyDragStarted(PointerDownEvent event) {

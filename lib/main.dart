@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sheets/sheet.dart';
 
 void main() {
@@ -11,14 +10,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData baseTheme = ThemeData(brightness: Brightness.light);
+    ThemeData baseTheme = ThemeData(
+      brightness: Brightness.light,
+      fontFamily: 'Arial',
+    );
 
     return MaterialApp(
       title: 'Sheet App',
       debugShowCheckedModeBanner: false,
-      theme: baseTheme.copyWith(
-        textTheme: GoogleFonts.robotoTextTheme(baseTheme.textTheme),
-      ),
+      theme: baseTheme,
       home: const SheetPage(),
     );
   }

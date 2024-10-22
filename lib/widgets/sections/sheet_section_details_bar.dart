@@ -39,6 +39,8 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
                     Expanded(
                       child: Text(
                         widget.sheetController.selection.stringify(),
+                        overflow: TextOverflow.clip,
+                        maxLines: 1,
                         style: const TextStyle(color: Colors.black, fontSize: 12, height: 1),
                       ),
                     ),

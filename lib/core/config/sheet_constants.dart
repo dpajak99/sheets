@@ -25,20 +25,20 @@ TextStyle defaultTextStyle = const TextStyle(
 
 TextStyle defaultHeaderTextStyle = const TextStyle(
   color: Color(0xff444746),
-  fontSize: 12,
-  height: 1,
+  fontSize: 11,
+  fontFamily: 'Arial',
 );
 
 TextStyle defaultHeaderTextStyleSelected = const TextStyle(
   color: Color(0xff0a1e47),
-  fontSize: 12,
+  fontSize: 11,
   fontWeight: FontWeight.bold,
-  height: 1,
+  fontFamily: 'Arial',
 );
 
 TextStyle defaultHeaderTextStyleSelectedAll = const TextStyle(
   color: Color(0xffffffff),
-  fontSize: 12,
+  fontSize: 11,
   fontWeight: FontWeight.bold,
-  height: 1,
+  fontFamily: 'Arial',
 );
