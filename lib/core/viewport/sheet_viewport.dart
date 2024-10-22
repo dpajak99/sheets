@@ -7,32 +7,17 @@ import 'package:sheets/core/viewport/sheet_viewport_content.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/utils/directional_values.dart';
 
-/// [SheetViewport] is responsible for managing the visible content within the
-/// viewport of the sheet and ensuring that content updates when the scroll
-/// position or sheet properties change.
-///
-/// It also provides functionality to convert global offsets to local ones
-/// relative to the visible grid within the viewport.
 class SheetViewport extends ChangeNotifier {
-  /// Manages the content currently visible within the viewport.
   final SheetViewportContent visibleContent = SheetViewportContent();
 
-  /// Stores the properties of the sheet, such as row heights and column widths.
   final SheetProperties _properties;
 
-  /// Controls the scroll position of the sheet and notifies the viewport
-  /// when the scroll changes.
   final SheetScrollController _scrollController;
 
-  /// Stores the current scroll position in both horizontal and vertical directions.
   late DirectionalValues<SheetScrollPosition> _scrollPosition;
 
   late SheetViewportRect viewportRect;
 
-  /// Creates a [SheetViewport] that updates visible content based on the
-  /// provided [properties] and [scrollController].
-  ///
-  /// The content within the viewport is initialized and rebuilt when necessary.
   SheetViewport(SheetProperties properties, SheetScrollController scrollController)
       : _scrollController = scrollController,
         _properties = properties {
@@ -81,8 +66,6 @@ class SheetViewport extends ChangeNotifier {
     return viewportRect.globalOffsetToLocal(globalOffset);
   }
 
-  /// Sets the viewport rectangle to the given [rect], and rebuilds the visible
-  /// content if the viewport size has changed.
   void setViewportRect(Rect rect) {
     if (viewportRect.isEquivalent(rect)) return;
 
@@ -115,15 +98,11 @@ class SheetViewport extends ChangeNotifier {
     }
   }
 
-  /// Updates the scroll position of the viewport when the [scrollController]
-  /// notifies a change, and rebuilds the visible content accordingly.
   void _updateScrollPosition(SheetScrollController scrollController) {
     _scrollPosition = scrollController.position;
     visibleContent.rebuild(viewportRect, _scrollPosition);
   }
 
-  /// Updates the sheet properties and rebuilds the visible content whenever
-  /// the [sheetProperties] change.
   void _updateSheetProperties(SheetProperties sheetProperties) {
     _scrollController.applyProperties(sheetProperties);
 

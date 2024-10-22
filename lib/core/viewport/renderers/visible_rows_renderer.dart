@@ -8,37 +8,19 @@ import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/directional_values.dart';
 
-/// [VisibleRowsRenderer] is responsible for determining and building the list
-/// of visible rows in the sheet based on the current viewport size, sheet properties,
-/// and scroll position.
-///
-/// It calculates the first visible row and iterates through the rows to add them
-/// to the list of visible rows until the viewport height is filled.
 class VisibleRowsRenderer {
-  /// The rectangle representing the current viewport area.
   final SheetViewportRect viewportRect;
 
-  /// The properties of the sheet, such as row heights, row count, and styles.
   final SheetProperties properties;
 
-  /// The current scroll position in both horizontal and vertical directions.
   final DirectionalValues<SheetScrollPosition> scrollPosition;
 
-  /// Creates a [VisibleRowsRenderer] that calculates which rows are visible
-  /// within the viewport based on the provided [viewportRect], [properties],
-  /// and [scrollPosition].
   VisibleRowsRenderer({
     required this.viewportRect,
     required this.properties,
     required this.scrollPosition,
   });
 
-  /// Builds and returns a list of [ViewportRow] objects representing the
-  /// rows visible in the current viewport.
-  ///
-  /// It calculates the first visible row and iterates through the rows, creating
-  /// their viewport configurations, stopping when the viewport height is filled
-  /// or there are no more rows.
   List<ViewportRow> build() {
     double firstVisibleCoordinate = scrollPosition.vertical.offset;
     _FirstVisibleRowInfo firstVisibleRowInfo = _findRowByY(firstVisibleCoordinate);

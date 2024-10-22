@@ -26,8 +26,6 @@ class SheetViewportRect with EquatableMixin {
     );
   }
 
-  /// Converts the given [globalOffset], which is relative to the entire sheet,
-  /// to a local offset relative to the visible grid within the viewport.
   Offset globalOffsetToLocal(Offset globalOffset) {
     ViewportOffsetTransformer transformer = ViewportOffsetTransformer(global);
     return transformer.globalToLocal(globalOffset);
