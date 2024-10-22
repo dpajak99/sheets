@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
-import 'package:sheets/core/gestures/sheet_fill_gesture.dart';
+import 'package:sheets/core/selection/sheet_fill_gesture.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 

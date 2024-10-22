@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/mouse/mouse_state_listener.dart';
+import 'package:sheets/widgets/mouse_state_listener.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';

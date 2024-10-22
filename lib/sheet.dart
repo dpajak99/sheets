@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/mouse/scroll/sheet_scrollable.dart';
-import 'package:sheets/core/mouse/sheet_mouse_gesture_detector.dart';
+import 'package:sheets/widgets/sheet_scrollable.dart';
+import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/layers/fill_handle/sheet_fill_handle_layer.dart';

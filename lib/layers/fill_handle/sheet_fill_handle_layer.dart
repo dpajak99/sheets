@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
-import 'package:sheets/core/mouse/sheet_draggable.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
+import 'package:sheets/widgets/sheet_draggable.dart';
 
 class SheetFillHandleLayer extends StatefulWidget {
   final SheetController sheetController;

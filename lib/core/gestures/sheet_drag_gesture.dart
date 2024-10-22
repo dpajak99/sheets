@@ -8,6 +8,9 @@ abstract class SheetMouseGesture extends SheetGesture {
   Offset get currentOffset;
 
   @override
+  void resolve(SheetController controller) {}
+
+  @override
   List<Object?> get props => <Object?>[];
 }
 
@@ -15,9 +18,6 @@ class SheetDragStartGesture extends SheetMouseGesture {
   final MouseCursorDetails startDetails;
 
   SheetDragStartGesture(this.startDetails);
-
-  @override
-  void resolve(SheetController controller) {}
 
   @override
   Offset get startOffset => startDetails.localOffset;
@@ -36,9 +36,6 @@ class SheetDragUpdateGesture extends SheetMouseGesture {
   SheetDragUpdateGesture({ required this.startDetails, required this.updateDetails});
 
   @override
-  void resolve(SheetController controller) {}
-
-  @override
   Offset get startOffset => startDetails.localOffset;
 
   @override
@@ -54,9 +51,6 @@ class SheetDragEndGesture extends SheetMouseGesture {
   
   SheetDragEndGesture({ required this.startDetails, required this.endDetails});
   
-  @override
-  void resolve(SheetController controller) {}
-
   @override
   Offset get startOffset => startDetails.localOffset;
 

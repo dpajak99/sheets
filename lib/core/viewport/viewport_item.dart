@@ -36,11 +36,6 @@ class ViewportRow extends ViewportItem {
         _style = style;
 
   @override
-  String toString() {
-    return 'Row(${_index.value})';
-  }
-
-  @override
   String get value => '${_index.value + 1}';
 
   @override
@@ -62,11 +57,6 @@ class ViewportColumn extends ViewportItem {
     required ColumnStyle style,
   })  : _index = index,
         _style = style;
-
-  @override
-  String toString() {
-    return 'Column(${_index.value})';
-  }
 
   @override
   String get value {
@@ -111,7 +101,7 @@ class ViewportCell extends ViewportItem {
         _column = column,
         _value = value;
 
-  factory ViewportCell.fromColumnRow(ViewportColumn column, ViewportRow row, {required String value}) {
+  factory ViewportCell.fromColumnRow(ViewportColumn column, ViewportRow row, {String value = ''}) {
     return ViewportCell(
       value: value,
       row: row,

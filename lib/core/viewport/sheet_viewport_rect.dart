@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/viewport/viewport_offset_transformer.dart';
-import 'package:sheets/core/viewport/viewport_rect_transformer.dart';
 
 class SheetViewportRect with EquatableMixin {
   late Rect global;
@@ -32,11 +31,6 @@ class SheetViewportRect with EquatableMixin {
   Offset globalOffsetToLocal(Offset globalOffset) {
     ViewportOffsetTransformer transformer = ViewportOffsetTransformer(global);
     return transformer.globalToLocal(globalOffset);
-  }
-  
-  Rect globalRectToLocal(Rect rect) {
-    ViewportRectTransformer transformer = ViewportRectTransformer(global);
-    return transformer.globalToLocal(rect);
   }
 
   bool isEquivalent(Rect rect) {

@@ -25,19 +25,3 @@ class SmoothScrollPhysics extends SheetScrollPhysics {
     return newOffset;
   }
 }
-
-class CellScrollPhysics extends SheetScrollPhysics {
-  @override
-  Offset parseScrolledOffset(Offset currentOffset, Offset delta) {
-    double maxHorizontalScrollExtent = _scrollController.metrics.horizontal.maxScrollExtent;
-    double maxVerticalScrollExtent = _scrollController.metrics.vertical.maxScrollExtent;
-
-    Offset updatedDelta = Offset(((delta.dx ~/ 22) * 22), ((delta.dy ~/ 22) * 22));
-
-    Offset limitX = Offset(0, maxHorizontalScrollExtent);
-    Offset limitY = Offset(0, maxVerticalScrollExtent);
-
-    Offset newOffset = (currentOffset + updatedDelta).limit(limitX, limitY);
-    return newOffset;
-  }
-}

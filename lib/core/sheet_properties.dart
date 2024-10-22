@@ -12,8 +12,8 @@ class SheetProperties extends ChangeNotifier {
 
   Map<RowIndex, RowStyle> get customRowStyles => _customRowStyles;
 
-  int columnCount = 100;
-  int rowCount = 100;
+  int columnCount;
+  int rowCount;
 
   void addRows(int count) {
     rowCount += count;
@@ -26,10 +26,12 @@ class SheetProperties extends ChangeNotifier {
   }
 
   SheetProperties({
-    required Map<ColumnIndex, ColumnStyle> customColumnStyles,
-    required Map<RowIndex, RowStyle> customRowStyles,
-  })  : _customRowStyles = customRowStyles,
-        _customColumnStyles = customColumnStyles;
+    Map<ColumnIndex, ColumnStyle>? customColumnStyles,
+    Map<RowIndex, RowStyle>? customRowStyles,
+    this.columnCount = 100,
+    this.rowCount = 100,
+  })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
+        _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{};
 
   double getRowHeight(RowIndex rowIndex) {
     return getRowStyle(rowIndex).height;
