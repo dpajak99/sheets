@@ -9,26 +9,26 @@ class RepeatActionTimer {
 
   final Duration startDuration;
   final Duration nextHoldDuration;
-  Timer? _holdStartTimer;
-  Timer? _holdPressTimer;
+  Timer? holdStartTimer;
+  Timer? holdPressTimer;
 
   void start(VoidCallback callback) {
     reset();
 
-    _holdStartTimer = Timer(startDuration, () {
+    holdStartTimer = Timer(startDuration, () {
       _setHoldPressTimer(callback);
     });
   }
 
   void reset() {
-    _holdStartTimer?.cancel();
-    _holdStartTimer = null;
+    holdStartTimer?.cancel();
+    holdStartTimer = null;
 
-    _holdPressTimer?.cancel();
-    _holdPressTimer = null;
+    holdPressTimer?.cancel();
+    holdPressTimer = null;
   }
 
   void _setHoldPressTimer(VoidCallback callback) {
-    _holdPressTimer = Timer.periodic(nextHoldDuration, (_) => callback());
+    holdPressTimer = Timer.periodic(nextHoldDuration, (_) => callback());
   }
 }

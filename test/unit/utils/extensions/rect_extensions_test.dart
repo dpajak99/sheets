@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 void main() {
-  group('Tests of RectExtensions', (){
-    group('Tests of RectExtensions.subtract()', (){
-      test('Should [return Rect] with subtracted values (>0)', (){
+  group('Tests of RectExtensions', () {
+    group('Tests of RectExtensions.subtract()', () {
+      test('Should [return Rect] with subtracted values (>0)', () {
         // Arrange
         Rect actualRect = const Rect.fromLTRB(0, 0, 10, 10);
 
@@ -18,7 +18,7 @@ void main() {
         expect(actualResult, expectedResult);
       });
 
-      test('Should [return Rect] with subtracted values (<0)', (){
+      test('Should [return Rect] with subtracted values (<0)', () {
         // Arrange
         Rect actualRect = const Rect.fromLTRB(0, 0, 10, 10);
 
@@ -32,8 +32,8 @@ void main() {
       });
     });
 
-    group('Tests of RectExtensions.within()', (){
-      test('Should [return true] if given point is within the rect', (){
+    group('Tests of RectExtensions.within()', () {
+      test('Should [return true] if given point is within the rect', () {
         // Arrange
         Rect actualRect = const Rect.fromLTRB(0, 0, 10, 10);
         Offset actualPoint = const Offset(5, 5);
@@ -45,7 +45,7 @@ void main() {
         expect(actualResult, true);
       });
 
-      test('Should [return false] if given point is not within the rect', (){
+      test('Should [return false] if given point is not within the rect', () {
         // Arrange
         Rect actualRect = const Rect.fromLTRB(0, 0, 10, 10);
         Offset actualPoint = const Offset(15, 15);

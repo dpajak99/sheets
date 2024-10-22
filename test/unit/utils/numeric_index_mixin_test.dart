@@ -61,6 +61,34 @@ void main() {
       expect(index1.compareTo(index3), equals(0));
     });
   });
+
+  group('MockNumericIndex.min', () {
+    test('Should [return the minimum value]', () {
+      // Arrange
+      MockNumericIndex index1 = MockNumericIndex(5);
+      MockNumericIndex index2 = MockNumericIndex(10);
+
+      // Act
+      MockNumericIndex result = min(index1, index2);
+
+      // Assert
+      expect(result, equals(index1));
+    });
+  });
+
+  group('MockNumericIndex.max', () {
+    test('Should [return the maximum value]', () {
+      // Arrange
+      MockNumericIndex index1 = MockNumericIndex(5);
+      MockNumericIndex index2 = MockNumericIndex(10);
+
+      // Act
+      MockNumericIndex result = max(index1, index2);
+
+      // Assert
+      expect(result, equals(index2));
+    });
+  });
 }
 
 class MockNumericIndex with NumericIndexMixin {

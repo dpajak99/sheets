@@ -400,7 +400,8 @@ void main() {
       SheetMultiSelection actualSelection = selection.append(appendedSelection);
 
       // Assert
-      SheetMultiSelection expectedSelection = SheetMultiSelection(selections: <SheetSelection>[selection, ...appendedSelection.selections]);
+      SheetMultiSelection expectedSelection =
+          SheetMultiSelection(selections: <SheetSelection>[selection, ...appendedSelection.selections]);
 
       expect(actualSelection, equals(expectedSelection));
     });

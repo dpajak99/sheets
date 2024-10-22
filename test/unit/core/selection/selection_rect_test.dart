@@ -75,7 +75,7 @@ void main() {
     });
   });
 
-  group('Tests of SelectionRect.isLeftBorderVisible', (){
+  group('Tests of SelectionRect.isLeftBorderVisible', () {
     test('Should [return true] when Direction.left is not hidden', () {
       // Arrange
       SelectionRect selectionRect = SelectionRect.fromLTRB(
@@ -105,7 +105,7 @@ void main() {
     });
   });
 
-  group('Tests of SelectionRect.isTopBorderVisible', (){
+  group('Tests of SelectionRect.isTopBorderVisible', () {
     test('Should [return true] when Direction.top is not hidden', () {
       // Arrange
       SelectionRect selectionRect = SelectionRect.fromLTRB(
@@ -135,7 +135,7 @@ void main() {
     });
   });
 
-  group('Tests of SelectionRect.isRightBorderVisible', (){
+  group('Tests of SelectionRect.isRightBorderVisible', () {
     test('Should [return true] when Direction.right is not hidden', () {
       // Arrange
       SelectionRect selectionRect = SelectionRect.fromLTRB(
@@ -165,7 +165,7 @@ void main() {
     });
   });
 
-  group('Tests of SelectionRect.isBottomBorderVisible', (){
+  group('Tests of SelectionRect.isBottomBorderVisible', () {
     test('Should [return true] when Direction.bottom is not hidden', () {
       // Arrange
       SelectionRect selectionRect = SelectionRect.fromLTRB(
