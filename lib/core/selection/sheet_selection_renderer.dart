@@ -5,13 +5,13 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 abstract class SheetSelectionRenderer<T extends SheetSelection> {
-  final SheetViewport viewport;
-  final T selection;
-
   SheetSelectionRenderer({
     required this.selection,
     required this.viewport,
   });
+
+  final SheetViewport viewport;
+  final T selection;
 
   bool get fillHandleVisible;
 

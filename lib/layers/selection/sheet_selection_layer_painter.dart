@@ -14,14 +14,14 @@ class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter
 
   late SheetSelection _sheetSelection;
 
-  set sheetSelection(SheetSelection value) {
+  void setSheetSelection(SheetSelection value) {
     _sheetSelection = value;
     notifyListeners();
   }
 
   late SheetViewport _viewport;
 
-  set viewport(SheetViewport value) {
+  void setViewport(SheetViewport value) {
     _viewport = value;
     notifyListeners();
   }

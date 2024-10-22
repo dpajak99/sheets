@@ -4,11 +4,6 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SelectionCellCorners with EquatableMixin {
-  final CellIndex topLeft;
-  final CellIndex topRight;
-  final CellIndex bottomLeft;
-  final CellIndex bottomRight;
-
   SelectionCellCorners(this.topLeft, this.topRight, this.bottomLeft, this.bottomRight);
 
   SelectionCellCorners.single(CellIndex cellIndex) : this(cellIndex, cellIndex, cellIndex, cellIndex);
@@ -31,6 +26,11 @@ class SelectionCellCorners with EquatableMixin {
         return SelectionCellCorners(bottomRight, bottomLeft, topRight, topLeft);
     }
   }
+
+  final CellIndex topLeft;
+  final CellIndex topRight;
+  final CellIndex bottomLeft;
+  final CellIndex bottomRight;
 
   Direction getRelativePosition(CellIndex cellIndex) {
     Map<Direction, int> directionSpaces = <Direction, int>{

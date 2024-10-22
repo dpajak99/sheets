@@ -3,14 +3,14 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
 class ClosestVisible<T> with EquatableMixin {
-  final List<Direction> hiddenBorders;
-  final T value;
-
   ClosestVisible._({required this.hiddenBorders, required this.value});
 
   ClosestVisible.fullyVisible(this.value) : hiddenBorders = <Direction>[];
 
   ClosestVisible.partiallyVisible({required this.hiddenBorders, required this.value});
+
+  final List<Direction> hiddenBorders;
+  final T value;
 
   static ClosestVisible<CellIndex> combineCellIndex(ClosestVisible<RowIndex> rowIndex, ClosestVisible<ColumnIndex> columnIndex) {
     return ClosestVisible<CellIndex>._(

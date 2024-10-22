@@ -4,11 +4,11 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 
 abstract class ViewportItem with EquatableMixin {
-  final Rect rect;
-
   ViewportItem({
     required this.rect,
   });
+
+  final Rect rect;
 
   String get value;
 
@@ -25,15 +25,15 @@ abstract class ViewportItem with EquatableMixin {
 }
 
 class ViewportRow extends ViewportItem {
-  final RowIndex _index;
-  final RowStyle _style;
-
   ViewportRow({
     required super.rect,
     required RowIndex index,
     required RowStyle style,
   })  : _index = index,
         _style = style;
+
+  final RowIndex _index;
+  final RowStyle _style;
 
   @override
   String get value => '${_index.value + 1}';
@@ -48,15 +48,15 @@ class ViewportRow extends ViewportItem {
 }
 
 class ViewportColumn extends ViewportItem {
-  final ColumnIndex _index;
-  final ColumnStyle _style;
-
   ViewportColumn({
     required super.rect,
     required ColumnIndex index,
     required ColumnStyle style,
   })  : _index = index,
         _style = style;
+
+  final ColumnIndex _index;
+  final ColumnStyle _style;
 
   @override
   String get value {
@@ -71,10 +71,11 @@ class ViewportColumn extends ViewportItem {
   String numberToExcelColumn(int number) {
     String result = '';
 
-    while (number > 0) {
-      number--; // Excel columns start from 1, not 0, hence this adjustment
-      result = String.fromCharCode(65 + (number % 26)) + result;
-      number = (number ~/ 26);
+    int parsedNumber = number;
+    while (parsedNumber > 0) {
+      parsedNumber--; // Excel columns start from 1, not 0, hence this adjustment
+      result = String.fromCharCode(65 + (parsedNumber % 26)) + result;
+      parsedNumber = parsedNumber ~/ 26;
     }
 
     return result;
@@ -85,11 +86,6 @@ class ViewportColumn extends ViewportItem {
 }
 
 class ViewportCell extends ViewportItem {
-  final CellIndex _index;
-  final ViewportRow _row;
-  final ViewportColumn _column;
-  final String _value;
-
   ViewportCell({
     required super.rect,
     required CellIndex index,
@@ -115,6 +111,11 @@ class ViewportCell extends ViewportItem {
       ),
     );
   }
+
+  final CellIndex _index;
+  final ViewportRow _row;
+  final ViewportColumn _column;
+  final String _value;
 
   @override
   CellIndex get index => _index;

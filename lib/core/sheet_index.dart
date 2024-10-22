@@ -50,9 +50,6 @@ sealed class SheetIndex with EquatableMixin {
 }
 
 class CellIndex extends SheetIndex {
-  final RowIndex row;
-  final ColumnIndex column;
-
   CellIndex({required this.row, required this.column});
 
   CellIndex.raw(int row, int column)
@@ -76,8 +73,10 @@ class CellIndex extends SheetIndex {
   }
 
   static CellIndex zero = CellIndex(row: RowIndex(0), column: ColumnIndex(0));
-
   static CellIndex max = CellIndex(row: RowIndex.max, column: ColumnIndex.max);
+
+  final RowIndex row;
+  final ColumnIndex column;
 
   @override
   CellIndex toRealIndex(SheetProperties properties) {
@@ -141,9 +140,9 @@ class CellIndex extends SheetIndex {
 }
 
 class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparable<ColumnIndex> {
-  final int _value;
-
   ColumnIndex(this._value);
+
+  final int _value;
 
   static ColumnIndex zero = ColumnIndex(0);
 
@@ -190,10 +189,11 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
   String numberToExcelColumn(int number) {
     String result = '';
 
-    while (number > 0) {
-      number--;
-      result = String.fromCharCode(65 + (number % 26)) + result;
-      number = (number ~/ 26);
+    int parsedNumber = number;
+    while (parsedNumber > 0) {
+      parsedNumber--;
+      result = String.fromCharCode(65 + (parsedNumber % 26)) + result;
+      parsedNumber = parsedNumber ~/ 26;
     }
 
     return result;
@@ -217,9 +217,9 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
 }
 
 class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<RowIndex> {
-  final int _value;
-
   RowIndex(this._value);
+
+  final int _value;
 
   static RowIndex zero = RowIndex(0);
 

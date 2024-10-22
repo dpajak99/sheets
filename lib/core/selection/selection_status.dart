@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 class SelectionStatus with EquatableMixin {
+  SelectionStatus(this._isSelected, this._isFullySelected);
+
   final bool _isSelected;
   final bool _isFullySelected;
-
-  SelectionStatus(this._isSelected, this._isFullySelected);
 
   static SelectionStatus statusFalse = SelectionStatus(false, false);
 

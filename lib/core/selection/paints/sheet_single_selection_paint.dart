@@ -5,18 +5,20 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 class SheetSingleSelectionPaint extends SheetSelectionPaint {
-  final SheetSingleSelectionRenderer renderer;
-
   SheetSingleSelectionPaint(
     this.renderer,
     bool? mainCellVisible,
     bool? backgroundVisible,
   ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? false);
 
+  final SheetSingleSelectionRenderer renderer;
+
   @override
   void paint(SheetViewport viewport, Canvas canvas, Size size) {
     ViewportCell? selectedCell = renderer.selectedCell;
-    if (selectedCell == null) return;
+    if (selectedCell == null) {
+      return;
+    }
 
     if (mainCellVisible) {
       paintMainCell(canvas, selectedCell.rect);
@@ -24,6 +26,8 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
       paintSelectionBorder(canvas, selectedCell.rect);
     }
 
-    if (backgroundVisible) paintSelectionBackground(canvas, selectedCell.rect);
+    if (backgroundVisible) {
+      paintSelectionBackground(canvas, selectedCell.rect);
+    }
   }
 }

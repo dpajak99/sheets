@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:sheets/core/sheet_index.dart';
 
 class SelectionStartDetails with EquatableMixin {
-  final SheetIndex index;
-
   SelectionStartDetails(this.index);
+
+  final SheetIndex index;
 
   CellIndex get cell {
     return switch (index) {
@@ -35,9 +35,9 @@ class SelectionStartDetails with EquatableMixin {
 }
 
 class SelectionEndDetails with EquatableMixin {
-  final SheetIndex index;
-
   SelectionEndDetails(this.index);
+
+  final SheetIndex index;
 
   CellIndex get cell {
     return switch (index) {

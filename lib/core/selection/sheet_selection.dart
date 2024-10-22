@@ -90,7 +90,9 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
     SelectionCellCorners? a = cellCorners;
     SelectionCellCorners? b = other.cellCorners;
 
-    if (a == null || b == null) return false;
+    if (a == null || b == null) {
+      return false;
+    }
 
     bool adjacent = a.isAdjacent(b);
     bool sameColumn = a.topLeft.column == b.topLeft.column && a.bottomRight.column == b.bottomRight.column;
@@ -118,7 +120,9 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
 
   @override
   bool containsRow(RowIndex index) {
-    if (columnSelected) return true;
+    if (columnSelected) {
+      return true;
+    }
 
     RowIndex topRow = start.row < end.row ? start.row : end.row;
     RowIndex bottomRow = start.row < end.row ? end.row : start.row;
@@ -128,7 +132,9 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
 
   @override
   bool containsColumn(ColumnIndex index) {
-    if (rowSelected) return true;
+    if (rowSelected) {
+      return true;
+    }
 
     ColumnIndex leftColumn = start.column < end.column ? start.column : end.column;
     ColumnIndex rightColumn = start.column < end.column ? end.column : start.column;

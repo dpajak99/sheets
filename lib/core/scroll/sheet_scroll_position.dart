@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
   SheetScrollPosition();
@@ -11,7 +11,9 @@ class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
   double get offset => _offset;
 
   set offset(double offset) {
-    if (_offset == offset) return;
+    if (_offset == offset) {
+      return;
+    }
     _offset = offset;
     notifyListeners();
   }

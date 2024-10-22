@@ -9,11 +9,11 @@ import 'package:sheets/utils/direction.dart';
 
 class SheetFillSelection extends SheetRangeSelection<CellIndex> {
   SheetFillSelection(
-    super.start,
-    super.end, {
+    super.startIndex,
+    super.endIndex, {
     required this.baseSelection,
     required this.fillDirection,
-  })  : assert(baseSelection is! SheetFillSelection),
+  })  : assert(baseSelection is! SheetFillSelection, 'Cannot fill a fill selection'),
         super(completed: false);
 
   final SheetSelection baseSelection;
@@ -51,13 +51,13 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
 
     switch (fillDirection) {
       case Direction.top:
-        return SheetRangeSelection<CellIndex>(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(currentCorners.topLeft, parentCorners.bottomRight);
       case Direction.bottom:
-        return SheetRangeSelection<CellIndex>(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(parentCorners.topLeft, currentCorners.bottomRight);
       case Direction.left:
-        return SheetRangeSelection<CellIndex>(currentCorners.topLeft, parentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(currentCorners.topLeft, parentCorners.bottomRight);
       case Direction.right:
-        return SheetRangeSelection<CellIndex>(parentCorners.topLeft, currentCorners.bottomRight, completed: true);
+        return SheetRangeSelection<CellIndex>(parentCorners.topLeft, currentCorners.bottomRight);
     }
   }
 

@@ -9,17 +9,17 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 class VisibleRowsRenderer {
-  final SheetViewportRect viewportRect;
-
-  final SheetProperties properties;
-
-  final DirectionalValues<SheetScrollPosition> scrollPosition;
-
   VisibleRowsRenderer({
     required this.viewportRect,
     required this.properties,
     required this.scrollPosition,
   });
+
+  final SheetViewportRect viewportRect;
+
+  final SheetProperties properties;
+
+  final DirectionalValues<SheetScrollPosition> scrollPosition;
 
   List<ViewportRow> build() {
     double firstVisibleCoordinate = scrollPosition.vertical.offset;
@@ -78,17 +78,17 @@ class VisibleRowsRenderer {
 }
 
 class _FirstVisibleRowInfo with EquatableMixin {
-  final RowIndex index;
-  final double startCoordinate;
-  final double visibleHeight;
-  final double hiddenHeight;
-
   const _FirstVisibleRowInfo({
     required this.index,
     required this.startCoordinate,
     required this.visibleHeight,
     required this.hiddenHeight,
   });
+
+  final RowIndex index;
+  final double startCoordinate;
+  final double visibleHeight;
+  final double hiddenHeight;
 
   @override
   List<Object?> get props => <Object?>[index, startCoordinate, visibleHeight, hiddenHeight];

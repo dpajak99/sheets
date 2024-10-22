@@ -36,7 +36,7 @@ void main() {
         });
 
         // Act
-        position.offset = position.offset;
+        position.offset = 0;
 
         // Assert
         expect(notified, isFalse);

@@ -4,13 +4,13 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 abstract class SheetSelectionPaint {
-  bool mainCellVisible = true;
-  bool backgroundVisible = true;
-
   SheetSelectionPaint({
     this.mainCellVisible = true,
     this.backgroundVisible = true,
   });
+
+  bool mainCellVisible = true;
+  bool backgroundVisible = true;
 
   void paint(SheetViewport viewport, Canvas canvas, Size size);
 
@@ -42,10 +42,18 @@ abstract class SheetSelectionPaint {
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.stroke;
 
-    if (top) canvas.drawLine(rect.topLeft, rect.topRight, selectionPaint);
-    if (right) canvas.drawLine(rect.topRight, rect.bottomRight, selectionPaint);
-    if (bottom) canvas.drawLine(rect.bottomLeft, rect.bottomRight, selectionPaint);
-    if (left) canvas.drawLine(rect.topLeft, rect.bottomLeft, selectionPaint);
+    if (top) {
+      canvas.drawLine(rect.topLeft, rect.topRight, selectionPaint);
+    }
+    if (right) {
+      canvas.drawLine(rect.topRight, rect.bottomRight, selectionPaint);
+    }
+    if (bottom) {
+      canvas.drawLine(rect.bottomLeft, rect.bottomRight, selectionPaint);
+    }
+    if (left) {
+      canvas.drawLine(rect.topLeft, rect.bottomLeft, selectionPaint);
+    }
   }
 
   void paintFillBorder(Canvas canvas, Rect rect) {

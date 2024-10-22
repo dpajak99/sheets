@@ -3,14 +3,6 @@ import 'package:sheets/core/selection/selection_direction.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SelectionRect extends Rect {
-  final List<Direction> _hiddenBorders;
-
-  SelectionRect.fromLTRB({
-    required Rect rect,
-    required List<Direction> hiddenBorders,
-  })  : _hiddenBorders = hiddenBorders,
-        super.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
-
   factory SelectionRect(
     Rect startRect,
     Rect endRect,
@@ -27,6 +19,14 @@ class SelectionRect extends Rect {
       hiddenBorders: hiddenBorders ?? <Direction>[],
     );
   }
+
+  SelectionRect.fromLTRB({
+    required Rect rect,
+    required List<Direction> hiddenBorders,
+  })  : _hiddenBorders = hiddenBorders,
+        super.fromLTRB(rect.left, rect.top, rect.right, rect.bottom);
+
+  final List<Direction> _hiddenBorders;
 
   bool get isLeftBorderVisible => !_hiddenBorders.contains(Direction.left);
 

@@ -1,26 +1,33 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/widgets/mouse_state_listener.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
+import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
+import 'package:sheets/widgets/mouse_state_listener.dart';
 
 class SheetScrollable extends StatefulWidget {
-  final Widget child;
-  final SheetScrollController scrollController;
-
   const SheetScrollable({
     required this.child,
     required this.scrollController,
     super.key,
   });
 
+  final Widget child;
+  final SheetScrollController scrollController;
+
   @override
   State<SheetScrollable> createState() => _SheetScrollableState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetScrollController>('scrollController', scrollController));
+  }
 }
 
 class _SheetScrollableState extends State<SheetScrollable> {
@@ -131,20 +138,34 @@ class _SheetScrollableState extends State<SheetScrollable> {
       ),
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetScrollbarPainter>('verticalScrollbarPainter', verticalScrollbarPainter));
+    properties.add(DiagnosticsProperty<SheetScrollbarPainter>('horizontalScrollbarPainter', horizontalScrollbarPainter));
+  }
 }
 
 class SheetScrollbar extends StatefulWidget {
-  final SheetScrollbarPainter painter;
-  final ValueChanged<double> onScroll;
-
   const SheetScrollbar({
     required this.painter,
     required this.onScroll,
     super.key,
   });
 
+  final SheetScrollbarPainter painter;
+  final ValueChanged<double> onScroll;
+
   @override
   State<StatefulWidget> createState() => _SheetScrollbarState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetScrollbarPainter>('painter', painter));
+    properties.add(ObjectFlagProperty<ValueChanged<double>>.has('onScroll', onScroll));
+  }
 }
 
 class _SheetScrollbarState extends State<SheetScrollbar> {
@@ -180,17 +201,17 @@ class _SheetScrollbarState extends State<SheetScrollbar> {
 }
 
 class _ScrollbarLayout extends StatelessWidget {
-  final Widget verticalScrollbar;
-  final Widget horizontalScrollbar;
-  final Widget child;
-  final double scrollbarWeight;
-
   const _ScrollbarLayout({
     required this.verticalScrollbar,
     required this.horizontalScrollbar,
     required this.child,
     required this.scrollbarWeight,
   });
+
+  final Widget verticalScrollbar;
+  final Widget horizontalScrollbar;
+  final Widget child;
+  final double scrollbarWeight;
 
   @override
   Widget build(BuildContext context) {
@@ -230,21 +251,28 @@ class _ScrollbarLayout extends StatelessWidget {
       ],
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('scrollbarWeight', scrollbarWeight));
+  }
 }
 
 class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
-  final SheetAxisDirection _axisDirection;
-
   SheetScrollbarPainter({
     required SheetAxisDirection axisDirection,
   })  : _axisDirection = axisDirection,
         _metrics = SheetScrollMetrics.zero(axisDirection),
         _position = SheetScrollPosition();
+  final SheetAxisDirection _axisDirection;
 
   late SheetScrollMetrics _metrics;
 
   set scrollMetrics(SheetScrollMetrics scrollMetrics) {
-    if (_metrics == scrollMetrics) return;
+    if (_metrics == scrollMetrics) {
+      return;
+    }
     _metrics = scrollMetrics;
     notifyListeners();
   }
@@ -252,7 +280,9 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
   late SheetScrollPosition _position;
 
   set scrollPosition(SheetScrollPosition scrollPosition) {
-    if (_position == scrollPosition) return;
+    if (_position == scrollPosition) {
+      return;
+    }
     _position = scrollPosition;
     notifyListeners();
   }
@@ -260,7 +290,9 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
   bool _hovered = false;
 
   set hovered(bool hovered) {
-    if (_hovered == hovered) return;
+    if (_hovered == hovered) {
+      return;
+    }
     _hovered = hovered;
     notifyListeners();
   }
@@ -304,7 +336,6 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
         double maxScrollPosition = _contentSize - _viewportDimension;
         double maxThumbOffset = trackHeight - thumbHeight;
         _scrollToThumbRatio = maxScrollPosition / maxThumbOffset;
-        break;
       case SheetAxisDirection.horizontal:
         double trackWidth = trackSize.width;
         double availableTrackWidth = trackWidth - (2 * thumbMargin);
@@ -321,7 +352,6 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
         double maxScrollPosition = _contentSize - _viewportDimension;
         double maxThumbOffset = trackWidth - thumbWidth;
         _scrollToThumbRatio = maxScrollPosition / maxThumbOffset;
-        break;
     }
 
     _paintTrack(canvas, trackSize);
@@ -369,15 +399,15 @@ class SheetScrollbarPainter extends ChangeNotifier implements CustomPainter {
 }
 
 class _ScrollbarButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onPressed;
-  final double size;
-
   const _ScrollbarButton({
     required this.icon,
     required this.onPressed,
     required this.size,
   });
+
+  final IconData icon;
+  final VoidCallback onPressed;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -415,5 +445,13 @@ class _ScrollbarButton extends StatelessWidget {
     } else {
       return const Color(0xff989898);
     }
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<IconData>('icon', icon));
+    properties.add(ObjectFlagProperty<VoidCallback>.has('onPressed', onPressed));
+    properties.add(DoubleProperty('size', size));
   }
 }

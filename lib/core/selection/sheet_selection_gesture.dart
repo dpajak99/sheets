@@ -1,17 +1,17 @@
+import 'package:sheets/core/gestures/sheet_gesture.dart';
+import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/gestures/sheet_gesture.dart';
-import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
-import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 class SheetSelectionStartGesture extends SheetGesture {
-  final ViewportItem selectionStart;
-
   SheetSelectionStartGesture(this.selectionStart);
+
+  final ViewportItem selectionStart;
 
   @override
   void resolve(SheetController controller) {
@@ -41,10 +41,10 @@ class SheetSelectionStartGesture extends SheetGesture {
 }
 
 class SheetSelectionUpdateGesture extends SheetGesture {
+  SheetSelectionUpdateGesture(this.selectionStart, this.selectionEnd);
+
   final ViewportItem selectionStart;
   final ViewportItem selectionEnd;
-
-  SheetSelectionUpdateGesture(this.selectionStart, this.selectionEnd);
 
   @override
   void resolve(SheetController controller) {
@@ -90,10 +90,10 @@ class SheetSelectionEndGesture extends SheetGesture {
 }
 
 class SheetSelectionMoveGesture extends SheetGesture {
+  SheetSelectionMoveGesture(this.dx, this.dy);
+
   final int dx;
   final int dy;
-
-  SheetSelectionMoveGesture(this.dx, this.dy);
 
   @override
   void resolve(SheetController controller) {

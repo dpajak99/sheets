@@ -1,8 +1,8 @@
 class CachedValue<T> {
+  CachedValue(this.getter);
+
   T? _value;
   T Function() getter;
-
-  CachedValue(this.getter);
 
   T get value {
     _value ??= getter();

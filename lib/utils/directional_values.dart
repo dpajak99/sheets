@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableMixin {
   DirectionalValues(this._vertical, this._horizontal) {
@@ -23,7 +23,9 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
   A get vertical => _vertical;
 
   set vertical(A vertical) {
-    if (_vertical == vertical) return;
+    if (_vertical == vertical) {
+      return;
+    }
     _vertical = vertical;
     notifyListeners();
   }
@@ -35,14 +37,18 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
   }
 
   set horizontal(A horizontal) {
-    if (_horizontal == horizontal) return;
+    if (_horizontal == horizontal) {
+      return;
+    }
     _horizontal = horizontal;
 
     notifyListeners();
   }
 
   void update({required A horizontal, required A vertical}) {
-    if (_horizontal == horizontal && _vertical == vertical) return;
+    if (_horizontal == horizontal && _vertical == vertical) {
+      return;
+    }
     _horizontal = horizontal;
     _vertical = vertical;
     notifyListeners();

@@ -50,7 +50,9 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
   @override
   bool containsSelection(SheetSelection nestedSelection) {
     SelectionCellCorners? nestedCorners = nestedSelection.cellCorners;
-    if (nestedCorners == null) return false;
+    if (nestedCorners == null) {
+      return false;
+    }
 
     SelectionCellCorners currentCorners = cellCorners;
     return nestedCorners.isNestedIn(currentCorners);
@@ -98,7 +100,6 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
       newSelections.add(SheetRangeSelection<CellIndex>(
         currentStart,
         CellIndex(row: subtractionStart.row.move(-1), column: currentEnd.column),
-        completed: true,
       ));
     }
 
@@ -106,7 +107,6 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
       newSelections.add(SheetRangeSelection<CellIndex>(
         CellIndex(row: subtractionStart.row, column: currentStart.column),
         CellIndex(row: subtractionEnd.row, column: subtractionStart.column.move(-1)),
-        completed: true,
       ));
     }
 
@@ -114,7 +114,6 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
       newSelections.add(SheetRangeSelection<CellIndex>(
         CellIndex(row: subtractionEnd.row.move(1), column: currentStart.column),
         currentEnd,
-        completed: true,
       ));
     }
 
@@ -122,7 +121,6 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
       newSelections.add(SheetRangeSelection<CellIndex>(
         CellIndex(row: subtractionStart.row, column: subtractionEnd.column.move(1)),
         CellIndex(row: subtractionEnd.row, column: currentEnd.column),
-        completed: true,
       ));
     }
 

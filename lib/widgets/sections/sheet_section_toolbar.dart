@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 
@@ -94,9 +95,9 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
 }
 
 class ToolbarText extends StatelessWidget {
-  final String text;
-
   const ToolbarText(this.text, {super.key});
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +113,12 @@ class ToolbarText extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('text', text));
   }
 }
 
@@ -129,9 +136,9 @@ class ToolbarDivider extends StatelessWidget {
 }
 
 class ToolbarIcon extends StatelessWidget {
-  final AssetIconData iconData;
-
   const ToolbarIcon(this.iconData, {super.key});
+
+  final AssetIconData iconData;
 
   @override
   Widget build(BuildContext context) {
@@ -139,12 +146,18 @@ class ToolbarIcon extends StatelessWidget {
       child: AssetIcon(iconData, color: const Color(0xff444746), size: 18),
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<AssetIconData>('iconData', iconData));
+  }
 }
 
 class ToolbarButton extends StatefulWidget {
-  final Widget child;
-
   const ToolbarButton({required this.child, super.key});
+
+  final Widget child;
 
   @override
   State<StatefulWidget> createState() => _ToolbarButtonState();
@@ -174,5 +187,11 @@ class _ToolbarButtonState extends State<ToolbarButton> {
         );
       },
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<bool>('hovered', hovered));
   }
 }

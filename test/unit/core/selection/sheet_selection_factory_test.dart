@@ -258,7 +258,7 @@ void main() {
         SheetSelection actualSelection = SheetSelectionFactory.all();
 
         // Assert
-        SheetSelection expectedSheetSelection = SheetRangeSelection<CellIndex>(CellIndex.zero, CellIndex.max, completed: true);
+        SheetSelection expectedSheetSelection = SheetRangeSelection<CellIndex>(CellIndex.zero, CellIndex.max);
 
         expect(actualSelection, expectedSheetSelection);
       });

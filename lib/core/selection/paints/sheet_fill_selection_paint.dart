@@ -7,13 +7,13 @@ import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 
 class SheetFillSelectionPaint extends SheetSelectionPaint {
-  final SheetFillSelectionRenderer renderer;
-
   SheetFillSelectionPaint(
     this.renderer,
     bool? mainCellVisible,
     bool? backgroundVisible,
   ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? true);
+
+  final SheetFillSelectionRenderer renderer;
 
   @override
   void paint(SheetViewport viewport, Canvas canvas, Size size) {
@@ -21,7 +21,9 @@ class SheetFillSelectionPaint extends SheetSelectionPaint {
     sheetSelectionRenderer.getPaint().paint(viewport, canvas, size);
 
     SelectionRect? selectionRect = renderer.selectionRect;
-    if (selectionRect == null) return;
+    if (selectionRect == null) {
+      return;
+    }
 
     paintFillBorder(canvas, selectionRect);
   }

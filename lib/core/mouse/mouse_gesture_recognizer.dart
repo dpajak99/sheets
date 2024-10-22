@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
+import 'package:sheets/core/sheet_controller.dart';
 
 abstract class MouseGestureRecognizer with EquatableMixin {
-  final MouseGestureHandler handler;
-
   MouseGestureRecognizer(this.handler);
+
+  final MouseGestureHandler handler;
 
   MouseGestureHandler? recognize(SheetController controller, SheetMouseGesture gesture);
 }
@@ -23,9 +23,9 @@ class MouseSelectionGestureRecognizer extends MouseGestureRecognizer {
 }
 
 class DraggableGestureRecognizer extends MouseGestureRecognizer {
-  Rect draggableArea = Rect.zero;
-
   DraggableGestureRecognizer(DraggableGestureHandler super.handler);
+
+  Rect draggableArea = Rect.zero;
 
   @override
   MouseGestureHandler? recognize(SheetController controller, SheetMouseGesture gesture) {

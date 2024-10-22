@@ -10,16 +10,6 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/utils/extensions/iterable_extensions.dart';
 
 class SheetMultiSelection extends SheetSelectionBase {
-  SheetMultiSelection._({
-    required Iterable<SheetSelection> selections,
-  })  : selections = selections.toSet().toList(),
-        assert(selections.isNotEmpty, 'Merged selections cannot be empty'),
-        super(
-          completed: true,
-          startIndex: selections.last.start.index,
-          endIndex: selections.last.end.index,
-        );
-
   factory SheetMultiSelection({
     required Iterable<SheetSelection> selections,
   }) {
@@ -30,6 +20,16 @@ class SheetMultiSelection extends SheetSelectionBase {
       },
     );
   }
+
+  SheetMultiSelection._({
+    required Iterable<SheetSelection> selections,
+  })  : selections = selections.toSet().toList(),
+        assert(selections.isNotEmpty, 'Merged selections cannot be empty'),
+        super(
+          completed: true,
+          startIndex: selections.last.start.index,
+          endIndex: selections.last.end.index,
+        );
 
   final List<SheetSelection> selections;
 
@@ -136,7 +136,7 @@ class SheetMultiSelection extends SheetSelectionBase {
 
     bool subtracted = false;
     for (SheetSelection selection in previousSelections) {
-      if (subtracted == false && selection.containsSelection(lastSelection)) {
+      if (!subtracted && selection.containsSelection(lastSelection)) {
         subtracted = true;
         List<SheetSelection> subtractedSelection = selection.subtract(lastSelection);
         if (subtractedSelection.isNotEmpty) {
@@ -162,13 +162,19 @@ class SheetMultiSelection extends SheetSelectionBase {
 
     for (int i = 0; i < selections.length; i++) {
       SheetSelection selectionA = selections[i];
-      if (!unmodifiedSelections.contains(selectionA)) continue;
+      if (!unmodifiedSelections.contains(selectionA)) {
+        continue;
+      }
 
       for (int j = i + 1; j < selections.length; j++) {
         SheetSelection selectionB = selections[j];
 
-        if (selectionA == selectionB) continue;
-        if (!unmodifiedSelections.contains(selectionB)) continue;
+        if (selectionA == selectionB) {
+          continue;
+        }
+        if (!unmodifiedSelections.contains(selectionB)) {
+          continue;
+        }
 
         if (selectionA.canMerge(selectionB)) {
           unmodifiedSelections.remove(selectionA);

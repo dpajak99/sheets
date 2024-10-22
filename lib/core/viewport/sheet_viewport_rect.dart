@@ -4,12 +4,12 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/viewport/viewport_offset_transformer.dart';
 
 class SheetViewportRect with EquatableMixin {
-  late Rect global;
-  late Rect local;
-
   SheetViewportRect(this.global) {
     _updateLocalRect();
   }
+
+  late Rect global;
+  late Rect local;
 
   double get width => global.width;
 

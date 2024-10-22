@@ -1,8 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/widgets/sheet_scrollable.dart';
-import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/layers/fill_handle/sheet_fill_handle_layer.dart';
@@ -10,9 +10,10 @@ import 'package:sheets/layers/headers/sheet_headers_layer.dart';
 import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/mesh/sheet_mesh_layer.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
 import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
+import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
+import 'package:sheets/widgets/sheet_scrollable.dart';
 
 class SheetPage extends StatefulWidget {
   const SheetPage({super.key});
@@ -35,8 +36,8 @@ class SheetPageState extends State<SheetPage> {
   }
 
   @override
-  void dispose() {
-    sheetController.dispose();
+  Future<void> dispose() async {
+    await sheetController.dispose();
     super.dispose();
   }
 
@@ -54,21 +55,33 @@ class SheetPageState extends State<SheetPage> {
       ),
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class Sheet extends StatefulWidget {
-  final SheetController sheetController;
-
   const Sheet({
     required this.sheetController,
     super.key,
   });
+
+  final SheetController sheetController;
 
   @override
   State<StatefulWidget> createState() => SheetState();
 
   static SheetState of(BuildContext context) {
     return context.findAncestorStateOfType<SheetState>()!;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
   }
 }
 
@@ -84,7 +97,7 @@ class SheetState extends State<Sheet> {
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
-      child: Container(
+      child: DecoratedBox(
         decoration: const BoxDecoration(
           color: Color(0xfff8faf8),
         ),
@@ -111,18 +124,30 @@ class SheetState extends State<Sheet> {
     }
     return false;
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class SheetContent extends StatefulWidget {
-  final SheetController sheetController;
-
   const SheetContent({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => SheetContentState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class SheetContentState extends State<SheetContent> {
@@ -150,7 +175,9 @@ class SheetContentState extends State<SheetContent> {
 
   void _notifySheetViewportChanged() {
     RenderBox? renderBox = _sheetViewportKey.currentContext!.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
+    if (renderBox == null) {
+      return;
+    }
 
     Offset position = renderBox.localToGlobal(Offset.zero);
     widget.sheetController.viewport.setViewportRect(Rect.fromLTRB(
@@ -163,12 +190,12 @@ class SheetContentState extends State<SheetContent> {
 }
 
 class SheetGrid extends StatelessWidget {
-  final SheetController sheetController;
-
   const SheetGrid({
     required this.sheetController,
     super.key,
   });
+
+  final SheetController sheetController;
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +206,6 @@ class SheetGrid extends StatelessWidget {
           left: 50,
           height: 50,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text('Add more'),
             ],
@@ -207,5 +233,11 @@ class SheetGrid extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
   }
 }

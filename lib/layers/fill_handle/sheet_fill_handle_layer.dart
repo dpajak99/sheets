@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:flutter/rendering.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/widgets/sheet_draggable.dart';
 
 class SheetFillHandleLayer extends StatefulWidget {
-  final SheetController sheetController;
-
   const SheetFillHandleLayer({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => SheetFillHandleLayerState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
@@ -81,9 +88,9 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
 }
 
 class _FillHandle extends StatelessWidget {
-  final double size;
-
   const _FillHandle({required this.size});
+
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -93,8 +100,14 @@ class _FillHandle extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: const Color(0xff3572e3),
-        border: Border.all(color: const Color(0xffffffff), width: 1),
+        border: Border.all(color: const Color(0xffffffff)),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('size', size));
   }
 }

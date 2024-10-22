@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/mouse/mouse_cursor_details.dart';
+import 'package:sheets/core/sheet_controller.dart';
 
 abstract class SheetMouseGesture extends SheetGesture {
   Offset get startOffset;
@@ -16,9 +16,9 @@ abstract class SheetMouseGesture extends SheetGesture {
 }
 
 class SheetMouseHoverGesture extends SheetMouseGesture {
-  final Offset localOffset;
-
   SheetMouseHoverGesture(this.localOffset);
+
+  final Offset localOffset;
 
   @override
   Offset get startOffset => localOffset;
@@ -28,9 +28,9 @@ class SheetMouseHoverGesture extends SheetMouseGesture {
 }
 
 class SheetDragStartGesture extends SheetMouseGesture {
-  final MouseCursorDetails startDetails;
-
   SheetDragStartGesture(this.startDetails);
+
+  final MouseCursorDetails startDetails;
 
   @override
   Offset get startOffset => startDetails.localOffset;
@@ -43,10 +43,10 @@ class SheetDragStartGesture extends SheetMouseGesture {
 }
 
 class SheetDragUpdateGesture extends SheetMouseGesture {
+  SheetDragUpdateGesture({required this.startDetails, required this.updateDetails});
+
   final MouseCursorDetails startDetails;
   final MouseCursorDetails updateDetails;
-
-  SheetDragUpdateGesture({required this.startDetails, required this.updateDetails});
 
   @override
   Offset get startOffset => startDetails.localOffset;
@@ -59,10 +59,10 @@ class SheetDragUpdateGesture extends SheetMouseGesture {
 }
 
 class SheetDragEndGesture extends SheetMouseGesture {
+  SheetDragEndGesture({required this.startDetails, required this.endDetails});
+
   final MouseCursorDetails startDetails;
   final MouseCursorDetails endDetails;
-
-  SheetDragEndGesture({required this.startDetails, required this.endDetails});
 
   @override
   Offset get startOffset => startDetails.localOffset;

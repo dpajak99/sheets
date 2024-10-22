@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
+import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 
 void main() {
   group('Tests of SheetScrollMetrics', () {

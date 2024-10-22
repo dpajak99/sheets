@@ -1,17 +1,24 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/headers/sheet_headers_painter.dart';
 
 class SheetHeadersLayer extends StatefulWidget {
-  final SheetController sheetController;
-
   const SheetHeadersLayer({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => _SheetHeadersLayerState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
@@ -69,5 +76,12 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   void _updateSelection() {
     columnHeadersPainter.selection = widget.sheetController.selection.value;
     rowHeadersPainter.selection = widget.sheetController.selection.value;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetHorizontalHeadersPainter>('columnHeadersPainter', columnHeadersPainter));
+    properties.add(DiagnosticsProperty<SheetVerticalHeadersPainter>('rowHeadersPainter', rowHeadersPainter));
   }
 }

@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 void main() {
@@ -95,6 +95,4 @@ void main() {
   });
 }
 
-class MockListenable extends ChangeNotifier {
-  void triggerUpdate() => notifyListeners();
-}
+class MockListenable extends ChangeNotifier {}

@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
-import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/utils/directional_values.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
+import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
+import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/utils/directional_values.dart';
 
 class SheetScrollController extends ChangeNotifier {
   SheetScrollController({
@@ -76,17 +76,11 @@ class SheetScrollController extends ChangeNotifier {
   }
 
   void scrollToVertical(double offset) {
-    if (offset < 0) {
-      offset = 0;
-    }
-    position.vertical.offset = offset;
+    position.vertical.offset = offset < 0 ? 0 : offset;
   }
 
   void scrollToHorizontal(double offset) {
-    if (offset < 0) {
-      offset = 0;
-    }
-    position.horizontal.offset = offset;
+    position.horizontal.offset = offset < 0 ? 0 : offset;
   }
 
   void setViewportSize(Size size) {

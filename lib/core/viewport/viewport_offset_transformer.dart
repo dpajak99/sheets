@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ViewportOffsetTransformer {
-  final Rect globalRect;
-
   ViewportOffsetTransformer(this.globalRect);
+
+  final Rect globalRect;
 
   Offset globalToLocal(Offset globalOffset) {
     Offset localOffset = Offset(globalOffset.dx - globalRect.left, globalOffset.dy - globalRect.top);

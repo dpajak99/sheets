@@ -1,13 +1,13 @@
-import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 
 class SheetResizeColumnGesture extends SheetGesture {
+  SheetResizeColumnGesture(this.columnIndex, this.width);
+
   final ColumnIndex columnIndex;
   final double width;
-
-  SheetResizeColumnGesture(this.columnIndex, this.width);
 
   @override
   void resolve(SheetController controller) {
@@ -20,10 +20,10 @@ class SheetResizeColumnGesture extends SheetGesture {
 }
 
 class SheetResizeRowGesture extends SheetGesture {
+  SheetResizeRowGesture(this.rowIndex, this.height);
+
   final RowIndex rowIndex;
   final double height;
-
-  SheetResizeRowGesture(this.rowIndex, this.height);
 
   @override
   void resolve(SheetController controller) {

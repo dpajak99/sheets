@@ -58,9 +58,9 @@ class NoKeysPressedState extends KeyboardState {
 }
 
 class SingleKeyPressedState extends KeyboardState {
-  final LogicalKeyboardKey key;
-
   const SingleKeyPressedState(this.key);
+
+  final LogicalKeyboardKey key;
 
   @override
   bool get anyKeyActive => true;
@@ -95,9 +95,9 @@ class SingleKeyPressedState extends KeyboardState {
 }
 
 class MultiKeysPressedState extends KeyboardState {
-  final List<LogicalKeyboardKey> _keys;
-
   const MultiKeysPressedState(this._keys);
+
+  final List<LogicalKeyboardKey> _keys;
 
   @override
   bool get anyKeyActive => true;
@@ -109,7 +109,7 @@ class MultiKeysPressedState extends KeyboardState {
 
   @override
   bool areKeysPressed(List<LogicalKeyboardKey> keys) {
-    return keys.every((LogicalKeyboardKey key) => isKeyPressed(key));
+    return keys.every(isKeyPressed);
   }
 
   @override

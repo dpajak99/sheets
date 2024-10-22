@@ -1,16 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/mouse/mouse_listener.dart';
 
 class SheetMouseGestureDetector extends StatefulWidget {
-  final MouseListener mouseListener;
-  final Widget child;
-
   const SheetMouseGestureDetector({
     required this.mouseListener,
     required this.child,
     super.key,
   });
+
+  final MouseListener mouseListener;
+  final Widget child;
 
   static SheetMouseGestureDetectorState of(BuildContext context) {
     return context.findAncestorStateOfType<SheetMouseGestureDetectorState>()!;
@@ -18,6 +19,12 @@ class SheetMouseGestureDetector extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => SheetMouseGestureDetectorState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<MouseListener>('mouseListener', mouseListener));
+  }
 }
 
 class SheetMouseGestureDetectorState extends State<SheetMouseGestureDetector> {

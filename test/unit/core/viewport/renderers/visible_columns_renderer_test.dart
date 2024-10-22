@@ -1,12 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/viewport/renderers/visible_columns_renderer.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
-import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/utils/directional_values.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:flutter/material.dart';
+import 'package:sheets/utils/directional_values.dart';
 
 void main() {
   group('Tests of VisibleColumnsRenderer.build()', () {

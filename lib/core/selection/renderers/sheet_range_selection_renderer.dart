@@ -11,14 +11,14 @@ import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRenderer<SheetRangeSelection<T>> {
-  late final CachedValue<SelectionRect?> _selectionRect;
-
   SheetRangeSelectionRenderer({
     required super.selection,
     required super.viewport,
   }) {
     _selectionRect = CachedValue<SelectionRect?>(_calculateSelectionBounds);
   }
+
+  late final CachedValue<SelectionRect?> _selectionRect;
 
   @override
   bool get fillHandleVisible => selection.isCompleted;

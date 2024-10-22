@@ -1,14 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MouseStateListener extends StatefulWidget {
-  final Widget Function(Set<WidgetState> states) childBuilder;
-  final bool disableSplash;
-  final bool disabled;
-  final MouseCursor? mouseCursor;
-  final ValueChanged<bool>? onHover;
-  final GestureTapCallback? onTap;
-  final bool selected;
-
   const MouseStateListener({
     required this.childBuilder,
     this.disableSplash = false,
@@ -20,8 +13,28 @@ class MouseStateListener extends StatefulWidget {
     super.key,
   });
 
+  final Widget Function(Set<WidgetState> states) childBuilder;
+  final bool disableSplash;
+  final bool disabled;
+  final MouseCursor? mouseCursor;
+  final ValueChanged<bool>? onHover;
+  final GestureTapCallback? onTap;
+  final bool selected;
+
   @override
   State<StatefulWidget> createState() => _MouseStateListener();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<Widget Function(Set<WidgetState> states)>.has('childBuilder', childBuilder));
+    properties.add(DiagnosticsProperty<bool>('disableSplash', disableSplash));
+    properties.add(DiagnosticsProperty<bool>('disabled', disabled));
+    properties.add(DiagnosticsProperty<MouseCursor?>('mouseCursor', mouseCursor));
+    properties.add(ObjectFlagProperty<ValueChanged<bool>?>.has('onHover', onHover));
+    properties.add(ObjectFlagProperty<GestureTapCallback?>.has('onTap', onTap));
+    properties.add(DiagnosticsProperty<bool>('selected', selected));
+  }
 }
 
 class _MouseStateListener extends State<MouseStateListener> {

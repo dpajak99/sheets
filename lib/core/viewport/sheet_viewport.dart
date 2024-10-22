@@ -8,16 +8,6 @@ import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 class SheetViewport extends ChangeNotifier {
-  final SheetViewportContent visibleContent = SheetViewportContent();
-
-  final SheetProperties _properties;
-
-  final SheetScrollController _scrollController;
-
-  late DirectionalValues<SheetScrollPosition> _scrollPosition;
-
-  late SheetViewportRect viewportRect;
-
   SheetViewport(SheetProperties properties, SheetScrollController scrollController)
       : _scrollController = scrollController,
         _properties = properties {
@@ -32,6 +22,16 @@ class SheetViewport extends ChangeNotifier {
     _properties.addListener(() => _updateSheetProperties(_properties));
     _scrollController.addListener(() => _updateScrollPosition(_scrollController));
   }
+
+  final SheetViewportContent visibleContent = SheetViewportContent();
+
+  final SheetProperties _properties;
+
+  final SheetScrollController _scrollController;
+
+  late DirectionalValues<SheetScrollPosition> _scrollPosition;
+
+  late SheetViewportRect viewportRect;
 
   @override
   void dispose() {
@@ -67,7 +67,9 @@ class SheetViewport extends ChangeNotifier {
   }
 
   void setViewportRect(Rect rect) {
-    if (viewportRect.isEquivalent(rect)) return;
+    if (viewportRect.isEquivalent(rect)) {
+      return;
+    }
 
     viewportRect = SheetViewportRect(rect);
     visibleContent.rebuild(viewportRect, _scrollPosition);

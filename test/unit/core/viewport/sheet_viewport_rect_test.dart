@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 
 void main() {
@@ -103,7 +103,7 @@ void main() {
         Offset localOffset = viewportRect.globalOffsetToLocal(globalOffset);
 
         // Assert
-        Offset expectedLocalOffset = const Offset(0, 0);
+        Offset expectedLocalOffset = Offset.zero;
         expect(localOffset, equals(expectedLocalOffset));
       });
 

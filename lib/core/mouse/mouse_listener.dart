@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/mouse/mouse_cursor_details.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/repeat_action_timer.dart';
 import 'package:sheets/utils/streamable.dart';
@@ -62,7 +62,7 @@ class MouseListener extends Streamable<SheetMouseGesture> {
     cursor.value = SystemMouseCursors.basic;
   }
 
-  set globalOffset(Offset globalOffset) {
+  void setGlobalOffset(Offset globalOffset) {
     Offset localOffset = _sheetController.viewport.globalOffsetToLocal(globalOffset);
     if (_localOffset != localOffset) {
       _localOffset = localOffset;
@@ -81,7 +81,7 @@ class MouseListener extends Streamable<SheetMouseGesture> {
   }
 
   void notifyDragUpdated(PointerMoveEvent event) {
-    globalOffset = event.position;
+    setGlobalOffset(event.position);
 
     if (_dragStartDetails != null) {
       _repeatDragUpdateTimer.reset();
@@ -99,7 +99,7 @@ class MouseListener extends Streamable<SheetMouseGesture> {
   }
 
   void _updateGlobalOffset(Offset position) {
-    globalOffset = position;
+    setGlobalOffset(position);
   }
 
   void _resolveGesture(SheetMouseGesture gesture) {

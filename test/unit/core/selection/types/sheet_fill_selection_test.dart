@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
+import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
-import 'package:sheets/core/selection/selection_corners.dart';
-import 'package:sheets/core/selection/selection_status.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
 void main() {
@@ -36,7 +36,7 @@ void main() {
       SheetFillSelection selection = SheetFillSelection(
         CellIndex.raw(2, 1),
         CellIndex.raw(5, 5),
-        baseSelection: SheetRangeSelection<RowIndex>.single(RowIndex(1), completed: true),
+        baseSelection: SheetRangeSelection<RowIndex>.single(RowIndex(1)),
         fillDirection: Direction.bottom,
       );
 
@@ -56,7 +56,7 @@ void main() {
       SheetFillSelection selection = SheetFillSelection(
         CellIndex.raw(2, 1),
         CellIndex.raw(5, 5),
-        baseSelection: SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1), completed: true),
+        baseSelection: SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1)),
         fillDirection: Direction.bottom,
       );
 
@@ -728,7 +728,6 @@ void main() {
       SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(
         CellIndex.raw(1, 1),
         CellIndex.raw(3, 5),
-        completed: true,
       );
 
       expect(actualSelection, equals(expectedSelection));
@@ -752,7 +751,6 @@ void main() {
       SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(
         CellIndex.raw(5, 1),
         CellIndex.raw(3, 3),
-        completed: true,
       );
 
       expect(actualSelection, equals(expectedSelection));
@@ -776,7 +774,6 @@ void main() {
       SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(
         CellIndex.raw(1, 1),
         CellIndex.raw(1, 3),
-        completed: true,
       );
 
       expect(actualSelection, equals(expectedSelection));
@@ -800,7 +797,6 @@ void main() {
       SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(
         CellIndex.raw(1, 1),
         CellIndex.raw(3, 3),
-        completed: true,
       );
 
       expect(actualSelection, equals(expectedSelection));

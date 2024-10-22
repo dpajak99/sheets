@@ -6,6 +6,7 @@ import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 
+// ignore_for_file: avoid_redundant_argument_values
 void main() {
   group('Tests of SelectionListExtensions', () {
     group('Tests of SelectionListExtensions.complete()', () {

@@ -1,17 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer_painter.dart';
 
 class SheetSelectionLayer extends StatefulWidget {
-  final SheetController sheetController;
-
   const SheetSelectionLayer({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => _SheetSelectionLayerState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
@@ -43,10 +50,10 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
   }
 
   void _updateSelection() {
-    _layerPainter.sheetSelection = widget.sheetController.selection.value;
+    _layerPainter.setSheetSelection(widget.sheetController.selection.value);
   }
 
   void _updateViewport() {
-    _layerPainter.viewport = widget.sheetController.viewport;
+    _layerPainter.setViewport(widget.sheetController.viewport);
   }
 }

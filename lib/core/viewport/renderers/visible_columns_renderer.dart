@@ -9,15 +9,15 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 class VisibleColumnsRenderer {
-  final SheetViewportRect viewportRect;
-  final SheetProperties properties;
-  final DirectionalValues<SheetScrollPosition> scrollPosition;
-
   VisibleColumnsRenderer({
     required this.viewportRect,
     required this.properties,
     required this.scrollPosition,
   });
+
+  final SheetViewportRect viewportRect;
+  final SheetProperties properties;
+  final DirectionalValues<SheetScrollPosition> scrollPosition;
 
   List<ViewportColumn> build() {
     double firstVisibleCoordinate = scrollPosition.horizontal.offset;
@@ -76,17 +76,17 @@ class VisibleColumnsRenderer {
 }
 
 class _FirstVisibleColumnInfo with EquatableMixin {
-  final ColumnIndex index;
-  final double startCoordinate;
-  final double visibleWidth;
-  final double hiddenWidth;
-
   const _FirstVisibleColumnInfo({
     required this.index,
     required this.startCoordinate,
     required this.visibleWidth,
     required this.hiddenWidth,
   });
+
+  final ColumnIndex index;
+  final double startCoordinate;
+  final double visibleWidth;
+  final double hiddenWidth;
 
   @override
   List<Object?> get props => <Object?>[index, startCoordinate, visibleWidth, hiddenWidth];

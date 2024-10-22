@@ -1,9 +1,17 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:sheets/core/sheet_index.dart';
+import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/sheet_index.dart';
 
 class SheetProperties extends ChangeNotifier {
+  SheetProperties({
+    Map<ColumnIndex, ColumnStyle>? customColumnStyles,
+    Map<RowIndex, RowStyle>? customRowStyles,
+    this.columnCount = 100,
+    this.rowCount = 100,
+  })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
+        _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{};
+
   final Map<ColumnIndex, ColumnStyle> _customColumnStyles;
 
   Map<ColumnIndex, ColumnStyle> get customColumnStyles => _customColumnStyles;
@@ -24,14 +32,6 @@ class SheetProperties extends ChangeNotifier {
     columnCount += count;
     notifyListeners();
   }
-
-  SheetProperties({
-    Map<ColumnIndex, ColumnStyle>? customColumnStyles,
-    Map<RowIndex, RowStyle>? customRowStyles,
-    this.columnCount = 100,
-    this.rowCount = 100,
-  })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
-        _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{};
 
   double getRowHeight(RowIndex rowIndex) {
     return getRowStyle(rowIndex).height;
@@ -69,13 +69,13 @@ class SheetProperties extends ChangeNotifier {
 }
 
 class ColumnStyle with EquatableMixin {
-  final double width;
 
   ColumnStyle({
     required this.width,
   });
 
   ColumnStyle.defaults() : width = defaultColumnWidth;
+  final double width;
 
   ColumnStyle copyWith({
     double? width,
@@ -90,13 +90,13 @@ class ColumnStyle with EquatableMixin {
 }
 
 class RowStyle with EquatableMixin {
-  final double height;
 
   RowStyle({
     required this.height,
   });
 
   RowStyle.defaults() : height = defaultRowHeight;
+  final double height;
 
   RowStyle copyWith({
     double? height,

@@ -1,17 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/selection/sheet_selection.dart';
-import 'package:sheets/core/selection/types/sheet_single_selection.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_status.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
+import 'package:sheets/core/selection/types/sheet_single_selection.dart';
+import 'package:sheets/core/sheet_index.dart';
 
 void main() {
   group('SheetSingleSelection.isCompleted', () {
     test('Should [return FALSE] for [INCOMPLETE selection]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualIsCompleted = selection.isCompleted;
@@ -39,7 +39,7 @@ void main() {
   group('SheetSingleSelection.rowSelected', () {
     test('Should [return FALSE] for a SheetSingleSelection selection', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualRowSelected = selection.rowSelected;
@@ -54,7 +54,7 @@ void main() {
   group('SheetSingleSelection.columnSelected', () {
     test('Should [return FALSE] for a SheetSingleSelection selection', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualRowSelected = selection.columnSelected;
@@ -70,7 +70,7 @@ void main() {
     test('Should [return CellIndex] representing the main cell', () {
       // Arrange
       CellIndex mainCell = CellIndex.raw(1, 1);
-      SheetSingleSelection selection = SheetSingleSelection(mainCell, completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(mainCell);
 
       // Act
       CellIndex actualMainCell = selection.mainCell;
@@ -86,7 +86,7 @@ void main() {
     test('Should [return SelectionCellCorners] for a single cell selection', () {
       // Arrange
       CellIndex selectedCell = CellIndex.raw(1, 1);
-      SheetSingleSelection selection = SheetSingleSelection(selectedCell, completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(selectedCell);
 
       // Act
       SelectionCellCorners actualCorners = selection.cellCorners;
@@ -101,7 +101,7 @@ void main() {
   group('SheetSingleSelection.contains()', () {
     test('Should [return TRUE] if [cell WITHIN range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.contains(CellIndex.raw(5, 5));
@@ -114,7 +114,7 @@ void main() {
 
     test('Should [return TRUE] if [row WITHIN range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.contains(RowIndex(5));
@@ -127,7 +127,7 @@ void main() {
 
     test('Should [return TRUE] if [column WITHIN range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.contains(ColumnIndex(5));
@@ -140,7 +140,7 @@ void main() {
 
     test('Should [return FALSE] if [cell OUTSIDE range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.contains(CellIndex.raw(2, 2));
@@ -153,7 +153,7 @@ void main() {
 
     test('Should [return FALSE] if [row OUTSIDE range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.contains(RowIndex(2));
@@ -166,7 +166,7 @@ void main() {
 
     test('Should [return FALSE] if [column OUTSIDE range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.contains(ColumnIndex(2));
@@ -181,7 +181,7 @@ void main() {
   group('SheetSingleSelection.containsCell()', () {
     test('Should [return TRUE] if [cell WITHIN range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.containsCell(CellIndex.raw(5, 5));
@@ -194,7 +194,7 @@ void main() {
 
     test('Should [return FALSE] if [cell OUTSIDE range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
 
       // Act
       bool actualContains = selection.containsCell(CellIndex.raw(2, 2));
@@ -209,7 +209,7 @@ void main() {
   group('SheetSingleSelection.containsRow()', () {
     test('Should [return TRUE] if [row WITHIN range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       RowIndex rowIndex = RowIndex(1);
 
       // Act
@@ -223,7 +223,7 @@ void main() {
 
     test('Should [return FALSE] if [row OUTSIDE range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
       RowIndex rowIndex = RowIndex(999);
 
       // Act
@@ -239,7 +239,7 @@ void main() {
   group('SheetSingleSelection.containsColumn()', () {
     test('Should [return TRUE] if [column WITHIN range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       ColumnIndex columnIndex = ColumnIndex(1);
 
       // Act
@@ -253,7 +253,7 @@ void main() {
 
     test('Should [return FALSE] if [column OUTSIDE range]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
       ColumnIndex columnIndex = ColumnIndex(999);
 
       // Act
@@ -269,7 +269,7 @@ void main() {
   group('SheetSingleSelection.containsSelection()', () {
     test('Should [return TRUE] for [IDENTICAL single selection]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       SheetSingleSelection identicalSelection = SheetSingleSelection(CellIndex.raw(1, 1));
 
       // Act
@@ -283,7 +283,7 @@ void main() {
 
     test('Should [return FALSE] for [DIFFERENT single selection]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       SheetSingleSelection differentSelection = SheetSingleSelection(CellIndex.raw(2, 2));
 
       // Act
@@ -299,7 +299,7 @@ void main() {
   group('SheetSingleSelection.isRowSelected()', () {
     test('Should [return SelectionStatus] for [SELECTED row]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       RowIndex rowIndex = RowIndex(1);
 
       // Act
@@ -313,7 +313,7 @@ void main() {
 
     test('Should [return SelectionStatus] for [DIFFERENT row]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       RowIndex rowIndex = RowIndex(2);
 
       // Act
@@ -329,7 +329,7 @@ void main() {
   group('SheetSingleSelection.isColumnSelected()', () {
     test('Should [return SelectionStatus] for [SELECTED column]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       ColumnIndex columnIndex = ColumnIndex(1);
 
       // Act
@@ -343,7 +343,7 @@ void main() {
 
     test('Should [return SelectionStatus] for [DIFFERENT column]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       ColumnIndex columnIndex = ColumnIndex(2);
 
       // Act
@@ -359,7 +359,7 @@ void main() {
   group('SheetSingleSelection.append()', () {
     test('Should [return SheetMultiSelection] when appending SheetSingleSelection', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
       SheetSingleSelection appendedSelection = SheetSingleSelection(CellIndex.raw(8, 8));
 
       // Act
@@ -373,7 +373,7 @@ void main() {
 
     test('Should [return SheetMultiSelection] when appending SheetRangeSelection', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
       SheetRangeSelection<CellIndex> appendedSelection = SheetRangeSelection<CellIndex>(
         CellIndex.raw(8, 8),
         CellIndex.raw(10, 10),
@@ -390,7 +390,7 @@ void main() {
 
     test('Should [return SheetMultiSelection] when appending SheetMultiSelection', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
       SheetMultiSelection appendedSelection = SheetMultiSelection(selections: <SheetSelection>[
         SheetSingleSelection(CellIndex.raw(8, 8)),
         SheetRangeSelection<CellIndex>(CellIndex.raw(10, 10), CellIndex.raw(12, 12)),
@@ -412,7 +412,7 @@ void main() {
       // Arrange
       CellIndex startIndex = CellIndex.raw(1, 1);
       CellIndex endIndex = CellIndex.raw(2, 2);
-      SheetSingleSelection selection = SheetSingleSelection(startIndex, completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(startIndex);
 
       // Act
       SheetSelection actualSelection = selection.modifyEnd(endIndex);
@@ -426,13 +426,13 @@ void main() {
     test('Should [return SheetSingleSelection] if [CellIndex IDENTICAL]', () {
       // Arrange
       CellIndex startIndex = CellIndex.raw(1, 1);
-      SheetSingleSelection selection = SheetSingleSelection(startIndex, completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(startIndex);
 
       // Act
       SheetSelection actualSelection = selection.modifyEnd(startIndex);
 
       // Assert
-      SheetSingleSelection expectedSelection = SheetSingleSelection(startIndex, completed: false);
+      SheetSingleSelection expectedSelection = SheetSingleSelection(startIndex);
 
       expect(actualSelection, equals(expectedSelection));
     });
@@ -442,7 +442,7 @@ void main() {
     test('Should [return SheetSingleSelection] with [completed == TRUE]', () {
       // Arrange
       CellIndex startIndex = CellIndex.raw(1, 1);
-      SheetSingleSelection selection = SheetSingleSelection(startIndex, completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(startIndex);
 
       // Act
       SheetSelection actualSelection = selection.complete();
@@ -457,7 +457,7 @@ void main() {
   group('SheetSingleSelection.subtract()', () {
     test('Should [return EMPTY list] when subtracting [IDENTICAL selection]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
       SheetSingleSelection identicalSelection = SheetSingleSelection(CellIndex.raw(1, 1));
 
       // Act
@@ -471,7 +471,7 @@ void main() {
 
     test('Should [return ORIGINAL selection] when subtracting [DIFFERENT selection]', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
       SheetSingleSelection differentSelection = SheetSingleSelection(CellIndex.raw(2, 2));
 
       // Act
@@ -487,7 +487,7 @@ void main() {
   group('SheetSingleSelection.stringifySelection()', () {
     test('Should [return String] representing SheetSingleSelection', () {
       // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1), completed: false);
+      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(1, 1));
 
       // Act
       String actualString = selection.stringifySelection();

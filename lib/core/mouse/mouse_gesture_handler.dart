@@ -1,18 +1,18 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/selection/sheet_fill_gesture.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 abstract class MouseGestureHandler extends ChangeNotifier with EquatableMixin {
   Completer<void>? _completer;
 
-  bool get isActive => _completer != null && _completer!.isCompleted == false;
+  bool get isActive => _completer != null && !_completer!.isCompleted;
 
   Future<void>? get future => _completer?.future;
 
@@ -42,9 +42,9 @@ abstract class DraggableGestureHandler extends MouseGestureHandler {
   SystemMouseCursor get hoverCursor;
 
   void setHovered(SheetController controller, bool currentHovered) {
-    if (_previousHovered == false && currentHovered) {
+    if (!_previousHovered && currentHovered) {
       setCursor(controller, hoverCursor);
-    } else if (_previousHovered && currentHovered == false) {
+    } else if (_previousHovered && !currentHovered) {
       resetCursor(controller);
     }
     _previousHovered = currentHovered;
@@ -87,7 +87,9 @@ class MouseSelectionGestureHandler extends MouseGestureHandler {
     setActive(true);
 
     ViewportItem? selectionStart = gesture.startDetails.hoveredItem;
-    if (selectionStart == null) return;
+    if (selectionStart == null) {
+      return;
+    }
 
     SheetSelectionStartGesture(selectionStart).resolve(controller);
   }
@@ -95,7 +97,9 @@ class MouseSelectionGestureHandler extends MouseGestureHandler {
   void _updateSelection(SheetController controller, SheetDragUpdateGesture gesture) {
     ViewportItem? selectionStart = gesture.startDetails.hoveredItem;
     ViewportItem? selectionUpdate = gesture.updateDetails.hoveredItem;
-    if (selectionStart == null || selectionUpdate == null) return;
+    if (selectionStart == null || selectionUpdate == null) {
+      return;
+    }
 
     SheetSelectionUpdateGesture(selectionStart, selectionUpdate).resolve(controller);
   }
@@ -130,7 +134,9 @@ class MouseFillGestureHandler extends DraggableGestureHandler {
   void _startFill(SheetController controller, SheetDragStartGesture gesture) {
     setActive(true);
     ViewportItem? selectionStart = gesture.startDetails.hoveredItem;
-    if (selectionStart == null) return;
+    if (selectionStart == null) {
+      return;
+    }
 
     SheetFillStartGesture().resolve(controller);
     controller.mouse.setCursor(SystemMouseCursors.precise);
@@ -139,7 +145,9 @@ class MouseFillGestureHandler extends DraggableGestureHandler {
   void _updateFill(SheetController controller, SheetDragUpdateGesture gesture) {
     ViewportItem? selectionStart = gesture.startDetails.hoveredItem;
     ViewportItem? selectionUpdate = gesture.updateDetails.hoveredItem;
-    if (selectionStart == null || selectionUpdate == null) return;
+    if (selectionStart == null || selectionUpdate == null) {
+      return;
+    }
 
     SheetFillUpdateGesture(selectionStart, selectionUpdate).resolve(controller);
   }
@@ -151,10 +159,10 @@ class MouseFillGestureHandler extends DraggableGestureHandler {
 }
 
 class MouseColumnResizeGestureHandler extends DraggableGestureHandler {
+  MouseColumnResizeGestureHandler(this.viewportColumn);
+
   ViewportColumn viewportColumn;
   double? newWidth;
-
-  MouseColumnResizeGestureHandler(this.viewportColumn);
 
   @override
   SystemMouseCursor get hoverCursor => SystemMouseCursors.resizeColumn;
@@ -212,10 +220,10 @@ class MouseColumnResizeGestureHandler extends DraggableGestureHandler {
 }
 
 class MouseRowResizeGestureHandler extends DraggableGestureHandler {
+  MouseRowResizeGestureHandler(this.viewportRow);
+
   ViewportRow viewportRow;
   double? newHeight;
-
-  MouseRowResizeGestureHandler(this.viewportRow);
 
   @override
   SystemMouseCursor get hoverCursor => SystemMouseCursors.resizeRow;

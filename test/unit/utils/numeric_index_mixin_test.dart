@@ -92,8 +92,8 @@ void main() {
 }
 
 class MockNumericIndex with NumericIndexMixin {
+  MockNumericIndex(this.value);
+
   @override
   final int value;
-
-  MockNumericIndex(this.value);
 }

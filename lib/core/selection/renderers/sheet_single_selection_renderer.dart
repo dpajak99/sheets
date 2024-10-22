@@ -7,8 +7,6 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/cached_value.dart';
 
 class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSelection> {
-  late final CachedValue<ViewportCell?> _selectedCell;
-
   SheetSingleSelectionRenderer({
     required super.selection,
     required super.viewport,
@@ -16,8 +14,10 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSel
     _selectedCell = CachedValue<ViewportCell?>(() => viewport.visibleContent.findCell(selection.start.cell));
   }
 
+  late final CachedValue<ViewportCell?> _selectedCell;
+
   @override
-  bool get fillHandleVisible => selection.isCompleted == true;
+  bool get fillHandleVisible => selection.isCompleted;
 
   @override
   Offset? get fillHandleOffset => selectedCell?.rect.bottomRight;

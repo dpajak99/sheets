@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
-import 'package:sheets/core/sheet_index.dart';
 
 void main() {
   group('Tests of ClosestVisible<T>', () {

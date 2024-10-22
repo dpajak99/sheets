@@ -1,14 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/mouse/mouse_listener.dart';
 
 class SheetDraggable extends StatefulWidget {
-  final Rect draggableAreaRect;
-  final MouseListener mouseListener;
-  final DraggableGestureHandler handler;
-  final Widget child;
-
   const SheetDraggable({
     required this.draggableAreaRect,
     required this.mouseListener,
@@ -17,8 +13,21 @@ class SheetDraggable extends StatefulWidget {
     super.key,
   });
 
+  final Rect draggableAreaRect;
+  final MouseListener mouseListener;
+  final DraggableGestureHandler handler;
+  final Widget child;
+
   @override
   State<StatefulWidget> createState() => _SheetDraggableState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Rect>('draggableAreaRect', draggableAreaRect));
+    properties.add(DiagnosticsProperty<MouseListener>('mouseListener', mouseListener));
+    properties.add(DiagnosticsProperty<DraggableGestureHandler>('handler', handler));
+  }
 }
 
 class _SheetDraggableState extends State<SheetDraggable> {
@@ -42,13 +51,19 @@ class _SheetDraggableState extends State<SheetDraggable> {
   }
 
   @override
-  void dispose() {
-    widget.mouseListener.removeRecognizer(recognizer);
+  Future<void> dispose() async {
+    await widget.mouseListener.removeRecognizer(recognizer);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return widget.child;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<DraggableGestureRecognizer>('recognizer', recognizer));
   }
 }

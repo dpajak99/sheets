@@ -51,7 +51,9 @@ class GestureSelectionStrategyModify implements GestureSelectionStrategy {
 class GestureSelectionStrategyFill implements GestureSelectionStrategy {
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
-    if (selectedIndex is! CellIndex) return previousSelection;
+    if (selectedIndex is! CellIndex) {
+      return previousSelection;
+    }
 
     SheetSelection baseSelection = previousSelection is SheetFillSelection
         ? previousSelection.baseSelection //
@@ -59,8 +61,12 @@ class GestureSelectionStrategyFill implements GestureSelectionStrategy {
 
     SelectionCellCorners? corners = baseSelection.cellCorners;
 
-    if (corners == null) return previousSelection;
-    if (baseSelection.contains(selectedIndex)) return baseSelection;
+    if (corners == null) {
+      return previousSelection;
+    }
+    if (baseSelection.contains(selectedIndex)) {
+      return baseSelection;
+    }
 
     Direction direction = corners.getRelativePosition(selectedIndex);
 
@@ -71,19 +77,15 @@ class GestureSelectionStrategyFill implements GestureSelectionStrategy {
       case Direction.top:
         start = corners.topLeft.move(-1, 0);
         end = CellIndex(row: selectedIndex.row, column: corners.topRight.column);
-        break;
       case Direction.bottom:
         start = CellIndex(row: selectedIndex.row, column: corners.bottomLeft.column);
         end = corners.bottomRight.move(1, 0);
-        break;
       case Direction.left:
         start = corners.topLeft.move(0, -1);
         end = CellIndex(row: corners.bottomLeft.row, column: selectedIndex.column);
-        break;
       case Direction.right:
         start = CellIndex(row: corners.topRight.row, column: selectedIndex.column);
         end = corners.bottomRight.move(0, 1);
-        break;
     }
 
     return SheetSelectionFactory.fill(

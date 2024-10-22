@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/viewport/renderers/visible_cells_renderer.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/core/sheet_index.dart';
-import 'package:flutter/material.dart';
 
 void main() {
   group('Tests of VisibleCellsRenderer.build()', () {

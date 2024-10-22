@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
+import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
-import 'package:sheets/core/selection/selection_corners.dart';
-import 'package:sheets/core/selection/selection_status.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/extensions/int_extensions.dart';
 
 void main() {
@@ -16,7 +16,6 @@ void main() {
       SheetRangeSelection<CellIndex> selection = SheetRangeSelection<CellIndex>(
         CellIndex.raw(1, 1),
         CellIndex.raw(2, 2),
-        completed: true,
       );
 
       // Act
@@ -49,7 +48,7 @@ void main() {
   group('SheetRangeSelection.rowSelected', () {
     test('Should [return TRUE] for [SELECTED row range]', () {
       // Arrange
-      SheetRangeSelection<RowIndex> selection = SheetRangeSelection<RowIndex>.single(RowIndex(1), completed: true);
+      SheetRangeSelection<RowIndex> selection = SheetRangeSelection<RowIndex>.single(RowIndex(1));
 
       // Act
       bool actualRowSelected = selection.rowSelected;
@@ -62,7 +61,7 @@ void main() {
 
     test('Should [return FALSE] for [SELECTED column range]', () {
       // Arrange
-      SheetRangeSelection<ColumnIndex> selection = SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1), completed: true);
+      SheetRangeSelection<ColumnIndex> selection = SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1));
 
       // Act
       bool actualRowSelected = selection.rowSelected;
@@ -90,7 +89,7 @@ void main() {
   group('SheetRangeSelection.columnSelected', () {
     test('Should [return TRUE] for [SELECTED column range]', () {
       // Arrange
-      SheetRangeSelection<ColumnIndex> selection = SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1), completed: true);
+      SheetRangeSelection<ColumnIndex> selection = SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1));
 
       // Act
       bool actualColumnSelected = selection.columnSelected;
@@ -103,7 +102,7 @@ void main() {
 
     test('Should [return FALSE] for [SELECTED row range]', () {
       // Arrange
-      SheetRangeSelection<RowIndex> selection = SheetRangeSelection<RowIndex>.single(RowIndex(1), completed: true);
+      SheetRangeSelection<RowIndex> selection = SheetRangeSelection<RowIndex>.single(RowIndex(1));
 
       // Act
       bool actualColumnSelected = selection.columnSelected;
@@ -821,7 +820,7 @@ void main() {
       SheetSelection actualSelection = selection.complete();
 
       // Assert
-      SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(startIndex, endIndex, completed: true);
+      SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(startIndex, endIndex);
 
       expect(actualSelection, equals(expectedSelection));
     });
@@ -835,7 +834,7 @@ void main() {
       SheetSelection actualSelection = selection.complete();
 
       // Assert
-      SheetRangeSelection<RowIndex> expectedSelection = SheetRangeSelection<RowIndex>.single(rowIndex, completed: true);
+      SheetRangeSelection<RowIndex> expectedSelection = SheetRangeSelection<RowIndex>.single(rowIndex);
 
       expect(actualSelection, equals(expectedSelection));
     });
@@ -849,7 +848,7 @@ void main() {
       SheetSelection actualSelection = selection.complete();
 
       // Assert
-      SheetRangeSelection<ColumnIndex> expectedSelection = SheetRangeSelection<ColumnIndex>.single(columnIndex, completed: true);
+      SheetRangeSelection<ColumnIndex> expectedSelection = SheetRangeSelection<ColumnIndex>.single(columnIndex);
 
       expect(actualSelection, equals(expectedSelection));
     });

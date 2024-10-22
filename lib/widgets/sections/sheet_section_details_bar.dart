@@ -1,17 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/core/sheet_controller.dart';
 
 class SheetSectionDetailsBar extends StatefulWidget {
-  final SheetController sheetController;
-
   const SheetSectionDetailsBar({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => _SheetSectionDetailsBarState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
@@ -23,7 +30,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
-          bottom: BorderSide(color: Color(0xffc0c0c0), width: 1),
+          bottom: BorderSide(color: Color(0xffc0c0c0)),
         ),
       ),
       child: Row(

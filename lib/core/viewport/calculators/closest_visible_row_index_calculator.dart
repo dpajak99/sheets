@@ -4,9 +4,9 @@ import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
 
 class ClosestVisibleRowIndexCalculator {
-  final List<ViewportRow> visibleRows;
-
   ClosestVisibleRowIndexCalculator(this.visibleRows);
+
+  final List<ViewportRow> visibleRows;
 
   ClosestVisible<RowIndex> findFor(CellIndex cellIndex) {
     RowIndex firstVisibleRow = visibleRows.first.index;

@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:async/async.dart' show StreamGroup;
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
-import 'package:async/async.dart' show StreamGroup;
 import 'package:sheets/utils/repeat_action_timer.dart';
 
 part 'keyboard_states.dart';
@@ -54,9 +54,9 @@ class KeyboardListener {
     );
   }
 
-  void dispose() {
-    _pressStreamController.close();
-    _releaseStreamController.close();
-    _holdStreamController.close();
+  Future<void> dispose() async {
+    await _pressStreamController.close();
+    await _releaseStreamController.close();
+    await _holdStreamController.close();
   }
 }

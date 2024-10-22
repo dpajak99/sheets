@@ -53,7 +53,7 @@ class SheetSelectionFactory {
   }
 
   static SheetSelection all() {
-    return SheetRangeSelection<CellIndex>(CellIndex.zero, CellIndex.max, completed: true);
+    return SheetRangeSelection<CellIndex>(CellIndex.zero, CellIndex.max);
   }
 
   static SheetSelection _cellRange(

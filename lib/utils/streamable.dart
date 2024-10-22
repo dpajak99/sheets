@@ -1,18 +1,18 @@
 import 'dart:async';
 
 class Streamable<T> {
-  late final StreamController<T> _streamController;
-
   Streamable() {
     _streamController = StreamController<T>();
   }
+
+  late final StreamController<T> _streamController;
 
   void listen(void Function(T) onData) {
     _streamController.stream.listen(onData);
   }
 
-  void dispose() {
-    _streamController.close();
+  Future<void> dispose() async {
+    await _streamController.close();
   }
 
   void addEvent(T event) {

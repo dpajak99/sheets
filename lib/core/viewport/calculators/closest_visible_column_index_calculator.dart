@@ -4,9 +4,9 @@ import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
 
 class ClosestVisibleColumnIndexCalculator {
-  final List<ViewportColumn> visibleColumns;
-
   ClosestVisibleColumnIndexCalculator(this.visibleColumns);
+
+  final List<ViewportColumn> visibleColumns;
 
   ClosestVisible<ColumnIndex> findFor(CellIndex cellIndex) {
     ColumnIndex firstVisibleColumn = visibleColumns.first.index;

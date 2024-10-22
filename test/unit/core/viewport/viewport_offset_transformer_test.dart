@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/core/viewport/viewport_offset_transformer.dart';
 
 void main() {
@@ -29,7 +29,7 @@ void main() {
         Offset localOffset = transformer.globalToLocal(globalOffset);
 
         // Assert
-        Offset expectedLocalOffset = const Offset(0, 0); // Clamped to (0, 0)
+        Offset expectedLocalOffset = Offset.zero; // Clamped to (0, 0)
         expect(localOffset, equals(expectedLocalOffset));
       });
 
@@ -85,7 +85,7 @@ void main() {
         Offset localOffset = transformer.globalToLocal(globalOffset);
 
         // Assert
-        Offset expectedLocalOffset = const Offset(0, 0); // Clamped to (0, 0)
+        Offset expectedLocalOffset = Offset.zero; // Clamped to (0, 0)
         expect(localOffset, equals(expectedLocalOffset));
       });
 
@@ -113,7 +113,7 @@ void main() {
         Offset localOffset = transformer.globalToLocal(globalOffset);
 
         // Assert
-        Offset expectedLocalOffset = const Offset(0, 0);
+        Offset expectedLocalOffset = Offset.zero;
         expect(localOffset, equals(expectedLocalOffset));
       });
 

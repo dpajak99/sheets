@@ -46,7 +46,7 @@ void main() {
   group('Tests of SelectionState.complete()', () {
     test('Should [complete selection] when selection is not complete', () {
       // Arrange
-      SheetSelection previousSelection = SheetSingleSelection(CellIndex.raw(4, 4), completed: false);
+      SheetSelection previousSelection = SheetSingleSelection(CellIndex.raw(4, 4));
       SelectionState selectionState = SelectionState(previousSelection);
 
       // Act

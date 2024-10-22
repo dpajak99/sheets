@@ -3,12 +3,11 @@ import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart
 import 'package:sheets/core/sheet_index.dart';
 
 class GestureSelectionBuilder {
-  final SheetSelection _previousSelection;
-  late GestureSelectionStrategy _selectionStrategy;
-
   GestureSelectionBuilder(
     SheetSelection previousSelection,
   ) : _previousSelection = previousSelection;
+  final SheetSelection _previousSelection;
+  late GestureSelectionStrategy _selectionStrategy;
 
   void setStrategy(GestureSelectionStrategy selectionStrategy) {
     _selectionStrategy = selectionStrategy;

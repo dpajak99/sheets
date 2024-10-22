@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/sheet_controller.dart';
@@ -6,15 +8,21 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/sheet_draggable.dart';
 
 class SheetVerticalHeadersResizerLayer extends StatefulWidget {
-  final SheetController sheetController;
-
   const SheetVerticalHeadersResizerLayer({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => _SheetVerticalHeadersResizerLayersState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class _SheetVerticalHeadersResizerLayersState extends State<SheetVerticalHeadersResizerLayer> {
@@ -54,11 +62,6 @@ class _SheetVerticalHeadersResizerLayersState extends State<SheetVerticalHeaders
 }
 
 class _VerticalHeaderResizer extends StatefulWidget {
-  final double height;
-  final ViewportColumn column;
-  final ValueChanged<Offset> onResize;
-  final SheetController sheetController;
-
   const _VerticalHeaderResizer({
     required this.height,
     required this.column,
@@ -66,8 +69,22 @@ class _VerticalHeaderResizer extends StatefulWidget {
     required this.sheetController,
   });
 
+  final double height;
+  final ViewportColumn column;
+  final ValueChanged<Offset> onResize;
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => _VerticalHeaderResizerState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('height', height));
+    properties.add(DiagnosticsProperty<ViewportColumn>('column', column));
+    properties.add(ObjectFlagProperty<ValueChanged<Offset>>.has('onResize', onResize));
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {

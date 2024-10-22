@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/selection/selection_corners.dart';
+import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
-import 'package:sheets/core/selection/selection_corners.dart';
-import 'package:sheets/core/selection/selection_status.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
+import 'package:sheets/core/sheet_index.dart';
 
 void main() {
   group('SheetMultiSelection.isCompleted', () {
@@ -34,7 +34,7 @@ void main() {
       SheetMultiSelection selection = SheetMultiSelection(
         selections: <SheetSelection>[
           SheetSingleSelection(CellIndex.raw(1, 1)),
-          SheetRangeSelection<RowIndex>.single(RowIndex(1), completed: true)
+          SheetRangeSelection<RowIndex>.single(RowIndex(1))
         ],
       );
 
@@ -54,7 +54,7 @@ void main() {
       SheetMultiSelection selection = SheetMultiSelection(
         selections: <SheetSelection>[
           SheetSingleSelection(CellIndex.raw(1, 1)),
-          SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1), completed: true)
+          SheetRangeSelection<ColumnIndex>.single(ColumnIndex(1))
         ],
       );
 
@@ -549,10 +549,10 @@ void main() {
       // Assert
       SheetMultiSelection expectedSelection = SheetMultiSelection(
         selections: <SheetSelection>[
-          SheetRangeSelection<CellIndex>(CellIndex.raw(0, 0), CellIndex.raw(0, 3), completed: true),
+          SheetRangeSelection<CellIndex>(CellIndex.raw(0, 0), CellIndex.raw(0, 3)),
           SheetSingleSelection(CellIndex.raw(1, 0), completed: true),
-          SheetRangeSelection<CellIndex>(CellIndex.raw(2, 0), CellIndex.raw(3, 3), completed: true),
-          SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 3), completed: true),
+          SheetRangeSelection<CellIndex>(CellIndex.raw(2, 0), CellIndex.raw(3, 3)),
+          SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 3)),
         ],
       );
 
@@ -573,12 +573,12 @@ void main() {
       List<SheetSelection> actualSelections = selection.subtract(SheetSingleSelection(CellIndex.raw(1, 1)));
       // Assert
       List<SheetSelection> expectedSelections = <SheetSelection>[
-        SheetRangeSelection<CellIndex>(CellIndex.raw(0, 0), CellIndex.raw(0, 3), completed: true),
-        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 0), CellIndex.raw(1, 0), completed: true),
-        SheetRangeSelection<CellIndex>(CellIndex.raw(2, 0), CellIndex.raw(3, 3), completed: true),
-        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 3), completed: true),
-        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 0), completed: true),
-        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 3), completed: true),
+        SheetRangeSelection<CellIndex>(CellIndex.raw(0, 0), CellIndex.raw(0, 3)),
+        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 0), CellIndex.raw(1, 0)),
+        SheetRangeSelection<CellIndex>(CellIndex.raw(2, 0), CellIndex.raw(3, 3)),
+        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 3)),
+        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 0)),
+        SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 3)),
       ];
 
       expect(actualSelections, equals(expectedSelections));

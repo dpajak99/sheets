@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/keyboard/keyboard_listener.dart';
 
-//ignore_for_file: always_specify_types
+// ignore_for_file: always_specify_types
 class KeyboardShortcuts {
   static const KeyboardState selectAll = MultiKeysPressedState([LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyA]);
   static const KeyboardState appendSelection = SingleKeyPressedState(LogicalKeyboardKey.controlLeft);

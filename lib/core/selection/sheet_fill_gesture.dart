@@ -1,9 +1,9 @@
+import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/gestures/sheet_gesture.dart';
-import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -18,10 +18,10 @@ class SheetFillStartGesture extends SheetFillGesture {
 }
 
 class SheetFillUpdateGesture extends SheetFillGesture {
+  SheetFillUpdateGesture(this.selectionStart, this.selectionEnd);
+
   final ViewportItem selectionStart;
   final ViewportItem selectionEnd;
-
-  SheetFillUpdateGesture(this.selectionStart, this.selectionEnd);
 
   @override
   void resolve(SheetController controller) {

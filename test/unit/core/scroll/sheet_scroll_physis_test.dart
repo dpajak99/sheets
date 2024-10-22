@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
+import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
-import 'package:sheets/core/scroll/sheet_axis_direction.dart';
+import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
 
 void main() {
   group('Tests of SheetScrollPhysics', () {

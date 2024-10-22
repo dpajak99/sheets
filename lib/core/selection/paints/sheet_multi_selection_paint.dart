@@ -7,13 +7,13 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 class SheetMultiSelectionPaint extends SheetSelectionPaint {
-  final SheetMultiSelectionRenderer renderer;
-
   SheetMultiSelectionPaint(
     this.renderer,
     bool? mainCellVisible,
     bool? backgroundVisible,
   ) : super(mainCellVisible: mainCellVisible ?? true, backgroundVisible: backgroundVisible ?? true);
+
+  final SheetMultiSelectionRenderer renderer;
 
   @override
   void paint(SheetViewport viewport, Canvas canvas, Size size) {

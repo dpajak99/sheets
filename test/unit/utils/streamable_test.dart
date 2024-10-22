@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/utils/streamable.dart';
-import 'dart:async';
 
 void main() {
   group('Tests of Streamable<T>', () {
@@ -79,10 +80,10 @@ void main() {
         expect(receivedEvent, equals('test'));
       });
 
-      test('Should [throw StateError] when [adding event after dispose]', () {
+      test('Should [throw StateError] when [adding event after dispose]', () async {
         // Arrange
         Streamable<int> streamable = Streamable<int>();
-        streamable.dispose();
+        await streamable.dispose();
 
         // Act & Assert
         expect(() => streamable.addEvent(1), throwsA(isA<StateError>()));
@@ -90,12 +91,12 @@ void main() {
     });
 
     group('Tests of dispose()', () {
-      test('Should [close the stream controller] when [dispose is called]', () {
+      test('Should [close the stream controller] when [dispose is called]', () async {
         // Arrange
         Streamable<int> streamable = Streamable<int>();
 
         // Act
-        streamable.dispose();
+        await streamable.dispose();
 
         // Assert
         // Cannot directly test _streamController as it's private,
@@ -116,7 +117,7 @@ void main() {
           },
         );
 
-        streamable.dispose();
+        await streamable.dispose();
 
         // Need to wait for the stream to close
         await Future<void>.delayed(Duration.zero);

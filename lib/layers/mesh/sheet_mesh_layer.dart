@@ -1,17 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/mesh/sheet_mesh_layer_painter.dart';
 
 class SheetMeshLayer extends StatefulWidget {
-  final SheetController sheetController;
-
   const SheetMeshLayer({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   State<StatefulWidget> createState() => _SheetMeshLayerState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class _SheetMeshLayerState extends State<SheetMeshLayer> {
