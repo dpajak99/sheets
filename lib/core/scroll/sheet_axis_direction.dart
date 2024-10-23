@@ -1,0 +1,1 @@
+enum SheetAxisDirection { vertical, horizontal }

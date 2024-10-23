@@ -1,146 +1,59 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/controller/sheet_controller.dart';
-import 'package:sheets/multi_listenable_builder.dart';
-import 'package:sheets/painters/headers_painter.dart';
-import 'package:sheets/painters/selection_painter.dart';
-import 'package:sheets/painters/sheet_painter.dart';
-import 'package:sheets/sheet_constants.dart';
-import 'package:sheets/sheet_fill_handle.dart';
-import 'package:sheets/sheet_draggable.dart';
-import 'package:sheets/sheet_gesture_detector.dart';
-import 'package:sheets/sheet_resize_divider.dart';
-import 'package:sheets/sheet_scrollable.dart';
-import 'package:sheets/widgets/sheet_cell_info_bar.dart';
-import 'package:sheets/widgets/sheet_toolbar.dart';
-
-class SheetPage extends StatefulWidget {
-  const SheetPage({super.key});
-
-  @override
-  State<StatefulWidget> createState() => SheetPageState();
-}
-
-class SheetPageState extends State<SheetPage> {
-  final SheetController sheetController = SheetController();
-
-  @override
-  void initState() {
-    super.initState();
-    ServicesBinding.instance.keyboard.addHandler(_onKeyboardKeyPressed);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-      children: [
-        const SheetToolbar(),
-        SheetCellInfoBar(sheetController: sheetController),
-        Expanded(
-          child: FlexibleSheet(sheetController: sheetController),
-        ),
-      ],
-    ));
-  }
-
-  bool _onKeyboardKeyPressed(KeyEvent event) {
-    if (event is KeyDownEvent) {
-      sheetController.keyboard.addKey(event.logicalKey);
-    } else if (event is KeyUpEvent) {
-      sheetController.keyboard.removeKey(event.logicalKey);
-    }
-    return false;
-  }
-}
-
-class FlexibleSheet extends StatelessWidget {
-  final SheetController sheetController;
-
-  const FlexibleSheet({
-    required this.sheetController,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return Sheet(
-          width: constraints.maxWidth,
-          height: constraints.maxHeight,
-          sheetController: sheetController,
-        );
-      },
-    );
-  }
-}
+import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/layers/fill_handle/sheet_fill_handle_layer.dart';
+import 'package:sheets/layers/headers/sheet_headers_layer.dart';
+import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
+import 'package:sheets/layers/mesh/sheet_mesh_layer.dart';
+import 'package:sheets/layers/selection/sheet_selection_layer.dart';
+import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
+import 'package:sheets/widgets/sheet_scrollable.dart';
 
 class Sheet extends StatefulWidget {
-  final double width;
-  final double height;
-  final SheetController sheetController;
-
   const Sheet({
-    required this.width,
-    required this.height,
     required this.sheetController,
     super.key,
   });
 
-  @override
-  State<StatefulWidget> createState() => SheetState();
+  final SheetController sheetController;
 
-  static SheetState of(BuildContext context) {
-    return context.findAncestorStateOfType<SheetState>()!;
+  @override
+  State<StatefulWidget> createState() => _SheetState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
   }
 }
 
-class SheetState extends State<Sheet> {
+class _SheetState extends State<Sheet> {
   SheetController get sheetController => widget.sheetController;
 
   @override
   void initState() {
     super.initState();
     ServicesBinding.instance.keyboard.addHandler(_onKeyboardKeyPressed);
-    sheetController.scrollController.viewportSize = Size(widget.width, widget.height);
-  }
-
-  @override
-  void didUpdateWidget(covariant Sheet oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.width != widget.width || oldWidget.height != widget.height) {
-      sheetController.scrollController.viewportSize = Size(widget.width, widget.height);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
-      child: Container(
+      child: DecoratedBox(
         decoration: const BoxDecoration(
           color: Color(0xfff8faf8),
         ),
         child: SheetScrollable(
-          scrollController: sheetController.scrollController,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Positioned.fill(
-                child: SheetGrid(sheetController: sheetController),
-              ),
-              Positioned.fill(
-                child: SheetGestureDetector(
-                  cursorListener: sheetController.mouse.cursor,
-                  onMouseOffsetChanged: sheetController.onMouseOffsetChanged,
-                  onTap: sheetController.mouse.tap,
-                  onDragStart: sheetController.mouse.dragStart,
-                  onDragUpdate: sheetController.mouse.dragUpdate,
-                  onDragEnd: sheetController.mouse.dragEnd,
-                  onScroll: sheetController.mouse.scroll,
-                ),
-              ),
-            ],
+          scrollController: sheetController.scroll,
+          child: SheetMouseGestureDetector(
+            mouseListener: sheetController.mouse,
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return SheetContent(sheetController: sheetController);
+              },
+            ),
           ),
         ),
       ),
@@ -156,89 +69,97 @@ class SheetState extends State<Sheet> {
     return false;
   }
 
-  void disableMouseActions() {
-    sheetController.mouse.disable();
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
+}
+
+class SheetContent extends StatefulWidget {
+  const SheetContent({
+    required this.sheetController,
+    super.key,
+  });
+
+  final SheetController sheetController;
+
+  @override
+  State<StatefulWidget> createState() => SheetContentState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
+}
+
+class SheetContentState extends State<SheetContent> {
+  final GlobalKey _sheetViewportKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _notifySheetViewportChanged());
   }
 
-  void enableMouseActions() {
-    sheetController.mouse.enable();
+  @override
+  void didUpdateWidget(covariant SheetContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _notifySheetViewportChanged());
   }
 
-  bool areMouseActionsEnabled() {
-    return sheetController.mouse.enabled;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: _sheetViewportKey,
+      child: SheetGrid(sheetController: widget.sheetController),
+    );
   }
 
-  bool isNativeDragging() {
-    return sheetController.mouse.nativeDragging;
-  }
+  void _notifySheetViewportChanged() {
+    RenderBox? renderBox = _sheetViewportKey.currentContext!.findRenderObject() as RenderBox?;
+    if (renderBox == null) {
+      return;
+    }
 
-  void setCustomTapHovered(bool value) {
-    sheetController.mouse.customTapHovered = value;
-  }
-
-  void setCursor(SystemMouseCursor cursor) {
-    sheetController.mouse.cursor.value = cursor;
-  }
-
-  void resetCursor() {
-    sheetController.mouse.cursor.value = SystemMouseCursors.basic;
+    Offset position = renderBox.localToGlobal(Offset.zero);
+    widget.sheetController.viewport.setViewportRect(Rect.fromLTRB(
+      position.dx,
+      position.dy,
+      renderBox.size.width + position.dx,
+      renderBox.size.height + position.dy,
+    ));
   }
 }
 
 class SheetGrid extends StatelessWidget {
-  final SheetController sheetController;
-
   const SheetGrid({
     required this.sheetController,
     super.key,
   });
 
+  final SheetController sheetController;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
+      children: <Widget>[
         const Positioned(
           bottom: 0,
           left: 50,
           height: 50,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+            children: <Widget>[
               Text('Add more'),
             ],
           ),
         ),
-        SheetLayer.fill(
-          listenables: [
-            sheetController.visibilityController,
-          ],
-          builder: (BuildContext context) {
-            return CustomPaint(
-              painter: SheetPainter(sheetController: sheetController),
-            );
-          },
-        ),
-        SheetLayer.fill(
-          listenables: [
-            sheetController.selectionController,
-            sheetController.visibilityController,
-          ],
-          builder: (BuildContext context) {
-            return Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                CustomPaint(isComplex: true, painter: ColumnHeadersPainter(sheetController: sheetController)),
-                CustomPaint(isComplex: true, painter: RowHeadersPainter(sheetController: sheetController)),
-                VerticalHeadersResizer(sheetController: sheetController),
-                HorizontalHeadersResizer(sheetController: sheetController),
-                CustomPaint(isComplex: true, painter: SelectionPainter(sheetController: sheetController)),
-                SheetFillHandle(
-                  sheetController: sheetController,
-                ),
-              ],
-            );
-          },
-        ),
+        Positioned.fill(child: SheetMeshLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetHeadersLayer(sheetController: sheetController)),
+        Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetSelectionLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
         Positioned(
           top: 0,
           left: 0,
@@ -254,85 +175,13 @@ class SheetGrid extends StatelessWidget {
             ),
           ),
         ),
-        // Positioned.fill(
-        //   child: ValueListenableBuilder<CellConfig?>(
-        //     valueListenable: sheetController.editNotifier,
-        //     builder: (BuildContext context, CellConfig? cellConfig, _) {
-        //       return Stack(
-        //         children: [
-        //           if (cellConfig != null)
-        //             Positioned(
-        //               left: cellConfig.rect.left,
-        //               top: cellConfig.rect.top,
-        //               child: Container(
-        //                 height: cellConfig.rect.height,
-        //                 constraints: BoxConstraints(minWidth: cellConfig.rect.width),
-        //                 child: SheetTextField(cellConfig: cellConfig),
-        //               ),
-        //             )
-        //         ],
-        //       );
-        //     },
-        //   ),
-        // ),
-        // SheetLayer.fill(
-        //   listenables: [
-        //     sheetController.selectionController,
-        //     sheetController.paintConfig,
-        //   ],
-        //   builder: (BuildContext context) {
-        //     Offset? fillHandleOffset = sheetController.selectionController.selection.fillHandleOffset;
-        //     return Stack(
-        //       children: [
-        //         if (fillHandleOffset != null)
-        //           Positioned(
-        //             left: fillHandleOffset.dx - 4,
-        //             top: fillHandleOffset.dy - 4,
-        //             child: FillHandleOffset(cursorController: sheetController.cursorController),
-        //           ),
-        //       ],
-        //     );
-        //   },
-        // ),
       ],
     );
   }
-}
-
-class SheetLayer extends StatelessWidget {
-  final List<Listenable> listenables;
-  final Widget Function(BuildContext context) builder;
-  final double? top;
-  final double? left;
-  final double? right;
-  final double? bottom;
-
-  const SheetLayer({
-    required this.listenables,
-    required this.builder,
-    this.top,
-    this.left,
-    this.right,
-    this.bottom,
-    super.key,
-  });
-
-  const SheetLayer.fill({super.key, required this.listenables, required this.builder})
-      : top = 0,
-        left = 0,
-        right = 0,
-        bottom = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: top,
-      left: left,
-      right: right,
-      bottom: bottom,
-      child: RepaintBoundary(
-        child: MultiListenableBuilder(listenables: listenables, builder: builder),
-      ),
-    );
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
   }
 }
