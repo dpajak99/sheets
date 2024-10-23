@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
@@ -51,8 +53,8 @@ class _SheetDraggableState extends State<SheetDraggable> {
   }
 
   @override
-  Future<void> dispose() async {
-    await widget.mouseListener.removeRecognizer(recognizer);
+  void dispose() {
+    unawaited(widget.mouseListener.removeRecognizer(recognizer));
     super.dispose();
   }
 

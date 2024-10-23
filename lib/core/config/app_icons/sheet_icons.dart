@@ -3,6 +3,9 @@ part of 'asset_icon.dart';
 // ignore_for_file: constant_identifier_names
 class SheetIcons {
   static const AssetIconData add = AssetIconData('assets/icons/add.svg');
+  static const AssetIconData footer_add = AssetIconData('assets/icons/footer_add.svg');
+  static const AssetIconData footer_menu = AssetIconData('assets/icons/footer_menu.svg');
+  static const AssetIconData footer_dropdown = AssetIconData('assets/icons/footer_dropdown.svg');
   static const AssetIconData add_comment = AssetIconData('assets/icons/add_comment.svg');
   static const AssetIconData border_all = AssetIconData('assets/icons/border_all.svg');
   static const AssetIconData cell_merge = AssetIconData('assets/icons/cell_merge.svg');

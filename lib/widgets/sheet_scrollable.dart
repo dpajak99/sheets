@@ -241,10 +241,7 @@ class _ScrollbarLayout extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             color: const Color(0xfff8f8f8),
-            border: Border(
-              top: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
-              bottom: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1)),
-            ),
+            border: Border(top: BorderSide(width: borderWidth, color: const Color(0xffe1e3e1))),
           ),
           child: horizontalScrollbar,
         ),

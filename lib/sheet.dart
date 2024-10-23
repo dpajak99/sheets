@@ -10,6 +10,7 @@ import 'package:sheets/layers/headers/sheet_headers_layer.dart';
 import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/mesh/sheet_mesh_layer.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer.dart';
+import 'package:sheets/widgets/sections/sheet_footer.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
 import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
@@ -51,6 +52,10 @@ class SheetPageState extends State<SheetPage> {
           Expanded(
             child: Sheet(sheetController: sheetController),
           ),
+          Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
+          Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
+          Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
+          const SheetFooter(),
         ],
       ),
     );
