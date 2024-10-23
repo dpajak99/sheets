@@ -39,18 +39,20 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
       title: 'Sheets example',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Column(
-          children: <Widget>[
-            const SheetSectionToolbar(),
-            SheetSectionDetailsBar(sheetController: sheetController),
-            Expanded(
-              child: Sheet(sheetController: sheetController),
-            ),
-            Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
-            Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
-            Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
-            const SheetFooter(),
-          ],
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              const SheetSectionToolbar(),
+              SheetSectionDetailsBar(sheetController: sheetController),
+              Expanded(
+                child: Sheet(sheetController: sheetController),
+              ),
+              Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
+              Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
+              Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
+              const SheetFooter(),
+            ],
+          ),
         ),
       ),
     );

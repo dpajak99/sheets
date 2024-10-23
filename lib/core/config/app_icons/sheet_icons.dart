@@ -3,9 +3,12 @@ part of 'asset_icon.dart';
 // ignore_for_file: constant_identifier_names
 class SheetIcons {
   static const AssetIconData add = AssetIconData('assets/icons/add.svg');
+  static const AssetIconData more_vert = AssetIconData('assets/icons/more_vert.svg');
+  static const AssetIconData arrow_up = AssetIconData('assets/icons/arrow_up.svg');
+  static const AssetIconData search = AssetIconData('assets/icons/search.svg');
   static const AssetIconData footer_add = AssetIconData('assets/icons/footer_add.svg');
   static const AssetIconData footer_menu = AssetIconData('assets/icons/footer_menu.svg');
-  static const AssetIconData footer_dropdown = AssetIconData('assets/icons/footer_dropdown.svg');
+  static const AssetIconData dropdown = AssetIconData('assets/icons/dropdown.svg');
   static const AssetIconData add_comment = AssetIconData('assets/icons/add_comment.svg');
   static const AssetIconData border_all = AssetIconData('assets/icons/border_all.svg');
   static const AssetIconData cell_merge = AssetIconData('assets/icons/cell_merge.svg');
@@ -23,6 +26,7 @@ class SheetIcons {
   static const AssetIconData insert_chart = AssetIconData('assets/icons/insert_chart.svg');
   static const AssetIconData link = AssetIconData('assets/icons/link.svg');
   static const AssetIconData paint = AssetIconData('assets/icons/paint.svg');
+  static const AssetIconData percentage = AssetIconData('assets/icons/percentage.svg');
   static const AssetIconData print = AssetIconData('assets/icons/print.svg');
   static const AssetIconData redo = AssetIconData('assets/icons/redo.svg');
   static const AssetIconData remove = AssetIconData('assets/icons/remove.svg');
