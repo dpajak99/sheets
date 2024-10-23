@@ -40,6 +40,7 @@ class AssetIcon extends StatelessWidget {
       height: height ?? size,
       child: SvgPicture.asset(
         assetIconData.assetName,
+        package: 'sheets',
         width: width ?? size,
         height: height ?? size,
         colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,

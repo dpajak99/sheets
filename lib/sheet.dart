@@ -3,70 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/layers/fill_handle/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/headers/sheet_headers_layer.dart';
 import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/mesh/sheet_mesh_layer.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer.dart';
-import 'package:sheets/widgets/sections/sheet_footer.dart';
-import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
-import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
 import 'package:sheets/widgets/sheet_scrollable.dart';
-
-class SheetPage extends StatefulWidget {
-  const SheetPage({super.key});
-
-  @override
-  State<StatefulWidget> createState() => SheetPageState();
-}
-
-class SheetPageState extends State<SheetPage> {
-  final SheetController sheetController = SheetController(
-    properties: SheetProperties(
-      customColumnStyles: <ColumnIndex, ColumnStyle>{},
-      customRowStyles: <RowIndex, RowStyle>{},
-    ),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Future<void> dispose() async {
-    await sheetController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          const SheetSectionToolbar(),
-          SheetSectionDetailsBar(sheetController: sheetController),
-          Expanded(
-            child: Sheet(sheetController: sheetController),
-          ),
-          Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
-          Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
-          Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
-          const SheetFooter(),
-        ],
-      ),
-    );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
-  }
-}
 
 class Sheet extends StatefulWidget {
   const Sheet({
@@ -77,11 +20,7 @@ class Sheet extends StatefulWidget {
   final SheetController sheetController;
 
   @override
-  State<StatefulWidget> createState() => SheetState();
-
-  static SheetState of(BuildContext context) {
-    return context.findAncestorStateOfType<SheetState>()!;
-  }
+  State<StatefulWidget> createState() => _SheetState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -90,7 +29,7 @@ class Sheet extends StatefulWidget {
   }
 }
 
-class SheetState extends State<Sheet> {
+class _SheetState extends State<Sheet> {
   SheetController get sheetController => widget.sheetController;
 
   @override

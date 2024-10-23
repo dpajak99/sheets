@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/widgets/sheet_theme.dart';
 
 class SheetSectionToolbar extends StatefulWidget {
   const SheetSectionToolbar({super.key});
@@ -13,94 +14,96 @@ class SheetSectionToolbar extends StatefulWidget {
 class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-      decoration: const BoxDecoration(
-        color: Color(0xfff9fbfd),
-      ),
+    return SheetTheme(
       child: Container(
-        height: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-        decoration: BoxDecoration(
-          color: const Color(0xffeef2f9),
-          borderRadius: BorderRadius.circular(45),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        decoration: const BoxDecoration(
+          color: Color(0xfff9fbfd),
         ),
-        child: const Row(
-          children: <Widget>[
-            ButtonsSection(
-              endDivider: false,
-              buttons: <Widget>[
-                ToolbarSearchbar(),
-              ],
-            ),
-            ButtonsSection(
-              buttons: <Widget>[
-                ToolbarIconButton(SheetIcons.undo),
-                ToolbarIconButton(SheetIcons.redo),
-                ToolbarIconButton(SheetIcons.print),
-                ToolbarIconButton(SheetIcons.paint),
-                ToolbarTextButtonDropdown('100%'),
-              ],
-            ),
-            ButtonsSection(
-              buttons: <Widget>[
-                ToolbarTextButton('zloty', padding: EdgeInsets.symmetric(horizontal: 1)),
-                ToolbarTextButton('%'),
-                ToolbarIconButton(SheetIcons.decimal_decrease),
-                ToolbarIconButton(SheetIcons.decimal_increase),
-                ToolbarTextButton('123', textSize: 12),
-              ],
-            ),
-            ButtonsSection(
-              buttons: <Widget>[
-                ToolbarTextButtonDropdown('Default'),
-              ],
-            ),
-            ButtonsSection(
-              buttons: <Widget>[
-                ToolbarIconButton(SheetIcons.add),
-                ToolbarTextDropdown('10'),
-                ToolbarIconButton(SheetIcons.remove),
-              ],
-            ),
-            ButtonsSection(
-              buttons: <Widget>[
-                ToolbarIconButton(SheetIcons.format_bold),
-                ToolbarIconButton(SheetIcons.format_italic),
-                ToolbarIconButton(SheetIcons.strikethrough),
-                ToolbarIconButton(SheetIcons.format_color_text),
-              ],
-            ),
-            ButtonsSection(
-              buttons: <Widget>[
-                ToolbarIconButton(SheetIcons.format_color_fill),
-                ToolbarIconButton(SheetIcons.border_all),
-                ToolbarIconDropdownButton(SheetIcons.cell_merge),
-              ],
-            ),
-            ButtonsSection(
-              buttons: <Widget>[
-                ToolbarIconDropdownButton(SheetIcons.format_align_left),
-                ToolbarIconDropdownButton(SheetIcons.vertical_align_bottom),
-                ToolbarIconDropdownButton(SheetIcons.format_text_overflow),
-                ToolbarIconDropdownButton(SheetIcons.text_rotation_none),
-              ],
-            ),
-            ButtonsSection(
-              endDivider: false,
-              buttons: <Widget>[
-                ToolbarIconButton(SheetIcons.link),
-                ToolbarIconButton(SheetIcons.add_comment),
-                ToolbarIconButton(SheetIcons.insert_chart),
-                ToolbarIconButton(SheetIcons.filter_alt),
-                ToolbarIconDropdownButton(SheetIcons.table_view),
-                ToolbarIconButton(SheetIcons.functions),
-              ],
-            ),
-            Spacer(),
-            ToolbarIconButton(SheetIcons.keyboard_arrow_up),
-            SizedBox(width: 13)
-          ],
+        child: Container(
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color(0xffeef2f9),
+            borderRadius: BorderRadius.circular(45),
+          ),
+          child: const Row(
+            children: <Widget>[
+              ButtonsSection(
+                endDivider: false,
+                buttons: <Widget>[
+                  ToolbarSearchbar(),
+                ],
+              ),
+              ButtonsSection(
+                buttons: <Widget>[
+                  ToolbarIconButton(SheetIcons.undo),
+                  ToolbarIconButton(SheetIcons.redo),
+                  ToolbarIconButton(SheetIcons.print),
+                  ToolbarIconButton(SheetIcons.paint),
+                  ToolbarTextButtonDropdown('100%'),
+                ],
+              ),
+              ButtonsSection(
+                buttons: <Widget>[
+                  ToolbarTextButton('zloty', padding: EdgeInsets.symmetric(horizontal: 1)),
+                  ToolbarTextButton('%'),
+                  ToolbarIconButton(SheetIcons.decimal_decrease),
+                  ToolbarIconButton(SheetIcons.decimal_increase),
+                  ToolbarTextButton('123', textSize: 12),
+                ],
+              ),
+              ButtonsSection(
+                buttons: <Widget>[
+                  ToolbarTextButtonDropdown('Default'),
+                ],
+              ),
+              ButtonsSection(
+                buttons: <Widget>[
+                  ToolbarIconButton(SheetIcons.add),
+                  ToolbarTextDropdown('10'),
+                  ToolbarIconButton(SheetIcons.remove),
+                ],
+              ),
+              ButtonsSection(
+                buttons: <Widget>[
+                  ToolbarIconButton(SheetIcons.format_bold),
+                  ToolbarIconButton(SheetIcons.format_italic),
+                  ToolbarIconButton(SheetIcons.strikethrough),
+                  ToolbarIconButton(SheetIcons.format_color_text),
+                ],
+              ),
+              ButtonsSection(
+                buttons: <Widget>[
+                  ToolbarIconButton(SheetIcons.format_color_fill),
+                  ToolbarIconButton(SheetIcons.border_all),
+                  ToolbarIconDropdownButton(SheetIcons.cell_merge),
+                ],
+              ),
+              ButtonsSection(
+                buttons: <Widget>[
+                  ToolbarIconDropdownButton(SheetIcons.format_align_left),
+                  ToolbarIconDropdownButton(SheetIcons.vertical_align_bottom),
+                  ToolbarIconDropdownButton(SheetIcons.format_text_overflow),
+                  ToolbarIconDropdownButton(SheetIcons.text_rotation_none),
+                ],
+              ),
+              ButtonsSection(
+                endDivider: false,
+                buttons: <Widget>[
+                  ToolbarIconButton(SheetIcons.link),
+                  ToolbarIconButton(SheetIcons.add_comment),
+                  ToolbarIconButton(SheetIcons.insert_chart),
+                  ToolbarIconButton(SheetIcons.filter_alt),
+                  ToolbarIconDropdownButton(SheetIcons.table_view),
+                  ToolbarIconButton(SheetIcons.functions),
+                ],
+              ),
+              Spacer(),
+              ToolbarIconButton(SheetIcons.keyboard_arrow_up),
+              SizedBox(width: 13)
+            ],
+          ),
         ),
       ),
     );
