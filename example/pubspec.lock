@@ -171,6 +171,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  linked_scroll_controller:
+    dependency: transitive
+    description:
+      name: linked_scroll_controller
+      sha256: e6020062bcf4ffc907ee7fd090fa971e65d8dfaac3c62baf601a3ced0b37986a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   lints:
     dependency: transitive
     description:
@@ -319,6 +327,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  spreadsheet_table:
+    dependency: "direct main"
+    description:
+      name: spreadsheet_table
+      sha256: "101477913c2fa8f6ca38e97fe59506cc5cb3ce256ad1a62f55c16d8654554a4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   sprintf:
     dependency: transitive
     description:

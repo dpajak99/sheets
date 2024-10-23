@@ -38,6 +38,8 @@ class SheetFooterTab extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 15,
+                fontFamily: 'GoogleSans',
+                package: 'sheets',
                 color: foregroundColor,
                 fontWeight: FontWeight.w600,
               ),
