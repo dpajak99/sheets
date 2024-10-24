@@ -76,7 +76,9 @@ class MouseListener extends Streamable<SheetMouseGesture> {
 
   void notifyDragStarted(PointerDownEvent event) {
     _updateGlobalOffset(event.position);
-    _dragStartDetails = _cursorDetails;
+    MouseCursorDetails cursorDetails = _cursorDetails;
+
+    _dragStartDetails = cursorDetails;
     addEvent(SheetDragStartGesture(_dragStartDetails!));
   }
 
@@ -105,7 +107,7 @@ class MouseListener extends Streamable<SheetMouseGesture> {
   void _resolveGesture(SheetMouseGesture gesture) {
     bool activeRecognizerResolved = _resolveActiveRecognizers(gesture);
     if (!activeRecognizerResolved) {
-      _resolveFirstHoveredRecognizer(gesture);
+      _resolveFirstRecognizer(gesture);
     }
   }
 
@@ -125,7 +127,7 @@ class MouseListener extends Streamable<SheetMouseGesture> {
     return activeHandlerResolved;
   }
 
-  void _resolveFirstHoveredRecognizer(SheetMouseGesture gesture) {
+  void _resolveFirstRecognizer(SheetMouseGesture gesture) {
     for (MouseGestureRecognizer recognizer in _mouseActionRecognizers) {
       MouseGestureHandler? handler = recognizer.recognize(_sheetController, gesture);
       if (handler != null) {

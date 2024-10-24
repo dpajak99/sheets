@@ -1,3 +1,4 @@
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 class VisibleCellsRenderer {
@@ -15,7 +16,12 @@ class VisibleCellsRenderer {
 
     for (ViewportRow row in visibleRows) {
       for (ViewportColumn column in visibleColumns) {
-        ViewportCell viewportCell = ViewportCell.fromColumnRow(column, row);
+        ViewportCell viewportCell = ViewportCell(
+          index: CellIndex(column: column.index, row: row.index),
+          column: column,
+          row: row,
+          value: '',
+        );
         visibleCells.add(viewportCell);
       }
     }

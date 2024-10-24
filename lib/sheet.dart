@@ -9,6 +9,7 @@ import 'package:sheets/layers/headers/sheet_headers_layer.dart';
 import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/mesh/sheet_mesh_layer.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer.dart';
+import 'package:sheets/layers/textfield/sheet_textfield_layer.dart';
 import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
 import 'package:sheets/widgets/sheet_scrollable.dart';
 
@@ -162,6 +163,7 @@ class SheetGrid extends StatelessWidget {
         Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetSelectionLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetTextfieldLayer(sheetController: sheetController)),
         Positioned(
           top: 0,
           left: 0,

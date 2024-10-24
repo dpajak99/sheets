@@ -15,6 +15,7 @@ class KeyboardShortcuts {
 
   static const KeyboardState addRows = SingleKeyPressedState(LogicalKeyboardKey.keyR);
   static const KeyboardState addColumns = SingleKeyPressedState(LogicalKeyboardKey.keyC);
+  static const KeyboardState enter = SingleKeyPressedState(LogicalKeyboardKey.enter);
 
   static const KeyboardState reverseScroll = SingleKeyPressedState(LogicalKeyboardKey.shiftLeft);
 }

@@ -86,7 +86,22 @@ class ViewportColumn extends ViewportItem {
 }
 
 class ViewportCell extends ViewportItem {
-  ViewportCell({
+  factory ViewportCell({
+    required CellIndex index,
+    required ViewportRow row,
+    required ViewportColumn column,
+    required String value,
+  }) {
+    return ViewportCell._(
+      rect: Rect.fromLTWH(column.rect.left, row.rect.top, column.rect.width, row.rect.height),
+      index: index,
+      row: row,
+      column: column,
+      value: value,
+    );
+  }
+
+  ViewportCell._({
     required super.rect,
     required CellIndex index,
     required ViewportRow row,
@@ -96,21 +111,6 @@ class ViewportCell extends ViewportItem {
         _row = row,
         _column = column,
         _value = value;
-
-  factory ViewportCell.fromColumnRow(ViewportColumn column, ViewportRow row, {String value = ''}) {
-    return ViewportCell(
-      value: value,
-      row: row,
-      column: column,
-      index: CellIndex(row: row.index, column: column.index),
-      rect: Rect.fromLTWH(
-        column.rect.left,
-        row.rect.top,
-        column.rect.width,
-        row.rect.height,
-      ),
-    );
-  }
 
   final CellIndex _index;
   final ViewportRow _row;

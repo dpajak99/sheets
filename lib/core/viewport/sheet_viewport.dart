@@ -5,6 +5,7 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
+import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 class SheetViewport extends ChangeNotifier {
@@ -77,7 +78,7 @@ class SheetViewport extends ChangeNotifier {
     _scrollController.setViewportSize(rect.size);
   }
 
-  void ensureIndexFullyVisible(SheetIndex index) {
+  Future<ViewportItem?> ensureIndexFullyVisible(SheetIndex index) async {
     Offset scrollOffset = _scrollController.offset;
 
     Rect sheetCoords = index.getSheetCoordinates(_properties);
@@ -98,6 +99,8 @@ class SheetViewport extends ChangeNotifier {
     } else if (rightMargin > scrollOffset.dx + sheetWidth) {
       _scrollController.scrollToHorizontal(sheetCoords.right - sheetWidth + 1);
     }
+
+    return visibleContent.findCell(index.toCellIndex());
   }
 
   void _updateScrollPosition(SheetScrollController scrollController) {

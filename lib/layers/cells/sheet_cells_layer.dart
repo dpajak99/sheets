@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/cells/sheet_cells_layer_painter.dart';
-import 'package:sheets/layers/mesh/sheet_mesh_layer_painter.dart';
 
 class SheetCellsLayer extends StatefulWidget {
   const SheetCellsLayer({

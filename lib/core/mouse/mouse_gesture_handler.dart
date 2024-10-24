@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/selection/sheet_fill_gesture.dart';
+import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
+import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -32,6 +34,32 @@ abstract class MouseGestureHandler extends ChangeNotifier with EquatableMixin {
 
   @override
   List<Object?> get props => <Object>[isActive];
+}
+
+class MouseDoubleClickGestureHandler extends MouseGestureHandler {
+  @override
+  void resolve(SheetController controller, SheetMouseGesture gesture) {
+    return switch (gesture) {
+      SheetDragStartGesture gesture => _doubleTap(controller, gesture),
+      _ => null,
+    };
+  }
+
+  @override
+  void reset(SheetController controller) {
+    setActive(false);
+  }
+
+  void _doubleTap(SheetController controller, SheetDragStartGesture gesture) {
+    if( gesture.startDetails.hoveredItem is! ViewportCell) {
+      return;
+    }
+    ViewportCell cell = gesture.startDetails.hoveredItem! as ViewportCell;
+
+    setActive(true);
+    controller.setActiveViewportCell(cell);
+    setActive(false);
+  }
 }
 
 abstract class DraggableGestureHandler extends MouseGestureHandler {
