@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
 import 'package:sheets/core/keyboard/keyboard_listener.dart';
 import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
@@ -8,7 +9,6 @@ import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/mouse/mouse_listener.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/selection/selection_state.dart';
-import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
@@ -21,7 +21,7 @@ class SheetController {
   SheetController({
     required this.properties,
   }) {
-    activeCell = ValueNotifier<ViewportCell?>(null);
+    _activeCellNotifier = ValueNotifier<ViewportCell?>(null);
 
     scroll = SheetScrollController();
     viewport = SheetViewport(properties, scroll);
@@ -34,7 +34,7 @@ class SheetController {
       sheetController: this,
     );
     selection = SelectionState.defaultSelection(
-      onChanged: (_) => activeCell.value = null,
+      onChanged: (_) => resetActiveCell(),
     );
 
     _setupKeyboardShortcuts();
@@ -45,13 +45,15 @@ class SheetController {
   late final SheetScrollController scroll;
   late final KeyboardListener keyboard;
   late final MouseListener mouse;
-  late final ValueNotifier<ViewportCell?> activeCell;
+  late final ValueNotifier<ViewportCell?> _activeCellNotifier;
 
   late SelectionState selection;
 
   Future<void> dispose() async {
     await keyboard.dispose();
   }
+
+  ValueNotifier<ViewportCell?> get activeCellNotifier => _activeCellNotifier;
 
   void resizeColumn(ColumnIndex column, double width) {
     SheetResizeColumnGesture(column, width).resolve(this);
@@ -61,34 +63,45 @@ class SheetController {
     SheetResizeRowGesture(row, height).resolve(this);
   }
 
-  void setActiveCellIndex(SheetIndex index) {
-    unawaited(() async {
-      ViewportCell? cell = await viewport.ensureIndexFullyVisible(index) as ViewportCell?;
-      print('Found cell: ${cell?.index.stringifyPosition()}');
-      if (cell == null) {
-        return;
-      }
-      setActiveViewportCell(cell);
-    }());
+  String getCellValue(CellIndex index) {
+    return properties.getCellValue(index);
   }
 
-  void setActiveViewportCell(ViewportCell cell) {
-    print('Setting active cell');
+  void setCellValue(CellIndex index, String value, {Size? size}) {
+    properties.setCellValue(index, value);
+    if(size != null ) {
+      SheetResizeCellGesture(index, size).resolve(this);
+    }
+    resetActiveCell();
+  }
+
+  void resetActiveCell() {
+    _activeCellNotifier.value = null;
+    keyboard.enableListener();
+  }
+
+  void setActiveCellIndex(SheetIndex index, {String? value}) {
+    ViewportCell? cell = viewport.ensureIndexFullyVisible(index) as ViewportCell?;
+    if (cell == null) {
+      return;
+    }
+    setActiveViewportCell(cell, value: value);
+  }
+
+  void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
-    activeCell.value = cell;
+    _activeCellNotifier.value = cell.copyWith(value: value);
+    keyboard.disableListener();
   }
 
   void _setupKeyboardShortcuts() {
     keyboard.pressStream.listen((KeyboardState state) {
-      if (activeCell.value != null) {
-        return;
-      }
       return switch (state) {
         KeyboardShortcuts.selectAll => selection.update(SheetSelectionFactory.all()),
         KeyboardShortcuts.addRows => properties.addRows(10),
         KeyboardShortcuts.addColumns => properties.addColumns(10),
         KeyboardShortcuts.enter => setActiveCellIndex(selection.value.mainCell),
-        (_) => null,
+        (_) => _handleKeyboardKey(state.keys),
       };
     });
 
@@ -106,5 +119,31 @@ class SheetController {
         SheetSelectionMoveGesture(0, 1).resolve(this);
       }
     });
+  }
+
+  void _handleKeyboardKey(List<LogicalKeyboardKey> key) {
+    List<String> keyLabels = key
+        .map((LogicalKeyboardKey logicalKeyboardKey) => logicalKeyboardKey.keyLabel)
+        .toList()
+        .where((String label) => label.length == 1)
+        .toList();
+
+    if(keyLabels.isNotEmpty) {
+      bool uppercase = key.contains(LogicalKeyboardKey.shiftLeft) || key.contains(LogicalKeyboardKey.shiftRight);
+      String value = keyLabels.first;
+
+      if (uppercase) {
+        value = value.toUpperCase();
+      } else {
+        value = value.toLowerCase();
+      }
+
+      setActiveCellIndex(selection.value.mainCell, value: value);
+    }
+
+    bool clearCell = key.contains(LogicalKeyboardKey.delete) || key.contains(LogicalKeyboardKey.backspace);
+    if (clearCell) {
+      setCellValue(selection.value.mainCell, '');
+    }
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:sheets/core/config/sheet_constants.dart' as constants;
+import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -30,7 +33,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ViewportCell?>(
-      valueListenable: widget.sheetController.activeCell,
+      valueListenable: widget.sheetController.activeCellNotifier,
       builder: (BuildContext context, ViewportCell? activeCell, Widget? child) {
         if (activeCell == null) {
           return const SizedBox();
@@ -39,9 +42,15 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
         return Stack(
           children: <Widget>[
             Positioned(
-              left: activeCell.rect.left - 2,
-              top: activeCell.rect.top - 1,
-              child: SheetTextfield(viewportCell: activeCell),
+              left: activeCell.rect.left,
+              top: activeCell.rect.top + constants.borderWidth,
+              child: SheetTextfield(
+                viewportCell: activeCell,
+                onEditingCompleted: (String value, Size? newSize) {
+                  widget.sheetController.setCellValue(activeCell.index, value, size: newSize);
+                  SheetSelectionMoveGesture(1, 0).resolve(widget.sheetController);
+                },
+              ),
             ),
           ],
         );
@@ -51,17 +60,40 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
 }
 
 class SheetTextfield extends StatefulWidget {
-  const SheetTextfield({
+  SheetTextfield({
     required this.viewportCell,
+    required this.onEditingCompleted,
+    this.backgroundColor = Colors.white,
+    this.offset = Offset.zero,
+    Border? outerBorder,
+    Border? innerBorder,
+    EdgeInsets? contentPadding,
     super.key,
-  });
+  }) {
+    this.outerBorder =
+        outerBorder ?? Border.all(color: const Color(0xffB2C5F4), width: 2, strokeAlign: BorderSide.strokeAlignOutside);
+    this.innerBorder = innerBorder ?? Border.all(color: const Color(0xff3056C6), width: 2);
+    this.contentPadding = contentPadding ?? const EdgeInsets.symmetric(vertical: 1, horizontal: 3);
+  }
 
   final ViewportCell viewportCell;
+  final void Function(String, Size?) onEditingCompleted;
+  final Color backgroundColor;
+  final Offset offset;
+  late final Border outerBorder;
+  late final Border innerBorder;
+  late final EdgeInsets contentPadding;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<ViewportCell>('viewportCell', viewportCell));
+    properties.add(DiagnosticsProperty<Border>('outerBorder', outerBorder));
+    properties.add(DiagnosticsProperty<Border>('innerBorder', innerBorder));
+    properties.add(ColorProperty('backgroundColor', backgroundColor));
+    properties.add(DiagnosticsProperty<Offset>('offset', offset));
+    properties.add(DiagnosticsProperty<EdgeInsets>('contentPadding', contentPadding));
+    properties.add(ObjectFlagProperty<void Function(String p1, Size? p2)>.has('onEditingCompleted', onEditingCompleted));
   }
 
   @override
@@ -73,12 +105,38 @@ class _SheetTextfieldState extends State<SheetTextfield> {
   late final TextEditingController controller;
 
   ViewportCell get viewportCell => widget.viewportCell;
+  bool controlPressed = false;
+  late Size textfieldSize = Size(viewportCell.rect.width, viewportCell.rect.height);
+  Size? newSize;
 
   @override
   void initState() {
     super.initState();
-    focusNode = FocusNode();
+    focusNode = FocusNode(
+      onKeyEvent: (FocusNode node, KeyEvent event) {
+        if (event is KeyDownEvent) {
+          if (controlPressed) {
+            return KeyEventResult.ignored;
+          }
+          if (event.logicalKey == LogicalKeyboardKey.enter) {
+            widget.onEditingCompleted(controller.text, newSize);
+            return KeyEventResult.handled;
+          } else if (event.logicalKey == LogicalKeyboardKey.controlLeft) {
+            controlPressed = true;
+          }
+          return KeyEventResult.ignored;
+        } else if (event is KeyUpEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.controlLeft) {
+            controlPressed = false;
+          }
+          return KeyEventResult.ignored;
+        } else {
+          return KeyEventResult.ignored;
+        }
+      },
+    );
     controller = TextEditingController(text: widget.viewportCell.value);
+    focusNode.requestFocus();
   }
 
   @override
@@ -89,43 +147,45 @@ class _SheetTextfieldState extends State<SheetTextfield> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        minWidth: viewportCell.rect.width + 3,
-        minHeight: viewportCell.rect.height + 3,
-      ),
+    return DecoratedBox(
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xffB2C5F4), width: 2),
+        border: widget.outerBorder,
+        color: widget.backgroundColor,
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: const Color(0xff3056C6), width: 2),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 3),
-        child: Align(
-          alignment: Alignment.centerLeft,
+      child: DecoratedBox(
+        decoration: BoxDecoration(border: widget.innerBorder),
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: widget.innerBorder.top.width,
+            left: widget.innerBorder.left.width,
+            right: widget.innerBorder.right.width,
+            bottom: widget.innerBorder.bottom.width,
+          ),
           child: FixedIncrementTextField(
-            width: viewportCell.rect.width - 11,
-            increment: viewportCell.rect.width,
+            baseSize: Size(textfieldWidth, textfieldHeight),
             maxWidth: 300,
-            autofocus: true,
+            maxHeight: 300,
             controller: controller,
             focusNode: focusNode,
             minLines: 1,
             maxLines: null,
-            style: const TextStyle(
-              fontFamily: 'Arial',
-              fontSize: 12,
-              color: Colors.black,
-              height: 1,
-            ),
-            cursorColor: Colors.black,
-            decoration: const InputDecoration(
+            style: widget.viewportCell.textStyle,
+            decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
-              contentPadding: EdgeInsets.zero,
+              contentPadding: widget.contentPadding,
             ),
+            cursorColor: Colors.black,
+            horizontalIncrementBuilder: () {
+              return viewportCell.rect.width;
+            },
+            onSizeChanged: (Size size) {
+              Size updatedSize = Size(
+                textfieldSize.width,
+                size.height + widget.innerBorder.top.width + widget.innerBorder.bottom.width,
+              );
+              newSize = updatedSize;
+            },
           ),
         ),
       ),
@@ -138,29 +198,44 @@ class _SheetTextfieldState extends State<SheetTextfield> {
     properties.add(DiagnosticsProperty<ViewportCell>('viewportCell', viewportCell));
     properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode));
     properties.add(DiagnosticsProperty<TextEditingController>('controller', controller));
+    properties.add(DiagnosticsProperty<bool>('controlPressed', controlPressed));
+    properties.add(DiagnosticsProperty<Size>('textfieldSize', textfieldSize));
+    properties.add(DoubleProperty('textfieldWidth', textfieldWidth));
+    properties.add(DoubleProperty('textfieldHeight', textfieldHeight));
+    properties.add(DiagnosticsProperty<Size?>('newSize', newSize));
+  }
+
+  double get textfieldWidth {
+    double borderWidth = widget.innerBorder.left.width + widget.innerBorder.right.width;
+    return textfieldSize.width - borderWidth - constants.borderWidth;
+  }
+
+  double get textfieldHeight {
+    double borderWidth = widget.innerBorder.top.width + widget.innerBorder.bottom.width;
+    return textfieldSize.height - borderWidth - constants.borderWidth;
   }
 }
 
 class FixedIncrementTextField extends StatefulWidget {
   const FixedIncrementTextField({
-    required this.width,
-    required this.increment,
+    required this.baseSize,
     required this.maxWidth,
-    required this.autofocus,
+    required this.maxHeight,
     required this.controller,
     required this.focusNode,
     required this.minLines,
     required this.style,
     required this.cursorColor,
     required this.decoration,
+    required this.horizontalIncrementBuilder,
+    required this.onSizeChanged,
     super.key,
     this.maxLines = 1,
   });
 
-  final double width;
-  final double increment;
+  final Size baseSize;
   final double maxWidth;
-  final bool autofocus;
+  final double maxHeight;
   final TextEditingController controller;
   final FocusNode focusNode;
   final int minLines;
@@ -168,21 +243,24 @@ class FixedIncrementTextField extends StatefulWidget {
   final TextStyle style;
   final Color cursorColor;
   final InputDecoration decoration;
+  final double Function() horizontalIncrementBuilder;
+  final void Function(Size) onSizeChanged;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<bool>('autofocus', autofocus));
     properties.add(DiagnosticsProperty<TextEditingController>('controller', controller));
     properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode));
     properties.add(IntProperty('minLines', minLines));
     properties.add(IntProperty('maxLines', maxLines));
     properties.add(DiagnosticsProperty<TextStyle>('style', style));
     properties.add(ColorProperty('cursorColor', cursorColor));
-    properties.add(DiagnosticsProperty<InputDecoration>('decoration', decoration));
-    properties.add(DoubleProperty('width', width));
-    properties.add(DoubleProperty('increment', increment));
     properties.add(DoubleProperty('maxWidth', maxWidth));
+    properties.add(DoubleProperty('maxHeight', maxHeight));
+    properties.add(ObjectFlagProperty<double Function()>.has('horizontalIncrementBuilder', horizontalIncrementBuilder));
+    properties.add(ObjectFlagProperty<void Function(Size p1)>.has('onSizeChanged', onSizeChanged));
+    properties.add(DiagnosticsProperty<Size>('baseSize', baseSize));
+    properties.add(DiagnosticsProperty<InputDecoration>('decoration', decoration));
   }
 
   @override
@@ -190,48 +268,81 @@ class FixedIncrementTextField extends StatefulWidget {
 }
 
 class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
-  late double _width = widget.width;
+  late Size _size = widget.baseSize;
 
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(_adjustWidth);
+    widget.controller.addListener(_adjustSize);
+    _adjustSize(notify: false);
   }
 
-  void _adjustWidth() {
+  void _adjustSize({bool notify = true}) {
     TextPainter textPainter = TextPainter(
       text: TextSpan(text: widget.controller.text, style: widget.style),
       maxLines: 1,
       textDirection: TextDirection.ltr,
     )..layout();
 
-    if (textPainter.width > _width - 15) {
-      setState(() {
-        _width = (_width + widget.increment).clamp(0.0, widget.maxWidth);
-      });
+    int newLineCount = widget.controller.text.split('\n').length;
+
+    double actualTextWidth = textPainter.width;
+    double actualTextHeight = newLineCount * textPainter.height;
+
+    Size currentSize = _size;
+    Size updatedSize = currentSize;
+
+    double breakpointHorizontal = currentSize.width - (widget.decoration.contentPadding?.horizontal ?? 0);
+    double breakpointVertical = currentSize.height - (widget.decoration.contentPadding?.vertical ?? 0);
+
+    if (actualTextWidth > breakpointHorizontal) {
+      updatedSize = Size(
+        (updatedSize.width + widget.horizontalIncrementBuilder()).clamp(0, widget.maxWidth),
+        updatedSize.height,
+      );
+    }
+
+    if (actualTextHeight > breakpointVertical) {
+      updatedSize = Size(
+        updatedSize.width,
+        (updatedSize.height + (widget.style.fontSize ?? 0) * (widget.style.height ?? 0)).clamp(0, widget.maxHeight),
+      );
+    }
+
+    if (currentSize != updatedSize) {
+        _size = updatedSize;
+        widget.onSizeChanged(_size);
+    }
+
+    if(notify) {
+      setState(() {});
     }
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(_adjustWidth);
+    widget.controller.removeListener(_adjustSize);
     widget.controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: _width,
-      child: TextField(
-        controller: widget.controller,
-        focusNode: widget.focusNode,
-        autofocus: widget.autofocus,
-        minLines: widget.minLines,
-        maxLines: widget.maxLines,
-        style: widget.style,
-        cursorColor: widget.cursorColor,
-        decoration: widget.decoration,
+    return SizedBox.fromSize(
+      size: _size,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: TextField(
+          controller: widget.controller,
+          focusNode: widget.focusNode,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
+          style: widget.style,
+          cursorColor: widget.cursorColor,
+          cursorWidth: 1,
+          cursorRadius: Radius.zero,
+          decoration: widget.decoration,
+        ),
       ),
     );
   }

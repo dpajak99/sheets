@@ -24,7 +24,7 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
 
   void paintCellText(Canvas canvas, ViewportCell cell) {
     TextPainter textPainter = TextPainter(
-      text: TextSpan(text: cell.value, style: defaultTextStyle),
+      text: TextSpan(text: cell.value, style: cell.textStyle),
       textDirection: TextDirection.ltr,
       maxLines: 3,
     );

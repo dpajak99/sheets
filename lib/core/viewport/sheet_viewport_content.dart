@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -59,6 +57,6 @@ class SheetViewportContent extends ChangeNotifier {
   }
 
   List<ViewportCell> _calculateCells(List<ViewportRow> visibleRows, List<ViewportColumn> visibleColumns) {
-    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build();
+    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build(_properties);
   }
 }

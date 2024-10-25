@@ -18,20 +18,36 @@ class KeyboardListener {
   final StreamController<KeyboardState> _holdStreamController = StreamController<KeyboardState>.broadcast();
 
   KeyboardState state = const NoKeysPressedState();
+  
+  bool enabled = true;
+  
+  void enableListener() {
+    enabled = true;
+  }
+  
+  void disableListener() {
+    enabled = false;
+  }
 
   void addKey(LogicalKeyboardKey logicalKeyboardKey) {
     KeyboardState previousState = state;
     state = previousState._addKey(logicalKeyboardKey);
-    _pressStreamController.add(state);
 
+    if(enabled) {
+      _pressStreamController.add(state);
+    }
+    
     _keyHoldTimer.start(() => _holdStreamController.add(state));
   }
 
   void removeKey(LogicalKeyboardKey logicalKeyboardKey) {
     KeyboardState previousState = state;
     state = previousState._removeKey(logicalKeyboardKey);
-    _releaseStreamController.add(state);
-
+    
+    if(enabled) {
+      _releaseStreamController.add(state);
+    }
+    
     _keyHoldTimer.reset();
   }
 

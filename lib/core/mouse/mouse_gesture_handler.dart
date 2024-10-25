@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/selection/sheet_fill_gesture.dart';
-import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
-import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 

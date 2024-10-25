@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -37,3 +38,25 @@ class SheetResizeRowGesture extends SheetGesture {
   @override
   List<Object?> get props => <Object?>[rowIndex, height];
 }
+
+class SheetResizeCellGesture extends SheetGesture {
+  SheetResizeCellGesture(this.cellIndex, this.size);
+
+  final CellIndex cellIndex;
+  final Size size;
+
+  @override
+  void resolve(SheetController controller) {
+    RowStyle rowStyle = controller.properties.getRowStyle(cellIndex.row);
+    ColumnStyle columnStyle = controller.properties.getColumnStyle(cellIndex.column);
+    controller.properties.setCellStyle(
+      cellIndex,
+      rowStyle.copyWith(height: size.height),
+      columnStyle.copyWith(width: size.width),
+    );
+  }
+
+  @override
+  List<Object?> get props => <Object?>[cellIndex, size];
+}
+

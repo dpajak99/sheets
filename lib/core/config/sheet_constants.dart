@@ -17,12 +17,6 @@ double resizerGapSize = 5;
 double resizerWeight = 3;
 double resizerLength = 16;
 
-TextStyle defaultTextStyle = const TextStyle(
-  color: Color(0xff000000),
-  fontSize: 13,
-  height: 1,
-);
-
 TextStyle defaultHeaderTextStyle = const TextStyle(
   color: Color(0xff444746),
   fontSize: 11,

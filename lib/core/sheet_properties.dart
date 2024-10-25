@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 
 class SheetProperties extends ChangeNotifier {
@@ -10,7 +11,11 @@ class SheetProperties extends ChangeNotifier {
     this.columnCount = 100,
     this.rowCount = 100,
   })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
-        _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{};
+        _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{} {
+    _data = SheetData();
+  }
+
+  late final SheetData _data;
 
   final Map<ColumnIndex, ColumnStyle> _customColumnStyles;
 
@@ -22,6 +27,15 @@ class SheetProperties extends ChangeNotifier {
 
   int columnCount;
   int rowCount;
+
+  void setCellValue(CellIndex cellIndex, String value) {
+    _data.setCellValue(cellIndex, value);
+    notifyListeners();
+  }
+
+  String getCellValue(CellIndex cellIndex) {
+    return _data.getCellValue(cellIndex);
+  }
 
   void addRows(int count) {
     rowCount += count;
@@ -39,6 +53,12 @@ class SheetProperties extends ChangeNotifier {
 
   double getColumnWidth(ColumnIndex columnIndex) {
     return getColumnStyle(columnIndex).width;
+  }
+
+  void setCellStyle(CellIndex cellIndex, RowStyle rowStyle, ColumnStyle columnStyle) {
+    _customRowStyles[cellIndex.row] = rowStyle;
+    _customColumnStyles[cellIndex.column] = columnStyle;
+    notifyListeners();
   }
 
   void setRowStyle(RowIndex rowIndex, RowStyle rowStyle) {

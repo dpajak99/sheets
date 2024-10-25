@@ -78,7 +78,7 @@ class SheetViewport extends ChangeNotifier {
     _scrollController.setViewportSize(rect.size);
   }
 
-  Future<ViewportItem?> ensureIndexFullyVisible(SheetIndex index) async {
+  ViewportItem? ensureIndexFullyVisible(SheetIndex index) {
     Offset scrollOffset = _scrollController.offset;
 
     Rect sheetCoords = index.getSheetCoordinates(_properties);

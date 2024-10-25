@@ -29,7 +29,8 @@ class ViewportRow extends ViewportItem {
     required super.rect,
     required RowIndex index,
     required RowStyle style,
-  })  : _index = index,
+  })
+      : _index = index,
         _style = style;
 
   final RowIndex _index;
@@ -52,7 +53,8 @@ class ViewportColumn extends ViewportItem {
     required super.rect,
     required ColumnIndex index,
     required ColumnStyle style,
-  })  : _index = index,
+  })
+      : _index = index,
         _style = style;
 
   final ColumnIndex _index;
@@ -107,10 +109,27 @@ class ViewportCell extends ViewportItem {
     required ViewportRow row,
     required ViewportColumn column,
     required String value,
-  })  : _index = index,
+  })
+      : _index = index,
         _row = row,
         _column = column,
         _value = value;
+
+  ViewportCell copyWith({
+    Rect? rect,
+    CellIndex? index,
+    ViewportRow? row,
+    ViewportColumn? column,
+    String? value,
+  }) {
+    return ViewportCell._(
+      rect: rect ?? this.rect,
+      index: index ?? _index,
+      row: row ?? _row,
+      column: column ?? _column,
+      value: value ?? _value,
+    );
+  }
 
   final CellIndex _index;
   final ViewportRow _row;
@@ -121,13 +140,21 @@ class ViewportCell extends ViewportItem {
   CellIndex get index => _index;
 
   @override
-  String get value {
-    return _value.isEmpty ? '${_column.value}${_row.value}' : _value;
-  }
+  String get value => _value;
 
   ViewportRow get row => _row;
 
   ViewportColumn get column => _column;
+
+  TextStyle get textStyle {
+    return const TextStyle(
+      fontFamily: 'Arial',
+      fontSize: 12,
+      color: Colors.black,
+      height: 1,
+      letterSpacing: 0,
+    );
+  }
 
   @override
   List<Object?> get props => <Object?>[rect, _index, _row, _column, _value];
