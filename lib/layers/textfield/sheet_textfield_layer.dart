@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -182,7 +184,7 @@ class _SheetTextfieldState extends State<SheetTextfield> {
             onSizeChanged: (Size size) {
               Size updatedSize = Size(
                 textfieldSize.width,
-                size.height + widget.innerBorder.top.width + widget.innerBorder.bottom.width,
+                size.height + widget.innerBorder.top.width + widget.innerBorder.bottom.width + constants.borderWidth,
               );
               newSize = updatedSize;
             },
@@ -268,7 +270,13 @@ class FixedIncrementTextField extends StatefulWidget {
 }
 
 class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
-  late Size _size = widget.baseSize;
+  late Size _areaSize = widget.baseSize;
+  late Size _editableSize = baseEditableSize;
+
+  Size get baseEditableSize => Size(
+        widget.baseSize.width - (widget.decoration.contentPadding?.horizontal ?? 0),
+        widget.baseSize.height - (widget.decoration.contentPadding?.vertical ?? 0),
+      );
 
   @override
   void initState() {
@@ -278,43 +286,50 @@ class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
   }
 
   void _adjustSize({bool notify = true}) {
+    double fontSize = widget.style.fontSize ?? 0;
+    double lineHeightFactor = widget.style.height ?? 1;
+    double singleLineHeight = fontSize * lineHeightFactor;
+
     TextPainter textPainter = TextPainter(
       text: TextSpan(text: widget.controller.text, style: widget.style),
-      maxLines: 1,
       textDirection: TextDirection.ltr,
-    )..layout();
+    )..layout(maxWidth: widget.maxWidth);
 
-    int newLineCount = widget.controller.text.split('\n').length;
+    double textWidth = textPainter.width;
+    double textHeight = textPainter.height;
 
-    double actualTextWidth = textPainter.width;
-    double actualTextHeight = newLineCount * textPainter.height;
+    int requiredLines = (textHeight / singleLineHeight).ceil();
 
-    Size currentSize = _size;
-    Size updatedSize = currentSize;
+    double maxWidth = widget.maxWidth;
+    double maxHeight = widget.maxHeight;
 
-    double breakpointHorizontal = currentSize.width - (widget.decoration.contentPadding?.horizontal ?? 0);
-    double breakpointVertical = currentSize.height - (widget.decoration.contentPadding?.vertical ?? 0);
+    double newWidth = _editableSize.width;
+    double newHeight = requiredLines * singleLineHeight + 2;
 
-    if (actualTextWidth > breakpointHorizontal) {
-      updatedSize = Size(
-        (updatedSize.width + widget.horizontalIncrementBuilder()).clamp(0, widget.maxWidth),
-        updatedSize.height,
-      );
+    if (textWidth > newWidth && newWidth < maxWidth) {
+      newWidth = min(textWidth + widget.horizontalIncrementBuilder(), maxWidth);
     }
 
-    if (actualTextHeight > breakpointVertical) {
-      updatedSize = Size(
-        updatedSize.width,
-        (updatedSize.height + (widget.style.fontSize ?? 0) * (widget.style.height ?? 0)).clamp(0, widget.maxHeight),
-      );
-    }
+    newWidth = min(newWidth, maxWidth);
+    newHeight = min(newHeight, maxHeight);
 
-    if (currentSize != updatedSize) {
-        _size = updatedSize;
-        widget.onSizeChanged(_size);
-    }
+    _editableSize = Size(newWidth, newHeight);
 
-    if(notify) {
+    Size newAreaSize = Size(
+      newWidth + (widget.decoration.contentPadding?.horizontal ?? 0),
+      newHeight + (widget.decoration.contentPadding?.vertical ?? 0),
+    );
+
+    _areaSize = Size(
+      newAreaSize.width,
+      max(newAreaSize.height, widget.baseSize.height),
+    );
+
+    int customNewLines = widget.controller.text.split('\n').length;
+    double customNewLinesHeight = customNewLines * singleLineHeight + (widget.decoration.contentPadding?.vertical ?? 0) + 2;
+    widget.onSizeChanged(Size(widget.baseSize.width, customNewLinesHeight));
+
+    if (notify) {
       setState(() {});
     }
   }
@@ -329,21 +344,38 @@ class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
   @override
   Widget build(BuildContext context) {
     return SizedBox.fromSize(
-      size: _size,
+      size: _areaSize,
       child: Align(
-        alignment: Alignment.centerLeft,
-        child: TextField(
-          controller: widget.controller,
-          focusNode: widget.focusNode,
-          minLines: widget.minLines,
-          maxLines: widget.maxLines,
-          style: widget.style,
-          cursorColor: widget.cursorColor,
-          cursorWidth: 1,
-          cursorRadius: Radius.zero,
-          decoration: widget.decoration,
+        alignment: Alignment.topLeft,
+        child: Padding(
+          padding: widget.decoration.contentPadding ?? EdgeInsets.zero,
+          child: SizedBox.fromSize(
+            size: _editableSize,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextField(
+                controller: widget.controller,
+                focusNode: widget.focusNode,
+                minLines: widget.minLines,
+                maxLines: widget.maxLines,
+                style: widget.style,
+                cursorColor: widget.cursorColor,
+                cursorWidth: 1,
+                cursorRadius: Radius.zero,
+                decoration: widget.decoration.copyWith(
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Size>('baseEditableSize', baseEditableSize));
   }
 }

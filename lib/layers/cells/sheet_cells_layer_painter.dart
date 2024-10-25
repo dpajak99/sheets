@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -23,14 +25,16 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
   }
 
   void paintCellText(Canvas canvas, ViewportCell cell) {
+    canvas.saveLayer(cell.rect, Paint());
     TextPainter textPainter = TextPainter(
       text: TextSpan(text: cell.value, style: cell.textStyle),
       textDirection: TextDirection.ltr,
-      maxLines: 3,
+      maxLines: max(1, cell.value.split('\n').length),
     );
 
     textPainter.layout();
     textPainter.paint(canvas, cell.rect.topLeft + const Offset(5, 5));
+    canvas.restore();
   }
 
   @override
@@ -46,7 +50,7 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
 class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   SheetCellsLayerPainter({
     required List<ViewportCell> visibleCells,
-  })  : _visibleCells = visibleCells;
+  }) : _visibleCells = visibleCells;
 
   late List<ViewportCell> _visibleCells;
 

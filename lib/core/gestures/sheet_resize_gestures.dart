@@ -59,4 +59,3 @@ class SheetResizeCellGesture extends SheetGesture {
   @override
   List<Object?> get props => <Object?>[cellIndex, size];
 }
-
