@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_index.dart';
 
 class SheetData with EquatableMixin {
@@ -6,15 +7,15 @@ class SheetData with EquatableMixin {
     Map<CellIndex, String>? data,
   }) {
     this.data = data ?? <CellIndex, String>{
-      CellIndex(column: ColumnIndex(0), row: RowIndex(0)): 'A1',
-      CellIndex(column: ColumnIndex(1), row: RowIndex(0)): 'B1',
-      CellIndex(column: ColumnIndex(2), row: RowIndex(0)): 'C1',
-      CellIndex(column: ColumnIndex(0), row: RowIndex(1)): 'A2',
-      CellIndex(column: ColumnIndex(1), row: RowIndex(1)): 'B2',
-      CellIndex(column: ColumnIndex(2), row: RowIndex(1)): 'C2',
-      CellIndex(column: ColumnIndex(0), row: RowIndex(2)): 'A3',
-      CellIndex(column: ColumnIndex(1), row: RowIndex(2)): 'B3',
-      CellIndex(column: ColumnIndex(2), row: RowIndex(2)): 'C3',
+      CellIndex(column: ColumnIndex(0), row: RowIndex(0)): '1',
+      CellIndex(column: ColumnIndex(1), row: RowIndex(0)): 'A',
+      CellIndex(column: ColumnIndex(2), row: RowIndex(0)): 'abc',
+      CellIndex(column: ColumnIndex(0), row: RowIndex(1)): '2',
+      CellIndex(column: ColumnIndex(1), row: RowIndex(1)): 'B',
+      CellIndex(column: ColumnIndex(2), row: RowIndex(1)): 'abc',
+      CellIndex(column: ColumnIndex(0), row: RowIndex(2)): '3',
+      CellIndex(column: ColumnIndex(1), row: RowIndex(2)): 'C',
+      CellIndex(column: ColumnIndex(2), row: RowIndex(2)): 'abc',
     };
   }
 
@@ -25,8 +26,8 @@ class SheetData with EquatableMixin {
     data[cellIndex] = value;
   }
 
-  String getCellValue(CellIndex cellIndex) {
-    return data[cellIndex] ?? '';
+  CellValue getCellValue(CellIndex cellIndex) {
+    return CellValueParser.parse(data[cellIndex] ?? '');
   }
 
   @override

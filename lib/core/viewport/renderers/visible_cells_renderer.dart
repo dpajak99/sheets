@@ -23,7 +23,7 @@ class VisibleCellsRenderer {
           index: cellIndex,
           column: column,
           row: row,
-          value: properties.getCellValue(cellIndex),
+          properties: properties.getCellProperties(cellIndex),
         );
         visibleCells.add(viewportCell);
       }

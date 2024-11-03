@@ -290,18 +290,18 @@ class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
     double lineHeightFactor = widget.style.height ?? 1;
     double singleLineHeight = fontSize * lineHeightFactor;
 
+    double maxWidth = widget.maxWidth;
+    double maxHeight = widget.maxHeight;
+
     TextPainter textPainter = TextPainter(
       text: TextSpan(text: widget.controller.text, style: widget.style),
       textDirection: TextDirection.ltr,
-    )..layout(maxWidth: widget.maxWidth);
+    )..layout(maxWidth: maxWidth);
 
     double textWidth = textPainter.width;
     double textHeight = textPainter.height;
 
     int requiredLines = (textHeight / singleLineHeight).ceil();
-
-    double maxWidth = widget.maxWidth;
-    double maxHeight = widget.maxHeight;
 
     double newWidth = _editableSize.width;
     double newHeight = requiredLines * singleLineHeight + 2;

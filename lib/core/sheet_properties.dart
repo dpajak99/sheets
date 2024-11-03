@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -33,8 +34,18 @@ class SheetProperties extends ChangeNotifier {
     notifyListeners();
   }
 
-  String getCellValue(CellIndex cellIndex) {
-    return _data.getCellValue(cellIndex);
+  void setCellsProperties(List<CellProperties> cellProperties) {
+    for (CellProperties cellProperty in cellProperties) {
+      _data.setCellValue(cellProperty.index, cellProperty.value.asString);
+    }
+    notifyListeners();
+  }
+
+  CellProperties getCellProperties(CellIndex cellIndex) {
+    return CellProperties(
+      cellIndex,
+      _data.getCellValue(cellIndex),
+    );
   }
 
   void addRows(int count) {
@@ -89,7 +100,6 @@ class SheetProperties extends ChangeNotifier {
 }
 
 class ColumnStyle with EquatableMixin {
-
   ColumnStyle({
     required this.width,
   });
@@ -110,7 +120,6 @@ class ColumnStyle with EquatableMixin {
 }
 
 class RowStyle with EquatableMixin {
-
   RowStyle({
     required this.height,
   });

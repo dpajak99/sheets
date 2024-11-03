@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/core/auto_fill_engine.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
 import 'package:sheets/core/keyboard/keyboard_listener.dart';
 import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
@@ -11,6 +13,7 @@ import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/selection/selection_state.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
+import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
@@ -35,6 +38,7 @@ class SheetController {
     );
     selection = SelectionState.defaultSelection(
       onChanged: (_) => resetActiveCell(),
+      onFill: fill,
     );
 
     _setupKeyboardShortcuts();
@@ -55,6 +59,13 @@ class SheetController {
 
   ValueNotifier<ViewportCell?> get activeCellNotifier => _activeCellNotifier;
 
+  Future<void> fill(SheetFillSelection selection) async {
+    List<CellProperties> baseProperties = selection.baseSelection.selectedCells.map(properties.getCellProperties).toList();
+    List<CellProperties> fillProperties = selection.selectedCells.map(properties.getCellProperties).toList();
+
+    await AutoFillEngine(baseProperties, fillProperties).resolve(this);
+  }
+
   void resizeColumn(ColumnIndex column, double width) {
     SheetResizeColumnGesture(column, width).resolve(this);
   }
@@ -63,13 +74,13 @@ class SheetController {
     SheetResizeRowGesture(row, height).resolve(this);
   }
 
-  String getCellValue(CellIndex index) {
-    return properties.getCellValue(index);
+  CellProperties getCellProperties(CellIndex index) {
+    return properties.getCellProperties(index);
   }
 
   void setCellValue(CellIndex index, String value, {Size? size}) {
     properties.setCellValue(index, value);
-    if(size != null ) {
+    if (size != null) {
       SheetResizeCellGesture(index, size).resolve(this);
     }
     resetActiveCell();
@@ -90,7 +101,12 @@ class SheetController {
 
   void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
-    _activeCellNotifier.value = cell.copyWith(value: value);
+    if(value != null ) {
+      _activeCellNotifier.value = cell.copyWith(properties: cell.properties.copyWith(value: StringCellValue(value)));
+    } else {
+      _activeCellNotifier.value = cell;
+    }
+
     keyboard.disableListener();
   }
 
@@ -128,7 +144,7 @@ class SheetController {
         .where((String label) => label.length == 1)
         .toList();
 
-    if(keyLabels.isNotEmpty) {
+    if (keyLabels.isNotEmpty) {
       bool uppercase = key.contains(LogicalKeyboardKey.shiftLeft) || key.contains(LogicalKeyboardKey.shiftRight);
       String value = keyLabels.first;
 

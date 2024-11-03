@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 
@@ -92,14 +93,14 @@ class ViewportCell extends ViewportItem {
     required CellIndex index,
     required ViewportRow row,
     required ViewportColumn column,
-    required String value,
+    required CellProperties properties,
   }) {
     return ViewportCell._(
       rect: Rect.fromLTWH(column.rect.left, row.rect.top, column.rect.width, row.rect.height),
       index: index,
       row: row,
       column: column,
-      value: value,
+      properties: properties,
     );
   }
 
@@ -108,39 +109,41 @@ class ViewportCell extends ViewportItem {
     required CellIndex index,
     required ViewportRow row,
     required ViewportColumn column,
-    required String value,
+    required CellProperties properties,
   })
       : _index = index,
         _row = row,
         _column = column,
-        _value = value;
+        _properties = properties;
 
   ViewportCell copyWith({
     Rect? rect,
     CellIndex? index,
     ViewportRow? row,
     ViewportColumn? column,
-    String? value,
+    CellProperties? properties,
   }) {
     return ViewportCell._(
       rect: rect ?? this.rect,
       index: index ?? _index,
       row: row ?? _row,
       column: column ?? _column,
-      value: value ?? _value,
+      properties: properties ?? _properties,
     );
   }
 
   final CellIndex _index;
   final ViewportRow _row;
   final ViewportColumn _column;
-  final String _value;
+  final CellProperties _properties;
 
   @override
   CellIndex get index => _index;
 
   @override
-  String get value => _value;
+  String get value => _properties.value.asString;
+
+  CellProperties get properties => _properties;
 
   ViewportRow get row => _row;
 
@@ -157,5 +160,5 @@ class ViewportCell extends ViewportItem {
   }
 
   @override
-  List<Object?> get props => <Object?>[rect, _index, _row, _column, _value];
+  List<Object?> get props => <Object?>[rect, _index, _row, _column, _properties];
 }
