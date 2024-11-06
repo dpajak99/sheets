@@ -17,6 +17,7 @@ import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/values/cell_value.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -63,7 +64,7 @@ class SheetController {
     List<CellProperties> baseProperties = selection.baseSelection.selectedCells.map(properties.getCellProperties).toList();
     List<CellProperties> fillProperties = selection.selectedCells.map(properties.getCellProperties).toList();
 
-    await AutoFillEngine(baseProperties, fillProperties).resolve(this);
+    await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
   }
 
   void resizeColumn(ColumnIndex column, double width) {

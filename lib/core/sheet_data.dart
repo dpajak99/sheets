@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/values/cell_value.dart';
 
 class SheetData with EquatableMixin {
   SheetData({
@@ -8,14 +8,16 @@ class SheetData with EquatableMixin {
   }) {
     this.data = data ?? <CellIndex, String>{
       CellIndex(column: ColumnIndex(0), row: RowIndex(0)): '1',
-      CellIndex(column: ColumnIndex(1), row: RowIndex(0)): 'A',
-      CellIndex(column: ColumnIndex(2), row: RowIndex(0)): 'abc',
+      CellIndex(column: ColumnIndex(1), row: RowIndex(0)): '1.1',
+      CellIndex(column: ColumnIndex(2), row: RowIndex(0)): '3',
+      //
       CellIndex(column: ColumnIndex(0), row: RowIndex(1)): '2',
-      CellIndex(column: ColumnIndex(1), row: RowIndex(1)): 'B',
-      CellIndex(column: ColumnIndex(2), row: RowIndex(1)): 'abc',
+      CellIndex(column: ColumnIndex(1), row: RowIndex(1)): '2.2',
+      CellIndex(column: ColumnIndex(2), row: RowIndex(1)): '2',
+      //
       CellIndex(column: ColumnIndex(0), row: RowIndex(2)): '3',
-      CellIndex(column: ColumnIndex(1), row: RowIndex(2)): 'C',
-      CellIndex(column: ColumnIndex(2), row: RowIndex(2)): 'abc',
+      CellIndex(column: ColumnIndex(1), row: RowIndex(2)): '3.3',
+      CellIndex(column: ColumnIndex(2), row: RowIndex(2)): '1',
     };
   }
 

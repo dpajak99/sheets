@@ -29,10 +29,12 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
     TextPainter textPainter = TextPainter(
       text: TextSpan(text: cell.value, style: cell.textStyle),
       textDirection: TextDirection.ltr,
+      textAlign: cell.properties.value.textAlign,
       maxLines: max(1, cell.value.split('\n').length),
     );
 
-    textPainter.layout();
+    double width = cell.rect.width - 10;
+    textPainter.layout(minWidth: width, maxWidth: width);
     textPainter.paint(canvas, cell.rect.topLeft + const Offset(5, 5));
     canvas.restore();
   }

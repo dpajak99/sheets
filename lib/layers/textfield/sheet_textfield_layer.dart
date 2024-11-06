@@ -75,7 +75,7 @@ class SheetTextfield extends StatefulWidget {
     this.outerBorder =
         outerBorder ?? Border.all(color: const Color(0xffB2C5F4), width: 2, strokeAlign: BorderSide.strokeAlignOutside);
     this.innerBorder = innerBorder ?? Border.all(color: const Color(0xff3056C6), width: 2);
-    this.contentPadding = contentPadding ?? const EdgeInsets.symmetric(vertical: 1, horizontal: 3);
+    this.contentPadding = contentPadding ?? const EdgeInsets.only(top: 1, bottom: 1, left: 3, right: 1);
   }
 
   final ViewportCell viewportCell;
@@ -172,6 +172,7 @@ class _SheetTextfieldState extends State<SheetTextfield> {
             minLines: 1,
             maxLines: null,
             style: widget.viewportCell.textStyle,
+            textAlign: widget.viewportCell.properties.value.textAlign,
             decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
@@ -227,6 +228,7 @@ class FixedIncrementTextField extends StatefulWidget {
     required this.focusNode,
     required this.minLines,
     required this.style,
+    required this.textAlign,
     required this.cursorColor,
     required this.decoration,
     required this.horizontalIncrementBuilder,
@@ -243,6 +245,7 @@ class FixedIncrementTextField extends StatefulWidget {
   final int minLines;
   final int? maxLines;
   final TextStyle style;
+  final TextAlign textAlign;
   final Color cursorColor;
   final InputDecoration decoration;
   final double Function() horizontalIncrementBuilder;
@@ -263,6 +266,7 @@ class FixedIncrementTextField extends StatefulWidget {
     properties.add(ObjectFlagProperty<void Function(Size p1)>.has('onSizeChanged', onSizeChanged));
     properties.add(DiagnosticsProperty<Size>('baseSize', baseSize));
     properties.add(DiagnosticsProperty<InputDecoration>('decoration', decoration));
+    properties.add(EnumProperty<TextAlign>('textAlign', textAlign));
   }
 
   @override
@@ -354,6 +358,7 @@ class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
+                textAlign: widget.textAlign,
                 controller: widget.controller,
                 focusNode: widget.focusNode,
                 minLines: widget.minLines,
@@ -362,6 +367,7 @@ class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
                 cursorColor: widget.cursorColor,
                 cursorWidth: 1,
                 cursorRadius: Radius.zero,
+                scrollPadding: EdgeInsets.zero,
                 decoration: widget.decoration.copyWith(
                   contentPadding: EdgeInsets.zero,
                 ),
