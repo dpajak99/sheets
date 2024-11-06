@@ -2,21 +2,47 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/values/cell_value.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 
 class SheetProperties extends ChangeNotifier {
   SheetProperties({
     Map<ColumnIndex, ColumnStyle>? customColumnStyles,
     Map<RowIndex, RowStyle>? customRowStyles,
+    Map<CellIndex, MainSheetTextSpan>? data,
     this.columnCount = 100,
     this.rowCount = 100,
   })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
         _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{} {
-    _data = SheetData();
+    this.data = data ??
+        <CellIndex, MainSheetTextSpan>{
+          CellIndex.raw(0, 0): MainSheetTextSpan(text: '1'),
+          CellIndex.raw(0, 1): MainSheetTextSpan(text: '1.1'),
+          CellIndex.raw(0, 2): MainSheetTextSpan(text: '3'),
+          //
+          CellIndex.raw(1, 0): MainSheetTextSpan(text: '2'),
+          CellIndex.raw(1, 1): MainSheetTextSpan(text: '2.2'),
+          CellIndex.raw(1, 2): MainSheetTextSpan(text: '2'),
+          //
+          CellIndex.raw(2, 0): MainSheetTextSpan(text: '3'),
+          CellIndex.raw(2, 1): MainSheetTextSpan(text: '3.3'),
+          CellIndex.raw(2, 2): MainSheetTextSpan(text: '1'),
+          //
+          CellIndex.raw(10, 5): MainSheetTextSpan(
+            text: 'w',
+            children: <SheetTextSpan>[
+              SheetTextSpan(text: 'a'),
+              SheetTextSpan(text: 'bff', style: const TextStyle(fontWeight: FontWeight.bold)),
+              SheetTextSpan(text: 'cvv', style: const TextStyle(color: Colors.red)),
+              SheetTextSpan(text: 'd'),
+              SheetTextSpan(text: 'ffe', style: const TextStyle(fontSize: 14)),
+            ],
+          ),
+        };
   }
 
-  late final SheetData _data;
+  late final Map<CellIndex, MainSheetTextSpan> data;
 
   final Map<ColumnIndex, ColumnStyle> _customColumnStyles;
 
@@ -29,22 +55,26 @@ class SheetProperties extends ChangeNotifier {
   int columnCount;
   int rowCount;
 
-  void setCellValue(CellIndex cellIndex, String value) {
-    _data.setCellValue(cellIndex, value);
+  void setCellText(CellIndex cellIndex, String text) {
+    data[cellIndex] = getCellText(cellIndex).withText(text);
     notifyListeners();
   }
 
   void setCellsProperties(List<CellProperties> cellProperties) {
     for (CellProperties cellProperty in cellProperties) {
-      _data.setCellValue(cellProperty.index, cellProperty.value.asString);
+      data[cellProperty.index] = cellProperty.value.span;
     }
     notifyListeners();
+  }
+
+  MainSheetTextSpan getCellText(CellIndex cellIndex) {
+    return data[cellIndex] ?? MainSheetTextSpan.empty();
   }
 
   CellProperties getCellProperties(CellIndex cellIndex) {
     return CellProperties(
       cellIndex,
-      _data.getCellValue(cellIndex),
+      CellValueParser.parse(getCellText(cellIndex)),
     );
   }
 

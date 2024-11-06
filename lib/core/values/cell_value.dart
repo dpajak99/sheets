@@ -1,100 +1,98 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 
 class CellValueParser {
-  static CellValue parse(String input) {
-    if (input.isEmpty) {
-      return const EmptyCellValue();
-    } else if (double.tryParse(input) != null) {
-      return NumericCellValue(double.parse(input));
-    } else if (DateTime.tryParse(input) != null) {
-      return DateCellValue(DateTime.parse(input));
+  static CellValue parse(MainSheetTextSpan span) {
+    if (NumericCellValue.hasMatch(span.rawText)) {
+      return NumericCellValue(span);
+    } else if (DateCellValue.hasMatch(span.rawText)) {
+      return DateCellValue(span);
     } else {
-      return StringCellValue(input);
+      return StringCellValue(span);
     }
   }
 }
 
 abstract class CellValue with EquatableMixin {
-  const CellValue();
+  const CellValue(this.span);
 
-  String get asString;
+  final MainSheetTextSpan span;
 
-  TextAlign get textAlign;
+  String get rawText => span.rawText;
+
+  StringCellValue withText(String text) {
+    return StringCellValue(span.withText(text));
+  }
 }
 
 class StringCellValue extends CellValue {
-  const StringCellValue(this.value);
+  StringCellValue(super.span);
 
-  final String value;
-
-  @override
-  String get asString => value;
+  StringCellValue.empty() : super(MainSheetTextSpan(text: ''));
 
   @override
-  TextAlign get textAlign => TextAlign.left;
-
-  @override
-  List<Object?> get props => <Object?>[value];
+  List<Object?> get props => <Object?>[span];
 }
 
 class DateCellValue extends CellValue {
-  const DateCellValue(this.value);
+  factory DateCellValue(MainSheetTextSpan span) {
+    DateTime date = DateTime.parse(span.rawText);
+    return DateCellValue._(date, span);
+  }
 
-  final DateTime value;
+  factory DateCellValue.auto(MainSheetTextSpan span) {
+    DateTime date = DateTime.parse(span.rawText);
+    MainSheetTextSpan updatedSpan = span.withText(DateFormat('yyyy-MM-dd').format(date));
+
+    return DateCellValue._(date, updatedSpan);
+  }
+
+  const DateCellValue._(this.date, super.span);
+
+  static bool hasMatch(String input) {
+    return DateTime.tryParse(input) != null;
+  }
+
+  final DateTime date;
 
   @override
-  String get asString {
-    if(value.hour == 0 && value.minute == 0 && value.second == 0) {
-      return DateFormat('yyyy-MM-dd').format(value);
+  String get rawText {
+    if (date.hour == 0 && date.minute == 0 && date.second == 0) {
+      return DateFormat('yyyy-MM-dd').format(date);
     } else {
-      return DateFormat('yyyy-MM-dd HH:mm').format(value);
+      return DateFormat('yyyy-MM-dd HH:mm').format(date);
     }
   }
 
   @override
-  TextAlign get textAlign => TextAlign.right;
-
-  @override
-  List<Object?> get props => <Object?>[value];
+  List<Object?> get props => <Object?>[date, span];
 }
 
 class NumericCellValue extends CellValue {
-  const NumericCellValue(this.value);
+  factory NumericCellValue(MainSheetTextSpan span) {
+    double number = double.parse(span.rawText);
+    return NumericCellValue._(number, span);
+  }
 
-  final double value;
+  const NumericCellValue._(this.number, super.span);
 
-  int get asInt => value.toInt();
+  static bool hasMatch(String input) {
+    return double.tryParse(input) != null;
+  }
 
-  double get asDouble => value;
+  final double number;
 
   @override
-  String get asString {
-    double integerRemainder = value % 1;
+  String get rawText {
+    double integerRemainder = number % 1;
     if (integerRemainder == 0) {
-      return value.toInt().toString();
+      return number.toInt().toString();
     } else {
-      return value.toString();
+      return number.toString();
     }
   }
 
   @override
-  TextAlign get textAlign => TextAlign.right;
-
-  @override
-  List<Object?> get props => <Object?>[value];
-}
-
-class EmptyCellValue extends CellValue {
-  const EmptyCellValue();
-
-  @override
-  String get asString => '';
-
-  @override
-  TextAlign get textAlign => TextAlign.left;
-
-  @override
-  List<Object?> get props => <Object?>[];
+  List<Object?> get props => <Object?>[number, span];
 }

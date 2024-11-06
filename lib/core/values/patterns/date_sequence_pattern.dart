@@ -2,6 +2,7 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/values/cell_value.dart';
 import 'package:sheets/core/values/pattern.dart';
 import 'package:sheets/core/values/pattern_matcher.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 
 class DateSequencePatternMatcher implements PatternMatcher {
   @override
@@ -11,13 +12,14 @@ class DateSequencePatternMatcher implements PatternMatcher {
       return null;
     }
 
-    List<DateTime> baseDates = baseCells.map((CellProperties cell) => (cell.value as DateCellValue).value).toList();
-    List<Duration> steps = _calculateSteps(baseDates);
+    List<DateCellValue> cellValues = baseCells.map((CellProperties cell) => cell.value as DateCellValue).toList();
+    List<DateTime> rawCellValues = cellValues.map((DateCellValue cellValue) => cellValue.date).toList();
+    List<Duration> steps = _calculateSteps(rawCellValues);
     if (steps.isEmpty) {
       return null;
     }
 
-    DateTime lastDate = baseDates.last;
+    DateTime lastDate = rawCellValues.last;
     return DateSequencePattern(steps, lastDate);
   }
 
@@ -57,7 +59,9 @@ class DateSequencePattern implements ValuePattern {
       DateTime newDateTimeValue = lastDate.add(step);
       lastDate = newDateTimeValue;
 
-      fillCells[i].value = DateCellValue(newDateTimeValue);
+      MainSheetTextSpan templateSpan = baseCells[i % baseCells.length].value.span;
+      MainSheetTextSpan newSpan = templateSpan.withText(newDateTimeValue.toString());
+      fillCells[i].value = DateCellValue.auto(newSpan);
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/values/cell_value.dart';
 import 'package:sheets/core/values/pattern.dart';
 import 'package:sheets/core/values/pattern_matcher.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearNumericPatternMatcher implements PatternMatcher {
   @override
@@ -11,15 +12,16 @@ class LinearNumericPatternMatcher implements PatternMatcher {
       return null;
     }
 
-    List<double> baseValues = baseCells.map((CellProperties cell) => (cell.value as NumericCellValue).value).toList();
-    List<double> steps = _calculateSteps(baseValues);
+    List<NumericCellValue> cellValues = baseCells.map((CellProperties cell) => cell.value as NumericCellValue).toList();
+    List<double> rawCellValues = cellValues.map((NumericCellValue cellValue) => cellValue.number).toList();
+    List<double> steps = _calculateSteps(rawCellValues);
     if (steps.isEmpty) {
       return null;
     }
 
-    double lastNumValue = baseValues.last;
+    double lastNumValue = rawCellValues.last;
 
-    int precision = baseValues.fold(0, (int maxPrecision, double value) {
+    int precision = rawCellValues.fold(0, (int maxPrecision, double value) {
       int precision = value.toString().split('.').last.length;
       return precision > maxPrecision ? precision : maxPrecision;
     });
@@ -65,7 +67,9 @@ class LinearNumericPattern implements ValuePattern {
       newNumValue = double.parse(newNumValue.toStringAsFixed(precision));
       lastNumValue = newNumValue;
 
-      fillCells[i].value = NumericCellValue(newNumValue);
+      MainSheetTextSpan templateSpan = baseCells[i % baseCells.length].value.span;
+      MainSheetTextSpan newSpan = templateSpan.withText(newNumValue.toString());
+      fillCells[i].value = NumericCellValue(newSpan);
     }
   }
 }

@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/utils/span_text_field.dart';
 
 class SheetTextfieldLayer extends StatefulWidget {
   const SheetTextfieldLayer({
@@ -137,7 +139,7 @@ class _SheetTextfieldState extends State<SheetTextfield> {
         }
       },
     );
-    controller = TextEditingController(text: widget.viewportCell.value);
+    controller = TextEditingController(text: widget.viewportCell.rawText);
     focusNode.requestFocus();
   }
 
@@ -164,6 +166,7 @@ class _SheetTextfieldState extends State<SheetTextfield> {
             bottom: widget.innerBorder.bottom.width,
           ),
           child: FixedIncrementTextField(
+            textSpan: viewportCell.properties.value.span,
             baseSize: Size(textfieldWidth, textfieldHeight),
             maxWidth: 300,
             maxHeight: 300,
@@ -172,7 +175,7 @@ class _SheetTextfieldState extends State<SheetTextfield> {
             minLines: 1,
             maxLines: null,
             style: widget.viewportCell.textStyle,
-            textAlign: widget.viewportCell.properties.value.textAlign,
+            textAlign: widget.viewportCell.textAlign,
             decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
@@ -221,6 +224,7 @@ class _SheetTextfieldState extends State<SheetTextfield> {
 
 class FixedIncrementTextField extends StatefulWidget {
   const FixedIncrementTextField({
+    required this.textSpan,
     required this.baseSize,
     required this.maxWidth,
     required this.maxHeight,
@@ -237,6 +241,7 @@ class FixedIncrementTextField extends StatefulWidget {
     this.maxLines = 1,
   });
 
+  final MainSheetTextSpan textSpan;
   final Size baseSize;
   final double maxWidth;
   final double maxHeight;
@@ -267,6 +272,7 @@ class FixedIncrementTextField extends StatefulWidget {
     properties.add(DiagnosticsProperty<Size>('baseSize', baseSize));
     properties.add(DiagnosticsProperty<InputDecoration>('decoration', decoration));
     properties.add(EnumProperty<TextAlign>('textAlign', textAlign));
+    properties.add(DiagnosticsProperty<MainSheetTextSpan>('textSpan', textSpan));
   }
 
   @override
@@ -357,7 +363,8 @@ class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
             size: _editableSize,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: TextField(
+              child: AnnotatedEditableText(
+                textSpan: widget.textSpan,
                 textAlign: widget.textAlign,
                 controller: widget.controller,
                 focusNode: widget.focusNode,
@@ -368,9 +375,6 @@ class _FixedIncrementTextFieldState extends State<FixedIncrementTextField> {
                 cursorWidth: 1,
                 cursorRadius: Radius.zero,
                 scrollPadding: EdgeInsets.zero,
-                decoration: widget.decoration.copyWith(
-                  contentPadding: EdgeInsets.zero,
-                ),
               ),
             ),
           ),

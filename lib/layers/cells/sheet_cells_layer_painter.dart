@@ -25,12 +25,14 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
   }
 
   void paintCellText(Canvas canvas, ViewportCell cell) {
+    TextSpan textSpan = cell.properties.value.span.toTextSpan();
+
     canvas.saveLayer(cell.rect, Paint());
     TextPainter textPainter = TextPainter(
-      text: TextSpan(text: cell.value, style: cell.textStyle),
+      text: textSpan,
       textDirection: TextDirection.ltr,
-      textAlign: cell.properties.value.textAlign,
-      maxLines: max(1, cell.value.split('\n').length),
+      textAlign: cell.properties.value.span.textAlign,
+      maxLines: max(1, cell.rawText.split('\n').length),
     );
 
     double width = cell.rect.width - 10;

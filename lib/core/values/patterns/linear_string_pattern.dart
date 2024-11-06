@@ -2,6 +2,7 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/values/cell_value.dart';
 import 'package:sheets/core/values/pattern.dart';
 import 'package:sheets/core/values/pattern_matcher.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/values/value_utils.dart';
 
 class LinearStringPatternMatcher implements PatternMatcher {
@@ -50,7 +51,7 @@ class LinearStringPatternMatcher implements PatternMatcher {
         return null;
       }
 
-      SegmentedStringCellValue? segmentedValue = ValueUtils.getSegmentedStringCellValue(cellValue.value);
+      SegmentedStringCellValue? segmentedValue = ValueUtils.getSegmentedStringCellValue(cellValue.rawText);
       if (segmentedValue == null) {
         return null;
       }
@@ -115,7 +116,10 @@ class LinearStringPattern implements ValuePattern {
       } else {
         newTextValue = '$value${newIntegerValue.abs()}';
       }
-      fillCells[i].value = StringCellValue(newTextValue);
+
+      MainSheetTextSpan templateSpan = baseCells[i % baseCells.length].value.span;
+      MainSheetTextSpan newSpan = templateSpan.withText(newTextValue);
+      fillCells[i].value = StringCellValue(newSpan);
     }
   }
 }

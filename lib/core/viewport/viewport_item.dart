@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/values/cell_value.dart';
 
 abstract class ViewportItem with EquatableMixin {
   ViewportItem({
@@ -10,8 +11,6 @@ abstract class ViewportItem with EquatableMixin {
   });
 
   final Rect rect;
-
-  String get value;
 
   SheetIndex get index;
 
@@ -37,7 +36,6 @@ class ViewportRow extends ViewportItem {
   final RowIndex _index;
   final RowStyle _style;
 
-  @override
   String get value => '${_index.value + 1}';
 
   @override
@@ -61,7 +59,6 @@ class ViewportColumn extends ViewportItem {
   final ColumnIndex _index;
   final ColumnStyle _style;
 
-  @override
   String get value {
     return numberToExcelColumn(_index.value + 1);
   }
@@ -140,24 +137,22 @@ class ViewportCell extends ViewportItem {
   @override
   CellIndex get index => _index;
 
-  @override
-  String get value => _properties.value.asString;
+  ViewportCell withText(String text) {
+    CellValue value = _properties.value;
+    return copyWith(properties: _properties.copyWith(value: value.withText(text)));
+  }
+
+  String get rawText => _properties.value.rawText;
+
+  TextAlign get textAlign => _properties.value.span.textAlign;
+
+  TextStyle get textStyle => _properties.value.span.style;
 
   CellProperties get properties => _properties;
 
   ViewportRow get row => _row;
 
   ViewportColumn get column => _column;
-
-  TextStyle get textStyle {
-    return const TextStyle(
-      fontFamily: 'Arial',
-      fontSize: 12,
-      color: Colors.black,
-      height: 1,
-      letterSpacing: 0,
-    );
-  }
 
   @override
   List<Object?> get props => <Object?>[rect, _index, _row, _column, _properties];

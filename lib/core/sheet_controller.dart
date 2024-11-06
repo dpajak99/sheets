@@ -17,7 +17,6 @@ import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/core/values/cell_value.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -80,7 +79,7 @@ class SheetController {
   }
 
   void setCellValue(CellIndex index, String value, {Size? size}) {
-    properties.setCellValue(index, value);
+    properties.setCellText(index, value);
     if (size != null) {
       SheetResizeCellGesture(index, size).resolve(this);
     }
@@ -103,7 +102,7 @@ class SheetController {
   void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
     if(value != null ) {
-      _activeCellNotifier.value = cell.copyWith(properties: cell.properties.copyWith(value: StringCellValue(value)));
+      _activeCellNotifier.value = cell.withText(value);
     } else {
       _activeCellNotifier.value = cell;
     }
