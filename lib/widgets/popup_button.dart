@@ -55,6 +55,7 @@ class _PopupButtonState extends State<PopupButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         if (_overlayEntry == null) {
           _showPopup();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/widgets/material/material_color_picker.dart';
+import 'package:sheets/widgets/material/material_font_dropdown.dart';
 import 'package:sheets/widgets/mouse_state_listener.dart';
 import 'package:sheets/widgets/popup_button.dart';
 
@@ -429,23 +430,28 @@ class ToolbarTextDropdownButton extends BaseToolbarButton {
 
   @override
   Widget buildContent(BuildContext context, Set<WidgetState> states) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Text(
-            value,
-            style: _textStyle.copyWith(fontSize: 15),
+    return PopupButton(
+      button: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              value,
+              style: _textStyle.copyWith(fontSize: 15),
+            ),
           ),
-        ),
-        const SizedBox(width: 3.71),
-        const AssetIcon(
-          SheetIcons.dropdown,
-          width: 8,
-          height: 4,
-          color: _foregroundColor,
-        ),
-      ],
+          const SizedBox(width: 3.71),
+          const AssetIcon(
+            SheetIcons.dropdown,
+            width: 8,
+            height: 4,
+            color: _foregroundColor,
+          ),
+        ],
+      ),
+      popupBuilder: (BuildContext context) {
+        return const MaterialFontDropdown(value: 'Arial');
+      },
     );
   }
 
