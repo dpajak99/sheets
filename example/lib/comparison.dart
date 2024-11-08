@@ -129,7 +129,7 @@ class _SheetPageState extends State<_SheetPage> {
         body: SafeArea(
           child: Column(
             children: <Widget>[
-              const SheetSectionToolbar(),
+              SheetSectionToolbar(sheetController: sheetController),
               SheetSectionDetailsBar(sheetController: sheetController),
               Expanded(
                 child: Sheet(sheetController: sheetController),

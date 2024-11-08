@@ -59,8 +59,8 @@ class DateSequencePattern implements ValuePattern {
       DateTime newDateTimeValue = lastDate.add(step);
       lastDate = newDateTimeValue;
 
-      MainSheetTextSpan templateSpan = baseCells[i % baseCells.length].value.span;
-      MainSheetTextSpan newSpan = templateSpan.withText(newDateTimeValue.toString());
+      SheetRichText templateSpan = baseCells[i % baseCells.length].value.span;
+      SheetRichText newSpan = templateSpan.withText(newDateTimeValue.toString());
       fillCells[i].value = DateCellValue.auto(newSpan);
     }
   }

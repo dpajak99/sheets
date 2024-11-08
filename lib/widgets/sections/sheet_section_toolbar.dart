@@ -1,14 +1,28 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/widgets/sections/sheet_toolbar/toolbar_button.dart';
 import 'package:sheets/widgets/sections/sheet_toolbar/toolbar_buttons_section.dart';
+import 'package:sheets/widgets/sheet_text_field.dart';
 import 'package:sheets/widgets/sheet_theme.dart';
 
 class SheetSectionToolbar extends StatefulWidget {
-  const SheetSectionToolbar({super.key});
+  const SheetSectionToolbar({
+    required this.sheetController,
+    super.key,
+  });
+
+  final SheetController sheetController;
 
   @override
   State<StatefulWidget> createState() => _SheetSectionToolbarState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
 }
 
 class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
@@ -28,12 +42,12 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
             color: const Color(0xffeef2f9),
             borderRadius: BorderRadius.circular(45),
           ),
-          child: const Row(
+          child: Row(
             children: <Widget>[
               Expanded(
                 child: ToolbarButtonsSectionWrapper(
                   sections: <ToolbarButtonsSection>[
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarSearchbar(),
                       ],
@@ -41,7 +55,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                         ToolbarButton.large(SheetIcons.search),
                       ],
                     ),
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarButton.icon(SheetIcons.undo),
                         ToolbarButton.icon(SheetIcons.redo),
@@ -51,7 +65,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                         ToolbarDivider(),
                       ],
                     ),
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarButton.text('zloty'),
                         ToolbarButton.icon(SheetIcons.percentage),
@@ -61,13 +75,13 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                         ToolbarDivider(),
                       ],
                     ),
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarTextDropdownButton(value: 'Default', width: 97),
                         ToolbarDivider(),
                       ],
                     ),
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarButton.iconSmall(SheetIcons.add),
                         ToolbarTextField(value: '10'),
@@ -77,14 +91,21 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                     ),
                     ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
-                        ToolbarButton.icon(SheetIcons.format_bold),
-                        ToolbarButton.icon(SheetIcons.format_italic),
-                        ToolbarButton.icon(SheetIcons.strikethrough),
-                        ToolbarColorPickerButton(icon: SheetIcons.format_color_text, color: Colors.red),
-                        ToolbarDivider(),
+                        ToolbarButton.icon(
+                          SheetIcons.format_bold,
+                          onTap: () {
+                            widget.sheetController.formatSelection(TextStyleUpdateRequest(
+                              fontWeight: FontWeight.bold,
+                            ));
+                          },
+                        ),
+                        const ToolbarButton.icon(SheetIcons.format_italic),
+                        const ToolbarButton.icon(SheetIcons.strikethrough),
+                        const ToolbarColorPickerButton(icon: SheetIcons.format_color_text, color: Colors.red),
+                        const ToolbarDivider(),
                       ],
                     ),
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarColorPickerButton(icon: SheetIcons.format_color_fill, color: Colors.red),
                         ToolbarButton.icon(SheetIcons.border_all),
@@ -92,7 +113,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                         ToolbarDivider(),
                       ],
                     ),
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarDropdownButton(icon: SheetIcons.format_align_left),
                         ToolbarDropdownButton(icon: SheetIcons.vertical_align_bottom),
@@ -101,7 +122,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                         ToolbarDivider(),
                       ],
                     ),
-                    ToolbarButtonsSection(
+                    const ToolbarButtonsSection(
                       buttons: <ToolbarItem>[
                         ToolbarButton.icon(SheetIcons.link),
                         ToolbarButton.icon(SheetIcons.add_comment),
@@ -114,7 +135,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                   ],
                 ),
               ),
-              ToolbarButton.icon(SheetIcons.arrow_up),
+              const ToolbarButton.icon(SheetIcons.arrow_up),
             ],
           ),
         ),

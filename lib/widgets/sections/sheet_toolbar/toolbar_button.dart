@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/widgets/material/material_color_picker.dart';
 import 'package:sheets/widgets/mouse_state_listener.dart';
+import 'package:sheets/widgets/popup_button.dart';
 
 const Color _foregroundColor = Color(0xff444746);
 const Color _hoverColor = Color(0xffE2E7EA);
@@ -36,6 +38,7 @@ abstract class BaseToolbarButton extends ToolbarItem {
     required this.height,
     required this.margin,
     this.padding,
+    this.onTap,
     super.key,
   });
 
@@ -43,6 +46,7 @@ abstract class BaseToolbarButton extends ToolbarItem {
   final double height;
   final EdgeInsets margin;
   final EdgeInsets? padding;
+  final VoidCallback? onTap;
 
   @override
   double get totalWidth => width + margin.horizontal;
@@ -50,7 +54,7 @@ abstract class BaseToolbarButton extends ToolbarItem {
   @override
   Widget build(BuildContext context) {
     return MouseStateListener(
-      onTap: () {},
+      onTap: onTap ?? () {},
       childBuilder: (Set<WidgetState> states) {
         Color? backgroundColor = states.contains(WidgetState.hovered) ? _hoverColor : null;
         return Container(
@@ -77,6 +81,7 @@ abstract class BaseToolbarButton extends ToolbarItem {
     properties.add(DoubleProperty('height', height));
     properties.add(DiagnosticsProperty<EdgeInsets>('margin', margin));
     properties.add(DiagnosticsProperty<EdgeInsets?>('padding', padding));
+    properties.add(ObjectFlagProperty<VoidCallback?>.has('onTap', onTap));
   }
 }
 
@@ -166,6 +171,7 @@ class ToolbarSearchbar extends ToolbarItem {
 class ToolbarButton extends BaseToolbarButton {
   const ToolbarButton.icon(
     this.icon, {
+    super.onTap,
     super.key,
   })  : text = null,
         iconSize = 19,
@@ -178,6 +184,7 @@ class ToolbarButton extends BaseToolbarButton {
 
   const ToolbarButton.iconSmall(
     this.icon, {
+    super.onTap,
     super.key,
   })  : text = null,
         iconSize = 17,
@@ -189,20 +196,21 @@ class ToolbarButton extends BaseToolbarButton {
         );
 
   const ToolbarButton.large(
-      this.icon, {
-        super.key,
-      })  : text = null,
+    this.icon, {
+    super.onTap,
+    super.key,
+  })  : text = null,
         iconSize = 19,
         super(
-        width: 37,
-        height: 28,
-        padding: null,
-        margin: const EdgeInsets.symmetric(horizontal: 1),
-      );
-
+          width: 37,
+          height: 28,
+          padding: null,
+          margin: const EdgeInsets.symmetric(horizontal: 1),
+        );
 
   const ToolbarButton.text(
     this.text, {
+    super.onTap,
     super.key,
   })  : icon = null,
         iconSize = null,
@@ -368,23 +376,33 @@ class ToolbarColorPickerButton extends BaseToolbarButton {
 
   @override
   Widget buildContent(BuildContext context, Set<WidgetState> states) {
-    return Stack(
-      fit: StackFit.expand,
-      alignment: Alignment.center,
-      children: <Widget>[
-        Center(
-          child: AssetIcon(icon, size: 19, color: _foregroundColor),
-        ),
-        Positioned(
-          top: 20,
-          left: 4.5,
-          right: 4.5,
-          child: Container(
-            height: 4,
-            decoration: BoxDecoration(color: color),
+    return PopupButton(
+      button: Stack(
+        fit: StackFit.expand,
+        alignment: Alignment.center,
+        children: <Widget>[
+          Center(
+            child: AssetIcon(icon, size: 19, color: _foregroundColor),
           ),
-        ),
-      ],
+          Positioned(
+            top: 20,
+            left: 4.5,
+            right: 4.5,
+            child: Container(
+              height: 4,
+              decoration: BoxDecoration(color: color),
+            ),
+          ),
+        ],
+      ),
+      popupBuilder: (BuildContext context) {
+        return MaterialColorPicker(
+          selectedColor: Colors.red,
+          onColorChanged: (Color color) {
+            // _controller.applyStyleToSelection(TextStyleUpdateRequest(color: color));
+          },
+        );
+      },
     );
   }
 

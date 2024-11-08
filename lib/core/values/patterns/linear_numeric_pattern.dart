@@ -67,8 +67,8 @@ class LinearNumericPattern implements ValuePattern {
       newNumValue = double.parse(newNumValue.toStringAsFixed(precision));
       lastNumValue = newNumValue;
 
-      MainSheetTextSpan templateSpan = baseCells[i % baseCells.length].value.span;
-      MainSheetTextSpan newSpan = templateSpan.withText(newNumValue.toString());
+      SheetRichText templateSpan = baseCells[i % baseCells.length].value.span;
+      SheetRichText newSpan = templateSpan.withText(newNumValue.toString());
       fillCells[i].value = NumericCellValue(newSpan);
     }
   }

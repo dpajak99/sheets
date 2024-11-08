@@ -10,39 +10,38 @@ class SheetProperties extends ChangeNotifier {
   SheetProperties({
     Map<ColumnIndex, ColumnStyle>? customColumnStyles,
     Map<RowIndex, RowStyle>? customRowStyles,
-    Map<CellIndex, MainSheetTextSpan>? data,
+    Map<CellIndex, SheetRichText>? data,
     this.columnCount = 100,
     this.rowCount = 100,
   })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
         _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{} {
     this.data = data ??
-        <CellIndex, MainSheetTextSpan>{
-          CellIndex.raw(0, 0): MainSheetTextSpan(text: '1'),
-          CellIndex.raw(0, 1): MainSheetTextSpan(text: '1.1'),
-          CellIndex.raw(0, 2): MainSheetTextSpan(text: '3'),
+        <CellIndex, SheetRichText>{
+          CellIndex.raw(0, 0): SheetRichText.single(text: '1'),
+          CellIndex.raw(0, 1): SheetRichText.single(text: '1.1'),
+          CellIndex.raw(0, 2): SheetRichText.single(text: '3'),
           //
-          CellIndex.raw(1, 0): MainSheetTextSpan(text: '2'),
-          CellIndex.raw(1, 1): MainSheetTextSpan(text: '2.2'),
-          CellIndex.raw(1, 2): MainSheetTextSpan(text: '2'),
+          CellIndex.raw(1, 0): SheetRichText.single(text: '2'),
+          CellIndex.raw(1, 1): SheetRichText.single(text: '2.2'),
+          CellIndex.raw(1, 2): SheetRichText.single(text: '2'),
           //
-          CellIndex.raw(2, 0): MainSheetTextSpan(text: '3'),
-          CellIndex.raw(2, 1): MainSheetTextSpan(text: '3.3'),
-          CellIndex.raw(2, 2): MainSheetTextSpan(text: '1'),
+          CellIndex.raw(2, 0): SheetRichText.single(text: '3'),
+          CellIndex.raw(2, 1): SheetRichText.single(text: '3.3'),
+          CellIndex.raw(2, 2): SheetRichText.single(text: '1'),
           //
-          CellIndex.raw(10, 5): MainSheetTextSpan(
-            text: 'w',
-            children: <SheetTextSpan>[
+          CellIndex.raw(10, 5): SheetRichText(
+            spans: <SheetTextSpan>[
               SheetTextSpan(text: 'a'),
-              SheetTextSpan(text: 'bff', style: const TextStyle(fontWeight: FontWeight.bold)),
-              SheetTextSpan(text: 'cvv', style: const TextStyle(color: Colors.red)),
+              SheetTextSpan(text: 'bff', style: defaultTextStyle.copyWith(fontWeight: FontWeight.bold)),
+              SheetTextSpan(text: 'cvv', style: defaultTextStyle.copyWith(color: Colors.red)),
               SheetTextSpan(text: 'd'),
-              SheetTextSpan(text: 'ffe', style: const TextStyle(fontSize: 14)),
+              // SheetTextSpan(text: 'ffe', style: defaultTextStyle.copyWith(fontSize: 14)),
             ],
           ),
         };
   }
 
-  late final Map<CellIndex, MainSheetTextSpan> data;
+  late final Map<CellIndex, SheetRichText> data;
 
   final Map<ColumnIndex, ColumnStyle> _customColumnStyles;
 
@@ -56,7 +55,7 @@ class SheetProperties extends ChangeNotifier {
   int rowCount;
 
   void setCellText(CellIndex cellIndex, String text) {
-    data[cellIndex] = getCellText(cellIndex).withText(text);
+    data[cellIndex] = getRichText(cellIndex).withText(text);
     notifyListeners();
   }
 
@@ -67,14 +66,14 @@ class SheetProperties extends ChangeNotifier {
     notifyListeners();
   }
 
-  MainSheetTextSpan getCellText(CellIndex cellIndex) {
-    return data[cellIndex] ?? MainSheetTextSpan.empty();
+  SheetRichText getRichText(CellIndex cellIndex) {
+    return data[cellIndex] ?? SheetRichText.empty();
   }
 
   CellProperties getCellProperties(CellIndex cellIndex) {
     return CellProperties(
       cellIndex,
-      CellValueParser.parse(getCellText(cellIndex)),
+      CellValueParser.parse(getRichText(cellIndex)),
     );
   }
 

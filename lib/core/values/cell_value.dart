@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class CellValueParser {
-  static CellValue parse(MainSheetTextSpan span) {
+  static CellValue parse(SheetRichText span) {
     if (NumericCellValue.hasMatch(span.rawText)) {
       return NumericCellValue(span);
     } else if (DateCellValue.hasMatch(span.rawText)) {
@@ -17,7 +17,7 @@ class CellValueParser {
 abstract class CellValue with EquatableMixin {
   const CellValue(this.span);
 
-  final MainSheetTextSpan span;
+  final SheetRichText span;
 
   String get rawText => span.rawText;
 
@@ -29,21 +29,21 @@ abstract class CellValue with EquatableMixin {
 class StringCellValue extends CellValue {
   StringCellValue(super.span);
 
-  StringCellValue.empty() : super(MainSheetTextSpan(text: ''));
+  StringCellValue.empty() : super(SheetRichText.empty());
 
   @override
   List<Object?> get props => <Object?>[span];
 }
 
 class DateCellValue extends CellValue {
-  factory DateCellValue(MainSheetTextSpan span) {
+  factory DateCellValue(SheetRichText span) {
     DateTime date = DateTime.parse(span.rawText);
     return DateCellValue._(date, span);
   }
 
-  factory DateCellValue.auto(MainSheetTextSpan span) {
+  factory DateCellValue.auto(SheetRichText span) {
     DateTime date = DateTime.parse(span.rawText);
-    MainSheetTextSpan updatedSpan = span.withText(DateFormat('yyyy-MM-dd').format(date));
+    SheetRichText updatedSpan = span.withText(DateFormat('yyyy-MM-dd').format(date));
 
     return DateCellValue._(date, updatedSpan);
   }
@@ -70,7 +70,7 @@ class DateCellValue extends CellValue {
 }
 
 class NumericCellValue extends CellValue {
-  factory NumericCellValue(MainSheetTextSpan span) {
+  factory NumericCellValue(SheetRichText span) {
     double number = double.parse(span.rawText);
     return NumericCellValue._(number, span);
   }

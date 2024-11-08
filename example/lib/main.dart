@@ -42,7 +42,7 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
         body: SafeArea(
           child: Column(
             children: <Widget>[
-              const SheetSectionToolbar(),
+              SheetSectionToolbar(sheetController: sheetController),
               SheetSectionDetailsBar(sheetController: sheetController),
               Expanded(
                 child: Sheet(sheetController: sheetController),

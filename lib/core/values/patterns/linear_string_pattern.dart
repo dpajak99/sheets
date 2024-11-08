@@ -117,8 +117,8 @@ class LinearStringPattern implements ValuePattern {
         newTextValue = '$value${newIntegerValue.abs()}';
       }
 
-      MainSheetTextSpan templateSpan = baseCells[i % baseCells.length].value.span;
-      MainSheetTextSpan newSpan = templateSpan.withText(newTextValue);
+      SheetRichText templateSpan = baseCells[i % baseCells.length].value.span;
+      SheetRichText newSpan = templateSpan.withText(newTextValue);
       fillCells[i].value = StringCellValue(newSpan);
     }
   }

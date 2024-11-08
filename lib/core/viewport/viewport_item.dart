@@ -4,6 +4,7 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/values/cell_value.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 
 abstract class ViewportItem with EquatableMixin {
   ViewportItem({
@@ -142,11 +143,13 @@ class ViewportCell extends ViewportItem {
     return copyWith(properties: _properties.copyWith(value: value.withText(text)));
   }
 
+  TextSpan get textSpan => _properties.value.span.toTextSpan();
+
+  SheetRichText get richText => _properties.value.span;
+
   String get rawText => _properties.value.rawText;
 
   TextAlign get textAlign => _properties.value.span.textAlign;
-
-  TextStyle get textStyle => _properties.value.span.style;
 
   CellProperties get properties => _properties;
 

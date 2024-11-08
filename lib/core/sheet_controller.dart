@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
 import 'package:sheets/core/keyboard/keyboard_listener.dart';
 import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
@@ -17,14 +19,16 @@ import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/widgets/sheet_text_field.dart';
 
 class SheetController {
   SheetController({
     required this.properties,
   }) {
-    _activeCellNotifier = ValueNotifier<ViewportCell?>(null);
+    _activeCellNotifier = ValueNotifier<ActiveCell?>(null);
 
     scroll = SheetScrollController();
     viewport = SheetViewport(properties, scroll);
@@ -49,7 +53,7 @@ class SheetController {
   late final SheetScrollController scroll;
   late final KeyboardListener keyboard;
   late final MouseListener mouse;
-  late final ValueNotifier<ViewportCell?> _activeCellNotifier;
+  late final ValueNotifier<ActiveCell?> _activeCellNotifier;
 
   late SelectionState selection;
 
@@ -57,7 +61,14 @@ class SheetController {
     await keyboard.dispose();
   }
 
-  ValueNotifier<ViewportCell?> get activeCellNotifier => _activeCellNotifier;
+  ValueNotifier<ActiveCell?> get activeCellNotifier => _activeCellNotifier;
+
+  void formatSelection(TextStyleUpdateRequest textStyleUpdateRequest) {
+    if(activeCellNotifier.value != null) {
+      SheetTextEditingController controller = activeCellNotifier.value!.controller;
+      controller.applyStyleToSelection(textStyleUpdateRequest);
+    }
+  }
 
   Future<void> fill(SheetFillSelection selection) async {
     List<CellProperties> baseProperties = selection.baseSelection.selectedCells.map(properties.getCellProperties).toList();
@@ -101,10 +112,10 @@ class SheetController {
 
   void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
-    if(value != null ) {
-      _activeCellNotifier.value = cell.withText(value);
+    if (value != null) {
+      _activeCellNotifier.value = ActiveCell(cell.withText(value));
     } else {
-      _activeCellNotifier.value = cell;
+      _activeCellNotifier.value = ActiveCell(cell);
     }
 
     keyboard.disableListener();
@@ -162,4 +173,17 @@ class SheetController {
       setCellValue(selection.value.mainCell, '');
     }
   }
+}
+
+class ActiveCell with EquatableMixin {
+  ActiveCell(this.cell)
+      : controller = SheetTextEditingController(
+          sheetText: EditableTextSpan.fromSheetRichText(cell.richText),
+        );
+
+  final ViewportCell cell;
+  final SheetTextEditingController controller;
+
+  @override
+  List<Object?> get props => <Object?>[cell];
 }

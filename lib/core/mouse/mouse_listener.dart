@@ -37,6 +37,8 @@ class MouseListener extends Streamable<SheetMouseGesture> {
 
   MouseCursorDetails? _dragStartDetails;
 
+  Rect? ignorePointerRect;
+
   @override
   void addEvent(SheetMouseGesture event) {
     super.addEvent(event);
@@ -105,6 +107,9 @@ class MouseListener extends Streamable<SheetMouseGesture> {
   }
 
   void _resolveGesture(SheetMouseGesture gesture) {
+    if(ignorePointerRect != null && ignorePointerRect!.contains(_localOffset)) {
+      return;
+    }
     bool activeRecognizerResolved = _resolveActiveRecognizers(gesture);
     if (!activeRecognizerResolved) {
       _resolveFirstRecognizer(gesture);
