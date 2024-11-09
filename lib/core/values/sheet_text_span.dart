@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
+import 'package:sheets/core/values/text_style_extensions.dart';
 import 'package:sheets/widgets/sheet_text_field.dart';
 
 class SheetRichText {
@@ -42,6 +43,20 @@ class SheetRichText {
     );
   }
 
+  TextStyle getSharedStyle() {
+    List<TextStyle> styles = spans.map((SheetTextSpan span) => span.style).toList();
+    if (styles.isEmpty) {
+      return constants.defaultTextStyle;
+    }
+    return styles.getSharedStyle();
+  }
+
+  void updateStyle(TextStyleUpdateRequest styleUpdateRequest) {
+    for(int i = 0; i < spans.length; i++) {
+      spans[i] = spans[i].copyWith(style: styleUpdateRequest.applyTo(spans[i].style));
+    }
+  }
+
   String get rawText {
     return spans.map((SheetTextSpan span) => span.text).join();
   }
@@ -55,6 +70,16 @@ class SheetTextSpan {
 
   final String text;
   final TextStyle style;
+
+  SheetTextSpan copyWith({
+    String? text,
+    TextStyle? style,
+  }) {
+    return SheetTextSpan(
+      text: text ?? this.text,
+      style: style ?? this.style,
+    );
+  }
 
   TextSpan toTextSpan() {
     return TextSpan(text: text, style: style);

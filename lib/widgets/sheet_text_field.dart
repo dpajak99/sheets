@@ -188,6 +188,7 @@ class SheetTextField extends StatefulWidget {
     required this.width,
     required this.height,
     required this.onSizeChanged,
+    required this.onChanged,
     super.key,
   });
 
@@ -196,6 +197,7 @@ class SheetTextField extends StatefulWidget {
   final double width;
   final double height;
   final ValueChanged<Size> onSizeChanged;
+  final ValueChanged<SheetRichText> onChanged;
 
   @override
   State<StatefulWidget> createState() => _SheetTextFieldState();
@@ -208,6 +210,7 @@ class SheetTextField extends StatefulWidget {
     properties.add(DoubleProperty('height', height));
     properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode));
     properties.add(ObjectFlagProperty<ValueChanged<Size>>.has('onSizeChanged', onSizeChanged));
+    properties.add(ObjectFlagProperty<ValueChanged<SheetRichText>>.has('onCompleted', onChanged));
   }
 }
 
@@ -227,6 +230,9 @@ class _SheetTextFieldState extends State<SheetTextField> {
     return ValueListenableBuilder<TextSelection?>(
       valueListenable: widget.controller.selectionNotifier,
       builder: (BuildContext context, TextSelection? selection, _) {
+        TextSpan textSpan = widget.controller.sheetText.toSimplifiedTextSpan();
+        widget.onChanged(SheetRichText.fromTextSpans(textSpan.children!.cast()));
+
         double maximalWidgetHeight = max(widget.controller.sheetText.minFontSize, widget.height);
 
         int cursorPosition = widget.controller.selection.baseOffset;
@@ -240,17 +246,16 @@ class _SheetTextFieldState extends State<SheetTextField> {
 
         double maxWidth = 300;
         TextPainter textPainter = TextPainter(
-          text: widget.controller.sheetText.toSimplifiedTextSpan(),
+          text: textSpan,
           textDirection: TextDirection.ltr,
         )..layout(maxWidth: maxWidth);
 
         double width = max(widget.width, min(maxWidth, textPainter.size.width + 2));
         double height = max(maximalWidgetHeight, textPainter.size.height);
 
-        widget.onSizeChanged(Size(width, height));
+        widget.onSizeChanged(Size(width, height - 2));
 
-        return Container(
-          color: Colors.red.withOpacity(0.2),
+        return SizedBox(
           width: width,
           child: Align(
             alignment: Alignment.centerLeft,

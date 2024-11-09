@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/sheet_text_field.dart';
 
@@ -51,8 +52,8 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
                 },
                 controller: activeCell.controller,
                 viewportCell: activeCell.cell,
-                onEditingCompleted: (String value, Size? newSize) {
-                  widget.sheetController.setCellValue(activeCell.cell.index, value, size: newSize);
+                onEditingCompleted: (SheetRichText sheetRichText, Size? newSize) {
+                  widget.sheetController.setCellValue(activeCell.cell.index, sheetRichText, size: newSize);
                   SheetSelectionMoveGesture(1, 0).resolve(widget.sheetController);
                 },
               ),
@@ -86,7 +87,7 @@ class SheetTextfieldLayout extends StatefulWidget {
   final SheetTextEditingController controller;
   final ValueChanged<Rect?> onSizeChanged;
   final ViewportCell viewportCell;
-  final void Function(String, Size?) onEditingCompleted;
+  final void Function(SheetRichText, Size?) onEditingCompleted;
   final Color backgroundColor;
   final Offset offset;
   late final Border outerBorder;
@@ -102,9 +103,9 @@ class SheetTextfieldLayout extends StatefulWidget {
     properties.add(ColorProperty('backgroundColor', backgroundColor));
     properties.add(DiagnosticsProperty<Offset>('offset', offset));
     properties.add(DiagnosticsProperty<EdgeInsets>('contentPadding', contentPadding));
-    properties.add(ObjectFlagProperty<void Function(String p1, Size? p2)>.has('onEditingCompleted', onEditingCompleted));
     properties.add(DiagnosticsProperty<SheetTextEditingController>('controller', controller));
     properties.add(ObjectFlagProperty<ValueChanged<Rect>>.has('onSizeChanged', onSizeChanged));
+    properties.add(ObjectFlagProperty<void Function(SheetRichText p1, Size? p2)>.has('onEditingCompleted', onEditingCompleted));
   }
 
   @override
@@ -118,6 +119,7 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
   bool controlPressed = false;
   late Size textfieldSize = Size(viewportCell.rect.width, viewportCell.rect.height);
   Size? newSize;
+  SheetRichText? sheetRichText;
 
   @override
   void initState() {
@@ -129,7 +131,7 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
             return KeyEventResult.ignored;
           }
           if (event.logicalKey == LogicalKeyboardKey.enter) {
-            widget.onEditingCompleted(widget.controller.text, newSize);
+            _completeEditing();
             return KeyEventResult.handled;
           } else if (event.logicalKey == LogicalKeyboardKey.controlLeft) {
             controlPressed = true;
@@ -173,6 +175,10 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
           onSizeChanged: (Size size) {
             Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
             widget.onSizeChanged(textfieldRect);
+            newSize = size;
+          },
+          onChanged: (SheetRichText sheetRichText) {
+            this.sheetRichText = sheetRichText;
           },
         ),
       ),
@@ -189,16 +195,39 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
     properties.add(DoubleProperty('textfieldWidth', textfieldWidth));
     properties.add(DoubleProperty('textfieldHeight', textfieldHeight));
     properties.add(DiagnosticsProperty<Size?>('newSize', newSize));
+    properties.add(DiagnosticsProperty<SheetRichText?>('sheetRichText', sheetRichText));
+    properties.add(DoubleProperty('paddingVertical', paddingVertical));
+    properties.add(DoubleProperty('paddingHorizontal', paddingHorizontal));
+  }
+
+  void _completeEditing() {
+    Size additionalSize = Size(paddingHorizontal, paddingVertical);
+    Size? cellSize = newSize != null ? Size(
+      newSize!.width + additionalSize.width,
+      newSize!.height + additionalSize.height,
+    ) : null;
+
+    print('cellSize: $cellSize');
+
+    widget.onEditingCompleted(sheetRichText ?? widget.viewportCell.richText, cellSize);
   }
 
   double get textfieldWidth {
-    double innerBorderWidth = widget.innerBorder.left.width + widget.innerBorder.right.width;
-    return textfieldSize.width - innerBorderWidth - constants.borderWidth - widget.contentPadding.horizontal;
+    return textfieldSize.width - paddingHorizontal;
   }
 
   double get textfieldHeight {
+    return textfieldSize.height - paddingVertical;
+  }
+
+  double get paddingHorizontal {
+    double innerBorderWidth = widget.innerBorder.left.width + widget.innerBorder.right.width;
+    return innerBorderWidth + constants.borderWidth + widget.contentPadding.horizontal;
+  }
+
+  double get paddingVertical {
     double innerBorderWidth = widget.innerBorder.top.width + widget.innerBorder.bottom.width;
     double outerBorderWidth = widget.outerBorder.top.width + widget.outerBorder.bottom.width;
-    return textfieldSize.height - innerBorderWidth - outerBorderWidth - constants.borderWidth - widget.contentPadding.vertical;
+    return innerBorderWidth + outerBorderWidth + constants.borderWidth + widget.contentPadding.vertical;
   }
 }

@@ -38,11 +38,15 @@ abstract class BaseToolbarButton extends ToolbarItem {
     required this.width,
     required this.height,
     required this.margin,
+    this.active = false,
+    this.pressed = false,
     this.padding,
     this.onTap,
     super.key,
   });
 
+  final bool active;
+  final bool pressed;
   final double width;
   final double height;
   final EdgeInsets margin;
@@ -57,7 +61,7 @@ abstract class BaseToolbarButton extends ToolbarItem {
     return MouseStateListener(
       onTap: onTap ?? () {},
       childBuilder: (Set<WidgetState> states) {
-        Color? backgroundColor = states.contains(WidgetState.hovered) ? _hoverColor : null;
+        Color? backgroundColor = getBackgroundColor(states);
         return Container(
           width: width,
           height: height,
@@ -73,6 +77,15 @@ abstract class BaseToolbarButton extends ToolbarItem {
     );
   }
 
+  Color? getBackgroundColor(Set<WidgetState> states) {
+    if( active ) {
+      return const Color(0xffd3e3fd);
+    } else if (states.contains(WidgetState.hovered) || pressed) {
+      return _hoverColor;
+    }
+    return null;
+  }
+
   Widget buildContent(BuildContext context, Set<WidgetState> states);
 
   @override
@@ -83,6 +96,8 @@ abstract class BaseToolbarButton extends ToolbarItem {
     properties.add(DiagnosticsProperty<EdgeInsets>('margin', margin));
     properties.add(DiagnosticsProperty<EdgeInsets?>('padding', padding));
     properties.add(ObjectFlagProperty<VoidCallback?>.has('onTap', onTap));
+    properties.add(DiagnosticsProperty<bool>('pressed', pressed));
+    properties.add(DiagnosticsProperty<bool>('active', active));
   }
 }
 
@@ -169,9 +184,43 @@ class ToolbarSearchbar extends ToolbarItem {
   }
 }
 
+class ToolbarPopupButton extends BaseToolbarButton {
+  ToolbarPopupButton({
+    required this.child,
+    required this.popupBuilder,
+    super.pressed,
+    super.key,
+  }) : super(
+          width: child.width,
+          height: child.height,
+          margin: child.margin,
+          padding: child.padding,
+          onTap: child.onTap,
+        );
+
+  final BaseToolbarButton child;
+  final WidgetBuilder popupBuilder;
+
+  @override
+  Widget buildContent(BuildContext context, Set<WidgetState> states) {
+    return PopupButton(
+      button: child.buildContent(context, states),
+      popupBuilder: popupBuilder,
+    );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<WidgetBuilder>.has('popupBuilder', popupBuilder));
+  }
+}
+
 class ToolbarButton extends BaseToolbarButton {
   const ToolbarButton.icon(
     this.icon, {
+    super.active,
+    super.pressed,
     super.onTap,
     super.key,
   })  : text = null,
@@ -185,6 +234,7 @@ class ToolbarButton extends BaseToolbarButton {
 
   const ToolbarButton.iconSmall(
     this.icon, {
+    super.pressed,
     super.onTap,
     super.key,
   })  : text = null,
@@ -198,6 +248,7 @@ class ToolbarButton extends BaseToolbarButton {
 
   const ToolbarButton.large(
     this.icon, {
+    super.pressed,
     super.onTap,
     super.key,
   })  : text = null,
@@ -211,6 +262,7 @@ class ToolbarButton extends BaseToolbarButton {
 
   const ToolbarButton.text(
     this.text, {
+    super.pressed,
     super.onTap,
     super.key,
   })  : icon = null,
@@ -241,6 +293,7 @@ class ToolbarButton extends BaseToolbarButton {
     properties.add(StringProperty('text', text));
     properties.add(DiagnosticsProperty<AssetIconData?>('icon', icon));
     properties.add(DoubleProperty('iconSize', iconSize));
+    properties.add(DiagnosticsProperty<bool?>('pressed', pressed));
   }
 }
 
@@ -366,6 +419,7 @@ class ToolbarColorPickerButton extends BaseToolbarButton {
   const ToolbarColorPickerButton({
     required this.icon,
     required this.color,
+    required this.onColorChanged,
     super.key,
     super.width = 32,
     super.height = 30,
@@ -374,6 +428,7 @@ class ToolbarColorPickerButton extends BaseToolbarButton {
 
   final AssetIconData icon;
   final Color color;
+  final ValueChanged<Color> onColorChanged;
 
   @override
   Widget buildContent(BuildContext context, Set<WidgetState> states) {
@@ -399,9 +454,7 @@ class ToolbarColorPickerButton extends BaseToolbarButton {
       popupBuilder: (BuildContext context) {
         return MaterialColorPicker(
           selectedColor: Colors.red,
-          onColorChanged: (Color color) {
-            // _controller.applyStyleToSelection(TextStyleUpdateRequest(color: color));
-          },
+          onColorChanged: onColorChanged,
         );
       },
     );
@@ -412,6 +465,7 @@ class ToolbarColorPickerButton extends BaseToolbarButton {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<AssetIconData>('icon', icon));
     properties.add(ColorProperty('color', color));
+    properties.add(ObjectFlagProperty<ValueChanged<Color>>.has('onColorChanged', onColorChanged));
   }
 }
 

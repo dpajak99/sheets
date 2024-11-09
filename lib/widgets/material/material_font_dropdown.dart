@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sheets/widgets/mouse_state_listener.dart';
 
 class MaterialFontDropdown extends StatefulWidget {
@@ -25,6 +24,7 @@ class _MaterialFontDropdownState extends State<MaterialFontDropdown> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      elevation: 3,
       borderRadius: BorderRadius.circular(3),
       child: Container(
         width: 215,
@@ -52,20 +52,16 @@ class _MaterialFontDropdownState extends State<MaterialFontDropdown> {
             FontsLabel(label: 'Ostatnie'),
             SizedBox(height: 2),
             FontOptionButton(
-              label: 'Times New Roman',
-              fontFamily: 'Times New Roman',
-            ),
-            FontOptionButton(
               label: 'Arial',
               fontFamily: 'Arial',
             ),
             FontOptionButton(
-              label: 'Roboto',
-              fontFamily: 'Roboto',
+              label: 'Courier New',
+              fontFamily: 'Courier New',
             ),
             FontOptionButton(
-              label: 'Tahoma',
-              fontFamily: 'Tahoma',
+              label: 'Times New Roman',
+              fontFamily: 'Times New Roman',
             ),
             FontsDivider(),
             FontOptionButton(
@@ -73,76 +69,8 @@ class _MaterialFontDropdownState extends State<MaterialFontDropdown> {
               fontFamily: 'Arial',
             ),
             FontOptionButton(
-              label: 'Caveat',
-              fontFamily: 'Caveat_regular',
-            ),
-            FontOptionButton(
-              label: 'Comfortaa',
-              fontFamily: 'Comfortaa',
-            ),
-            FontOptionButton(
               label: 'Courier New',
               fontFamily: 'Courier New',
-            ),
-            FontOptionButton(
-              label: 'EB Garamond',
-              fontFamily: 'EB Garamond',
-            ),
-            FontOptionButton(
-              label: 'Lexend',
-              fontFamily: 'Lexend',
-            ),
-            FontOptionButton(
-              label: 'Lobster',
-              fontFamily: 'Lobster',
-            ),
-            FontOptionButton(
-              label: 'Lora',
-              fontFamily: 'Lora',
-            ),
-            FontOptionButton(
-              label: 'Merriweather',
-              fontFamily: 'Merriweather',
-            ),
-            FontOptionButton(
-              label: 'Montserrat',
-              fontFamily: 'Montserrat',
-            ),
-            FontOptionButton(
-              label: 'Nunito',
-              fontFamily: 'Nunito',
-            ),
-            FontOptionButton(
-              label: 'Oswald',
-              fontFamily: 'Oswald',
-            ),
-            FontOptionButton(
-              label: 'Pacifico',
-              fontFamily: 'Pacifico',
-            ),
-            FontOptionButton(
-              label: 'Playfair Display',
-              fontFamily: 'Playfair Display',
-            ),
-            FontOptionButton(
-              label: 'Roboto',
-              fontFamily: 'Roboto',
-            ),
-            FontOptionButton(
-              label: 'Roboto Mono',
-              fontFamily: 'Roboto Mono',
-            ),
-            FontOptionButton(
-              label: 'Roboto Serif',
-              fontFamily: 'Roboto Serif',
-            ),
-            FontOptionButton(
-              label: 'Spectral',
-              fontFamily: 'Spectral',
-            ),
-            FontOptionButton(
-              label: 'Tahoma',
-              fontFamily: 'Tahoma',
             ),
             FontOptionButton(
               label: 'Times New Roman',
@@ -270,7 +198,6 @@ class FontOptionButton extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontFamily: fontFamily,
-                    package: 'google_fonts',
                     fontSize: 14,
                     color: const Color(0xff444746),
                   ),
@@ -321,7 +248,7 @@ class FontsLabel extends StatelessWidget {
           fontSize: 11,
           color: Color(0xff444746),
           letterSpacing: 11 * (-0.03),
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

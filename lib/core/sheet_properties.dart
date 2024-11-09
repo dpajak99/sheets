@@ -5,6 +5,7 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/cell_value.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/widgets/sheet_text_field.dart';
 
 class SheetProperties extends ChangeNotifier {
   SheetProperties({
@@ -54,8 +55,16 @@ class SheetProperties extends ChangeNotifier {
   int columnCount;
   int rowCount;
 
-  void setCellText(CellIndex cellIndex, String text) {
-    data[cellIndex] = getRichText(cellIndex).withText(text);
+  void formatSelection(List<CellIndex> cells, TextStyleUpdateRequest textStyleUpdateRequest) {
+    for (CellIndex cellIndex in cells) {
+      SheetRichText text = getRichText(cellIndex);
+      text.updateStyle(textStyleUpdateRequest);
+    }
+    notifyListeners();
+  }
+
+  void setCellText(CellIndex cellIndex, SheetRichText text) {
+    data[cellIndex] = text;
     notifyListeners();
   }
 
@@ -68,6 +77,10 @@ class SheetProperties extends ChangeNotifier {
 
   SheetRichText getRichText(CellIndex cellIndex) {
     return data[cellIndex] ?? SheetRichText.empty();
+  }
+
+  TextStyle getSharedStyle(CellIndex cellIndex) {
+    return getRichText(cellIndex).getSharedStyle();
   }
 
   CellProperties getCellProperties(CellIndex cellIndex) {
@@ -112,6 +125,15 @@ class SheetProperties extends ChangeNotifier {
 
   void setColumnStyle(ColumnIndex columnIndex, ColumnStyle columnStyle) {
     _customColumnStyles[columnIndex] = columnStyle;
+    notifyListeners();
+  }
+
+  void ensureMinimalRowsHeight(List<RowIndex> rows, double height) {
+    for(RowIndex index in rows) {
+      if (getRowStyle(index).height < height) {
+        setRowStyle(index, RowStyle(height: height));
+      }
+    }
     notifyListeners();
   }
 

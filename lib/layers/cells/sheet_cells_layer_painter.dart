@@ -32,7 +32,6 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
       text: textSpan,
       textDirection: TextDirection.ltr,
       textAlign: cell.properties.value.span.textAlign,
-      maxLines: max(1, cell.rawText.split('\n').length),
     );
 
     double width = cell.rect.width - 10;

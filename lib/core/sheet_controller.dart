@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
@@ -20,6 +21,7 @@ import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/core/values/text_style_extensions.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/sheet_text_field.dart';
@@ -67,6 +69,26 @@ class SheetController {
     if(activeCellNotifier.value != null) {
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
       controller.applyStyleToSelection(textStyleUpdateRequest);
+    } else {
+      properties.formatSelection(selection.value.selectedCells, textStyleUpdateRequest);
+    }
+  }
+
+  material.TextStyle getActiveStyle() {
+    if(activeCellNotifier.value != null) {
+      SheetTextEditingController controller = activeCellNotifier.value!.controller;
+      return controller.activeStyle;
+    } else {
+      List<CellIndex> selectedCells = selection.value.selectedCells;
+      if (selectedCells.isEmpty) {
+        return defaultTextStyle;
+      }
+      List<material.TextStyle> styles = <material.TextStyle>[];
+      for (CellIndex cellIndex in selectedCells) {
+        styles.add(properties.getSharedStyle(cellIndex));
+      }
+
+      return styles.getSharedStyle();
     }
   }
 
@@ -89,7 +111,7 @@ class SheetController {
     return properties.getCellProperties(index);
   }
 
-  void setCellValue(CellIndex index, String value, {Size? size}) {
+  void setCellValue(CellIndex index, SheetRichText value, {Size? size}) {
     properties.setCellText(index, value);
     if (size != null) {
       SheetResizeCellGesture(index, size).resolve(this);
@@ -170,7 +192,7 @@ class SheetController {
 
     bool clearCell = key.contains(LogicalKeyboardKey.delete) || key.contains(LogicalKeyboardKey.backspace);
     if (clearCell) {
-      setCellValue(selection.value.mainCell, '');
+      setCellValue(selection.value.mainCell, SheetRichText.empty());
     }
   }
 }
