@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
@@ -20,8 +19,8 @@ import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/values/actions/text_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
-import 'package:sheets/core/values/text_style_extensions.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/sheet_text_field.dart';
@@ -30,7 +29,7 @@ class SheetController {
   SheetController({
     required this.properties,
   }) {
-    _activeCellNotifier = ValueNotifier<ActiveCell?>(null);
+    _editableCellNotifier = ValueNotifier<EditableViewportCell?>(null);
 
     scroll = SheetScrollController();
     viewport = SheetViewport(properties, scroll);
@@ -55,7 +54,7 @@ class SheetController {
   late final SheetScrollController scroll;
   late final KeyboardListener keyboard;
   late final MouseListener mouse;
-  late final ValueNotifier<ActiveCell?> _activeCellNotifier;
+  late final ValueNotifier<EditableViewportCell?> _editableCellNotifier;
 
   late SelectionState selection;
 
@@ -63,38 +62,38 @@ class SheetController {
     await keyboard.dispose();
   }
 
-  ValueNotifier<ActiveCell?> get activeCellNotifier => _activeCellNotifier;
+  ValueNotifier<EditableViewportCell?> get activeCellNotifier => _editableCellNotifier;
 
-  void formatSelection(TextStyleUpdateRequest textStyleUpdateRequest) {
-    if(activeCellNotifier.value != null) {
+  void formatSelection(TextFormatAction textFormatAction) {
+    List<CellIndex> selectedCells = selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
+    if (activeCellNotifier.value != null) {
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      controller.applyStyleToSelection(textStyleUpdateRequest);
+      controller.applyStyleToSelection(textFormatAction);
     } else {
-      properties.formatSelection(selection.value.selectedCells, textStyleUpdateRequest);
+      properties.formatSelection(selectedCells, textFormatAction);
     }
+
+    properties.ensureMinimalRowsHeight(
+      selectedCells.map((CellIndex cellIndex) => cellIndex.row).toSet().toList(),
+    );
   }
 
-  material.TextStyle getActiveStyle() {
-    if(activeCellNotifier.value != null) {
+  SelectionStyle getSelectionStyle() {
+    if (activeCellNotifier.value != null) {
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      return controller.activeStyle;
+      return SelectionStyle(controller.activeStyle);
     } else {
-      List<CellIndex> selectedCells = selection.value.selectedCells;
-      if (selectedCells.isEmpty) {
-        return defaultTextStyle;
-      }
-      List<material.TextStyle> styles = <material.TextStyle>[];
-      for (CellIndex cellIndex in selectedCells) {
-        styles.add(properties.getSharedStyle(cellIndex));
-      }
-
-      return styles.getSharedStyle();
+      CellProperties cellProperties = properties.getCellProperties(selection.value.mainCell);
+      return SelectionStyle(cellProperties.value.span.getSharedStyle());
     }
   }
 
   Future<void> fill(SheetFillSelection selection) async {
-    List<CellProperties> baseProperties = selection.baseSelection.selectedCells.map(properties.getCellProperties).toList();
-    List<CellProperties> fillProperties = selection.selectedCells.map(properties.getCellProperties).toList();
+    List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(properties.columnCount, properties.rowCount);
+    List<CellIndex> fillCells = selection.getSelectedCells(properties.columnCount, properties.rowCount);
+
+    List<CellProperties> baseProperties = selectedCells.map(properties.getCellProperties).toList();
+    List<CellProperties> fillProperties = fillCells.map(properties.getCellProperties).toList();
 
     await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
   }
@@ -120,7 +119,7 @@ class SheetController {
   }
 
   void resetActiveCell() {
-    _activeCellNotifier.value = null;
+    _editableCellNotifier.value = null;
     keyboard.enableListener();
   }
 
@@ -135,9 +134,9 @@ class SheetController {
   void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
     if (value != null) {
-      _activeCellNotifier.value = ActiveCell(cell.withText(value));
+      _editableCellNotifier.value = EditableViewportCell(cell.withText(value));
     } else {
-      _activeCellNotifier.value = ActiveCell(cell);
+      _editableCellNotifier.value = EditableViewportCell(cell);
     }
 
     keyboard.disableListener();
@@ -197,8 +196,8 @@ class SheetController {
   }
 }
 
-class ActiveCell with EquatableMixin {
-  ActiveCell(this.cell)
+class EditableViewportCell with EquatableMixin {
+  EditableViewportCell(this.cell)
       : controller = SheetTextEditingController(
           sheetText: EditableTextSpan.fromSheetRichText(cell.richText),
         );

@@ -34,9 +34,9 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ActiveCell?>(
+    return ValueListenableBuilder<EditableViewportCell?>(
       valueListenable: widget.sheetController.activeCellNotifier,
-      builder: (BuildContext context, ActiveCell? activeCell, Widget? child) {
+      builder: (BuildContext context, EditableViewportCell? activeCell, Widget? child) {
         if (activeCell == null) {
           return const SizedBox();
         }

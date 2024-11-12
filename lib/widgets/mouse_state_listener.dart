@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class MouseStateListener extends StatefulWidget {
@@ -39,6 +40,8 @@ class MouseStateListener extends StatefulWidget {
 
 class _MouseStateListener extends State<MouseStateListener> {
   final Set<WidgetState> _states = <WidgetState>{};
+  Offset? _pointerDownPosition;
+  static const double _kTapSlopSquared = 18.0 * 18.0;
 
   @override
   void initState() {
@@ -55,34 +58,36 @@ class _MouseStateListener extends State<MouseStateListener> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: widget.mouseCursor ?? (widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.none),
-      child: GestureDetector(
-        onTapDown: (TapDownDetails details) {
+      onEnter: (PointerEnterEvent event) {
+        _addState(WidgetState.hovered);
+        widget.onHover?.call(true);
+      },
+      onExit: (PointerExitEvent event) {
+        _removeState(WidgetState.hovered);
+        _removeState(WidgetState.pressed);
+        widget.onHover?.call(false);
+      },
+      cursor: widget.mouseCursor ?? (widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic),
+      child: Listener(
+        onPointerDown: (PointerDownEvent event) {
+          _pointerDownPosition = event.position;
           _addState(WidgetState.pressed);
         },
-        onTapUp: (TapUpDetails details) {
+        onPointerUp: (PointerUpEvent event) {
           _removeState(WidgetState.pressed);
-        },
-        onTapCancel: () {
-          _removeState(WidgetState.pressed);
-        },
-        child: InkWell(
-          onTap: widget.onTap != null ? () => widget.onTap!() : null,
-          splashFactory: widget.disableSplash ? NoSplash.splashFactory : null,
-          splashColor: widget.disableSplash ? Colors.transparent : null,
-          highlightColor: widget.disableSplash ? Colors.transparent : null,
-          hoverColor: widget.disableSplash ? Colors.transparent : null,
-          onHover: (bool hovered) {
-            if (hovered) {
-              _addState(WidgetState.hovered);
-            } else {
-              _removeState(WidgetState.hovered);
-              _removeState(WidgetState.pressed);
+          if (_pointerDownPosition != null) {
+            Offset offset = event.position - _pointerDownPosition!;
+            if (offset.distanceSquared <= _kTapSlopSquared) {
+              widget.onTap?.call();
             }
-            widget.onHover?.call(hovered);
-          },
-          child: widget.childBuilder(_states),
-        ),
+            _pointerDownPosition = null;
+          }
+        },
+        onPointerCancel: (PointerCancelEvent event) {
+          _removeState(WidgetState.pressed);
+          _pointerDownPosition = null;
+        },
+        child: widget.childBuilder(_states),
       ),
     );
   }

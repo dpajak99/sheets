@@ -16,6 +16,9 @@ class SheetIcons {
   static const AssetIconData decimal_increase = AssetIconData('assets/icons/decimal_increase.svg');
   static const AssetIconData filter_alt = AssetIconData('assets/icons/filter_alt.svg');
   static const AssetIconData format_align_left = AssetIconData('assets/icons/format_align_left.svg');
+  static const AssetIconData format_align_right = AssetIconData('assets/icons/format_align_right.svg');
+  static const AssetIconData format_align_center = AssetIconData('assets/icons/format_align_center.svg');
+  static const AssetIconData format_align_justify = AssetIconData('assets/icons/format_align_justify.svg');
   static const AssetIconData format_bold = AssetIconData('assets/icons/format_bold.svg');
   static const AssetIconData format_color_fill = AssetIconData('assets/icons/format_color_fill.svg');
   static const AssetIconData format_color_text = AssetIconData('assets/icons/format_color_text.svg');
@@ -35,5 +38,7 @@ class SheetIcons {
   static const AssetIconData text_rotation_none = AssetIconData('assets/icons/text_rotation_none.svg');
   static const AssetIconData undo = AssetIconData('assets/icons/undo.svg');
   static const AssetIconData vertical_align_bottom = AssetIconData('assets/icons/vertical_align_bottom.svg');
+  static const AssetIconData vertical_align_center = AssetIconData('assets/icons/vertical_align_center.svg');
+  static const AssetIconData vertical_align_top = AssetIconData('assets/icons/vertical_align_top.svg');
   static const AssetIconData keyboard_arrow_up = AssetIconData('assets/icons/keyboard_arrow_up.svg');
 }

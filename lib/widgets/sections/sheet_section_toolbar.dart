@@ -1,13 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/widgets/material/material_format_dropdown.dart';
-import 'package:sheets/widgets/sections/sheet_toolbar/toolbar_button.dart';
+import 'package:sheets/core/values/actions/text_format_actions.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_color_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_divider.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_font_family_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_font_size_textfield.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_searchbar.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_align_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_format_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 import 'package:sheets/widgets/sections/sheet_toolbar/toolbar_buttons_section.dart';
-import 'package:sheets/widgets/sheet_text_field.dart';
 import 'package:sheets/widgets/sheet_theme.dart';
 
 class SheetSectionToolbar extends StatefulWidget {
@@ -54,7 +62,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
               widget.sheetController.selection,
             ]),
             builder: (BuildContext context, _) {
-              TextStyle textStyle = widget.sheetController.getActiveStyle();
+              SelectionStyle selectionStyle = widget.sheetController.getSelectionStyle();
 
               return Row(
                 children: <Widget>[
@@ -62,171 +70,146 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                     child: ToolbarButtonsSectionWrapper(
                       sections: <ToolbarButtonsSection>[
                         const ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarSearchbar(),
+                          buttons: <Widget>[
+                            MaterialToolbarSearchbar.expanded(),
                           ],
-                          smallButtons: <ToolbarItem>[
-                            ToolbarButton.large(SheetIcons.search),
-                          ],
-                        ),
-                        const ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarButton.icon(SheetIcons.undo),
-                            ToolbarButton.icon(SheetIcons.redo),
-                            ToolbarButton.icon(SheetIcons.print),
-                            ToolbarButton.icon(SheetIcons.paint),
-                            ToolbarTextDropdownButton(value: '100%', width: 75),
-                            ToolbarDivider(),
+                          smallButtons: <Widget>[
+                            MaterialToolbarSearchbar.collapsed(),
                           ],
                         ),
                         ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            const ToolbarButton.text('zloty'),
-                            const ToolbarButton.icon(SheetIcons.percentage),
-                            const ToolbarButton.icon(SheetIcons.decimal_decrease),
-                            const ToolbarButton.icon(SheetIcons.decimal_increase),
-                            ToolbarPopupButton(
-                              child: const ToolbarButton.text('123'),
-                              popupBuilder: (BuildContext context) => const MaterialFormatDropdown(),
-                            ),
-                            const ToolbarDivider(),
-                          ],
-                        ),
-                        const ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarTextDropdownButton(value: 'Default', width: 97),
-                            ToolbarDivider(),
+                          buttons: <Widget>[
+                            MaterialToolbarIconButton(icon: SheetIcons.undo, onTap: () {}),
+                            MaterialToolbarIconButton(icon: SheetIcons.redo, onTap: () {}),
+                            MaterialToolbarIconButton(icon: SheetIcons.print, onTap: () {}),
+                            MaterialToolbarIconButton(icon: SheetIcons.paint, onTap: () {}),
+                            // ToolbarTextDropdownButton(value: '100%', width: 75),
+                            const MaterialToolbarDivider(),
                           ],
                         ),
                         ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarButton.iconSmall(
-                              SheetIcons.remove,
-                              onTap: () {
-                                double fontSize = (textStyle.fontSize ?? 14) - 1;
-                                widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                  fontSize: fontSize,
-                                ));
-                              },
-                            ),
-                            ToolbarTextField(value: textStyle.fontSize?.toStringAsFixed(0) ?? ''),
-                            ToolbarButton.iconSmall(
-                              SheetIcons.add,
-                              onTap: () {
-                                double fontSize = (textStyle.fontSize ?? 14) + 1;
-                                widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                  fontSize: fontSize,
-                                ));
-                                widget.sheetController.properties.ensureMinimalRowsHeight(
-                                  widget.sheetController.selection.value.selectedCells
-                                      .map((CellIndex cellIndex) => cellIndex.row)
-                                      .toSet()
-                                      .toList(),
-                                  fontSize + 9,
-                                );
-                              },
-                            ),
-                            const ToolbarDivider(),
+                          buttons: <Widget>[
+                            MaterialToolbarTextButton(text: 'zloty', onTap: () {}),
+                            MaterialToolbarIconButton(icon: SheetIcons.percentage, onTap: () {}),
+                            MaterialToolbarIconButton(icon: SheetIcons.decimal_decrease, onTap: () {}),
+                            MaterialToolbarIconButton(icon: SheetIcons.decimal_increase, onTap: () {}),
+                            const MaterialToolbarFormatButton(),
+                            const MaterialToolbarDivider(),
                           ],
                         ),
                         ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarButton.icon(
-                              SheetIcons.format_bold,
-                              active: textStyle.fontWeight == FontWeight.bold,
-                              onTap: () {
-                                if (textStyle.fontWeight == FontWeight.bold) {
-                                  widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                    fontWeight: FontWeight.normal,
-                                  ));
-                                } else {
-                                  widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                    fontWeight: FontWeight.bold,
-                                  ));
-                                }
+                          buttons: <Widget>[
+                            MaterialToolbarFontFamilyButton(
+                              selectedFontFamily: 'Default',
+                              onChanged: (String value) {
+                                widget.sheetController.formatSelection(UpdateFontFamilyAction(selectionStyle, value));
                               },
                             ),
-                            ToolbarButton.icon(
-                              SheetIcons.format_italic,
-                              active: textStyle.fontStyle == FontStyle.italic,
+                            const MaterialToolbarDivider(),
+                          ],
+                        ),
+                        ToolbarButtonsSection(
+                          buttons: <Widget>[
+                            MaterialToolbarIconButton.small(
+                              icon: SheetIcons.remove,
                               onTap: () {
-                                if (textStyle.fontStyle == FontStyle.italic) {
-                                  widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                    fontStyle: FontStyle.normal,
-                                  ));
-                                } else {
-                                  widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                    fontStyle: FontStyle.italic,
-                                  ));
-                                }
+                                widget.sheetController.formatSelection(DecreaseFontSizeAction(selectionStyle));
                               },
                             ),
-                            ToolbarButton.icon(
-                              SheetIcons.strikethrough,
-                              active: textStyle.decoration == TextDecoration.lineThrough,
+                            MaterialToolbarFontSizeTextfield(
+                              selectedFontSize: selectionStyle.fontSize ?? 0,
+                              onChanged: (double value){},
+                            ),
+                            MaterialToolbarIconButton.small(
+                              icon: SheetIcons.add,
                               onTap: () {
-                                if (textStyle.decoration == TextDecoration.lineThrough) {
-                                  widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                    decoration: TextDecoration.none,
-                                  ));
-                                } else {
-                                  widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                    decoration: TextDecoration.lineThrough,
-                                  ));
-                                }
+                                widget.sheetController.formatSelection(IncreaseFontSizeAction(selectionStyle));
                               },
                             ),
-                            ToolbarColorPickerButton(
+                            const MaterialToolbarDivider(),
+                          ],
+                        ),
+                        ToolbarButtonsSection(
+                          buttons: <Widget>[
+                            MaterialToolbarIconButton(
+                              icon: SheetIcons.format_bold,
+                              active: selectionStyle.fontWeight == FontWeight.bold,
+                              onTap: () {
+                                widget.sheetController.formatSelection(UpdateFontWeightAction(selectionStyle, FontWeight.bold));
+                              },
+                            ),
+                            MaterialToolbarIconButton(
+                              icon: SheetIcons.format_italic,
+                              active: selectionStyle.fontStyle == FontStyle.italic,
+                              onTap: () {
+                                widget.sheetController.formatSelection(UpdateFontStyleAction(selectionStyle, FontStyle.italic));
+                              },
+                            ),
+                            MaterialToolbarIconButton(
+                              icon: SheetIcons.strikethrough,
+                              active: selectionStyle.decoration == TextDecoration.lineThrough,
+                              onTap: () {
+                                widget.sheetController
+                                    .formatSelection(UpdateTextDecorationAction(selectionStyle, TextDecoration.lineThrough));
+                              },
+                            ),
+                            MaterialToolbarColorButton(
                               icon: SheetIcons.format_color_text,
-                              color: textStyle.color ?? defaultTextStyle.color!,
-                              onColorChanged: (Color color) {
-                                widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                  color: color,
-                                ));
+                              color: selectionStyle.color ?? defaultTextStyle.color ?? Colors.black,
+                              onSelected: (Color color) {
+                                widget.sheetController.formatSelection(UpdateFontColorAction(selectionStyle, color));
                               },
                             ),
-                            const ToolbarDivider(),
+                            const MaterialToolbarDivider(),
                           ],
                         ),
                         ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarColorPickerButton(
+                          buttons: <Widget>[
+                            MaterialToolbarColorButton(
                               icon: SheetIcons.format_color_fill,
-                              color: textStyle.backgroundColor ?? Colors.white,
-                              onColorChanged: (Color color) {
-                                widget.sheetController.formatSelection(TextStyleUpdateRequest(
-                                  backgroundColor: color,
-                                ));
+                              color: selectionStyle.backgroundColor ?? defaultTextStyle.backgroundColor ?? Colors.white,
+                              onSelected: (Color color) {
+                                widget.sheetController.formatSelection(UpdateBackgroundColorAction(selectionStyle, color));
                               },
                             ),
-                            const ToolbarButton.icon(SheetIcons.border_all),
-                            const ToolbarDropdownButtonSeparated(icon: SheetIcons.cell_merge),
-                            const ToolbarDivider(),
+                            MaterialToolbarIconButton(icon: SheetIcons.border_all, onTap: (){}),
+                            MaterialToolbarIconButton.withDropdown(icon: SheetIcons.cell_merge, onTap: (){}),
+                            const MaterialToolbarDivider(),
                           ],
                         ),
-                        const ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarDropdownButton(icon: SheetIcons.format_align_left),
-                            ToolbarDropdownButton(icon: SheetIcons.vertical_align_bottom),
-                            ToolbarDropdownButton(icon: SheetIcons.format_text_overflow),
-                            ToolbarDropdownButton(icon: SheetIcons.text_rotation_none),
-                            ToolbarDivider(),
+                        ToolbarButtonsSection(
+                          buttons: <Widget>[
+                            MaterialTextAlignButton(
+                              selectedTextAlign: TextAlign.left,
+                              onChanged: (TextAlign value) {
+                                // widget.sheetController.formatSelection(UpdateTextAlignAction(selectionStyle, value));
+                              },
+                            ),
+                            MaterialTextVerticalAlignButton(
+                              selectedTextAlign: TextVerticalAlign.bottom,
+                              onChanged: (TextVerticalAlign value) {
+                                // widget.sheetController.formatSelection(UpdateVerticalAlignAction(selectionStyle, value));
+                              },
+                            ),
+                            MaterialToolbarIconButton.withDropdown(icon: SheetIcons.format_text_overflow, onTap: (){}),
+                            MaterialToolbarIconButton.withDropdown(icon: SheetIcons.text_rotation_none, onTap: (){}),
+                            const MaterialToolbarDivider(),
                           ],
                         ),
-                        const ToolbarButtonsSection(
-                          buttons: <ToolbarItem>[
-                            ToolbarButton.icon(SheetIcons.link),
-                            ToolbarButton.icon(SheetIcons.add_comment),
-                            ToolbarButton.icon(SheetIcons.insert_chart),
-                            ToolbarButton.icon(SheetIcons.filter_alt),
-                            ToolbarDropdownButton(icon: SheetIcons.table_view),
-                            ToolbarButton.icon(SheetIcons.functions),
+                        ToolbarButtonsSection(
+                          buttons: <Widget>[
+                            MaterialToolbarIconButton(icon: SheetIcons.link, onTap: (){}),
+                            MaterialToolbarIconButton(icon: SheetIcons.add_comment, onTap: (){}),
+                            MaterialToolbarIconButton(icon: SheetIcons.insert_chart, onTap: (){}),
+                            MaterialToolbarIconButton(icon: SheetIcons.filter_alt, onTap: (){}),
+                            MaterialToolbarIconButton.withDropdown(icon: SheetIcons.table_view, onTap: (){}),
+                            MaterialToolbarIconButton(icon: SheetIcons.functions, onTap: (){}),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  const ToolbarButton.icon(SheetIcons.arrow_up),
+                  MaterialToolbarIconButton(icon: SheetIcons.arrow_up, onTap: (){}),
                 ],
               );
             },

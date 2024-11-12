@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
@@ -8,7 +10,7 @@ import 'package:sheets/widgets/sections/sheet_footer.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
 import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 
-void main() {
+void main() async {
   runApp(const MaterialSheetExample());
 }
 

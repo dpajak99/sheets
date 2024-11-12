@@ -1,19 +1,21 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/values/actions/text_format_actions.dart';
 import 'package:sheets/core/values/cell_value.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
-import 'package:sheets/widgets/sheet_text_field.dart';
 
 class SheetProperties extends ChangeNotifier {
   SheetProperties({
     Map<ColumnIndex, ColumnStyle>? customColumnStyles,
     Map<RowIndex, RowStyle>? customRowStyles,
     Map<CellIndex, SheetRichText>? data,
-    this.columnCount = 100,
-    this.rowCount = 100,
+    this.columnCount = 10,
+    this.rowCount = 20,
   })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
         _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{} {
     this.data = data ??
@@ -55,10 +57,10 @@ class SheetProperties extends ChangeNotifier {
   int columnCount;
   int rowCount;
 
-  void formatSelection(List<CellIndex> cells, TextStyleUpdateRequest textStyleUpdateRequest) {
+  void formatSelection(List<CellIndex> cells, TextFormatAction textFormatAction) {
     for (CellIndex cellIndex in cells) {
       SheetRichText text = getRichText(cellIndex);
-      text.updateStyle(textStyleUpdateRequest);
+      text.updateStyle(textFormatAction);
     }
     notifyListeners();
   }
@@ -83,9 +85,17 @@ class SheetProperties extends ChangeNotifier {
     return getRichText(cellIndex).getSharedStyle();
   }
 
+  List<CellProperties> getCellPropertiesList(List<CellIndex> cellIndexes) {
+    return cellIndexes.map(getCellProperties).toList();
+  }
+
   CellProperties getCellProperties(CellIndex cellIndex) {
+    RowStyle rowStyle = getRowStyle(cellIndex.row);
+    ColumnStyle columnStyle = getColumnStyle(cellIndex.column);
+
     return CellProperties(
       cellIndex,
+      CellStyle(rowStyle: rowStyle, columnStyle: columnStyle),
       CellValueParser.parse(getRichText(cellIndex)),
     );
   }
@@ -128,12 +138,18 @@ class SheetProperties extends ChangeNotifier {
     notifyListeners();
   }
 
-  void ensureMinimalRowsHeight(List<RowIndex> rows, double height) {
-    for(RowIndex index in rows) {
-      if (getRowStyle(index).height < height) {
-        setRowStyle(index, RowStyle(height: height));
-      }
+  void ensureMinimalRowsHeight(List<RowIndex> rows) {
+    rows.forEach(adjustRowToMaxFontSize);
+  }
+
+  void adjustRowToMaxFontSize(RowIndex rowIndex) {
+    double maxHeight = 0;
+    for (int i = 0; i < columnCount; i++) {
+      SheetRichText text = getRichText(CellIndex(row: rowIndex, column: ColumnIndex(i)));
+      TextPainter textPainter = TextPainter(text: text.toTextSpan(), textDirection: TextDirection.ltr)..layout();
+      maxHeight = max(maxHeight, textPainter.height);
     }
+    setRowStyle(rowIndex, RowStyle(height: maxHeight + 5));
     notifyListeners();
   }
 

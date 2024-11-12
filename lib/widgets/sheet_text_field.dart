@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/values/actions/text_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/value_update_notifier.dart';
 
@@ -51,7 +51,7 @@ class SheetTextEditingController extends TextEditingController {
     return sheetText.getCurrentStyle(value.selection.end);
   }
 
-  void applyStyleToSelection(TextStyleUpdateRequest textStyleUpdateRequest) {
+  void applyStyleToSelection(TextFormatAction textFormatAction) {
     TextSelection selection = value.selection;
     int start = selection.start;
     int end = selection.end;
@@ -61,124 +61,13 @@ class SheetTextEditingController extends TextEditingController {
     }
 
     if (start == end) {
-      sheetText.insertStyle(start, textStyleUpdateRequest);
+      sheetText.insertStyle(start, textFormatAction);
     } else {
-      sheetText.updateStyle(start, end, textStyleUpdateRequest);
+      sheetText.updateStyle(start, end, textFormatAction);
     }
     selectionNotifier.refresh();
     notifyListeners();
   }
-}
-
-class TextStyleUpdateRequest with EquatableMixin {
-  TextStyleUpdateRequest({
-    this.color,
-    this.backgroundColor,
-    this.fontSize,
-    this.fontWeight,
-    this.fontStyle,
-    this.letterSpacing,
-    this.wordSpacing,
-    this.textBaseline,
-    this.leadingDistribution,
-    this.locale,
-    this.foreground,
-    this.background,
-    this.shadows,
-    this.fontFeatures,
-    this.fontVariations,
-    this.decoration,
-    this.decorationColor,
-    this.decorationStyle,
-    this.decorationThickness,
-    this.debugLabel,
-    this.fontFamily,
-    this.fontFamilyFallback,
-    this.package,
-    this.overflow,
-  });
-
-  final Color? color;
-  final Color? backgroundColor;
-  final double? fontSize;
-  final FontWeight? fontWeight;
-  final FontStyle? fontStyle;
-  final double? letterSpacing;
-  final double? wordSpacing;
-  final TextBaseline? textBaseline;
-  final TextLeadingDistribution? leadingDistribution;
-  final Locale? locale;
-  final Paint? foreground;
-  final Paint? background;
-  final List<Shadow>? shadows;
-  final List<FontFeature>? fontFeatures;
-  final List<FontVariation>? fontVariations;
-  final TextDecoration? decoration;
-  final Color? decorationColor;
-  final TextDecorationStyle? decorationStyle;
-  final double? decorationThickness;
-  final String? debugLabel;
-  final String? fontFamily;
-  final List<String>? fontFamilyFallback;
-  final String? package;
-  final TextOverflow? overflow;
-
-  TextStyle applyTo(TextStyle textStyle) {
-    return textStyle.copyWith(
-      color: color,
-      backgroundColor: backgroundColor,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      fontStyle: fontStyle,
-      letterSpacing: letterSpacing,
-      wordSpacing: wordSpacing,
-      textBaseline: textBaseline,
-      leadingDistribution: leadingDistribution,
-      locale: locale,
-      foreground: foreground,
-      background: background,
-      shadows: shadows,
-      fontFeatures: fontFeatures,
-      fontVariations: fontVariations,
-      decoration: decoration,
-      decorationColor: decorationColor,
-      decorationStyle: decorationStyle,
-      decorationThickness: decorationThickness,
-      debugLabel: debugLabel,
-      fontFamily: fontFamily,
-      fontFamilyFallback: fontFamilyFallback,
-      package: package,
-      overflow: overflow,
-    );
-  }
-
-  @override
-  List<Object?> get props => <Object?>[
-        color,
-        backgroundColor,
-        fontSize,
-        fontWeight,
-        fontStyle,
-        letterSpacing,
-        wordSpacing,
-        textBaseline,
-        leadingDistribution,
-        locale,
-        foreground,
-        background,
-        shadows,
-        fontFeatures,
-        fontVariations,
-        decoration,
-        decorationColor,
-        decorationStyle,
-        decorationThickness,
-        debugLabel,
-        fontFamily,
-        fontFamilyFallback,
-        package,
-        overflow
-      ];
 }
 
 class SheetTextField extends StatefulWidget {
