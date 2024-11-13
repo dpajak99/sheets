@@ -3,6 +3,8 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/layers/shared_paints.dart';
+import 'package:sheets/utils/edge_visibility.dart';
 
 abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPainter {
   void paintHeadersBackground(Canvas canvas, Rect rect, SelectionStatus selectionStatus) {
@@ -20,19 +22,16 @@ abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPaint
     canvas.drawRect(rect, backgroundPaint);
   }
 
-  void paintHeadersBorder(Canvas canvas, Rect rect, {bool top = true}) {
-    Paint borderPaint = Paint()
-      ..color = const Color(0xffc4c7c5)
-      ..strokeWidth = borderWidth
-      ..isAntiAlias = false
-      ..style = PaintingStyle.stroke;
-
-    if (top) {
-      canvas.drawLine(rect.topLeft, rect.topRight, borderPaint);
-    }
-    canvas.drawLine(rect.topRight, rect.bottomRight, borderPaint);
-    canvas.drawLine(rect.bottomLeft, rect.bottomRight, borderPaint);
-    canvas.drawLine(rect.topLeft, rect.bottomLeft, borderPaint);
+  void paintHeadersBorder(Canvas canvas, BorderRect rect, {bool top = true}) {
+    SharedPaints.paintBorder(
+      canvas: canvas,
+      rect: rect,
+      border: Border.all(
+        color: const Color(0xffc4c7c5),
+        width: borderWidth,
+      ),
+      edgeVisibility: EdgeVisibility(top: top),
+    );
   }
 
   void paintRowLabel(Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {

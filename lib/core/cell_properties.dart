@@ -1,47 +1,72 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/core/values/cell_value.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
 class CellProperties with EquatableMixin {
-  CellProperties(this.index, this.style, this.value);
+  CellProperties({
+    required this.style,
+    required this.value,
+  });
 
-  CellProperties.empty(this.index, this.style) : value = StringCellValue.empty();
+  CellProperties.empty()
+      : value = SheetRichText.empty(),
+        style = CellStyle();
 
-  final CellIndex index;
-  final CellStyle style;
-  CellValue value;
+  CellStyle style;
+  SheetRichText value;
 
-  CellProperties copyWith({CellValue? value, CellStyle? style}) {
+  CellProperties copyWith({SheetRichText? value, CellStyle? style}) {
     return CellProperties(
-      index,
-      style ?? this.style,
-      value ?? this.value,
+      style: style ?? this.style,
+      value: value ?? this.value,
     );
   }
 
   @override
-  List<Object?> get props => <Object?>[index, value];
+  List<Object?> get props => <Object?>[value];
 }
 
 class CellStyle with EquatableMixin {
   CellStyle({
-    required this.rowStyle,
-    required this.columnStyle,
-  });
+    this.textAlign = TextAlign.left,
+    this.textOverflow = TextOverflowBehavior.clip,
+    this.textVerticalAlign = TextVerticalAlign.bottom,
+    this.rotationAngleDegrees = 0.0,
+    this.backgroundColor = Colors.white,
+    Border? border,
+  })  : _border = border,
+        borderZIndex = border != null ? DateTime.now().millisecondsSinceEpoch : null;
 
-  final RowStyle rowStyle;
-  final ColumnStyle columnStyle;
+  Color backgroundColor;
+  double rotationAngleDegrees;
+  TextAlign textAlign;
+  TextOverflowBehavior textOverflow;
+  TextVerticalAlign textVerticalAlign;
+  Border? _border;
+
+  Border? get border => _border;
+  set border(Border? value) {
+    _border = value;
+    borderZIndex = DateTime.now().millisecondsSinceEpoch;
+  }
+
+  int? borderZIndex;
 
   @override
-  List<Object?> get props => <Object?>[rowStyle, columnStyle];
+  List<Object?> get props => <Object?>[textAlign, textOverflow, textVerticalAlign];
 }
 
 class SelectionStyle with EquatableMixin {
-  SelectionStyle(this.textStyle);
+  SelectionStyle(this.textStyle, this.cellStyle);
 
   final TextStyle textStyle;
+  final CellStyle cellStyle;
+
+  TextAlign get textAlignHorizontal => cellStyle.textAlign;
+
+  TextVerticalAlign get textAlignVertical => cellStyle.textVerticalAlign;
 
   FontWeight? get fontWeight => textStyle.fontWeight;
 

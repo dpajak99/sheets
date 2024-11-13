@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
-import 'package:sheets/core/values/actions/text_format_actions.dart';
+import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 
 class SheetRichText {
   SheetRichText({required this.spans});
@@ -50,7 +50,7 @@ class SheetRichText {
     return styles.reduce((TextStyle a, TextStyle b) => a.merge(b));
   }
 
-  void updateStyle(TextFormatAction textFormatAction) {
+  void updateStyle(TextStyleFormatAction textFormatAction) {
     for(int i = 0; i < spans.length; i++) {
       spans[i] = spans[i].copyWith(style: textFormatAction.format(spans[i].style));
     }
@@ -190,7 +190,7 @@ class EditableTextSpan with EquatableMixin {
     }
   }
 
-  void insertStyle(int index, TextFormatAction textFormatAction) {
+  void insertStyle(int index, TextStyleFormatAction textFormatAction) {
     TextStyle previousStyle = getPreviousStyle(index);
     TextStyle newStyle = textFormatAction.format(previousStyle);
 
@@ -206,7 +206,7 @@ class EditableTextSpan with EquatableMixin {
     }
   }
 
-  void updateStyle(int start, int end, TextFormatAction textFormatAction) {
+  void updateStyle(int start, int end, TextStyleFormatAction textFormatAction) {
     for (int i = start; i < end; i++) {
       TextSpanLetter letter = letters[i];
       letters[i] = letter.copyWith(style: textFormatAction.format(letter.style));

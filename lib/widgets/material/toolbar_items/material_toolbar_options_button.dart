@@ -128,6 +128,7 @@ class _OptionsPopupState<T> extends State<_OptionsPopup<T>> {
             return _OptionsPopupButton<T>(
               icon: option.icon,
               onTap: () {
+                print('onTap');
                 setState(() {
                   _selectedValue = option.value;
                 });
@@ -162,7 +163,7 @@ class _OptionsPopupButton<T> extends StatelessWidget with MaterialToolbarButtonM
   @override
   Widget build(BuildContext context) {
     return MouseStateListener(
-      onTap: () => onTap,
+      onTap: onTap,
       childBuilder: (Set<WidgetState> states) {
         Color? backgroundColor = getBackgroundColor(states);
         Color? foregroundColor = getForegroundColor(states);

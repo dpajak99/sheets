@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/values/actions/text_format_actions.dart';
+import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/value_update_notifier.dart';
 
@@ -51,7 +51,7 @@ class SheetTextEditingController extends TextEditingController {
     return sheetText.getCurrentStyle(value.selection.end);
   }
 
-  void applyStyleToSelection(TextFormatAction textFormatAction) {
+  void applyStyleToSelection(TextStyleFormatAction textFormatAction) {
     TextSelection selection = value.selection;
     int start = selection.start;
     int end = selection.end;

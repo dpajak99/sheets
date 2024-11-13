@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
+import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/layers/shared_paints.dart';
+import 'package:sheets/utils/edge_visibility.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 abstract class SheetSelectionPaint {
@@ -14,46 +17,36 @@ abstract class SheetSelectionPaint {
 
   void paint(SheetViewport viewport, Canvas canvas, Size size);
 
-  void paintMainCell(Canvas canvas, Rect rect) {
-    Paint mainCellPaint = Paint()
-      ..color = const Color(0xff3572e3)
-      ..strokeWidth = borderWidth * 2
-      ..isAntiAlias = false
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawRect(rect.subtract(borderWidth / 2), mainCellPaint);
+  void paintMainCell(Canvas canvas, BorderRect rect) {
+    SharedPaints.paintBorder(
+      canvas: canvas,
+      rect: rect,
+      edgeVisibility: EdgeVisibility.allVisible(),
+      border: Border.all(
+        color: const Color(0xff3572e3),
+        width: 2,
+      ),
+    );
   }
 
-  void paintSelectionBackground(Canvas canvas, Rect rect) {
+  void paintSelectionBackground(Canvas canvas, BorderRect backgroundRect) {
     Paint backgroundPaint = Paint()
       ..color = const Color(0x203572e3)
       ..color = const Color(0x203572e3)
       ..style = PaintingStyle.fill;
 
-    canvas.drawRect(rect, backgroundPaint);
+    canvas.drawRect(backgroundRect, backgroundPaint);
   }
 
-  void paintSelectionBorder(Canvas canvas, Rect rect,
-      {bool top = true, bool right = true, bool bottom = true, bool left = true}) {
-    Paint selectionPaint = Paint()
-      ..color = const Color(0xff3572e3)
-      ..strokeWidth = borderWidth
-      ..isAntiAlias = false
-      ..strokeCap = StrokeCap.square
-      ..style = PaintingStyle.stroke;
-
-    if (top) {
-      canvas.drawLine(rect.topLeft, rect.topRight, selectionPaint);
-    }
-    if (right) {
-      canvas.drawLine(rect.topRight, rect.bottomRight, selectionPaint);
-    }
-    if (bottom) {
-      canvas.drawLine(rect.bottomLeft, rect.bottomRight, selectionPaint);
-    }
-    if (left) {
-      canvas.drawLine(rect.topLeft, rect.bottomLeft, selectionPaint);
-    }
+  void paintSelectionBorder(Canvas canvas, BorderRect rect, EdgeVisibility edgeVisibility) {
+    SharedPaints.paintBorder(
+      canvas: canvas,
+      rect: rect,
+      edgeVisibility: edgeVisibility,
+      border: Border.all(
+        color: const Color(0xff3572e3),
+      ),
+    );
   }
 
   void paintFillBorder(Canvas canvas, Rect rect) {

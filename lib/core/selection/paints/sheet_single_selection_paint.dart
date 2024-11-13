@@ -3,6 +3,7 @@ import 'package:sheets/core/selection/renderers/sheet_single_selection_renderer.
 import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/utils/edge_visibility.dart';
 
 class SheetSingleSelectionPaint extends SheetSelectionPaint {
   SheetSingleSelectionPaint(
@@ -23,7 +24,7 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
     if (mainCellVisible) {
       paintMainCell(canvas, selectedCell.rect);
     } else {
-      paintSelectionBorder(canvas, selectedCell.rect);
+      paintSelectionBorder(canvas, selectedCell.rect, EdgeVisibility.allVisible());
     }
 
     if (backgroundVisible) {

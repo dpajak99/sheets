@@ -1,16 +1,17 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/values/actions/cell_style_format_action.dart';
 
-abstract class TextFormatAction with EquatableMixin {
-  TextFormatAction(this.selectionStyle);
+abstract class TextStyleFormatAction extends FormatAction {
+  TextStyleFormatAction(this.selectionStyle, {super.autoresize});
 
   final SelectionStyle selectionStyle;
 
   TextStyle format(TextStyle previousTextStyle);
 }
 
-class UpdateFontWeightAction extends TextFormatAction {
+class UpdateFontWeightAction extends TextStyleFormatAction {
   UpdateFontWeightAction(super.selectionStyle, this.fontWeight);
 
   final FontWeight fontWeight;
@@ -28,7 +29,7 @@ class UpdateFontWeightAction extends TextFormatAction {
   List<Object?> get props => <Object?>[];
 }
 
-class UpdateFontStyleAction extends TextFormatAction {
+class UpdateFontStyleAction extends TextStyleFormatAction {
   UpdateFontStyleAction(super.selectionStyle, this.fontStyle);
 
   final FontStyle fontStyle;
@@ -46,7 +47,7 @@ class UpdateFontStyleAction extends TextFormatAction {
   List<Object?> get props => <Object?>[];
 }
 
-class UpdateTextDecorationAction extends TextFormatAction {
+class UpdateTextDecorationAction extends TextStyleFormatAction {
   UpdateTextDecorationAction(super.selectionStyle, this.decoration);
 
   final TextDecoration decoration;
@@ -64,7 +65,7 @@ class UpdateTextDecorationAction extends TextFormatAction {
   List<Object?> get props => <Object?>[];
 }
 
-class UpdateFontColorAction extends TextFormatAction {
+class UpdateFontColorAction extends TextStyleFormatAction {
   UpdateFontColorAction(super.selectionStyle, this.color);
 
   final Color color;
@@ -78,22 +79,8 @@ class UpdateFontColorAction extends TextFormatAction {
   List<Object?> get props => <Object?>[];
 }
 
-class UpdateBackgroundColorAction extends TextFormatAction {
-  UpdateBackgroundColorAction(super.selectionStyle, this.color);
-
-  final Color color;
-
-  @override
-  TextStyle format(TextStyle previousTextStyle) {
-    return previousTextStyle.copyWith(backgroundColor: color);
-  }
-
-  @override
-  List<Object?> get props => <Object?>[];
-}
-
-class DecreaseFontSizeAction extends TextFormatAction {
-  DecreaseFontSizeAction(super.selectionStyle);
+class DecreaseFontSizeAction extends TextStyleFormatAction {
+  DecreaseFontSizeAction(super.selectionStyle) : super(autoresize: true);
 
   @override
   TextStyle format(TextStyle previousTextStyle) {
@@ -108,8 +95,8 @@ class DecreaseFontSizeAction extends TextFormatAction {
   List<Object?> get props => <Object?>[];
 }
 
-class IncreaseFontSizeAction extends TextFormatAction {
-  IncreaseFontSizeAction(super.selectionStyle);
+class IncreaseFontSizeAction extends TextStyleFormatAction {
+  IncreaseFontSizeAction(super.selectionStyle): super(autoresize: true);
 
   @override
   TextStyle format(TextStyle previousTextStyle) {
@@ -123,7 +110,7 @@ class IncreaseFontSizeAction extends TextFormatAction {
   List<Object?> get props => <Object?>[];
 }
 
-class UpdateFontFamilyAction extends TextFormatAction {
+class UpdateFontFamilyAction extends TextStyleFormatAction {
   UpdateFontFamilyAction(super.selectionStyle, this.fontFamily);
 
   final String fontFamily;

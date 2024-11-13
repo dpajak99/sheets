@@ -60,27 +60,31 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
               },
             ),
             const VerticalDivider(color: Color(0xffc7c7c7), width: 1, thickness: 1),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 11),
-              child: Row(
-                children: <Widget>[
-                  const AssetIcon(SheetIcons.function, size: 16, color: Color(0xff989a99)),
-                  const SizedBox(width: 8),
-                  ListenableBuilder(
-                    listenable: widget.sheetController.selection,
-                    builder: (BuildContext context, _) {
-                      return Text(
-                        widget.sheetController.properties
-                            .getCellProperties(widget.sheetController.selection.value.mainCell)
-                            .value
-                            .rawText,
-                        overflow: TextOverflow.clip,
-                        maxLines: 1,
-                        style: const TextStyle(color: Colors.black, fontSize: 14, height: 1),
-                      );
-                    },
-                  ),
-                ],
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 11),
+                child: Row(
+                  children: <Widget>[
+                    const AssetIcon(SheetIcons.function, size: 16, color: Color(0xff989a99)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ListenableBuilder(
+                        listenable: widget.sheetController.selection,
+                        builder: (BuildContext context, _) {
+                          return Text(
+                            widget.sheetController.properties
+                                .getCellProperties(widget.sheetController.selection.value.mainCell)
+                                .value
+                                .rawText,
+                            overflow: TextOverflow.clip,
+                            maxLines: 1,
+                            style: const TextStyle(color: Colors.black, fontSize: 14, height: 1),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

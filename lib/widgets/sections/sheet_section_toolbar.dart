@@ -4,7 +4,8 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/values/actions/text_format_actions.dart';
+import 'package:sheets/core/values/actions/cell_style_format_action.dart';
+import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_color_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_divider.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_font_family_button.dart';
@@ -14,6 +15,7 @@ import 'package:sheets/widgets/material/toolbar_items/material_toolbar_searchbar
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_align_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_format_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 import 'package:sheets/widgets/sections/sheet_toolbar/toolbar_buttons_section.dart';
 import 'package:sheets/widgets/sheet_theme.dart';
@@ -169,7 +171,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                               icon: SheetIcons.format_color_fill,
                               color: selectionStyle.backgroundColor ?? defaultTextStyle.backgroundColor ?? Colors.white,
                               onSelected: (Color color) {
-                                widget.sheetController.formatSelection(UpdateBackgroundColorAction(selectionStyle, color));
+                                widget.sheetController.formatSelection(UpdateBackgroundColorAction(color));
                               },
                             ),
                             MaterialToolbarIconButton(icon: SheetIcons.border_all, onTap: (){}),
@@ -180,18 +182,23 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                         ToolbarButtonsSection(
                           buttons: <Widget>[
                             MaterialTextAlignButton(
-                              selectedTextAlign: TextAlign.left,
+                              selectedTextAlign: selectionStyle.textAlignHorizontal,
                               onChanged: (TextAlign value) {
-                                // widget.sheetController.formatSelection(UpdateTextAlignAction(selectionStyle, value));
+                                widget.sheetController.formatSelection(UpdateHorizontalTextAlignAction(value));
                               },
                             ),
                             MaterialTextVerticalAlignButton(
-                              selectedTextAlign: TextVerticalAlign.bottom,
+                              selectedTextAlign: selectionStyle.textAlignVertical,
                               onChanged: (TextVerticalAlign value) {
+                                widget.sheetController.formatSelection(UpdateVerticalTextAlignAction(value));
+                              },
+                            ),
+                            MaterialTextOverflowButton(
+                              selectedTextOverflow: TextOverflowBehavior.overflow,
+                              onChanged: (TextOverflowBehavior value) {
                                 // widget.sheetController.formatSelection(UpdateVerticalAlignAction(selectionStyle, value));
                               },
                             ),
-                            MaterialToolbarIconButton.withDropdown(icon: SheetIcons.format_text_overflow, onTap: (){}),
                             MaterialToolbarIconButton.withDropdown(icon: SheetIcons.text_rotation_none, onTap: (){}),
                             const MaterialToolbarDivider(),
                           ],

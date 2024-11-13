@@ -24,6 +24,8 @@ class SheetIcons {
   static const AssetIconData format_color_text = AssetIconData('assets/icons/format_color_text.svg');
   static const AssetIconData format_italic = AssetIconData('assets/icons/format_italic.svg');
   static const AssetIconData format_text_overflow = AssetIconData('assets/icons/format_text_overflow.svg');
+  static const AssetIconData format_text_clip = AssetIconData('assets/icons/format_text_clip.svg');
+  static const AssetIconData format_text_wrap = AssetIconData('assets/icons/format_text_wrap.svg');
   static const AssetIconData function = AssetIconData('assets/icons/function.svg');
   static const AssetIconData functions = AssetIconData('assets/icons/functions.svg');
   static const AssetIconData insert_chart = AssetIconData('assets/icons/insert_chart.svg');

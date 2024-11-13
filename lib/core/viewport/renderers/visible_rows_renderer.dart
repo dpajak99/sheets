@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -38,10 +37,10 @@ class VisibleRowsRenderer {
       ViewportRow viewportRow = ViewportRow(
         index: rowIndex,
         style: rowStyle,
-        rect: Rect.fromLTWH(0, currentContentHeight + columnHeadersHeight, rowHeadersWidth, rowStyle.height),
+        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight, rowHeadersWidth, rowStyle.height),
       );
       visibleRows.add(viewportRow);
-      currentContentHeight += viewportRow.style.height;
+      currentContentHeight += viewportRow.style.height + borderWidth;
 
       index++;
     }

@@ -5,46 +5,56 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/values/actions/text_format_actions.dart';
-import 'package:sheets/core/values/cell_value.dart';
+import 'package:sheets/core/values/actions/cell_style_format_action.dart';
+import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class SheetProperties extends ChangeNotifier {
   SheetProperties({
     Map<ColumnIndex, ColumnStyle>? customColumnStyles,
     Map<RowIndex, RowStyle>? customRowStyles,
-    Map<CellIndex, SheetRichText>? data,
-    this.columnCount = 10,
-    this.rowCount = 20,
-  })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
+    Map<CellIndex, CellProperties>? data,
+    this.columnCount = 100,
+    this.rowCount = 200,
+  })  : _customRowStyles = <RowIndex, RowStyle>{
+          RowIndex(2): RowStyle(height: 60),
+        },
         _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{} {
     this.data = data ??
-        <CellIndex, SheetRichText>{
-          CellIndex.raw(0, 0): SheetRichText.single(text: '1'),
-          CellIndex.raw(0, 1): SheetRichText.single(text: '1.1'),
-          CellIndex.raw(0, 2): SheetRichText.single(text: '3'),
+        <CellIndex, CellProperties>{
+          CellIndex.raw(0, 0): CellProperties(value: SheetRichText.single(text: '1'), style: CellStyle()),
+          CellIndex.raw(0, 1): CellProperties(value: SheetRichText.single(text: '1.1'), style: CellStyle()),
+          CellIndex.raw(0, 2): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
           //
-          CellIndex.raw(1, 0): SheetRichText.single(text: '2'),
-          CellIndex.raw(1, 1): SheetRichText.single(text: '2.2'),
-          CellIndex.raw(1, 2): SheetRichText.single(text: '2'),
+          CellIndex.raw(1, 0): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
+          CellIndex.raw(1, 1): CellProperties(value: SheetRichText.single(text: '2.2'), style: CellStyle()),
+          CellIndex.raw(1, 2): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
           //
-          CellIndex.raw(2, 0): SheetRichText.single(text: '3'),
-          CellIndex.raw(2, 1): SheetRichText.single(text: '3.3'),
-          CellIndex.raw(2, 2): SheetRichText.single(text: '1'),
+          CellIndex.raw(2, 0): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
+          CellIndex.raw(2, 1): CellProperties(value: SheetRichText.single(text: '3.3'), style: CellStyle()),
+          CellIndex.raw(2, 2): CellProperties(value: SheetRichText.single(text: 'Szła dzieweczka do laseczka do zielonego ahahaha do zielonego ahahah do zieeeelooonegoooo... Napotkała myśliweczka mardzo szwarnego ahahahahah bardzo szwarnego ahahahhaha bardzo szwarnegooooo.... Gdzie jest ta ulica'), style: CellStyle()),
           //
-          CellIndex.raw(10, 5): SheetRichText(
-            spans: <SheetTextSpan>[
-              SheetTextSpan(text: 'a'),
-              SheetTextSpan(text: 'bff', style: defaultTextStyle.copyWith(fontWeight: FontWeight.bold)),
-              SheetTextSpan(text: 'cvv', style: defaultTextStyle.copyWith(color: Colors.red)),
-              SheetTextSpan(text: 'd'),
-              // SheetTextSpan(text: 'ffe', style: defaultTextStyle.copyWith(fontSize: 14)),
-            ],
+          CellIndex.raw(10, 5): CellProperties(
+            value: SheetRichText(
+              spans: <SheetTextSpan>[
+                SheetTextSpan(text: 'a'),
+                SheetTextSpan(text: 'bff', style: defaultTextStyle.copyWith(fontWeight: FontWeight.bold)),
+                SheetTextSpan(text: 'cvv', style: defaultTextStyle.copyWith(color: Colors.red)),
+                SheetTextSpan(text: 'd'),
+                // SheetTextSpan(text: 'ffe', style: defaultTextStyle.copyWith(fontSize: 14)),
+              ],
+            ),
+            style: CellStyle(
+              border: Border.all(
+                color: Colors.black,
+                width: 1,
+              ),
+            ),
           ),
         };
   }
 
-  late final Map<CellIndex, SheetRichText> data;
+  late final Map<CellIndex, CellProperties> data;
 
   final Map<ColumnIndex, ColumnStyle> _customColumnStyles;
 
@@ -57,47 +67,40 @@ class SheetProperties extends ChangeNotifier {
   int columnCount;
   int rowCount;
 
-  void formatSelection(List<CellIndex> cells, TextFormatAction textFormatAction) {
+  void formatSelection(List<CellIndex> cells, FormatAction formatAction) {
     for (CellIndex cellIndex in cells) {
-      SheetRichText text = getRichText(cellIndex);
-      text.updateStyle(textFormatAction);
+      print('formatSelection: $cellIndex');
+      data[cellIndex] ??= CellProperties.empty();
+      if (formatAction is TextStyleFormatAction) {
+        data[cellIndex]!.value.updateStyle(formatAction);
+      } else if (formatAction is CellStyleFormatAction) {
+        formatAction.format(data[cellIndex]!.style);
+      }
     }
     notifyListeners();
   }
 
   void setCellText(CellIndex cellIndex, SheetRichText text) {
-    data[cellIndex] = text;
+    data[cellIndex] ??= CellProperties.empty();
+    data[cellIndex]!.value = text;
     notifyListeners();
   }
 
-  void setCellsProperties(List<CellProperties> cellProperties) {
-    for (CellProperties cellProperty in cellProperties) {
-      data[cellProperty.index] = cellProperty.value.span;
-    }
-    notifyListeners();
-  }
-
-  SheetRichText getRichText(CellIndex cellIndex) {
-    return data[cellIndex] ?? SheetRichText.empty();
-  }
-
-  TextStyle getSharedStyle(CellIndex cellIndex) {
-    return getRichText(cellIndex).getSharedStyle();
-  }
-
-  List<CellProperties> getCellPropertiesList(List<CellIndex> cellIndexes) {
-    return cellIndexes.map(getCellProperties).toList();
+  Map<CellIndex, CellProperties> getMultiCellProperties(List<CellIndex> cellIndexes) {
+    return Map<CellIndex, CellProperties>.fromEntries(cellIndexes.map((CellIndex cellIndex) {
+      return MapEntry<CellIndex, CellProperties>(cellIndex, getCellProperties(cellIndex));
+    }));
   }
 
   CellProperties getCellProperties(CellIndex cellIndex) {
-    RowStyle rowStyle = getRowStyle(cellIndex.row);
-    ColumnStyle columnStyle = getColumnStyle(cellIndex.column);
+    return data[cellIndex] ?? CellProperties.empty();
+  }
 
-    return CellProperties(
-      cellIndex,
-      CellStyle(rowStyle: rowStyle, columnStyle: columnStyle),
-      CellValueParser.parse(getRichText(cellIndex)),
-    );
+  void setCellsProperties(Map<CellIndex, CellProperties> cellProperties) {
+    for (MapEntry<CellIndex, CellProperties> entry in cellProperties.entries) {
+      data[entry.key] = entry.value;
+    }
+    notifyListeners();
   }
 
   void addRows(int count) {
@@ -145,8 +148,8 @@ class SheetProperties extends ChangeNotifier {
   void adjustRowToMaxFontSize(RowIndex rowIndex) {
     double maxHeight = 0;
     for (int i = 0; i < columnCount; i++) {
-      SheetRichText text = getRichText(CellIndex(row: rowIndex, column: ColumnIndex(i)));
-      TextPainter textPainter = TextPainter(text: text.toTextSpan(), textDirection: TextDirection.ltr)..layout();
+      CellProperties cellProperties = getCellProperties(CellIndex(row: rowIndex, column: ColumnIndex(i)));
+      TextPainter textPainter = TextPainter(text: cellProperties.value.toTextSpan(), textDirection: TextDirection.ltr)..layout();
       maxHeight = max(maxHeight, textPainter.height);
     }
     setRowStyle(rowIndex, RowStyle(height: maxHeight + 5));

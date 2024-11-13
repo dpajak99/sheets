@@ -32,10 +32,7 @@ class SheetRangeSelectionPaint<T extends SheetIndex> extends SheetSelectionPaint
       paintSelectionBorder(
         canvas,
         selectionRect,
-        top: selectionRect.isTopBorderVisible,
-        right: selectionRect.isRightBorderVisible,
-        bottom: selectionRect.isBottomBorderVisible,
-        left: selectionRect.isLeftBorderVisible,
+        selectionRect.edgeVisibility,
       );
     }
   }

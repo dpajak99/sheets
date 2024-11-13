@@ -7,7 +7,7 @@ import 'package:sheets/widgets/material/toolbar_items/mixins/material_toolbar_it
 import 'package:sheets/widgets/mouse_state_listener.dart';
 import 'package:sheets/widgets/popup_button.dart';
 
-class MaterialToolbarColorButton extends StatelessWidget with MaterialToolbarItemMixin {
+class MaterialToolbarColorButton extends StatefulWidget with MaterialToolbarItemMixin {
   const MaterialToolbarColorButton({
     required this.color,
     required this.onSelected,
@@ -29,30 +29,43 @@ class MaterialToolbarColorButton extends StatelessWidget with MaterialToolbarIte
   final AssetIconData icon;
 
   @override
-  Widget build(BuildContext context) {
-    return PopupButton(
-      button: _ColorPickerButton(
-        selectedColor: color,
-        icon: icon,
-        width: width,
-        height: height,
-        margin: margin,
-      ),
-      popupBuilder: (BuildContext context) {
-        return MaterialColorPicker(
-          selectedColor: color,
-          onColorChanged: onSelected,
-        );
-      },
-    );
-  }
-
-  @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(ColorProperty('color', color));
     properties.add(ObjectFlagProperty<ValueChanged<Color>>.has('onSelected', onSelected));
     properties.add(DiagnosticsProperty<AssetIconData>('icon', icon));
+  }
+
+  @override
+  State<StatefulWidget> createState() => _MaterialToolbarColorButtonState();
+}
+
+class _MaterialToolbarColorButtonState extends State<MaterialToolbarColorButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupButton(
+      button: _ColorPickerButton(
+        pressed: _pressed,
+        selectedColor: widget.color,
+        icon: widget.icon,
+        width: widget.width,
+        height: widget.height,
+        margin: widget.margin,
+      ),
+      onToggle: (bool isPressed) {
+        setState(() {
+          _pressed = isPressed;
+        });
+      },
+      popupBuilder: (BuildContext context) {
+        return MaterialColorPicker(
+          selectedColor: widget.color,
+          onColorChanged: widget.onSelected,
+        );
+      },
+    );
   }
 }
 
@@ -64,10 +77,12 @@ class _ColorPickerButton extends StatelessWidget with MaterialToolbarButtonMixin
     required this.selectedColor,
     required this.icon,
     this.active = false,
+    this.pressed = false,
   });
 
   @override
   final bool active;
+  final bool pressed;
   final double width;
   final double height;
   final EdgeInsets margin;
@@ -79,8 +94,13 @@ class _ColorPickerButton extends StatelessWidget with MaterialToolbarButtonMixin
     return MouseStateListener(
       onTap: () {},
       childBuilder: (Set<WidgetState> states) {
-        Color? backgroundColor = getBackgroundColor(states);
-        Color? foregroundColor = getForegroundColor(states);
+        Set<WidgetState> updatedStates = <WidgetState>{
+          if (pressed) WidgetState.pressed,
+          ...states,
+        };
+
+        Color? backgroundColor = getBackgroundColor(updatedStates);
+        Color? foregroundColor = getForegroundColor(updatedStates);
 
         return Container(
           width: width,
@@ -121,5 +141,6 @@ class _ColorPickerButton extends StatelessWidget with MaterialToolbarButtonMixin
     properties.add(DiagnosticsProperty<EdgeInsets>('margin', margin));
     properties.add(ColorProperty('selectedColor', selectedColor));
     properties.add(DiagnosticsProperty<AssetIconData>('icon', icon));
+    properties.add(DiagnosticsProperty<bool>('pressed', pressed));
   }
 }

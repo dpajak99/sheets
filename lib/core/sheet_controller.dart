@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
 import 'package:sheets/core/keyboard/keyboard_listener.dart';
 import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
@@ -19,7 +17,8 @@ import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/core/values/actions/text_format_actions.dart';
+import 'package:sheets/core/values/actions/cell_style_format_action.dart';
+import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -64,38 +63,38 @@ class SheetController {
 
   ValueNotifier<EditableViewportCell?> get activeCellNotifier => _editableCellNotifier;
 
-  void formatSelection(TextFormatAction textFormatAction) {
+  void formatSelection(FormatAction formatAction) {
     List<CellIndex> selectedCells = selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
-    if (activeCellNotifier.value != null) {
+    if (activeCellNotifier.value != null && formatAction is TextStyleFormatAction) {
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      controller.applyStyleToSelection(textFormatAction);
+      controller.applyStyleToSelection(formatAction);
     } else {
-      properties.formatSelection(selectedCells, textFormatAction);
+      properties.formatSelection(selectedCells, formatAction);
     }
 
-    properties.ensureMinimalRowsHeight(
-      selectedCells.map((CellIndex cellIndex) => cellIndex.row).toSet().toList(),
-    );
+    if(formatAction.autoresize) {
+      properties.ensureMinimalRowsHeight(selectedCells.map((CellIndex cellIndex) => cellIndex.row).toSet().toList());
+    }
   }
 
   SelectionStyle getSelectionStyle() {
     if (activeCellNotifier.value != null) {
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      return SelectionStyle(controller.activeStyle);
+      return SelectionStyle(controller.activeStyle, activeCellNotifier.value!.cell.properties.style);
     } else {
       CellProperties cellProperties = properties.getCellProperties(selection.value.mainCell);
-      return SelectionStyle(cellProperties.value.span.getSharedStyle());
+      return SelectionStyle(cellProperties.value.getSharedStyle(), cellProperties.style);
     }
   }
 
   Future<void> fill(SheetFillSelection selection) async {
-    List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(properties.columnCount, properties.rowCount);
-    List<CellIndex> fillCells = selection.getSelectedCells(properties.columnCount, properties.rowCount);
-
-    List<CellProperties> baseProperties = selectedCells.map(properties.getCellProperties).toList();
-    List<CellProperties> fillProperties = fillCells.map(properties.getCellProperties).toList();
-
-    await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
+    // List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(properties.columnCount, properties.rowCount);
+    // List<CellIndex> fillCells = selection.getSelectedCells(properties.columnCount, properties.rowCount);
+    //
+    // List<CellProperties> baseProperties = selectedCells.map(properties.getCellProperties).toList();
+    // List<CellProperties> fillProperties = fillCells.map(properties.getCellProperties).toList();
+    //
+    // await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
   }
 
   void resizeColumn(ColumnIndex column, double width) {
@@ -134,7 +133,7 @@ class SheetController {
   void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
     if (value != null) {
-      _editableCellNotifier.value = EditableViewportCell(cell.withText(value));
+      _editableCellNotifier.value = EditableViewportCell(cell..setText(value));
     } else {
       _editableCellNotifier.value = EditableViewportCell(cell);
     }
