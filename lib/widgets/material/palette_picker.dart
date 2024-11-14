@@ -1,21 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// PalettePicker widget allows selection of a color value based on position.
 class PalettePicker extends StatefulWidget {
   const PalettePicker({
-    Key? key,
     required this.color,
     required this.position,
     required this.onChanged,
     required this.leftRightColors,
     required this.topBottomColors,
+    super.key,
     this.leftPosition = 0.0,
     this.rightPosition = 1.0,
     this.topPosition = 0.0,
     this.bottomPosition = 1.0,
     this.border,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   final Color color;
   final Offset position;
@@ -30,31 +31,41 @@ class PalettePicker extends StatefulWidget {
   final BorderRadius? borderRadius;
 
   @override
-  _PalettePickerState createState() => _PalettePickerState();
+  State<StatefulWidget> createState() => _PalettePickerState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ColorProperty('color', color));
+    properties.add(DiagnosticsProperty<Offset>('position', position));
+    properties.add(ObjectFlagProperty<ValueChanged<Offset>>.has('onChanged', onChanged));
+    properties.add(DoubleProperty('leftPosition', leftPosition));
+    properties.add(DoubleProperty('rightPosition', rightPosition));
+    properties.add(IterableProperty<Color>('leftRightColors', leftRightColors));
+    properties.add(DoubleProperty('topPosition', topPosition));
+    properties.add(DoubleProperty('bottomPosition', bottomPosition));
+    properties.add(IterableProperty<Color>('topBottomColors', topBottomColors));
+    properties.add(DiagnosticsProperty<Border?>('border', border));
+    properties.add(DiagnosticsProperty<BorderRadius?>('borderRadius', borderRadius));
+  }
 }
 
 class _PalettePickerState extends State<PalettePicker> {
   Offset get _ratio {
-    final double ratioX = ((widget.position.dx - widget.leftPosition) /
-        (widget.rightPosition - widget.leftPosition))
-        .clamp(0.0, 1.0);
-    final double ratioY = ((widget.position.dy - widget.topPosition) /
-        (widget.bottomPosition - widget.topPosition))
-        .clamp(0.0, 1.0);
+    double ratioX = ((widget.position.dx - widget.leftPosition) / (widget.rightPosition - widget.leftPosition)).clamp(0.0, 1.0);
+    double ratioY = ((widget.position.dy - widget.topPosition) / (widget.bottomPosition - widget.topPosition)).clamp(0.0, 1.0);
     return Offset(ratioX, ratioY);
   }
 
   void _updatePosition(Offset localPosition, Size size) {
-    final double dx = localPosition.dx.clamp(0.0, size.width);
-    final double dy = localPosition.dy.clamp(0.0, size.height);
+    double dx = localPosition.dx.clamp(0.0, size.width);
+    double dy = localPosition.dy.clamp(0.0, size.height);
 
-    final double ratioX = dx / size.width;
-    final double ratioY = dy / size.height;
+    double ratioX = dx / size.width;
+    double ratioY = dy / size.height;
 
-    final double positionX = widget.leftPosition +
-        ratioX * (widget.rightPosition - widget.leftPosition);
-    final double positionY = widget.topPosition +
-        ratioY * (widget.bottomPosition - widget.topPosition);
+    double positionX = widget.leftPosition + ratioX * (widget.rightPosition - widget.leftPosition);
+    double positionY = widget.topPosition + ratioY * (widget.bottomPosition - widget.topPosition);
 
     widget.onChanged(Offset(positionX, positionY));
   }
@@ -70,7 +81,7 @@ class _PalettePickerState extends State<PalettePicker> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
+      children: <Widget>[
         // Left-Right Gradient
         Container(
           decoration: BoxDecoration(
@@ -119,19 +130,19 @@ class _PalettePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Offset offset = Offset(
+    Offset offset = Offset(
       size.width * ratio.dx,
       size.height * ratio.dy,
     );
 
-    final Paint paintWhite = Paint()..color = Colors.white;
-    final Paint paintColor = Paint()..color = color;
+    Paint paintWhite = Paint()..color = Colors.white;
+    Paint paintColor = Paint()..color = color;
 
     Path circlePath = Path()..addOval(Rect.fromCircle(center: offset + const Offset(0, -1), radius: 11));
 
     canvas.drawShadow(circlePath, const Color(0xAA000000), 2, true);
-    canvas.drawCircle(offset, 10.0, paintWhite);
-    canvas.drawCircle(offset, 8.0, paintColor);
+    canvas.drawCircle(offset, 10, paintWhite);
+    canvas.drawCircle(offset, 8, paintColor);
   }
 
   @override

@@ -11,7 +11,7 @@ class CellProperties with EquatableMixin {
   });
 
   CellProperties.empty()
-      : value = SheetRichText.empty(),
+      : value = SheetRichText(),
         style = CellStyle();
 
   CellStyle style;

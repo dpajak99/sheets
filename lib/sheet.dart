@@ -166,8 +166,8 @@ class SheetGrid extends StatelessWidget {
           top: 0,
           left: 0,
           child: Container(
-            width: rowHeadersWidth,
-            height: columnHeadersHeight,
+            width: rowHeadersWidth + 1,
+            height: columnHeadersHeight + 1,
             decoration: const BoxDecoration(
               color: Color(0xfff8f9fa),
               border: Border(

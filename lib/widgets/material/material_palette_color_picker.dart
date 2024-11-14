@@ -102,15 +102,14 @@ class _MaterialPaletteColorPickerDialogState extends State<MaterialPaletteColorP
             ),
             const SizedBox(height: 29),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: <Widget>[
                 SizedBox(
                   width: 32,
                   height: 32,
                   child: Stack(
                     alignment: Alignment.center,
-                    children: [
+                    children: <Widget>[
                       Container(
                         width: 32,
                         height: 32,
@@ -179,19 +178,19 @@ class _MaterialPaletteColorPickerDialogState extends State<MaterialPaletteColorP
 }
 
 class TextColorSection extends StatelessWidget {
-
   const TextColorSection({
     required this.color,
     required this.onColorChanged,
     super.key,
   });
+
   final Color color;
   final ValueChanged<HSVColor> onColorChanged;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: <Widget>[
         RGBHexTextValuePicker(
           color: color,
           onChanged: (Color color) {
@@ -218,12 +217,12 @@ class TextColorSection extends StatelessWidget {
 }
 
 class RGBHexTextValuePicker extends StatefulWidget {
-
   const RGBHexTextValuePicker({
     required this.color,
     required this.onChanged,
     super.key,
   });
+
   final Color color;
   final ValueChanged<Color> onChanged;
 
@@ -248,7 +247,7 @@ class _RGBHexTextValuePickerState extends State<RGBHexTextValuePicker> {
     controller.text = '#${widget.color.value.toRadixString(16).toUpperCase().padLeft(8, '0')}';
 
     focusNode.addListener(() {
-      if(!focusNode.hasFocus) {
+      if (!focusNode.hasFocus) {
         controller.text = '#${widget.color.value.toRadixString(16).toUpperCase().padLeft(8, '0')}';
       }
     });
@@ -269,12 +268,10 @@ class _RGBHexTextValuePickerState extends State<RGBHexTextValuePicker> {
       textFieldWidth: 75,
       label: 'Hex',
       controller: controller,
-      formatters: [RGBAHexInputFormatter()],
+      formatters: <TextInputFormatter>[RGBAHexInputFormatter()],
       onChanged: (String value) {
         String parsedValue = value.startsWith('#') ? value.substring(1) : value;
-        print('Parsed value: (${parsedValue.length}) $parsedValue');
         if (parsedValue.length == 8) {
-          print('Updating color from hex: $parsedValue');
           widget.onChanged(Color(int.parse(parsedValue, radix: 16)));
         }
       },
@@ -290,12 +287,12 @@ class _RGBHexTextValuePickerState extends State<RGBHexTextValuePicker> {
 }
 
 class RGBTextValuePicker extends StatefulWidget {
-
   const RGBTextValuePicker({
     required this.color,
     required this.onChanged,
     super.key,
   });
+
   final Color color;
   final ValueChanged<Color> onChanged;
 
@@ -327,21 +324,21 @@ class _RGBTextValuePickerState extends State<RGBTextValuePicker> {
     blueController.text = widget.color.blue.toString();
 
     redFocusNode.addListener(() {
-      if(!redFocusNode.hasFocus) {
+      if (!redFocusNode.hasFocus) {
         int? red = widget.color.red;
         redController.text = red.toString();
       }
     });
 
     greenFocusNode.addListener(() {
-      if(!greenFocusNode.hasFocus) {
+      if (!greenFocusNode.hasFocus) {
         int? green = widget.color.green;
         greenController.text = green.toString();
       }
     });
 
     blueFocusNode.addListener(() {
-      if(!blueFocusNode.hasFocus) {
+      if (!blueFocusNode.hasFocus) {
         int? blue = widget.color.blue;
         blueController.text = blue.toString();
       }
@@ -363,8 +360,8 @@ class _RGBTextValuePickerState extends State<RGBTextValuePicker> {
   @override
   void didUpdateWidget(covariant RGBTextValuePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(widget.color != oldWidget.color) {
-      if(redFocusNode.hasFocus || greenFocusNode.hasFocus || blueFocusNode.hasFocus) {
+    if (widget.color != oldWidget.color) {
+      if (redFocusNode.hasFocus || greenFocusNode.hasFocus || blueFocusNode.hasFocus) {
         return;
       }
       redController.text = widget.color.red.toString();
@@ -376,13 +373,13 @@ class _RGBTextValuePickerState extends State<RGBTextValuePicker> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: <Widget>[
         _PickerTextField(
           focusNode: redFocusNode,
           controller: redController,
           areaWidth: 43,
           label: 'R',
-          formatters: [RGBInputFormatter()],
+          formatters: <TextInputFormatter>[RGBInputFormatter()],
           onChanged: (String value) {
             int? red = value.isEmpty ? 0 : int.tryParse(value);
             _onColorChanged(red: red);
@@ -394,7 +391,7 @@ class _RGBTextValuePickerState extends State<RGBTextValuePicker> {
           controller: greenController,
           areaWidth: 43,
           label: 'G',
-          formatters: [RGBInputFormatter()],
+          formatters: <TextInputFormatter>[RGBInputFormatter()],
           onChanged: (String value) {
             int? green = value.isEmpty ? 0 : int.tryParse(value);
             _onColorChanged(green: green);
@@ -406,7 +403,7 @@ class _RGBTextValuePickerState extends State<RGBTextValuePicker> {
           controller: blueController,
           areaWidth: 43,
           label: 'B',
-          formatters: [RGBInputFormatter()],
+          formatters: <TextInputFormatter>[RGBInputFormatter()],
           onChanged: (String value) {
             int? blue = value.isEmpty ? 0 : int.tryParse(value);
             _onColorChanged(blue: blue);
@@ -420,7 +417,7 @@ class _RGBTextValuePickerState extends State<RGBTextValuePicker> {
     widget.onChanged(Color.fromARGB(
       255,
       (red != null && red >= 0 && red <= 255) ? red : widget.color.red,
-      (green != null && green >= 0 && green <= 255) ? green: widget.color.green,
+      (green != null && green >= 0 && green <= 255) ? green : widget.color.green,
       (blue != null && blue >= 0 && blue <= 255) ? blue : widget.color.blue,
     ));
   }
@@ -438,12 +435,12 @@ class _RGBTextValuePickerState extends State<RGBTextValuePicker> {
 }
 
 class SheetOutlinedButton extends StatelessWidget {
-
   const SheetOutlinedButton({
     required this.label,
     required this.onPressed,
     super.key,
   });
+
   final String label;
   final VoidCallback onPressed;
 
@@ -501,12 +498,12 @@ class SheetOutlinedButton extends StatelessWidget {
 }
 
 class SheetElevatedButton extends StatelessWidget {
-
   const SheetElevatedButton({
     required this.label,
     required this.onPressed,
     super.key,
   });
+
   final String label;
   final VoidCallback onPressed;
 
@@ -564,12 +561,12 @@ class SheetElevatedButton extends StatelessWidget {
 }
 
 class SheetIconButton extends StatelessWidget {
-
   const SheetIconButton({
     required this.icon,
     required this.onPressed,
     super.key,
   });
+
   final IconData icon;
   final VoidCallback onPressed;
 
@@ -623,7 +620,6 @@ class SheetIconButton extends StatelessWidget {
 }
 
 class _PickerTextField extends StatefulWidget {
-
   const _PickerTextField({
     required this.controller,
     required this.focusNode,
@@ -658,7 +654,6 @@ class _PickerTextField extends StatefulWidget {
 }
 
 class _PickerTextFieldState extends State<_PickerTextField> {
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -696,7 +691,7 @@ class _PickerTextFieldState extends State<_PickerTextField> {
                   borderSide: BorderSide(color: Color(0xffDADCE0)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xff000000), width: 2),
+                  borderSide: BorderSide(width: 2),
                 ),
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
@@ -713,7 +708,7 @@ class RGBInputFormatter extends TextInputFormatter {
   RGBInputFormatter({
     this.min = 0,
     this.max = 255,
-  }) : assert(min >= 0 && max <= 255);
+  }) : assert(min >= 0 && max <= 255, 'Value must be between min and max');
 
   final int min;
   final int max;
@@ -727,7 +722,7 @@ class RGBInputFormatter extends TextInputFormatter {
       return oldValue;
     }
 
-    final int? value = int.tryParse(newValue.text);
+    int? value = int.tryParse(newValue.text);
     if (value == null) {
       return oldValue;
     }
@@ -740,7 +735,7 @@ class RGBAHexInputFormatter extends TextInputFormatter {
   RGBAHexInputFormatter({
     this.min = 0,
     this.max = 255,
-  }) : assert(min >= 0 && max <= 255);
+  }) : assert(min >= 0 && max <= 255, 'Value must be between min and max');
 
   final int min;
   final int max;

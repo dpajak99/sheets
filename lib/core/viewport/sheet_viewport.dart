@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -81,23 +82,31 @@ class SheetViewport extends ChangeNotifier {
   ViewportItem? ensureIndexFullyVisible(SheetIndex index) {
     Offset scrollOffset = _scrollController.offset;
 
-    Rect sheetCoords = index.getSheetCoordinates(_properties);
-    double sheetHeight = viewportRect.innerRectLocal.height;
-    double sheetWidth = viewportRect.innerRectLocal.width;
+    Rect cellSheetCoords = index.getSheetCoordinates(_properties);
 
-    double topMargin = sheetCoords.top;
-    double bottomMargin = sheetCoords.bottom;
-    double leftMargin = sheetCoords.left;
-    double rightMargin = sheetCoords.right;
+    double sheetWidth = viewportRect.innerRectLocal.width;
+    double sheetHeight = viewportRect.innerRectLocal.height;
+
+    double topMargin = cellSheetCoords.top;
+    double bottomMargin = cellSheetCoords.bottom;
+    double leftMargin = cellSheetCoords.left;
+    double rightMargin = cellSheetCoords.right;
 
     if (topMargin < scrollOffset.dy) {
-      _scrollController.scrollToVertical(sheetCoords.top - 1);
+      double shift = cellSheetCoords.top;
+      _scrollController.scrollToVertical(shift);
+
     } else if (bottomMargin > scrollOffset.dy + sheetHeight) {
-      _scrollController.scrollToVertical(sheetCoords.bottom - sheetHeight + 1);
+      double shift = cellSheetCoords.bottom - sheetHeight;
+      _scrollController.scrollToVertical(shift);
+
     } else if (leftMargin < scrollOffset.dx) {
-      _scrollController.scrollToHorizontal(sheetCoords.left - 1);
+      double shift = cellSheetCoords.left;
+      _scrollController.scrollToHorizontal(shift);
+
     } else if (rightMargin > scrollOffset.dx + sheetWidth) {
-      _scrollController.scrollToHorizontal(sheetCoords.right - sheetWidth + 1);
+      double shift = cellSheetCoords.right - sheetWidth;
+      _scrollController.scrollToHorizontal(shift);
     }
 
     return visibleContent.findCell(index.toCellIndex());

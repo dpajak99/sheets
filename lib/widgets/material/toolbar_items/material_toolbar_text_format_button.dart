@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_popup.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_button.dart';
-import 'package:sheets/widgets/material/toolbar_items/mixins/material_button_item_mixin.dart';
 import 'package:sheets/widgets/material/toolbar_items/mixins/material_toolbar_item_mixin.dart';
 import 'package:sheets/widgets/mouse_state_listener.dart';
 import 'package:sheets/widgets/popup_button.dart';
@@ -69,7 +68,7 @@ class _MaterialFormatDropdownState extends State<_MaterialFormatDropdown> {
         ),
         child: const Column(
           children: <Widget>[
-            _SelectableButton(label: 'Automatycznie'),
+            _SelectableButton(label: 'Automatycznie', selected: true),
             _SelectableButton(label: 'Zwykły tekst'),
             MaterialToolbarPopupDivider(),
             _SelectableButton(label: 'Liczba', exampleValue: '1 000,12'),
@@ -101,7 +100,6 @@ class _SelectableButton extends StatelessWidget {
     required this.label,
     this.exampleValue,
     this.selected = false,
-    super.key,
   });
 
   final bool selected;

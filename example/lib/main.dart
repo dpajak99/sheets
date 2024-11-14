@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/sheet.dart';
 import 'package:sheets/widgets/sections/sheet_footer.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
@@ -26,6 +28,15 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
     properties: SheetProperties(
       customColumnStyles: <ColumnIndex, ColumnStyle>{},
       customRowStyles: <RowIndex, RowStyle>{},
+      data: <CellIndex, CellProperties>{
+        CellIndex.raw(5, 5): CellProperties(
+          value: SheetRichText.single(text: '1', style: const TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          )),
+          style: CellStyle(),
+        ),
+      },
     ),
   );
 

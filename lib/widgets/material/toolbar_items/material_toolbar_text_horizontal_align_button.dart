@@ -39,6 +39,7 @@ class MaterialTextHorizontalAlignButton extends StatelessWidget with MaterialToo
       height: height,
       margin: margin,
       icon: icon,
+      selectedValue: selectedTextAlign,
       onSelected: onChanged,
       options: const <IconOptionValue<TextAlign>>[
         IconOptionValue<TextAlign>(value: TextAlign.left, icon: SheetIcons.format_align_left),

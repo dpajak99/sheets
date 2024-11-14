@@ -40,6 +40,7 @@ class MaterialTextAlignButton extends StatelessWidget with MaterialToolbarItemMi
       margin: margin,
       icon: icon,
       onSelected: onChanged,
+      selectedValue: selectedTextAlign,
       options: const <IconOptionValue<TextAlign>>[
         IconOptionValue<TextAlign>(value: TextAlign.left, icon: SheetIcons.format_align_left),
         IconOptionValue<TextAlign>(value: TextAlign.center, icon: SheetIcons.format_align_center),

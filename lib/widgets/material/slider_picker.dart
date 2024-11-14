@@ -1,11 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// SliderPicker widget allows selection of a value between [min] and [max].
 class SliderPicker extends StatefulWidget {
   const SliderPicker({
-    super.key,
     required this.value,
     required this.onChanged,
+    super.key,
     this.min = 0.0,
     this.max = 1.0,
     this.colors,
@@ -14,7 +15,7 @@ class SliderPicker extends StatefulWidget {
     this.border,
     this.width = 40.0,
     this.height = 40.0,
-  }) : assert(value >= min && value <= max);
+  }) : assert(value >= min && value <= max, 'Value must be between min and max');
 
   final double value;
   final ValueChanged<double> onChanged;
@@ -29,6 +30,20 @@ class SliderPicker extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _SliderPickerState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('value', value));
+    properties.add(ObjectFlagProperty<ValueChanged<double>>.has('onChanged', onChanged));
+    properties.add(DoubleProperty('min', min));
+    properties.add(DoubleProperty('max', max));
+    properties.add(IterableProperty<Color>('colors', colors));
+    properties.add(DiagnosticsProperty<BorderRadius>('borderRadius', borderRadius));
+    properties.add(DiagnosticsProperty<Border?>('border', border));
+    properties.add(DoubleProperty('width', width));
+    properties.add(DoubleProperty('height', height));
+  }
 }
 
 class _SliderPickerState extends State<SliderPicker> {
@@ -37,9 +52,9 @@ class _SliderPickerState extends State<SliderPicker> {
   double get _ratio => ((widget.value - widget.min) / (widget.max - widget.min)).clamp(0.0, 1.0);
 
   void _updateValue(Offset localPosition) {
-    final RenderBox renderBox = _sliderKey.currentContext?.findRenderObject() as RenderBox;
-    final double ratio = localPosition.dx / renderBox.size.width;
-    final double newValue = (ratio * (widget.max - widget.min) + widget.min).clamp(widget.min, widget.max);
+    RenderBox renderBox = _sliderKey.currentContext!.findRenderObject()! as RenderBox;
+    double ratio = localPosition.dx / renderBox.size.width;
+    double newValue = (ratio * (widget.max - widget.min) + widget.min).clamp(widget.min, widget.max);
     widget.onChanged(newValue);
   }
 
@@ -53,8 +68,8 @@ class _SliderPickerState extends State<SliderPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final double thumbSize = widget.height * 2;
-    final double thumbPosition = (_ratio * (widget.width - thumbSize / 2)).clamp(0.0, widget.width - thumbSize);
+    double thumbSize = widget.height * 2;
+    double thumbPosition = (_ratio * (widget.width - thumbSize / 2)).clamp(0.0, widget.width - thumbSize);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -67,7 +82,7 @@ class _SliderPickerState extends State<SliderPicker> {
         child: Stack(
           alignment: Alignment.centerLeft,
           clipBehavior: Clip.none,
-          children: [
+          children: <Widget>[
             // Track
             Container(
               width: widget.width,
@@ -89,7 +104,7 @@ class _SliderPickerState extends State<SliderPicker> {
               left: thumbPosition,
               child: _Thumb(
                 size: thumbSize,
-                hue: (widget.value).clamp(widget.min, widget.max),
+                hue: widget.value.clamp(widget.min, widget.max),
               ),
             ),
           ],
@@ -118,6 +133,13 @@ class _Thumb extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('size', size));
+    properties.add(DoubleProperty('hue', hue));
+  }
 }
 
 /// Custom painter for the thumb.
@@ -128,9 +150,9 @@ class _ThumbPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Offset center = Offset(size.width / 2, size.height / 2);
-    final Paint paintWhite = Paint()..color = Colors.white;
-    final Paint paintColor = Paint()..color = HSVColor.fromAHSV(1.0, hue, 1.0, 1.0).toColor();
+    Offset center = Offset(size.width / 2, size.height / 2);
+    Paint paintWhite = Paint()..color = Colors.white;
+    Paint paintColor = Paint()..color = HSVColor.fromAHSV(1, hue, 1, 1).toColor();
 
     Path circlePath = Path()..addOval(Rect.fromCircle(center: center + const Offset(0, -1), radius: size.width / 2 + 1));
 

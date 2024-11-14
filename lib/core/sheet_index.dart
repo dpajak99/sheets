@@ -88,23 +88,10 @@ class CellIndex extends SheetIndex {
 
   @override
   Rect getSheetCoordinates(SheetProperties properties) {
-    double x = 0;
-    for (int i = 0; i < column.value; i++) {
-      double columnWidth = properties.getColumnWidth(ColumnIndex(i));
-      x += columnWidth;
-    }
+    Rect xRect = column.getSheetCoordinates(properties);
+    Rect yRect = row.getSheetCoordinates(properties);
 
-    double width = properties.getColumnWidth(column);
-
-    double y = 0;
-    for (int i = 0; i < row.value; i++) {
-      double rowHeight = properties.getRowHeight(RowIndex(i));
-      y += rowHeight;
-    }
-
-    double height = properties.getRowHeight(row);
-
-    return Rect.fromLTWH(x, y, width, height);
+    return Rect.fromLTWH(xRect.left, yRect.top, xRect.width, yRect.height);
   }
 
   CellIndex move(int rowOffset, int columnOffset) {
@@ -162,12 +149,12 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
     double x = 0;
     for (int i = 0; i < value; i++) {
       double columnWidth = properties.getColumnWidth(ColumnIndex(i));
-      x += columnWidth;
+      x += columnWidth + borderWidth;
     }
 
     double width = properties.getColumnWidth(this);
 
-    return Rect.fromLTWH(x, 0, width, columnHeadersHeight);
+    return Rect.fromLTWH(x, 0, width + borderWidth, defaultRowHeight + borderWidth);
   }
 
   ColumnIndex operator -(int number) {
@@ -242,12 +229,11 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
     double y = 0;
     for (int i = 0; i < value; i++) {
       double rowHeight = properties.getRowHeight(RowIndex(i));
-      y += rowHeight;
+      y += rowHeight + borderWidth;
     }
 
     double height = properties.getRowHeight(this);
-
-    return Rect.fromLTWH(0, y, rowHeadersWidth, height);
+    return Rect.fromLTWH(0, y, defaultColumnWidth + borderWidth, height + borderWidth);
   }
 
   RowIndex move(int number) {

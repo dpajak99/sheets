@@ -21,7 +21,6 @@ const TextStyle defaultTextStyle = TextStyle(
   fontFamily: 'Arial',
   fontSize: 12,
   color: Colors.black,
-  height: 1.2,
   letterSpacing: 0,
 );
 

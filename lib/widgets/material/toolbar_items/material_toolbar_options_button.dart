@@ -18,7 +18,7 @@ class IconOptionValue<T> with EquatableMixin {
   final AssetIconData icon;
 
   @override
-  List<Object?> get props => [value, icon];
+  List<Object?> get props => <Object?>[value, icon];
 }
 
 class MaterialToolbarOptionsButton<T> extends StatefulWidget with MaterialToolbarItemMixin, MaterialToolbarButtonMixin {
@@ -26,6 +26,7 @@ class MaterialToolbarOptionsButton<T> extends StatefulWidget with MaterialToolba
     required this.icon,
     required this.onSelected,
     required this.options,
+    required this.selectedValue,
     this.width = 39,
     this.height = 30,
     this.margin = const EdgeInsets.symmetric(horizontal: 1),
@@ -41,6 +42,7 @@ class MaterialToolbarOptionsButton<T> extends StatefulWidget with MaterialToolba
   final double height;
   @override
   final EdgeInsets margin;
+  final T selectedValue;
   final AssetIconData icon;
   final ValueChanged<T> onSelected;
   final List<IconOptionValue<T>> options;
@@ -54,6 +56,7 @@ class MaterialToolbarOptionsButton<T> extends StatefulWidget with MaterialToolba
     properties.add(DiagnosticsProperty<AssetIconData>('icon', icon));
     properties.add(ObjectFlagProperty<ValueChanged<T>>.has('onSelected', onSelected));
     properties.add(IterableProperty<IconOptionValue<T>>('options', options));
+    properties.add(DiagnosticsProperty<T>('selectedValue', selectedValue));
   }
 }
 
@@ -75,7 +78,7 @@ class _MaterialToolbarOptionsButtonState<T> extends State<MaterialToolbarOptions
       },
       popupBuilder: (BuildContext context) {
         return _OptionsPopup<T>(
-          selectedValue: widget.options.first.value,
+          selectedValue: widget.selectedValue,
           options: widget.options,
           onSelected: widget.onSelected,
         );
@@ -128,7 +131,6 @@ class _OptionsPopupState<T> extends State<_OptionsPopup<T>> {
             return _OptionsPopupButton<T>(
               icon: option.icon,
               onTap: () {
-                print('onTap');
                 setState(() {
                   _selectedValue = option.value;
                 });

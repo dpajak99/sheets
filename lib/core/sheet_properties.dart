@@ -16,41 +16,43 @@ class SheetProperties extends ChangeNotifier {
     Map<CellIndex, CellProperties>? data,
     this.columnCount = 100,
     this.rowCount = 200,
-  })  : _customRowStyles = <RowIndex, RowStyle>{
-          RowIndex(2): RowStyle(height: 60),
-        },
+  })  : _customRowStyles = customRowStyles ??
+            <RowIndex, RowStyle>{
+              RowIndex(2): RowStyle(height: 60),
+            },
         _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{} {
     this.data = data ??
         <CellIndex, CellProperties>{
-          CellIndex.raw(0, 0): CellProperties(value: SheetRichText.single(text: '1'), style: CellStyle()),
-          CellIndex.raw(0, 1): CellProperties(value: SheetRichText.single(text: '1.1'), style: CellStyle()),
-          CellIndex.raw(0, 2): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
-          //
-          CellIndex.raw(1, 0): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
-          CellIndex.raw(1, 1): CellProperties(value: SheetRichText.single(text: '2.2'), style: CellStyle()),
-          CellIndex.raw(1, 2): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
-          //
-          CellIndex.raw(2, 0): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
-          CellIndex.raw(2, 1): CellProperties(value: SheetRichText.single(text: '3.3'), style: CellStyle()),
-          CellIndex.raw(2, 2): CellProperties(value: SheetRichText.single(text: 'Szła dzieweczka do laseczka do zielonego ahahaha do zielonego ahahah do zieeeelooonegoooo... Napotkała myśliweczka mardzo szwarnego ahahahahah bardzo szwarnego ahahahhaha bardzo szwarnegooooo.... Gdzie jest ta ulica'), style: CellStyle()),
-          //
-          CellIndex.raw(10, 5): CellProperties(
-            value: SheetRichText(
-              spans: <SheetTextSpan>[
-                SheetTextSpan(text: 'a'),
-                SheetTextSpan(text: 'bff', style: defaultTextStyle.copyWith(fontWeight: FontWeight.bold)),
-                SheetTextSpan(text: 'cvv', style: defaultTextStyle.copyWith(color: Colors.red)),
-                SheetTextSpan(text: 'd'),
-                // SheetTextSpan(text: 'ffe', style: defaultTextStyle.copyWith(fontSize: 14)),
-              ],
-            ),
-            style: CellStyle(
-              border: Border.all(
-                color: Colors.black,
-                width: 1,
-              ),
-            ),
-          ),
+          // CellIndex.raw(0, 0): CellProperties(value: SheetRichText.single(text: '1'), style: CellStyle()),
+          // CellIndex.raw(0, 1): CellProperties(value: SheetRichText.single(text: '1.1'), style: CellStyle()),
+          // CellIndex.raw(0, 2): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
+          // //
+          // CellIndex.raw(1, 0): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
+          // CellIndex.raw(1, 1): CellProperties(value: SheetRichText.single(text: '2.2'), style: CellStyle()),
+          // CellIndex.raw(1, 2): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
+          // //
+          // CellIndex.raw(2, 0): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
+          // CellIndex.raw(2, 1): CellProperties(value: SheetRichText.single(text: '3.3'), style: CellStyle()),
+          // CellIndex.raw(2, 2): CellProperties(
+          //     value: SheetRichText.single(
+          //         text:
+          //             'Szła dzieweczka do laseczka do zielonego ahahaha do zielonego ahahah do zieeeelooonegoooo... Napotkała myśliweczka mardzo szwarnego ahahahahah bardzo szwarnego ahahahhaha bardzo szwarnegooooo.... Gdzie jest ta ulica'),
+          //     style: CellStyle()),
+          // //
+          // CellIndex.raw(10, 5): CellProperties(
+          //   value: SheetRichText(
+          //     spans: <SheetTextSpan>[
+          //       SheetTextSpan(text: 'a'),
+          //       SheetTextSpan(text: 'bff', style: defaultTextStyle.copyWith(fontWeight: FontWeight.bold)),
+          //       SheetTextSpan(text: 'cvv', style: defaultTextStyle.copyWith(color: Colors.red)),
+          //       SheetTextSpan(text: 'd'),
+          //       // SheetTextSpan(text: 'ffe', style: defaultTextStyle.copyWith(fontSize: 14)),
+          //     ],
+          //   ),
+          //   style: CellStyle(
+          //     border: Border.all(),
+          //   ),
+          // ),
         };
   }
 
@@ -69,7 +71,6 @@ class SheetProperties extends ChangeNotifier {
 
   void formatSelection(List<CellIndex> cells, FormatAction formatAction) {
     for (CellIndex cellIndex in cells) {
-      print('formatSelection: $cellIndex');
       data[cellIndex] ??= CellProperties.empty();
       if (formatAction is TextStyleFormatAction) {
         data[cellIndex]!.value.updateStyle(formatAction);
@@ -80,7 +81,7 @@ class SheetProperties extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCellText(CellIndex cellIndex, SheetRichText text) {
+  void setRichText(CellIndex cellIndex, SheetRichText text) {
     data[cellIndex] ??= CellProperties.empty();
     data[cellIndex]!.value = text;
     notifyListeners();

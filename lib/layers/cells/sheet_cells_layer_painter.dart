@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/shared_paints.dart';
 import 'package:sheets/utils/edge_visibility.dart';

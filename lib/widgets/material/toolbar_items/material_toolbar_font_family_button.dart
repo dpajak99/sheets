@@ -71,16 +71,16 @@ class _FontFamilyButton extends StatelessWidget with MaterialToolbarButtonMixin 
     required this.fontFamily,
     this.width = 97,
     this.height = 30,
-    this.active = false,
   });
 
-  @override
-  final bool active;
   final bool pressed;
   final double width;
   final double height;
   final String fontFamily;
   final VoidCallback onTap;
+
+  @override
+  bool get active => false;
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +255,6 @@ class _SelectableButton extends StatelessWidget {
     required this.fontFamily,
     required this.onTap,
     this.selected = false,
-    super.key,
   });
 
   final bool selected;

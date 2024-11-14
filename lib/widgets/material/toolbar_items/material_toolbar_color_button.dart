@@ -76,18 +76,18 @@ class _ColorPickerButton extends StatelessWidget with MaterialToolbarButtonMixin
     required this.margin,
     required this.selectedColor,
     required this.icon,
-    this.active = false,
     this.pressed = false,
   });
 
-  @override
-  final bool active;
   final bool pressed;
   final double width;
   final double height;
   final EdgeInsets margin;
   final Color selectedColor;
   final AssetIconData icon;
+
+  @override
+  bool get active => false;
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,6 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/shared_paints.dart';
 import 'package:sheets/utils/edge_visibility.dart';
-import 'package:sheets/utils/extensions/rect_extensions.dart';
 
 abstract class SheetSelectionPaint {
   SheetSelectionPaint({

@@ -37,6 +37,7 @@ class MaterialTextOverflowButton extends StatelessWidget with MaterialToolbarIte
       margin: margin,
       icon: icon,
       onSelected: onChanged,
+      selectedValue: selectedTextOverflow,
       options: const <IconOptionValue<TextOverflowBehavior>>[
         IconOptionValue<TextOverflowBehavior>(value: TextOverflowBehavior.overflow, icon: SheetIcons.format_text_overflow),
         IconOptionValue<TextOverflowBehavior>(value: TextOverflowBehavior.wrap, icon: SheetIcons.format_text_wrap),

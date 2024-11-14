@@ -57,7 +57,7 @@ class VisibleRowsRenderer {
     while (firstVisibleRowInfo == null) {
       RowIndex rowIndex = RowIndex(actualRowIndex);
       RowStyle rowStyle = properties.getRowStyle(rowIndex);
-      double rowHeightEnd = currentHeightStart + rowStyle.height;
+      double rowHeightEnd = currentHeightStart + rowStyle.height + borderWidth;
 
       if (y >= currentHeightStart && y < rowHeightEnd) {
         firstVisibleRowInfo = _FirstVisibleRowInfo(

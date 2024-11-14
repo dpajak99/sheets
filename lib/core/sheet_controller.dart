@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
@@ -22,13 +22,15 @@ import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/widgets/sheet_text_field.dart';
+import 'package:sheets/utils/extensions/silent_value_notifier.dart';
+import 'package:sheets/widgets/text/sheet_text_field.dart';
+import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 class SheetController {
   SheetController({
     required this.properties,
   }) {
-    _editableCellNotifier = ValueNotifier<EditableViewportCell?>(null);
+    _editableCellNotifier = SilentValueNotifier<EditableViewportCell?>(null);
 
     scroll = SheetScrollController();
     viewport = SheetViewport(properties, scroll);
@@ -53,7 +55,7 @@ class SheetController {
   late final SheetScrollController scroll;
   late final KeyboardListener keyboard;
   late final MouseListener mouse;
-  late final ValueNotifier<EditableViewportCell?> _editableCellNotifier;
+  late final SilentValueNotifier<EditableViewportCell?> _editableCellNotifier;
 
   late SelectionState selection;
 
@@ -61,28 +63,35 @@ class SheetController {
     await keyboard.dispose();
   }
 
-  ValueNotifier<EditableViewportCell?> get activeCellNotifier => _editableCellNotifier;
+  SilentValueNotifier<EditableViewportCell?> get activeCellNotifier => _editableCellNotifier;
 
   void formatSelection(FormatAction formatAction) {
     List<CellIndex> selectedCells = selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
     if (activeCellNotifier.value != null && formatAction is TextStyleFormatAction) {
+      TextStyleFormatAction textStyleFormatAction = formatAction;
+
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      controller.applyStyleToSelection(formatAction);
+      unawaited(controller.handleAction(
+        SheetTextFieldActions.format((material.TextStyle mergedTextStyle, material.TextStyle previousTextStyle) {
+          return textStyleFormatAction.format(mergedTextStyle, previousTextStyle);
+        }),
+      ));
     } else {
       properties.formatSelection(selectedCells, formatAction);
-    }
-
-    if(formatAction.autoresize) {
-      properties.ensureMinimalRowsHeight(selectedCells.map((CellIndex cellIndex) => cellIndex.row).toSet().toList());
+      if (formatAction.autoresize) {
+        properties.ensureMinimalRowsHeight(selectedCells.map((CellIndex cellIndex) => cellIndex.row).toSet().toList());
+      }
     }
   }
 
   SelectionStyle getSelectionStyle() {
     if (activeCellNotifier.value != null) {
+
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      return SelectionStyle(controller.activeStyle, activeCellNotifier.value!.cell.properties.style);
+      return SelectionStyle(controller.previousStyle, activeCellNotifier.value!.cell.properties.style);
     } else {
       CellProperties cellProperties = properties.getCellProperties(selection.value.mainCell);
+
       return SelectionStyle(cellProperties.value.getSharedStyle(), cellProperties.style);
     }
   }
@@ -110,7 +119,7 @@ class SheetController {
   }
 
   void setCellValue(CellIndex index, SheetRichText value, {Size? size}) {
-    properties.setCellText(index, value);
+    properties.setRichText(index, value);
     if (size != null) {
       SheetResizeCellGesture(index, size).resolve(this);
     }
@@ -118,7 +127,7 @@ class SheetController {
   }
 
   void resetActiveCell() {
-    _editableCellNotifier.value = null;
+    _editableCellNotifier.setValue(null);
     keyboard.enableListener();
   }
 
@@ -132,10 +141,11 @@ class SheetController {
 
   void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
+
     if (value != null) {
-      _editableCellNotifier.value = EditableViewportCell(cell..setText(value));
+      _editableCellNotifier.setValue(EditableViewportCell(cell..setText(value)));
     } else {
-      _editableCellNotifier.value = EditableViewportCell(cell);
+      _editableCellNotifier.setValue(EditableViewportCell(cell));
     }
 
     keyboard.disableListener();
@@ -190,7 +200,7 @@ class SheetController {
 
     bool clearCell = key.contains(LogicalKeyboardKey.delete) || key.contains(LogicalKeyboardKey.backspace);
     if (clearCell) {
-      setCellValue(selection.value.mainCell, SheetRichText.empty());
+      setCellValue(selection.value.mainCell, SheetRichText());
     }
   }
 }
@@ -198,7 +208,7 @@ class SheetController {
 class EditableViewportCell with EquatableMixin {
   EditableViewportCell(this.cell)
       : controller = SheetTextEditingController(
-          sheetText: EditableTextSpan.fromSheetRichText(cell.richText),
+          text: EditableTextSpan.fromTextSpan(cell.richText.toTextSpan()),
         );
 
   final ViewportCell cell;

@@ -37,6 +37,7 @@ class MaterialTextVerticalAlignButton extends StatelessWidget with MaterialToolb
       margin: margin,
       icon: icon,
       onSelected: onChanged,
+      selectedValue: selectedTextAlign,
       options: const <IconOptionValue<TextVerticalAlign>>[
         IconOptionValue<TextVerticalAlign>(value: TextVerticalAlign.bottom, icon: SheetIcons.vertical_align_bottom),
         IconOptionValue<TextVerticalAlign>(value: TextVerticalAlign.center, icon: SheetIcons.vertical_align_center),

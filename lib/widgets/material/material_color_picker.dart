@@ -115,14 +115,14 @@ class _MaterialColorPickerState extends State<MaterialColorPicker> {
 }
 
 class ColorPickerCustomSection extends StatefulWidget {
-  final ValueChanged<Color> onChanged;
-  final Color? selectedColor;
-
   const ColorPickerCustomSection({
     required this.onChanged,
     this.selectedColor,
     super.key,
   });
+
+  final ValueChanged<Color> onChanged;
+  final Color? selectedColor;
 
   @override
   State<StatefulWidget> createState() => _ColorPickerCustomSectionState();
@@ -165,12 +165,6 @@ class _ColorPickerCustomSectionState extends State<ColorPickerCustomSection> {
 }
 
 class ColorsGrid extends StatelessWidget {
-  final int columns;
-  final List<int> colors;
-  final ValueChanged<Color> onColorChanged;
-  final List<Widget> customWidgets;
-  final Color? selectedColor;
-
   const ColorsGrid({
     required this.columns,
     required this.colors,
@@ -179,6 +173,12 @@ class ColorsGrid extends StatelessWidget {
     this.selectedColor,
     super.key,
   });
+
+  final int columns;
+  final List<int> colors;
+  final ValueChanged<Color> onColorChanged;
+  final List<Widget> customWidgets;
+  final Color? selectedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +204,6 @@ class ColorsGrid extends StatelessWidget {
         for (int i = 0; i < rows; i++)
           Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               for (int j = 0; j < columns; j++)
                 if (visibleWidgets.elementAtOrNull(i * columns + j) != null) visibleWidgets[i * columns + j],
@@ -225,16 +224,16 @@ class ColorsGrid extends StatelessWidget {
 }
 
 class ColorGridItem extends StatelessWidget {
-  final bool selected;
-  final Color color;
-  final ValueChanged<Color> onColorChanged;
-
   const ColorGridItem({
     required this.selected,
     required this.color,
     required this.onColorChanged,
     super.key,
   });
+
+  final bool selected;
+  final Color color;
+  final ValueChanged<Color> onColorChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -288,14 +287,14 @@ class ColorGridItem extends StatelessWidget {
 }
 
 class ColorPickerLabel extends StatelessWidget {
-  final String label;
-  final IconData? icon;
-
   const ColorPickerLabel({
     required this.label,
     this.icon,
     super.key,
   });
+
+  final String label;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +303,6 @@ class ColorPickerLabel extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
             label,
@@ -342,7 +340,6 @@ class ColorPickerDivider extends StatelessWidget {
       height: 15,
       width: double.infinity,
       child: Align(
-        alignment: Alignment.center,
         child: Container(
           height: 1,
           width: double.infinity,
@@ -354,10 +351,6 @@ class ColorPickerDivider extends StatelessWidget {
 }
 
 class ColorPickerLabelIconButton extends StatelessWidget {
-  final IconData icon;
-  final double size;
-  final VoidCallback onPressed;
-
   const ColorPickerLabelIconButton({
     required this.icon,
     required this.onPressed,
@@ -369,6 +362,9 @@ class ColorPickerLabelIconButton extends StatelessWidget {
     required this.onPressed,
     super.key,
   }) : size = 16;
+  final IconData icon;
+  final double size;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -402,16 +398,16 @@ class ColorPickerLabelIconButton extends StatelessWidget {
 }
 
 class ColorPickerButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-  final IconData? icon;
-
   const ColorPickerButton({
     required this.label,
     required this.onPressed,
     this.icon,
     super.key,
   });
+
+  final String label;
+  final VoidCallback onPressed;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -428,7 +424,6 @@ class ColorPickerButton extends StatelessWidget {
             color: states.contains(WidgetState.hovered) ? const Color(0xffF1F3F4) : Colors.white,
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
                 width: 17,

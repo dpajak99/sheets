@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/values/actions/cell_style_format_action.dart';
@@ -8,7 +7,7 @@ abstract class TextStyleFormatAction extends FormatAction {
 
   final SelectionStyle selectionStyle;
 
-  TextStyle format(TextStyle previousTextStyle);
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle);
 }
 
 class UpdateFontWeightAction extends TextStyleFormatAction {
@@ -17,7 +16,7 @@ class UpdateFontWeightAction extends TextStyleFormatAction {
   final FontWeight fontWeight;
 
   @override
-  TextStyle format(TextStyle previousTextStyle) {
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle) {
     if (selectionStyle.fontWeight == fontWeight) {
       return previousTextStyle.copyWith(fontWeight: FontWeight.normal);
     } else {
@@ -35,7 +34,7 @@ class UpdateFontStyleAction extends TextStyleFormatAction {
   final FontStyle fontStyle;
 
   @override
-  TextStyle format(TextStyle previousTextStyle) {
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle) {
     if (selectionStyle.fontStyle == fontStyle) {
       return previousTextStyle.copyWith(fontStyle: FontStyle.normal);
     } else {
@@ -53,7 +52,7 @@ class UpdateTextDecorationAction extends TextStyleFormatAction {
   final TextDecoration decoration;
 
   @override
-  TextStyle format(TextStyle previousTextStyle) {
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle) {
     if (selectionStyle.decoration == decoration) {
       return previousTextStyle.copyWith(decoration: TextDecoration.none);
     } else {
@@ -71,7 +70,7 @@ class UpdateFontColorAction extends TextStyleFormatAction {
   final Color color;
 
   @override
-  TextStyle format(TextStyle previousTextStyle) {
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle) {
     return previousTextStyle.copyWith(color: color);
   }
 
@@ -83,7 +82,7 @@ class DecreaseFontSizeAction extends TextStyleFormatAction {
   DecreaseFontSizeAction(super.selectionStyle) : super(autoresize: true);
 
   @override
-  TextStyle format(TextStyle previousTextStyle) {
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle) {
     if (selectionStyle.fontSize != null) {
       return previousTextStyle.copyWith(fontSize: previousTextStyle.fontSize! - 1);
     } else {
@@ -99,7 +98,7 @@ class IncreaseFontSizeAction extends TextStyleFormatAction {
   IncreaseFontSizeAction(super.selectionStyle): super(autoresize: true);
 
   @override
-  TextStyle format(TextStyle previousTextStyle) {
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle) {
     if (selectionStyle.fontSize != null) {
       return previousTextStyle.copyWith(fontSize: previousTextStyle.fontSize! + 1);
     } else {
@@ -116,7 +115,7 @@ class UpdateFontFamilyAction extends TextStyleFormatAction {
   final String fontFamily;
 
   @override
-  TextStyle format(TextStyle previousTextStyle) {
+  TextStyle format(TextStyle mergedTextStyle, TextStyle previousTextStyle) {
     return previousTextStyle.copyWith(fontFamily: fontFamily);
   }
 

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -56,7 +55,7 @@ class VisibleColumnsRenderer {
     while (firstVisibleColumnInfo == null) {
       ColumnIndex columnIndex = ColumnIndex(actualColumnIndex);
       ColumnStyle columnStyle = properties.getColumnStyle(columnIndex);
-      double columnWidthEnd = currentWidthStart + columnStyle.width;
+      double columnWidthEnd = currentWidthStart + columnStyle.width + borderWidth;
 
       if (x >= currentWidthStart && x < columnWidthEnd) {
         firstVisibleColumnInfo = _FirstVisibleColumnInfo(
