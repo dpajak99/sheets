@@ -30,6 +30,10 @@ class SheetRichText {
   final List<SheetTextSpan> spans;
   final TextAlign textAlign = TextAlign.left;
 
+  String getPlainText() {
+    return spans.map((SheetTextSpan span) => span.text).join();
+  }
+
   SheetRichText withText(String text) {
     List<SheetTextSpan> newSpans = <SheetTextSpan>[
       SheetTextSpan(text: text, style: spans.first.style),

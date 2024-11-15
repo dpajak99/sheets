@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/values/formats/number_format.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
@@ -37,8 +38,10 @@ class CellStyle with EquatableMixin {
     this.backgroundColor = Colors.white,
     Border? border,
   })  : _border = border,
+        valueFormat = CustomNumberFormat('0.0'),
         borderZIndex = border != null ? DateTime.now().millisecondsSinceEpoch : null;
 
+  ValueFormat valueFormat;
   Color backgroundColor;
   double rotationAngleDegrees;
   TextAlign textAlign;

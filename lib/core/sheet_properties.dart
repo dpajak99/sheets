@@ -7,6 +7,7 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/actions/cell_style_format_action.dart';
 import 'package:sheets/core/values/actions/text_style_format_actions.dart';
+import 'package:sheets/core/values/formats/number_format.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class SheetProperties extends ChangeNotifier {
@@ -83,7 +84,8 @@ class SheetProperties extends ChangeNotifier {
 
   void setRichText(CellIndex cellIndex, SheetRichText text) {
     data[cellIndex] ??= CellProperties.empty();
-    data[cellIndex]!.value = text;
+    ValueFormat valueFormat = data[cellIndex]!.style.valueFormat;
+    data[cellIndex]!.value = valueFormat.format(text);
     notifyListeners();
   }
 
