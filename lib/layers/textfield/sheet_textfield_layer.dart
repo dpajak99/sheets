@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
+import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
@@ -27,11 +31,6 @@ class SheetTextfieldLayer extends StatefulWidget {
 
 class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<EditableViewportCell?>(
       valueListenable: widget.sheetController.activeCellNotifier,
@@ -46,12 +45,11 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
               left: activeCell.cell.rect.left,
               top: activeCell.cell.rect.top,
               child: SheetTextfieldLayout(
+                sheetController: widget.sheetController,
+                textAlign: activeCell.cell.properties.visibleTextAlign,
                 maxWidth: widget.sheetController.viewport.width - activeCell.cell.rect.left - 10,
                 maxHeight: widget.sheetController.viewport.height - activeCell.cell.rect.top - 10,
                 backgroundColor: activeCell.cell.properties.style.backgroundColor,
-                onSizeChanged: (Rect? rect) {
-                  widget.sheetController.mouse.ignorePointerRect = rect;
-                },
                 onCompleted: (bool shouldSaveValue, SheetRichText richText, Size size) {
                   if(shouldSaveValue) {
                     widget.sheetController.setCellValue(activeCell.cell.index, richText, size: size);
@@ -73,9 +71,10 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
 
 class SheetTextfieldLayout extends StatefulWidget {
   SheetTextfieldLayout({
-    required this.onSizeChanged,
+    required this.sheetController,
     required this.controller,
     required this.viewportCell,
+    required this.textAlign,
     required this.onCompleted,
     required this.maxWidth,
     required this.maxHeight,
@@ -100,9 +99,10 @@ class SheetTextfieldLayout extends StatefulWidget {
     );
   }
 
+  final SheetController sheetController;
   final SheetTextEditingController controller;
-  final ValueChanged<Rect?> onSizeChanged;
   final ViewportCell viewportCell;
+  final TextAlign textAlign;
   final void Function(bool shouldSaveValue, SheetRichText richText, Size size) onCompleted;
   final Color backgroundColor;
   final Offset offset;
@@ -122,12 +122,13 @@ class SheetTextfieldLayout extends StatefulWidget {
     properties.add(DiagnosticsProperty<Offset>('offset', offset));
     properties.add(DiagnosticsProperty<EdgeInsets>('contentPadding', contentPadding));
     properties.add(DiagnosticsProperty<SheetTextEditingController>('controller', controller));
-    properties.add(ObjectFlagProperty<ValueChanged<Rect>>.has('onSizeChanged', onSizeChanged));
     properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, SheetRichText richText, Size size)>.has('onCompleted', onCompleted));
     properties.add(DoubleProperty('maxWidth', maxWidth));
     properties.add(DoubleProperty('maxHeight', maxHeight));
     properties.add(DoubleProperty('paddingHorizontal', paddingHorizontal));
     properties.add(DoubleProperty('paddingVertical', paddingVertical));
+    properties.add(EnumProperty<TextAlign>('textAlign', textAlign));
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
   }
 
   double get paddingHorizontal {
@@ -152,14 +153,21 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
   ViewportCell get viewportCell => widget.viewportCell;
   bool controlPressed = false;
 
+  late final TextfieldHoveredGestureRecognizer _recognizer;
+
   @override
   void initState() {
     super.initState();
+    TextfieldHoverGestureHandler handler = TextfieldHoverGestureHandler();
+    _recognizer = TextfieldHoveredGestureRecognizer(handler);
+    widget.sheetController.mouse.insertRecognizer(_recognizer);
   }
 
   @override
   void dispose() {
-    widget.onSizeChanged(null);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await widget.sheetController.mouse.removeRecognizer(_recognizer);
+    });
     super.dispose();
   }
 
@@ -180,7 +188,7 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
           backgroundColor: widget.backgroundColor,
           onSizeChanged: (Size size) {
             Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
-            widget.onSizeChanged(textfieldRect);
+            _recognizer.setDraggableArea(textfieldRect);
           },
           onCompleted: (bool shouldSaveValue, TextSpan textSpan, Size size) {
             SheetRichText sheetRichText = SheetRichText.fromTextSpan(textSpan);

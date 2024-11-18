@@ -222,8 +222,6 @@ class ViewportCell extends ViewportItem {
 
   String get rawText => _properties.value.rawText;
 
-  TextAlign get textAlign => _properties.value.textAlign;
-
   CellProperties get properties => _properties;
 
   ViewportRow get row => _row;

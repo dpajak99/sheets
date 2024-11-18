@@ -61,9 +61,9 @@ class MouseSelectionGestureRecognizer extends MouseGestureRecognizer {
 }
 
 class DraggableGestureRecognizer extends MouseGestureRecognizer {
-  DraggableGestureRecognizer(DraggableGestureHandler super.handler);
+  DraggableGestureRecognizer(DraggableGestureHandler super.handler, [this.draggableArea = Rect.zero]);
 
-  Rect draggableArea = Rect.zero;
+  Rect draggableArea;
 
   @override
   MouseGestureHandler? recognize(SheetController controller, SheetMouseGesture gesture) {
@@ -86,4 +86,10 @@ class DraggableGestureRecognizer extends MouseGestureRecognizer {
 
   @override
   List<Object?> get props => <Object?>[handler];
+}
+
+class TextfieldHoveredGestureRecognizer extends DraggableGestureRecognizer {
+  TextfieldHoveredGestureRecognizer(
+    TextfieldHoverGestureHandler super.handler,
+  );
 }

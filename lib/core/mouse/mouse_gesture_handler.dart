@@ -60,6 +60,21 @@ class MouseDoubleClickGestureHandler extends MouseGestureHandler {
   }
 }
 
+class TextfieldHoverGestureHandler extends DraggableGestureHandler {
+  @override
+  SystemMouseCursor get hoverCursor => SystemMouseCursors.text;
+
+  @override
+  void resolve(SheetController controller, SheetMouseGesture gesture) {}
+
+  @override
+  void reset(SheetController controller) {
+    setActive(false);
+    resetCursor(controller);
+  }
+
+}
+
 abstract class DraggableGestureHandler extends MouseGestureHandler {
   bool _previousHovered = false;
 

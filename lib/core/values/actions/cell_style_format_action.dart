@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
 abstract class FormatAction with EquatableMixin {
@@ -55,4 +56,18 @@ class UpdateBackgroundColorAction extends CellStyleFormatAction {
 
   @override
   List<Object?> get props => <Object?>[];
+}
+
+class UpdateValueFormatAction extends CellStyleFormatAction {
+  UpdateValueFormatAction(this.valueFormat);
+
+  final SheetValueFormat valueFormat;
+
+  @override
+  void format(CellStyle previousCellStyle) {
+    previousCellStyle.valueFormat = valueFormat;
+  }
+
+  @override
+  List<Object?> get props => <Object?>[valueFormat];
 }

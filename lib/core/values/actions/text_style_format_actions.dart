@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/values/actions/cell_style_format_action.dart';
 
 abstract class TextStyleFormatAction extends FormatAction {

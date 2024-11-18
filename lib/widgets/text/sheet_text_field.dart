@@ -317,16 +317,18 @@ class SheetTextfieldState {
 class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   factory SheetTextEditingController({
     EditableTextSpan? text,
+    TextAlign textAlign = TextAlign.left,
   }) {
     SheetTextEditingValue value = text != null
         ? SheetTextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length))
         : SheetTextEditingValue.empty;
 
-    return SheetTextEditingController._(value);
+    return SheetTextEditingController._(value, textAlign: textAlign);
   }
 
-  SheetTextEditingController._(super._value);
+  SheetTextEditingController._(super._value, {this.textAlign = TextAlign.left});
 
+  final TextAlign textAlign;
   final _HistoryManager<SheetTextEditingValue> _historyManager = _HistoryManager<SheetTextEditingValue>();
 
   late final double minWidth;
@@ -385,6 +387,14 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
     return value.text.getPreviousStyle(index);
   }
 
+  List<TextStyle> get selectionStyles {
+    List<TextStyle> styles = <TextStyle>[];
+    for (int i = selection.start; i < selection.end; i++) {
+      styles.add(value.text.letters[i].style);
+    }
+    return styles;
+  }
+
   Future<void> handleAction(SheetTextFieldAction action) async {
     SheetTextEditingValue oldValue = value;
     SheetTextEditingValue newValue = await action.execute(this);
@@ -417,7 +427,7 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   }
 
   double _calculateTextfieldWidth(double previousWidth) {
-    TextPainter painter = buildTextPainter(value.span, customWidth: previousWidth);
+    TextPainter painter = buildTextPainter(value.span, customWidth: previousWidth, useMinWidth: false);
 
     double updatedWidth = previousWidth.clamp(minWidth, maxWidth);
 
@@ -437,7 +447,7 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
       span = TextSpan(text: ' ', style: previousStyle);
     }
 
-    TextPainter painter = buildTextPainter(span, customWidth: width);
+    TextPainter painter = buildTextPainter(span, customWidth: width, useMinWidth: false);
     if (previousHeight < maxHeight) {
       return painter.height.clamp(minHeight, maxHeight);
     } else {
@@ -446,13 +456,14 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   }
 
   /// Builds and returns a [TextPainter] for the current text.
-  TextPainter buildTextPainter(TextSpan textSpan, {double? customWidth}) {
+  TextPainter buildTextPainter(TextSpan textSpan, {double? customWidth, bool useMinWidth = true}) {
     TextPainter painter = TextPainter(
       text: textSpan,
       textDirection: TextDirection.ltr,
-      textAlign: TextAlign.left,
+      textAlign: textAlign,
     );
-    painter.layout(maxWidth: customWidth ?? size.width);
+    double width = customWidth ?? size.width;
+    painter.layout(minWidth: useMinWidth ? width : 0, maxWidth: width);
     return painter;
   }
 
@@ -1056,7 +1067,7 @@ class _CursorPainter extends ChangeNotifier implements CustomPainter {
         canvas.drawRect(cursorRect, Paint()..color = Colors.black);
       }
     } catch (e) {
-      print(e);
+      // ignore
     }
   }
 

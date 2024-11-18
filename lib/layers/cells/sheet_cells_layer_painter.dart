@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/shared_paints.dart';
 import 'package:sheets/utils/edge_visibility.dart';
@@ -55,10 +56,17 @@ class CellPainter {
   }
 
   void _paintText(Canvas canvas) {
-    CellStyle cellStyle = cell.properties.style;
+    CellProperties properties = cell.properties;
+    CellStyle cellStyle = properties.style;
 
-    TextSpan textSpan = cell.properties.value.toTextSpan();
-    TextAlign textAlign = cellStyle.textAlign;
+    SheetRichText previousRichText = properties.value;
+    if(previousRichText.isEmpty) {
+      return;
+    }
+
+    SheetRichText updatedRichText = properties.visibleValueFormat.formatVisible(previousRichText) ?? previousRichText;
+    TextSpan textSpan = updatedRichText.toTextSpan();
+    TextAlign textAlign = properties.visibleTextAlign;
 
     TextPainter textPainter = TextPainter(
       text: textSpan,

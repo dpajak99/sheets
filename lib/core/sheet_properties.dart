@@ -7,7 +7,6 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/actions/cell_style_format_action.dart';
 import 'package:sheets/core/values/actions/text_style_format_actions.dart';
-import 'package:sheets/core/values/formats/number_format.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class SheetProperties extends ChangeNotifier {
@@ -79,13 +78,13 @@ class SheetProperties extends ChangeNotifier {
         formatAction.format(data[cellIndex]!.style);
       }
     }
+
     notifyListeners();
   }
 
   void setRichText(CellIndex cellIndex, SheetRichText text) {
     data[cellIndex] ??= CellProperties.empty();
-    ValueFormat valueFormat = data[cellIndex]!.style.valueFormat;
-    data[cellIndex]!.value = valueFormat.format(text);
+    data[cellIndex]!.value = text;
     notifyListeners();
   }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_index.dart';

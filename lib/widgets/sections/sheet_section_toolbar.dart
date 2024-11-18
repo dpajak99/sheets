@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:intl/intl.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/values/actions/cell_style_format_action.dart';
 import 'package:sheets/core/values/actions/text_style_format_actions.dart';
+import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_color_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_divider.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_font_family_button.dart';
@@ -94,11 +96,23 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <Widget>[
-                                MaterialToolbarTextButton(text: 'zloty', onTap: () {}),
-                                MaterialToolbarIconButton(icon: SheetIcons.percentage, onTap: () {}),
-                                MaterialToolbarIconButton(icon: SheetIcons.decimal_decrease, onTap: () {}),
-                                MaterialToolbarIconButton(icon: SheetIcons.decimal_increase, onTap: () {}),
-                                const MaterialToolbarFormatButton(),
+                                MaterialToolbarTextButton(text: NumberFormat.currency().currencySymbol, onTap: () {
+                                  widget.sheetController.formatSelection(UpdateValueFormatAction(SheetNumberFormat.currency()));
+                                }),
+                                MaterialToolbarIconButton(icon: SheetIcons.percentage, onTap: () {
+                                  widget.sheetController.formatSelection(UpdateValueFormatAction(SheetNumberFormat.percentPattern()));
+                                }),
+                                MaterialToolbarIconButton(icon: SheetIcons.decimal_decrease, onTap: () {
+                                  widget.sheetController.formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.decreaseDecimal()));
+                                }),
+                                MaterialToolbarIconButton(icon: SheetIcons.decimal_increase, onTap: () {
+                                  widget.sheetController.formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.increaseDecimal()));
+                                }),
+                                MaterialToolbarFormatButton(
+                                  onChanged: (SheetValueFormat value) {
+                                    widget.sheetController.formatSelection(UpdateValueFormatAction(value));
+                                  },
+                                ),
                                 const MaterialToolbarDivider(),
                               ],
                             ),

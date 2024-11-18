@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -13,6 +14,8 @@ import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
 import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 
 void main() async {
+  Intl.defaultLocale = 'pl_PL';
+
   runApp(const MaterialSheetExample());
 }
 
@@ -30,10 +33,7 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
       customRowStyles: <RowIndex, RowStyle>{},
       data: <CellIndex, CellProperties>{
         CellIndex.raw(5, 5): CellProperties(
-          value: SheetRichText.single(text: '1', style: const TextStyle(
-            color: Colors.black,
-            fontSize: 12,
-          )),
+          value: SheetRichText.single(text: '1'),
           style: CellStyle(),
         ),
       },
@@ -50,6 +50,7 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sheets example',
+      locale: const Locale('pl_PL'),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(

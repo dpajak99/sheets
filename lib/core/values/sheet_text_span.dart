@@ -10,8 +10,8 @@ class SheetRichText {
 
   SheetRichText.single({
     required String text,
-    required TextStyle style,
-  }) : spans = <SheetTextSpan>[SheetTextSpan(text: text, style: style)];
+    TextStyle? style,
+  }) : spans = <SheetTextSpan>[SheetTextSpan(text: text, style: style ?? constants.defaultTextStyle)];
 
   factory SheetRichText.fromTextSpan(TextSpan textSpan) {
     return SheetRichText.fromTextSpans(textSpan.children!.cast());
@@ -28,7 +28,8 @@ class SheetRichText {
   }
 
   final List<SheetTextSpan> spans;
-  final TextAlign textAlign = TextAlign.left;
+
+  bool get isEmpty => spans.isEmpty;
 
   String getPlainText() {
     return spans.map((SheetTextSpan span) => span.text).join();

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_popup.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/mixins/material_toolbar_item_mixin.dart';
@@ -8,6 +9,7 @@ import 'package:sheets/widgets/popup_button.dart';
 
 class MaterialToolbarFormatButton extends StatefulWidget with MaterialToolbarItemMixin {
   const MaterialToolbarFormatButton({
+    required this.onChanged,
     this.width = 32,
     this.height = 30,
     this.margin = const EdgeInsets.symmetric(horizontal: 1),
@@ -20,9 +22,16 @@ class MaterialToolbarFormatButton extends StatefulWidget with MaterialToolbarIte
   final double height;
   @override
   final EdgeInsets margin;
+  final ValueChanged<SheetValueFormat> onChanged;
 
   @override
   State<StatefulWidget> createState() => _MaterialToolbarFormatButtonState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<ValueChanged<SheetValueFormat>>.has('onChanged', onChanged));
+  }
 }
 
 class _MaterialToolbarFormatButtonState extends State<MaterialToolbarFormatButton> {
@@ -41,16 +50,28 @@ class _MaterialToolbarFormatButtonState extends State<MaterialToolbarFormatButto
           _pressed = isOpen;
         });
       },
-      popupBuilder: (BuildContext context) => const _MaterialFormatDropdown(),
+      popupBuilder: (BuildContext context) => _MaterialFormatDropdown(
+        onChanged: widget.onChanged,
+      ),
     );
   }
 }
 
 class _MaterialFormatDropdown extends StatefulWidget {
-  const _MaterialFormatDropdown();
+  const _MaterialFormatDropdown({
+    required this.onChanged,
+  });
+
+  final ValueChanged<SheetValueFormat> onChanged;
 
   @override
   State<StatefulWidget> createState() => _MaterialFormatDropdownState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<ValueChanged<SheetValueFormat>>.has('onChanged', onChanged));
+  }
 }
 
 class _MaterialFormatDropdownState extends State<_MaterialFormatDropdown> {
@@ -66,28 +87,79 @@ class _MaterialFormatDropdownState extends State<_MaterialFormatDropdown> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(3),
         ),
-        child: const Column(
+        child: Column(
           children: <Widget>[
-            _SelectableButton(label: 'Automatycznie', selected: true),
-            _SelectableButton(label: 'Zwykły tekst'),
-            MaterialToolbarPopupDivider(),
-            _SelectableButton(label: 'Liczba', exampleValue: '1 000,12'),
-            _SelectableButton(label: 'Procentowy', exampleValue: '10,12%'),
-            _SelectableButton(label: 'Naukowy', exampleValue: '1,01E+03'),
-            MaterialToolbarPopupDivider(),
-            _SelectableButton(label: 'Księgowy', exampleValue: '(1 000,12) zł'),
-            _SelectableButton(label: 'Finansowy', exampleValue: '(1 000,12)'),
-            _SelectableButton(label: 'Waluta', exampleValue: '1 000,12 zł'),
-            _SelectableButton(label: 'Waluta (w zaokrągleniu)', exampleValue: '1 000 zł'),
-            MaterialToolbarPopupDivider(),
-            _SelectableButton(label: 'Data', exampleValue: '2008-09-26'),
-            _SelectableButton(label: 'Godzina', exampleValue: '15:59:00'),
-            _SelectableButton(label: 'Data i godzina', exampleValue: '2008-09-26 15:59:00'),
-            _SelectableButton(label: 'Czas trwania', exampleValue: '24:01:00'),
-            MaterialToolbarPopupDivider(),
-            _SelectableButton(label: 'Waluta niestandardowa'),
-            _SelectableButton(label: 'Niestandardowa data i godzina'),
-            _SelectableButton(label: 'Niestandardowy format liczbowy'),
+            _SelectableButton(
+              label: 'Automatycznie',
+              selected: true,
+              onTap: () {},
+            ),
+            _SelectableButton(
+              label: 'Zwykły tekst',
+              onTap: () => widget.onChanged(SheetStringFormat()),
+            ),
+            const MaterialToolbarPopupDivider(),
+            _SelectableButton(
+              label: 'Liczba',
+              exampleValue: '1 000,12',
+              onTap: () => widget.onChanged(SheetNumberFormat.decimalPattern()),
+            ),
+            _SelectableButton(
+              label: 'Procentowy',
+              exampleValue: '10,12%',
+              onTap: () => widget.onChanged(SheetNumberFormat.percentPattern()),
+            ),
+            _SelectableButton(
+              label: 'Naukowy',
+              exampleValue: '1,01E+03',
+              onTap: () => widget.onChanged(SheetNumberFormat.scientificPattern()),
+            ),
+            const MaterialToolbarPopupDivider(),
+            _SelectableButton(
+              label: 'Księgowy',
+              exampleValue: '(1 000,12) zł',
+              onTap: () => widget.onChanged(SheetNumberFormat.currency()),
+            ),
+            _SelectableButton(
+              label: 'Finansowy',
+              exampleValue: '(1 000,12)',
+              onTap: () => widget.onChanged(SheetNumberFormat.decimalPatternDigits()),
+            ),
+            // _SelectableButton(
+            //   label: 'Waluta',
+            //   exampleValue: '1 000,12 zł',
+            //   onTap: () => widget.onChanged(SheetNumberFormat.currency()),
+            // ),
+            // _SelectableButton(
+            //   label: 'Waluta (w zaokrągleniu)',
+            //   exampleValue: '1 000 zł',
+            //   onTap: () => widget.onChanged(SheetNumberFormat('#,##0 zł')),
+            // ),
+            const MaterialToolbarPopupDivider(),
+            _SelectableButton(
+              label: 'Data',
+              exampleValue: '2008-09-26',
+              onTap: () => widget.onChanged(SheetDateFormat('yyyy-MM-dd')),
+            ),
+            _SelectableButton(
+              label: 'Godzina',
+              exampleValue: '15:59:00',
+              onTap: () => widget.onChanged(SheetDateFormat('HH:mm:ss')),
+            ),
+            _SelectableButton(
+              label: 'Data i godzina',
+              exampleValue: '2008-09-26 15:59:00',
+              onTap: () => widget.onChanged(SheetDateFormat('yyyy-MM-dd HH:mm:ss')),
+            ),
+            _SelectableButton(
+              label: 'Czas trwania',
+              exampleValue: '24:01:00',
+              onTap: () => widget.onChanged(SheetDurationFormat.auto()),
+            ),
+            const MaterialToolbarPopupDivider(),
+            _SelectableButton(label: 'Waluta niestandardowa', onTap: () {}),
+            _SelectableButton(label: 'Niestandardowa data i godzina', onTap: () {}),
+            _SelectableButton(label: 'Niestandardowy format liczbowy', onTap: () {}),
           ],
         ),
       ),
@@ -97,6 +169,7 @@ class _MaterialFormatDropdownState extends State<_MaterialFormatDropdown> {
 
 class _SelectableButton extends StatelessWidget {
   const _SelectableButton({
+    required this.onTap,
     required this.label,
     this.exampleValue,
     this.selected = false,
@@ -105,11 +178,12 @@ class _SelectableButton extends StatelessWidget {
   final bool selected;
   final String label;
   final String? exampleValue;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return MouseStateListener(
-      onTap: () {},
+      onTap: onTap,
       childBuilder: (Set<WidgetState> states) {
         return Container(
           height: 32,
@@ -166,5 +240,6 @@ class _SelectableButton extends StatelessWidget {
     properties.add(DiagnosticsProperty<bool>('selected', selected));
     properties.add(StringProperty('label', label));
     properties.add(StringProperty('exampleValue', exampleValue));
+    properties.add(ObjectFlagProperty<VoidCallback?>.has('onTap', onTap));
   }
 }

@@ -11,6 +11,7 @@ import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/mouse/mouse_listener.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/selection/selection_state.dart';
+import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
@@ -85,14 +86,23 @@ class SheetController {
   }
 
   SelectionStyle getSelectionStyle() {
-    if (activeCellNotifier.value != null) {
+    CellProperties cellProperties = properties.getCellProperties(selection.value.mainCell);
 
-      SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      return SelectionStyle(controller.previousStyle, activeCellNotifier.value!.cell.properties.style);
+    if (activeCellNotifier.value == null) {
+      return CellSelectionStyle(cellProperties: cellProperties);
+    }
+
+    SheetTextEditingController textEditingController = activeCellNotifier.value!.controller;
+    if (textEditingController.selection.isCollapsed) {
+      return CursorSelectionStyle(
+        cellProperties: cellProperties,
+        textStyle: textEditingController.previousStyle,
+      );
     } else {
-      CellProperties cellProperties = properties.getCellProperties(selection.value.mainCell);
-
-      return SelectionStyle(cellProperties.value.getSharedStyle(), cellProperties.style);
+      return CursorRangeSelectionStyle(
+        cellProperties: cellProperties,
+        textStyles: textEditingController.selectionStyles,
+      );
     }
   }
 
@@ -206,13 +216,17 @@ class SheetController {
 }
 
 class EditableViewportCell with EquatableMixin {
-  EditableViewportCell(this.cell)
-      : controller = SheetTextEditingController(
-          text: EditableTextSpan.fromTextSpan(cell.richText.toTextSpan()),
-        );
+  EditableViewportCell(this.cell) {
+    SheetRichText richText = cell.richText;
+    SheetRichText formattedText = cell.properties.style.valueFormat?.formatEditable(richText) ?? richText;
+    controller = SheetTextEditingController(
+      textAlign: cell.properties.visibleTextAlign,
+      text: EditableTextSpan.fromTextSpan(formattedText.toTextSpan()),
+    );
+  }
 
-  final ViewportCell cell;
-  final SheetTextEditingController controller;
+  late final ViewportCell cell;
+  late final SheetTextEditingController controller;
 
   @override
   List<Object?> get props => <Object?>[cell];
