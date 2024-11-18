@@ -74,8 +74,8 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
                           return Text(
                             widget.sheetController.properties
                                 .getCellProperties(widget.sheetController.selection.value.mainCell)
-                                .value
-                                .rawText,
+                                .editableRichText
+                                .toPlainText(),
                             overflow: TextOverflow.clip,
                             maxLines: 1,
                             style: const TextStyle(color: Colors.black, fontSize: 14, height: 1),

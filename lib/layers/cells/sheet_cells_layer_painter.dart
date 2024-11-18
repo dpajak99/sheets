@@ -59,13 +59,12 @@ class CellPainter {
     CellProperties properties = cell.properties;
     CellStyle cellStyle = properties.style;
 
-    SheetRichText previousRichText = properties.value;
-    if(previousRichText.isEmpty) {
+    SheetRichText richText = properties.visibleRichText;
+    if(richText.isEmpty) {
       return;
     }
 
-    SheetRichText updatedRichText = properties.visibleValueFormat.formatVisible(previousRichText) ?? previousRichText;
-    TextSpan textSpan = updatedRichText.toTextSpan();
+    TextSpan textSpan = richText.toTextSpan();
     TextAlign textAlign = properties.visibleTextAlign;
 
     TextPainter textPainter = TextPainter(

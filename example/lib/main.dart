@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_controller.dart';
@@ -15,6 +16,7 @@ import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 
 void main() async {
   Intl.defaultLocale = 'pl_PL';
+  await initializeDateFormatting('pl_PL');
 
   runApp(const MaterialSheetExample());
 }

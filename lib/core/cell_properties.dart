@@ -25,6 +25,14 @@ class CellProperties with EquatableMixin {
     );
   }
 
+  SheetRichText get visibleRichText {
+    return visibleValueFormat.formatVisible(value) ?? value;
+  }
+
+  SheetRichText get editableRichText {
+    return visibleValueFormat.formatEditable(value);
+  }
+
   SheetValueFormat get visibleValueFormat {
     return style.valueFormat ?? SheetValueFormat.auto(value);
   }

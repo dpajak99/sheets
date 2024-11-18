@@ -31,7 +31,7 @@ class SheetRichText {
 
   bool get isEmpty => spans.isEmpty;
 
-  String getPlainText() {
+  String toPlainText() {
     return spans.map((SheetTextSpan span) => span.text).join();
   }
 
@@ -61,10 +61,6 @@ class SheetRichText {
     for (int i = 0; i < spans.length; i++) {
       spans[i] = spans[i].copyWith(style: textFormatAction.format(spans[i].style, textFormatAction.selectionStyle.textStyle));
     }
-  }
-
-  String get rawText {
-    return spans.map((SheetTextSpan span) => span.text).join();
   }
 }
 

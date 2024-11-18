@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
+import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
 import 'package:sheets/core/keyboard/keyboard_listener.dart';
@@ -107,13 +108,17 @@ class SheetController {
   }
 
   Future<void> fill(SheetFillSelection selection) async {
-    // List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(properties.columnCount, properties.rowCount);
-    // List<CellIndex> fillCells = selection.getSelectedCells(properties.columnCount, properties.rowCount);
-    //
-    // List<CellProperties> baseProperties = selectedCells.map(properties.getCellProperties).toList();
-    // List<CellProperties> fillProperties = fillCells.map(properties.getCellProperties).toList();
-    //
-    // await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
+    List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(properties.columnCount, properties.rowCount);
+    List<CellIndex> fillCells = selection.getSelectedCells(properties.columnCount, properties.rowCount);
+
+    Map<CellIndex, CellProperties> baseProperties = <CellIndex, CellProperties>{
+      for (CellIndex index in selectedCells) index: properties.getCellProperties(index),
+    };
+    Map<CellIndex, CellProperties> fillProperties = <CellIndex, CellProperties>{
+      for (CellIndex index in fillCells) index: properties.getCellProperties(index),
+    };
+
+    await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
   }
 
   void resizeColumn(ColumnIndex column, double width) {
@@ -217,11 +222,10 @@ class SheetController {
 
 class EditableViewportCell with EquatableMixin {
   EditableViewportCell(this.cell) {
-    SheetRichText richText = cell.richText;
-    SheetRichText formattedText = cell.properties.style.valueFormat?.formatEditable(richText) ?? richText;
+    SheetRichText richText = cell.properties.editableRichText;
     controller = SheetTextEditingController(
       textAlign: cell.properties.visibleTextAlign,
-      text: EditableTextSpan.fromTextSpan(formattedText.toTextSpan()),
+      text: EditableTextSpan.fromTextSpan(richText.toTextSpan()),
     );
   }
 

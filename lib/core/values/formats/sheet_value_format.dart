@@ -7,14 +7,15 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 abstract class SheetValueFormat with EquatableMixin {
   static SheetValueFormat auto(SheetRichText value) {
     try {
+      // print('Searching for format for value: ${value.getPlainText()}');
       List<SheetValueFormat> autoFormats = <SheetValueFormat>[
         SheetNumberFormat.decimalPattern(),
         SheetDateFormat('yyyy-MM-dd'),
-        SheetDurationFormat.withMilliseconds(),
+        SheetDurationFormat.auto(),
       ];
 
       return autoFormats.firstWhere((SheetValueFormat format) => format.formatVisible(value) != null);
-    } catch (_) {
+    } catch (e) {
       return SheetStringFormat();
     }
   }
@@ -170,13 +171,17 @@ class SheetNumberFormat extends SheetValueFormat {
   @override
   SheetRichText? formatVisible(SheetRichText richText) {
     try {
-      String text = richText.getPlainText();
+      String text = richText.toPlainText();
       num number = numberFormat.parse(text);
       String formatted = numberFormat.format(number);
       return richText.withText(formatted);
     } catch (e) {
       return null;
     }
+  }
+
+  num toNumber(String text) {
+    return numberFormat.parse(text);
   }
 
   @override
@@ -209,21 +214,24 @@ class SheetNumberFormat extends SheetValueFormat {
 }
 
 class SheetDateFormat extends SheetValueFormat {
-  SheetDateFormat(this.pattern);
+  SheetDateFormat(String pattern) : dateFormat = DateFormat(pattern);
 
-  final String pattern;
+  final DateFormat dateFormat;
 
   @override
   SheetRichText? formatVisible(SheetRichText richText) {
     try {
-      String text = richText.getPlainText();
-      DateFormat dateFormat = DateFormat(pattern);
+      String text = richText.toPlainText();
 
       String formatted = dateFormat.format(DateTime.parse(text));
       return richText.withText(formatted);
     } catch (e) {
       return null;
     }
+  }
+
+  DateTime toDate(String text) {
+    return dateFormat.parse(text);
   }
 
   @override
@@ -241,7 +249,7 @@ class SheetDateFormat extends SheetValueFormat {
   SheetValueFormat increaseDecimal() => this;
 
   @override
-  List<Object?> get props => <Object?>[pattern];
+  List<Object?> get props => <Object?>[dateFormat];
 }
 
 class SheetDurationFormat extends SheetValueFormat {
@@ -260,7 +268,7 @@ class SheetDurationFormat extends SheetValueFormat {
   @override
   SheetRichText? formatVisible(SheetRichText richText) {
     try {
-      String text = richText.getPlainText();
+      String text = richText.toPlainText();
       Duration duration = _parseDuration(text);
 
       int hours = duration.inHours;
@@ -290,7 +298,7 @@ class SheetDurationFormat extends SheetValueFormat {
   @override
   SheetRichText formatEditable(SheetRichText richText) {
     try {
-      String text = richText.getPlainText();
+      String text = richText.toPlainText();
       Duration duration = _parseDuration(text);
 
       int hours = duration.inHours;
@@ -310,6 +318,10 @@ class SheetDurationFormat extends SheetValueFormat {
     } catch (e) {
       return richText;
     }
+  }
+
+  Duration toDuration(String text) {
+    return _parseDuration(text);
   }
 
   Duration _parseDuration(String text) {

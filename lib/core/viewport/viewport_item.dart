@@ -216,17 +216,7 @@ class ViewportCell extends ViewportItem {
     _properties.value = _properties.value.withText(text);
   }
 
-  TextSpan get textSpan => _properties.value.toTextSpan();
-
-  SheetRichText get richText => _properties.value;
-
-  String get rawText => _properties.value.rawText;
-
   CellProperties get properties => _properties;
-
-  ViewportRow get row => _row;
-
-  ViewportColumn get column => _column;
 
   @override
   List<Object?> get props => <Object?>[rect, _index, _row, _column, _properties];
