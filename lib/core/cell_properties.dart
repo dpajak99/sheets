@@ -5,6 +5,8 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
+int globalBorderZIndex = 0;
+
 class CellProperties with EquatableMixin {
   CellProperties({
     required this.style,
@@ -55,7 +57,7 @@ class CellStyle with EquatableMixin {
     this.valueFormat,
     Border? border,
   })  : _border = border,
-        borderZIndex = border != null ? DateTime.now().millisecondsSinceEpoch : null;
+        borderZIndex = border != null ? globalBorderZIndex++ : null;
 
   SheetValueFormat? valueFormat;
   Color backgroundColor;
@@ -69,7 +71,11 @@ class CellStyle with EquatableMixin {
 
   set border(Border? value) {
     _border = value;
-    borderZIndex = DateTime.now().millisecondsSinceEpoch;
+    if (value != null) {
+      borderZIndex = globalBorderZIndex++;
+    } else {
+      borderZIndex = null;
+    }
   }
 
   int? borderZIndex;

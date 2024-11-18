@@ -79,19 +79,19 @@ class SharedPaints {
     Line bottomBorderLine = rect.getBottomBorder(border);
     Line leftBorderLine = rect.getLeftBorder(border);
 
-    if (border.top.width > 0 && edgeVisibility.top) {
+    if (border.top.width > 0 && border.top != BorderSide.none && edgeVisibility.top) {
       canvas.drawLine(topBorderLine.start, topBorderLine.end, topBorderPaint);
     }
 
-    if (border.right.width > 0 && edgeVisibility.right) {
+    if (border.right.width > 0 && border.right != BorderSide.none && edgeVisibility.right) {
       canvas.drawLine(rightBorderLine.start, rightBorderLine.end, rightBorderPaint);
     }
 
-    if (border.bottom.width > 0 ) {
+    if (border.bottom.width > 0 && border.bottom != BorderSide.none) {
       canvas.drawLine(bottomBorderLine.start, bottomBorderLine.end, bottomBorderPaint);
     }
 
-    if (border.left.width > 0) {
+    if (border.left.width > 0 && border.left != BorderSide.none) {
       canvas.drawLine(leftBorderLine.start, leftBorderLine.end, leftBorderPaint);
     }
   }

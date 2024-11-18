@@ -5,9 +5,11 @@ import 'package:sheets/widgets/mouse_state_listener.dart';
 class MaterialToolbarPopup extends StatelessWidget {
   const MaterialToolbarPopup({
     required this.child,
+    this.width = 215,
     super.key,
   });
 
+  final double width;
   final Widget child;
 
   @override
@@ -16,7 +18,7 @@ class MaterialToolbarPopup extends StatelessWidget {
       elevation: 3,
       borderRadius: BorderRadius.circular(3),
       child: Container(
-        width: 215,
+        width: width,
         padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 7),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -25,6 +27,12 @@ class MaterialToolbarPopup extends StatelessWidget {
         child: child,
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('width', width));
   }
 }
 

@@ -11,6 +11,17 @@ class SheetIcons {
   static const AssetIconData dropdown = AssetIconData('assets/icons/dropdown.svg');
   static const AssetIconData add_comment = AssetIconData('assets/icons/add_comment.svg');
   static const AssetIconData border_all = AssetIconData('assets/icons/border_all.svg');
+  static const AssetIconData border_right = AssetIconData('assets/icons/border_right.svg');
+  static const AssetIconData border_inner = AssetIconData('assets/icons/border_inner.svg');
+  static const AssetIconData border_top = AssetIconData('assets/icons/border_top.svg');
+  static const AssetIconData border_left = AssetIconData('assets/icons/border_left.svg');
+  static const AssetIconData border_bottom = AssetIconData('assets/icons/border_bottom.svg');
+  static const AssetIconData border_horizontal = AssetIconData('assets/icons/border_horizontal.svg');
+  static const AssetIconData border_vertical = AssetIconData('assets/icons/border_vertical.svg');
+  static const AssetIconData border_clear = AssetIconData('assets/icons/border_clear.svg');
+  static const AssetIconData border_outer = AssetIconData('assets/icons/border_outer.svg');
+  static const AssetIconData border_color = AssetIconData('assets/icons/border_color.svg');
+  static const AssetIconData line_style = AssetIconData('assets/icons/line_style.svg');
   static const AssetIconData cell_merge = AssetIconData('assets/icons/cell_merge.svg');
   static const AssetIconData decimal_decrease = AssetIconData('assets/icons/decimal_decrease.svg');
   static const AssetIconData decimal_increase = AssetIconData('assets/icons/decimal_increase.svg');

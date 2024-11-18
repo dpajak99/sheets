@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/core/viewport/sheet_viewport_content.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/shared_paints.dart';
 import 'package:sheets/utils/edge_visibility.dart';
@@ -11,25 +12,6 @@ import 'package:sheets/utils/extensions/rect_extensions.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
-  void paintCellBackground(Canvas canvas, ViewportCell cell) {
-    Paint backgroundPaint = Paint()
-      ..color = Colors.white
-      ..isAntiAlias = false
-      ..style = PaintingStyle.fill;
-
-    canvas.drawRect(cell.rect, backgroundPaint);
-  }
-
-  void paintCellBorder(Canvas canvas, ViewportCell cell) {
-    Paint borderPaint = Paint()
-      ..color = const Color(0xffe1e1e1)
-      ..strokeWidth = borderWidth
-      ..isAntiAlias = false
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawRect(cell.rect, borderPaint);
-  }
-
   @override
   bool? hitTest(Offset position) => null;
 
@@ -40,27 +22,125 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
   bool shouldRebuildSemantics(covariant CustomPainter oldDelegate) => false;
 }
 
-class CellPainter {
-  CellPainter({
-    required this.cell,
-    this.padding = const EdgeInsets.all(3),
-  });
+class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
+  SheetCellsLayerPainter({
+    required SheetViewportContent viewportContent,
+    EdgeInsets? padding,
+  }) : _viewportContent = viewportContent, _padding = padding ?? const EdgeInsets.all(3);
 
-  final ViewportCell cell;
-  final EdgeInsets padding;
+  late SheetViewportContent _viewportContent;
+  final EdgeInsets _padding;
 
-  void paint(Canvas canvas) {
-    _paintBackground(canvas);
-    _paintBorder(canvas);
-    _paintText(canvas);
+  void update(SheetViewportContent viewportContent) {
+    _viewportContent = viewportContent;
+    notifyListeners();
   }
 
-  void _paintText(Canvas canvas) {
+  @override
+  void paint(Canvas canvas, Size size) {
+    List<ViewportCell> visibleCells = _viewportContent.cells;
+
+    visibleCells.sort((ViewportCell a, ViewportCell b) {
+      int aZIndex = a.properties.style.borderZIndex ?? 0;
+      int bZIndex = b.properties.style.borderZIndex ?? 0;
+
+      return aZIndex.compareTo(bZIndex);
+    });
+
+    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    List<ViewportCell> borderedCells = <ViewportCell>[];
+
+    for (ViewportCell cell in visibleCells) {
+      _paintCellBackground(canvas, cell);
+      _paintCellText(canvas, cell);
+
+      if(cell.properties.style.border != null) {
+        borderedCells.add(cell);
+      }
+    }
+
+    _paintMesh(canvas, size);
+
+    for(ViewportCell cell in borderedCells) {
+      _paintCellBorder(canvas, cell);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant SheetCellsLayerPainter oldDelegate) {
+    return oldDelegate._viewportContent != _viewportContent || oldDelegate._padding != _padding;
+  }
+  
+  void _paintMesh(Canvas canvas, Size size) {
+    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    List<ViewportColumn> visibleColumns = _viewportContent.columns;
+    List<ViewportRow> visibleRows = _viewportContent.rows;
+
+    if (visibleColumns.isEmpty || visibleRows.isEmpty) {
+      return;
+    }
+
+    ViewportColumn lastColumn = visibleColumns.last;
+    ViewportRow lastRow = visibleRows.last;
+
+    double maxOffsetRight = min(size.width, lastColumn.rect.right);
+    double maxOffsetBottom = min(size.height, lastRow.rect.bottom);
+
+    for (ViewportColumn column in visibleColumns) {
+      Rect columnRect = column.rect;
+      _paintMeshLine(canvas, Offset(columnRect.right + borderWidth, 0), Offset(columnRect.right + borderWidth, maxOffsetBottom));
+    }
+
+    for (ViewportRow row in visibleRows) {
+      Rect rowRect = row.rect;
+      _paintMeshLine(canvas, Offset(0, rowRect.bottom), Offset(maxOffsetRight, rowRect.bottom));
+    }
+  }
+
+  void _paintMeshLine(Canvas canvas, Offset startOffset, Offset endOffset) {
+    Paint borderPaint = Paint()
+      ..color = const Color(0x1F040404)
+      ..strokeWidth = borderWidth
+      ..isAntiAlias = false
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawLine(startOffset, endOffset, borderPaint);
+  }
+
+  void _paintCellBackground(Canvas canvas, ViewportCell cell) {
+    CellStyle cellStyle = cell.properties.style;
+
+    Paint backgroundPaint = Paint()
+      ..color = cellStyle.backgroundColor
+      ..isAntiAlias = false
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRect(cell.rect.expand(borderWidth), backgroundPaint);
+  }
+
+  void _paintCellBorder(Canvas canvas, ViewportCell cell) {
+    Border border = Border(
+      top: cell.properties.style.border?.top ?? BorderSide.none,
+      right: cell.properties.style.border?.right ?? BorderSide.none,
+      bottom: cell.properties.style.border?.bottom ?? BorderSide.none,
+      left: cell.properties.style.border?.left ?? BorderSide.none,
+    );
+
+    SharedPaints.paintBorder(
+      canvas: canvas,
+      rect: cell.rect,
+      border: border,
+      edgeVisibility: EdgeVisibility.allVisible(),
+    );
+  }
+
+  void _paintCellText(Canvas canvas, ViewportCell cell) {
     CellProperties properties = cell.properties;
     CellStyle cellStyle = properties.style;
 
     SheetRichText richText = properties.visibleRichText;
-    if(richText.isEmpty) {
+    if (richText.isEmpty) {
       return;
     }
 
@@ -73,7 +153,7 @@ class CellPainter {
       textAlign: textAlign,
     );
 
-    double width = cell.rect.width - padding.horizontal;
+    double width = cell.rect.width - _padding.horizontal;
     textPainter.layout(minWidth: width, maxWidth: width);
 
     // Get vertical alignment (default to top if not set)
@@ -81,20 +161,20 @@ class CellPainter {
 
     // Calculate the y-offset based on vertical alignment
     double yOffset;
-    double availableHeight = cell.rect.height - padding.vertical;
+    double availableHeight = cell.rect.height - _padding.vertical;
 
     if (verticalAlign == TextVerticalAlign.top || textPainter.height >= availableHeight) {
-      yOffset = padding.top;
+      yOffset = _padding.top;
     } else if (verticalAlign == TextVerticalAlign.center) {
-      yOffset = padding.top + (availableHeight - textPainter.height) / 2;
+      yOffset = _padding.top + (availableHeight - textPainter.height) / 2;
     } else if (verticalAlign == TextVerticalAlign.bottom) {
-      yOffset = cell.rect.height - padding.bottom - textPainter.height;
+      yOffset = cell.rect.height - _padding.bottom - textPainter.height;
     } else {
-      yOffset = padding.top;
+      yOffset = _padding.top;
     }
 
     if (cellStyle.rotationAngleDegrees != 0) {
-      Offset position = cell.rect.topLeft + Offset(padding.left, yOffset);
+      Offset position = cell.rect.topLeft + Offset(_padding.left, yOffset);
 
       double textWidth = textPainter.width;
       double textHeight = textPainter.height;
@@ -107,68 +187,7 @@ class CellPainter {
       textPainter.paint(canvas, Offset.zero);
       canvas.restore();
     } else {
-      textPainter.paint(canvas, cell.rect.topLeft + Offset(padding.left, yOffset));
+      textPainter.paint(canvas, cell.rect.topLeft + Offset(_padding.left, yOffset));
     }
-  }
-
-  void _paintBackground(Canvas canvas) {
-    CellStyle cellStyle = cell.properties.style;
-
-    Paint backgroundPaint = Paint()
-      ..color = cellStyle.backgroundColor
-      ..isAntiAlias = false
-      ..style = PaintingStyle.fill;
-
-    canvas.drawRect(cell.rect.expand(borderWidth), backgroundPaint);
-  }
-
-  void _paintBorder(Canvas canvas) {
-    SharedPaints.paintBorder(
-      canvas: canvas,
-      rect: cell.rect,
-      border: cell.properties.style.border ??
-          Border.all(
-            color: const Color(0x1F040404),
-            width: borderWidth,
-          ),
-      edgeVisibility: EdgeVisibility.allVisible(),
-    );
-  }
-}
-
-
-
-class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
-  SheetCellsLayerPainter({
-    required List<ViewportCell> visibleCells,
-  }) : _visibleCells = visibleCells;
-
-  late List<ViewportCell> _visibleCells;
-
-  void update(List<ViewportCell> visibleCells) {
-    _visibleCells = visibleCells;
-    notifyListeners();
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    _visibleCells.sort((ViewportCell a, ViewportCell b) {
-      int aZIndex = a.properties.style.borderZIndex ?? 0;
-      int bZIndex = b.properties.style.borderZIndex ?? 0;
-
-      return aZIndex.compareTo(bZIndex);
-    });
-
-    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    for (ViewportCell cell in _visibleCells) {
-      CellPainter cellPainter = CellPainter(cell: cell);
-      cellPainter.paint(canvas);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant SheetCellsLayerPainter oldDelegate) {
-    return oldDelegate._visibleCells != _visibleCells;
   }
 }

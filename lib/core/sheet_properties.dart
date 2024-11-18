@@ -76,6 +76,8 @@ class SheetProperties extends ChangeNotifier {
         data[cellIndex]!.value.updateStyle(formatAction);
       } else if (formatAction is CellStyleFormatAction) {
         formatAction.format(data[cellIndex]!.style);
+      } else if(formatAction is FullFormatAction) {
+        formatAction.format(this);
       }
     }
 
@@ -96,6 +98,22 @@ class SheetProperties extends ChangeNotifier {
 
   CellProperties getCellProperties(CellIndex cellIndex) {
     return data[cellIndex] ?? CellProperties.empty();
+  }
+
+  List<CellProperties> getCellPropertiesByRowRange(ColumnIndex column, RowIndex start, RowIndex end) {
+    List<CellProperties> cellProperties = <CellProperties>[];
+    for (int i = start.value; i <= end.value; i++) {
+      cellProperties.add(getCellProperties(CellIndex(row: RowIndex(i), column: column)));
+    }
+    return cellProperties;
+  }
+
+  List<CellProperties> getCellPropertiesByColumnRange(RowIndex row, ColumnIndex start, ColumnIndex end) {
+    List<CellProperties> cellProperties = <CellProperties>[];
+    for (int i = start.value; i <= end.value; i++) {
+      cellProperties.add(getCellProperties(CellIndex(row: row, column: ColumnIndex(i))));
+    }
+    return cellProperties;
   }
 
   void setCellsProperties(Map<CellIndex, CellProperties> cellProperties) {

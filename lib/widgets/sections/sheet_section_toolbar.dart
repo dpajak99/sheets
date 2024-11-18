@@ -8,6 +8,7 @@ import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/values/actions/cell_style_format_action.dart';
 import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_border_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_color_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_divider.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_font_family_button.dart';
@@ -96,18 +97,30 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <Widget>[
-                                MaterialToolbarTextButton(text: NumberFormat.currency().currencySymbol, onTap: () {
-                                  widget.sheetController.formatSelection(UpdateValueFormatAction(SheetNumberFormat.currency()));
-                                }),
-                                MaterialToolbarIconButton(icon: SheetIcons.percentage, onTap: () {
-                                  widget.sheetController.formatSelection(UpdateValueFormatAction(SheetNumberFormat.percentPattern()));
-                                }),
-                                MaterialToolbarIconButton(icon: SheetIcons.decimal_decrease, onTap: () {
-                                  widget.sheetController.formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.decreaseDecimal()));
-                                }),
-                                MaterialToolbarIconButton(icon: SheetIcons.decimal_increase, onTap: () {
-                                  widget.sheetController.formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.increaseDecimal()));
-                                }),
+                                MaterialToolbarTextButton(
+                                    text: NumberFormat.currency().currencySymbol,
+                                    onTap: () {
+                                      widget.sheetController
+                                          .formatSelection(UpdateValueFormatAction(SheetNumberFormat.currency()));
+                                    }),
+                                MaterialToolbarIconButton(
+                                    icon: SheetIcons.percentage,
+                                    onTap: () {
+                                      widget.sheetController
+                                          .formatSelection(UpdateValueFormatAction(SheetNumberFormat.percentPattern()));
+                                    }),
+                                MaterialToolbarIconButton(
+                                    icon: SheetIcons.decimal_decrease,
+                                    onTap: () {
+                                      widget.sheetController
+                                          .formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.decreaseDecimal()));
+                                    }),
+                                MaterialToolbarIconButton(
+                                    icon: SheetIcons.decimal_increase,
+                                    onTap: () {
+                                      widget.sheetController
+                                          .formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.increaseDecimal()));
+                                    }),
                                 MaterialToolbarFormatButton(
                                   onChanged: (SheetValueFormat value) {
                                     widget.sheetController.formatSelection(UpdateValueFormatAction(value));
@@ -193,7 +206,15 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                     widget.sheetController.formatSelection(UpdateBackgroundColorAction(color));
                                   },
                                 ),
-                                MaterialToolbarIconButton(icon: SheetIcons.border_all, onTap: () {}),
+                                MaterialBorderButton(
+                                  onChanged: (BorderEdges edges, Color color, double width) {
+                                    widget.sheetController.formatSelection(UpdateBorderFormatAction(
+                                      borderEdges: edges,
+                                      borderSide: BorderSide(color: color, width: width),
+                                      selectedCells: widget.sheetController.selectedCells,
+                                    ));
+                                  },
+                                ),
                                 MaterialToolbarIconButton.withDropdown(icon: SheetIcons.cell_merge, onTap: () {}),
                                 const MaterialToolbarDivider(),
                               ],

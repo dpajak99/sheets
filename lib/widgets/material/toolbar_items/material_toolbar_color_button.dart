@@ -15,6 +15,8 @@ class MaterialToolbarColorButton extends StatefulWidget with MaterialToolbarItem
     this.width = 32,
     this.height = 30,
     this.margin = const EdgeInsets.symmetric(horizontal: 1),
+    this.button,
+    this.level = 1,
     super.key,
   });
 
@@ -27,6 +29,8 @@ class MaterialToolbarColorButton extends StatefulWidget with MaterialToolbarItem
   final Color color;
   final ValueChanged<Color> onSelected;
   final AssetIconData icon;
+  final Widget? button;
+  final int level;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -34,6 +38,7 @@ class MaterialToolbarColorButton extends StatefulWidget with MaterialToolbarItem
     properties.add(ColorProperty('color', color));
     properties.add(ObjectFlagProperty<ValueChanged<Color>>.has('onSelected', onSelected));
     properties.add(DiagnosticsProperty<AssetIconData>('icon', icon));
+    properties.add(IntProperty('level', level));
   }
 
   @override
@@ -41,19 +46,23 @@ class MaterialToolbarColorButton extends StatefulWidget with MaterialToolbarItem
 }
 
 class _MaterialToolbarColorButtonState extends State<MaterialToolbarColorButton> {
+  final PopupController _popupController = PopupController();
   bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
     return PopupButton(
-      button: _ColorPickerButton(
-        pressed: _pressed,
-        selectedColor: widget.color,
-        icon: widget.icon,
-        width: widget.width,
-        height: widget.height,
-        margin: widget.margin,
-      ),
+      level: widget.level,
+      controller: _popupController,
+      button: widget.button ??
+          _ColorPickerButton(
+            pressed: _pressed,
+            selectedColor: widget.color,
+            icon: widget.icon,
+            width: widget.width,
+            height: widget.height,
+            margin: widget.margin,
+          ),
       onToggle: (bool isPressed) {
         setState(() {
           _pressed = isPressed;
@@ -62,7 +71,10 @@ class _MaterialToolbarColorButtonState extends State<MaterialToolbarColorButton>
       popupBuilder: (BuildContext context) {
         return MaterialColorPicker(
           selectedColor: widget.color,
-          onColorChanged: widget.onSelected,
+          onColorChanged: (Color color) {
+            _popupController.close();
+            widget.onSelected(color);
+          },
         );
       },
     );

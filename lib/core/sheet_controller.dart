@@ -61,6 +61,10 @@ class SheetController {
 
   late SelectionState selection;
 
+  List<CellIndex> get selectedCells {
+    return selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
+  }
+
   Future<void> dispose() async {
     await keyboard.dispose();
   }

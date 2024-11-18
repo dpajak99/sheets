@@ -26,7 +26,7 @@ class MaterialToolbarOptionsButton<T> extends StatefulWidget with MaterialToolba
     required this.icon,
     required this.onSelected,
     required this.options,
-    required this.selectedValue,
+    this.selectedValue,
     this.width = 39,
     this.height = 30,
     this.margin = const EdgeInsets.symmetric(horizontal: 1),
@@ -42,7 +42,7 @@ class MaterialToolbarOptionsButton<T> extends StatefulWidget with MaterialToolba
   final double height;
   @override
   final EdgeInsets margin;
-  final T selectedValue;
+  final T? selectedValue;
   final AssetIconData icon;
   final ValueChanged<T> onSelected;
   final List<IconOptionValue<T>> options;
@@ -89,13 +89,13 @@ class _MaterialToolbarOptionsButtonState<T> extends State<MaterialToolbarOptions
 
 class _OptionsPopup<T> extends StatefulWidget {
   const _OptionsPopup({
-    required this.selectedValue,
     required this.options,
     required this.onSelected,
+    this.selectedValue,
     super.key,
   });
 
-  final T selectedValue;
+  final T? selectedValue;
   final List<IconOptionValue<T>> options;
   final ValueChanged<T> onSelected;
 
@@ -112,7 +112,7 @@ class _OptionsPopup<T> extends StatefulWidget {
 }
 
 class _OptionsPopupState<T> extends State<_OptionsPopup<T>> {
-  late T _selectedValue = widget.selectedValue;
+  late T? _selectedValue = widget.selectedValue;
 
   @override
   Widget build(BuildContext context) {

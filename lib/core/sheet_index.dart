@@ -157,6 +157,10 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
     return Rect.fromLTWH(x, 0, width + borderWidth, defaultRowHeight + borderWidth);
   }
 
+  ColumnIndex operator +(int number) {
+    return ColumnIndex(value + number);
+  }
+
   ColumnIndex operator -(int number) {
     return ColumnIndex(value - number);
   }
@@ -251,6 +255,10 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
 
   RowIndex operator +(int number) {
     return RowIndex(value + number);
+  }
+
+  RowIndex operator -(int number) {
+    return RowIndex(value - number);
   }
 
   @override
