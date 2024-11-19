@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
-import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 
 abstract class SelectionStyle with EquatableMixin {
   SelectionStyle({
@@ -16,8 +17,10 @@ abstract class SelectionStyle with EquatableMixin {
   TextAlign get textAlignHorizontal => cellProperties.visibleTextAlign;
 
   TextVerticalAlign get textAlignVertical {
-    return cellProperties.style.textVerticalAlign;
+    return cellProperties.style.verticalAlign;
   }
+
+  CellStyle get cellStyle => cellProperties.style;
 
   FontWeight? get fontWeight => textStyle.fontWeight;
 

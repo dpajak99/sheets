@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
-import 'package:sheets/core/values/actions/cell_style_format_action.dart';
-import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/utils/formatters/style/cell_style_format.dart';
+import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
+import 'package:sheets/utils/formatters/style/style_format.dart';
+import 'package:sheets/utils/formatters/style/text_style_format.dart';
 
 class SheetProperties extends ChangeNotifier {
   SheetProperties({
@@ -35,18 +35,19 @@ class SheetProperties extends ChangeNotifier {
   int columnCount;
   int rowCount;
 
-  void formatSelection(List<CellIndex> cells, FormatAction formatAction) {
+  void formatSelection(List<CellIndex> cells, StyleFormatAction<StyleFormatIntent> formatAction) {
     for (CellIndex cellIndex in cells) {
       data[cellIndex] ??= CellProperties.empty();
-      if (formatAction is TextStyleFormatAction) {
-        data[cellIndex]!.value.updateStyle(formatAction);
-      } else if (formatAction is CellStyleFormatAction) {
-        formatAction.format(data[cellIndex]!.style);
-      } else if (formatAction is FullFormatAction) {
-        formatAction.format(this);
+
+      switch (formatAction) {
+        case TextStyleFormatAction<TextStyleFormatIntent> formatAction:
+          data[cellIndex]!.value = data[cellIndex]!.value.updateStyle(formatAction);
+        case CellStyleFormatAction<CellStyleFormatIntent> formatAction:
+          data[cellIndex]!.style = formatAction.format(data[cellIndex]!.style);
+        case SheetStyleFormatAction<SheetStyleFormatIntent> formatAction:
+          formatAction.format(this);
       }
     }
-
     notifyListeners();
   }
 
@@ -107,10 +108,19 @@ class SheetProperties extends ChangeNotifier {
     return getColumnStyle(columnIndex).width;
   }
 
-  void setCellStyle(CellIndex cellIndex, RowStyle rowStyle, ColumnStyle columnStyle) {
+  void setCellSize(CellIndex cellIndex, RowStyle rowStyle, ColumnStyle columnStyle) {
     _customRowStyles[cellIndex.row] = rowStyle;
     _customColumnStyles[cellIndex.column] = columnStyle;
     notifyListeners();
+  }
+
+  void setCellStyle(CellIndex cellIndex, CellStyle cellStyle, {bool notify = true}) {
+    data[cellIndex] ??= CellProperties.empty();
+    data[cellIndex] = data[cellIndex]!.copyWith(style: cellStyle);
+
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   void setRowStyle(RowIndex rowIndex, RowStyle rowStyle) {
@@ -164,4 +174,3 @@ class SheetProperties extends ChangeNotifier {
     return _customColumnStyles.map((ColumnIndex key, ColumnStyle value) => MapEntry<int, double>(key.value, value.width));
   }
 }
-

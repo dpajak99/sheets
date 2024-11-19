@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_options_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/mixins/material_toolbar_item_mixin.dart';
 
@@ -53,11 +54,4 @@ class MaterialTextVerticalAlignButton extends StatelessWidget with MaterialToolb
     properties.add(EnumProperty<TextVerticalAlign>('selectedTextAlign', selectedTextAlign));
     properties.add(ObjectFlagProperty<ValueChanged<TextVerticalAlign>>.has('onChanged', onChanged));
   }
-
-}
-
-enum TextVerticalAlign {
-  top,
-  center,
-  bottom,
 }

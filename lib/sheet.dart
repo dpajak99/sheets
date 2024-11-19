@@ -4,13 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/layers/cells/sheet_cells_layer.dart';
 import 'package:sheets/layers/fill_handle/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/headers/sheet_headers_layer.dart';
 import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer.dart';
 import 'package:sheets/layers/textfield/sheet_textfield_layer.dart';
+import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
 import 'package:sheets/widgets/sheet_scrollable.dart';
 
@@ -48,9 +48,9 @@ class _SheetState extends State<Sheet> {
       onStartEditing: sheetController.startEditing,
       onMove: (CellMoveDirection direction) => sheetController.moveSelection(direction.toOffset()),
       onRemove: () => sheetController.clearSelection(),
-      onFontWeightUpdate: (FontWeight fontWeight) => widget.sheetController.formatSelection(UpdateFontWeightAction(widget.sheetController.getSelectionStyle(), fontWeight)),
-      onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.formatSelection(UpdateFontStyleAction(widget.sheetController.getSelectionStyle(), fontStyle)),
-      onTextDecorationUpdate: (TextDecoration decoration) => widget.sheetController.formatSelection(UpdateTextDecorationAction(widget.sheetController.getSelectionStyle(), decoration)),
+      onFontWeightUpdate: (FontWeight fontWeight) => widget.sheetController.formatSelection(ToggleFontWeightIntent()),
+      onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.formatSelection(ToggleFontStyleIntent()),
+      onTextDecorationUpdate: (TextDecoration decoration) => widget.sheetController.formatSelection(ToggleTextDecorationIntent(value: decoration)),
       onUndo: () {},
       onRedo: () {},
       onPaste: () {},

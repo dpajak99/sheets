@@ -50,7 +50,7 @@ class SheetResizeCellGesture extends SheetGesture {
   void resolve(SheetController controller) {
     RowStyle rowStyle = controller.properties.getRowStyle(cellIndex.row);
     ColumnStyle columnStyle = controller.properties.getColumnStyle(cellIndex.column);
-    controller.properties.setCellStyle(
+    controller.properties.setCellSize(
       cellIndex,
       rowStyle.copyWith(height: size.height),
       columnStyle.copyWith(width: size.width),

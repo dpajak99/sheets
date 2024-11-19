@@ -37,7 +37,7 @@ class CellProperties with EquatableMixin {
   }
 
   TextAlign get visibleTextAlign {
-    return style.textAlign ?? visibleValueFormat.textAlign;
+    return style.horizontalAlign ?? visibleValueFormat.textAlign;
   }
 
   @override

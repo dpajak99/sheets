@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
 
 typedef TextStyleFormatter = TextStyle Function(TextStyle mergedStyle, TextStyle textStyle);
@@ -41,7 +42,7 @@ class SheetTextFieldActions {
 
   static SheetTextFieldAction paste() => _PasteAction();
 
-  static SheetTextFieldAction format(TextStyleFormatter formatter) => _FormatAction(formatter);
+  static SheetTextFieldAction format(TextStyleFormatIntent intent) => _FormatAction(intent);
 }
 
 abstract class SheetTextFieldAction with EquatableMixin {
@@ -501,9 +502,9 @@ class _PasteAction extends SheetTextFieldAction {
 
 /// Formats the selected text using the provided formatter function.
 class _FormatAction extends SheetTextFieldAction {
+  _FormatAction(this.intent);
 
-  _FormatAction(this.formatter);
-  final TextStyleFormatter formatter;
+  final TextStyleFormatIntent intent;
 
   @override
   bool get shouldUpdateHistory => true;
@@ -514,14 +515,14 @@ class _FormatAction extends SheetTextFieldAction {
     EditableTextSpan textSpan = controller.value.text.format(
       start: selection.start,
       end: selection.end,
-      formatter: formatter,
+      intent: intent,
     );
 
     return controller.value.copyWith(text: textSpan);
   }
 
   @override
-  List<Object?> get props => <Object?>[formatter];
+  List<Object?> get props => <Object?>[intent];
 }
 
 bool _containsWordDelimiter(String text) {

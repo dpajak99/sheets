@@ -5,9 +5,11 @@ import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/values/actions/cell_style_format_action.dart';
-import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/utils/formatters/style/cell_style_format.dart';
+import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
+import 'package:sheets/utils/formatters/style/text_style_format.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_border_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_color_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_divider.dart';
@@ -101,29 +103,29 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                     text: NumberFormat.currency().currencySymbol,
                                     onTap: () {
                                       widget.sheetController
-                                          .formatSelection(UpdateValueFormatAction(SheetNumberFormat.currency()));
+                                          .formatSelection(SetValueFormatIntent(format: SheetNumberFormat.currency()));
                                     }),
                                 MaterialToolbarIconButton(
                                     icon: SheetIcons.percentage,
                                     onTap: () {
                                       widget.sheetController
-                                          .formatSelection(UpdateValueFormatAction(SheetNumberFormat.percentPattern()));
+                                          .formatSelection(SetValueFormatIntent(format: SheetNumberFormat.percentPattern()));
                                     }),
                                 MaterialToolbarIconButton(
                                     icon: SheetIcons.decimal_decrease,
                                     onTap: () {
                                       widget.sheetController
-                                          .formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.decreaseDecimal()));
+                                          .formatSelection(SetValueFormatIntent(format: selectionStyle.valueFormat.decreaseDecimal()));
                                     }),
                                 MaterialToolbarIconButton(
                                     icon: SheetIcons.decimal_increase,
                                     onTap: () {
                                       widget.sheetController
-                                          .formatSelection(UpdateValueFormatAction(selectionStyle.valueFormat.increaseDecimal()));
+                                          .formatSelection(SetValueFormatIntent(format: selectionStyle.valueFormat.increaseDecimal()));
                                     }),
                                 MaterialToolbarFormatButton(
                                   onChanged: (SheetValueFormat value) {
-                                    widget.sheetController.formatSelection(UpdateValueFormatAction(value));
+                                    widget.sheetController.formatSelection(SetValueFormatIntent(format: value));
                                   },
                                 ),
                                 const MaterialToolbarDivider(),
@@ -133,8 +135,8 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                               buttons: <Widget>[
                                 MaterialToolbarFontFamilyButton(
                                   selectedFontFamily: 'Default',
-                                  onChanged: (String value) {
-                                    widget.sheetController.formatSelection(UpdateFontFamilyAction(selectionStyle, value));
+                                  onChanged: (String fontFamily) {
+                                    widget.sheetController.formatSelection(SetFontFamilyIntent(fontFamily: fontFamily));
                                   },
                                 ),
                                 const MaterialToolbarDivider(),
@@ -145,7 +147,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                 MaterialToolbarIconButton.small(
                                   icon: SheetIcons.remove,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(DecreaseFontSizeAction(selectionStyle));
+                                    widget.sheetController.formatSelection(DecreaseFontSizeIntent());
                                   },
                                 ),
                                 MaterialToolbarFontSizeTextfield(
@@ -155,7 +157,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                 MaterialToolbarIconButton.small(
                                   icon: SheetIcons.add,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(IncreaseFontSizeAction(selectionStyle));
+                                    widget.sheetController.formatSelection(IncreaseFontSizeIntent());
                                   },
                                 ),
                                 const MaterialToolbarDivider(),
@@ -168,7 +170,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                   active: selectionStyle.fontWeight == FontWeight.bold,
                                   onTap: () {
                                     widget.sheetController
-                                        .formatSelection(UpdateFontWeightAction(selectionStyle, FontWeight.bold));
+                                        .formatSelection(ToggleFontWeightIntent());
                                   },
                                 ),
                                 MaterialToolbarIconButton(
@@ -176,7 +178,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                   active: selectionStyle.fontStyle == FontStyle.italic,
                                   onTap: () {
                                     widget.sheetController
-                                        .formatSelection(UpdateFontStyleAction(selectionStyle, FontStyle.italic));
+                                        .formatSelection(ToggleFontStyleIntent());
                                   },
                                 ),
                                 MaterialToolbarIconButton(
@@ -184,14 +186,14 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                   active: selectionStyle.decoration == TextDecoration.lineThrough,
                                   onTap: () {
                                     widget.sheetController
-                                        .formatSelection(UpdateTextDecorationAction(selectionStyle, TextDecoration.lineThrough));
+                                        .formatSelection(ToggleTextDecorationIntent(value: TextDecoration.lineThrough));
                                   },
                                 ),
                                 MaterialToolbarColorButton(
                                   icon: SheetIcons.format_color_text,
                                   color: selectionStyle.color ?? defaultTextStyle.color ?? Colors.black,
                                   onSelected: (Color color) {
-                                    widget.sheetController.formatSelection(UpdateFontColorAction(selectionStyle, color));
+                                    widget.sheetController.formatSelection(SetFontColorIntent(color: color));
                                   },
                                 ),
                                 const MaterialToolbarDivider(),
@@ -203,13 +205,13 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                   icon: SheetIcons.format_color_fill,
                                   color: selectionStyle.backgroundColor ?? defaultTextStyle.backgroundColor ?? Colors.white,
                                   onSelected: (Color color) {
-                                    widget.sheetController.formatSelection(UpdateBackgroundColorAction(color));
+                                    widget.sheetController.formatSelection(SetBackgroundColorIntent(color: color));
                                   },
                                 ),
                                 MaterialBorderButton(
                                   onChanged: (BorderEdges edges, Color color, double width) {
-                                    widget.sheetController.formatSelection(UpdateBorderFormatAction(
-                                      borderEdges: edges,
+                                    widget.sheetController.formatSelection(SetBorderIntent(
+                                      edges: edges,
                                       borderSide: BorderSide(color: color, width: width),
                                       selectedCells: widget.sheetController.selectedCells,
                                     ));
@@ -224,13 +226,13 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                 MaterialTextAlignButton(
                                   selectedTextAlign: selectionStyle.textAlignHorizontal,
                                   onChanged: (TextAlign value) {
-                                    widget.sheetController.formatSelection(UpdateHorizontalTextAlignAction(value));
+                                    widget.sheetController.formatSelection(SetHorizontalAlignIntent(value));
                                   },
                                 ),
                                 MaterialTextVerticalAlignButton(
                                   selectedTextAlign: selectionStyle.textAlignVertical,
                                   onChanged: (TextVerticalAlign value) {
-                                    widget.sheetController.formatSelection(UpdateVerticalTextAlignAction(value));
+                                    widget.sheetController.formatSelection(SetVerticalAlignIntent(value));
                                   },
                                 ),
                                 MaterialTextOverflowButton(

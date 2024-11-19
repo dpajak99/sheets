@@ -17,12 +17,14 @@ import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/core/values/actions/cell_style_format_action.dart';
-import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/extensions/silent_value_notifier.dart';
+import 'package:sheets/utils/formatters/style/cell_style_format.dart';
+import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
+import 'package:sheets/utils/formatters/style/style_format.dart';
+import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
 import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
@@ -64,22 +66,28 @@ class SheetController {
 
   SilentValueNotifier<EditableViewportCell?> get activeCellNotifier => _editableCellNotifier;
 
-  void formatSelection(FormatAction formatAction) {
-    List<CellIndex> selectedCells = selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
-    if (activeCellNotifier.value != null && formatAction is TextStyleFormatAction) {
-      TextStyleFormatAction textStyleFormatAction = formatAction;
+  bool get hasActiveCell => activeCellNotifier.value != null;
 
+  void formatSelection(StyleFormatIntent intent) {
+    List<CellIndex> selectedCells = selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
+    SelectionStyle selectionStyle = getSelectionStyle();
+
+    if (hasActiveCell && intent is TextStyleFormatIntent) {
       SheetTextEditingController controller = activeCellNotifier.value!.controller;
-      unawaited(controller.handleAction(
-        SheetTextFieldActions.format((material.TextStyle mergedTextStyle, material.TextStyle previousTextStyle) {
-          return textStyleFormatAction.format(mergedTextStyle, previousTextStyle);
-        }),
-      ));
-    } else {
-      properties.formatSelection(selectedCells, formatAction);
-      if (formatAction.autoresize) {
-        properties.ensureMinimalRowsHeight(selectedCells.map((CellIndex cellIndex) => cellIndex.row).toSet().toList());
-      }
+      unawaited(controller.handleAction(SheetTextFieldActions.format(intent)));
+      return;
+    }
+
+    switch (intent) {
+      case TextStyleFormatIntent intent:
+        TextStyleFormatAction<TextStyleFormatIntent> formatAction = intent.createAction(baseTextStyle: selectionStyle.textStyle);
+        properties.formatSelection(selectedCells, formatAction);
+      case CellStyleFormatIntent intent:
+        CellStyleFormatAction<CellStyleFormatIntent> formatAction = intent.createAction(cellStyle: selectionStyle.cellStyle);
+        properties.formatSelection(selectedCells, formatAction);
+      case SheetStyleFormatIntent intent:
+        SheetStyleFormatAction<SheetStyleFormatIntent> formatAction = intent.createAction();
+        properties.formatSelection(selectedCells, formatAction);
     }
   }
 
@@ -175,33 +183,6 @@ class SheetController {
 
   void clearSelection() {
     properties.clearCells(selectedCells);
-  }
-
-
-  void _handleKeyboardKey(List<LogicalKeyboardKey> key) {
-    List<String> keyLabels = key
-        .map((LogicalKeyboardKey logicalKeyboardKey) => logicalKeyboardKey.keyLabel)
-        .toList()
-        .where((String label) => label.length == 1)
-        .toList();
-
-    if (keyLabels.isNotEmpty) {
-      bool uppercase = key.contains(LogicalKeyboardKey.shiftLeft) || key.contains(LogicalKeyboardKey.shiftRight);
-      String value = keyLabels.first;
-
-      if (uppercase) {
-        value = value.toUpperCase();
-      } else {
-        value = value.toLowerCase();
-      }
-
-      setActiveCellIndex(selection.value.mainCell, value: value);
-    }
-
-    bool clearCell = key.contains(LogicalKeyboardKey.delete) || key.contains(LogicalKeyboardKey.backspace);
-    if (clearCell) {
-      setCellValue(selection.value.mainCell, SheetRichText());
-    }
   }
 }
 

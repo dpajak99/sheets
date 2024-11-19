@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
 import 'package:sheets/utils/extensions/silent_value_notifier.dart';
+import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 /// Represents a single character with an associated [TextStyle].
@@ -79,7 +80,7 @@ class EditableTextSpan with EquatableMixin {
     return copyWith(letters: <TextSpanLetter>[TextSpanLetter(letter: '', style: style)]);
   }
 
-  EditableTextSpan format({required int start, required int end, required TextStyleFormatter formatter}) {
+  EditableTextSpan format({required int start, required int end, required TextStyleFormatIntent intent}) {
     List<TextSpanLetter> updatedLetters = List<TextSpanLetter>.from(letters);
     List<TextStyle> styles = updatedLetters.sublist(start, end).map((TextSpanLetter letter) => letter.style).toList();
     if (styles.isEmpty) {
@@ -89,8 +90,10 @@ class EditableTextSpan with EquatableMixin {
         ? styles.reduce((TextStyle a, TextStyle b) => a.merge(b)) //
         : styles.first;
 
+    TextStyleFormatAction<TextStyleFormatIntent> formatter = intent.createAction(baseTextStyle: mergedStyle);
+
     for (int i = start; i < end; i++) {
-      TextStyle newStyle = formatter(mergedStyle, letters[i].style);
+      TextStyle newStyle = formatter.format(letters[i].style);
       updatedLetters[i] = updatedLetters[i].copyWith(style: newStyle);
     }
 
@@ -621,43 +624,15 @@ class _SheetTextFieldState extends State<SheetTextField> {
   }
 
   void _updateFontWeight(FontWeight fontWeight) {
-    _handleAction(SheetTextFieldActions.format((TextStyle mergedStyle, TextStyle style) {
-      if (mergedStyle.fontWeight == fontWeight) {
-        return style.copyWith(fontWeight: FontWeight.normal);
-      } else {
-        return style.copyWith(fontWeight: fontWeight);
-      }
-    }));
+    _handleAction(SheetTextFieldActions.format(ToggleFontWeightIntent(value: fontWeight)));
   }
 
   void _updateFontStyle(FontStyle fontStyle) {
-    _handleAction(SheetTextFieldActions.format((TextStyle mergedStyle, TextStyle style) {
-      if (mergedStyle.fontStyle == fontStyle) {
-        return style.copyWith(fontStyle: FontStyle.normal);
-      } else {
-        return style.copyWith(fontStyle: fontStyle);
-      }
-    }));
+    _handleAction(SheetTextFieldActions.format(ToggleFontStyleIntent(value: fontStyle)));
   }
 
   void _formatDecoration(TextDecoration textDecoration) {
-    _handleAction(SheetTextFieldActions.format((TextStyle mergedStyle, TextStyle style) {
-      TextDecoration? mergedDecoration = mergedStyle.decoration;
-
-      if (mergedDecoration == null) {
-        return style.copyWith(decoration: textDecoration);
-      } else if (mergedDecoration.contains(textDecoration)) {
-        List<TextDecoration> availableDecorations = <TextDecoration>[
-          if (mergedDecoration.contains(TextDecoration.underline)) TextDecoration.underline,
-          if (mergedDecoration.contains(TextDecoration.overline)) TextDecoration.overline,
-          if (mergedDecoration.contains(TextDecoration.lineThrough)) TextDecoration.lineThrough,
-        ]..remove(textDecoration);
-
-        return style.copyWith(decoration: TextDecoration.combine(availableDecorations));
-      } else {
-        return style.copyWith(decoration: TextDecoration.combine(<TextDecoration>[style.decoration!, textDecoration]));
-      }
-    }));
+    _handleAction(SheetTextFieldActions.format(ToggleTextDecorationIntent(value: textDecoration)));
   }
 
   void _undo() {

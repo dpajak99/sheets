@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
-import 'package:sheets/core/values/actions/text_style_format_actions.dart';
+import 'package:sheets/utils/formatters/style/text_style_format.dart';
 
 class SheetRichText {
   SheetRichText({List<SheetTextSpan>? spans})
@@ -64,10 +64,13 @@ class SheetRichText {
     }
   }
 
-  void updateStyle(TextStyleFormatAction textFormatAction) {
-    for (int i = 0; i < spans.length; i++) {
-      spans[i] = spans[i].copyWith(style: textFormatAction.format(spans[i].style, textFormatAction.selectionStyle.textStyle));
+  SheetRichText updateStyle(TextStyleFormatAction<TextStyleFormatIntent> formatter) {
+    List<SheetTextSpan> newSpans = List<SheetTextSpan>.from(spans);
+    for (int i = 0; i < newSpans.length; i++) {
+      SheetTextSpan span = newSpans[i];
+      newSpans[i] = span.copyWith(style: formatter.format(span.style));
     }
+    return SheetRichText(spans: newSpans);
   }
 }
 

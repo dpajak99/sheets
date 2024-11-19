@@ -2,53 +2,62 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
 class CellStyle with EquatableMixin {
   CellStyle({
-    this.textAlign,
+    this.horizontalAlign,
     this.textOverflow = TextOverflowBehavior.clip,
-    this.textVerticalAlign = TextVerticalAlign.bottom,
+    this.verticalAlign = TextVerticalAlign.bottom,
     this.rotationAngleDegrees = 0.0,
     this.backgroundColor = Colors.white,
     this.valueFormat,
-    Border? border,
-  })  : _border = border,
-        borderZIndex = border != null ? globalBorderZIndex++ : null;
+    this.border,
+  })  : borderZIndex = border != null ? globalBorderZIndex++ : null;
 
   static int globalBorderZIndex = 0;
 
-  SheetValueFormat? valueFormat;
-  Color backgroundColor;
-  double rotationAngleDegrees;
-  TextAlign? textAlign;
-  TextOverflowBehavior textOverflow;
-  TextVerticalAlign textVerticalAlign;
-  Border? _border;
-
-  Border? get border => _border;
-
-  set border(Border? value) {
-    _border = value;
-    if (value != null) {
-      borderZIndex = globalBorderZIndex++;
-    } else {
-      borderZIndex = null;
-    }
+  CellStyle copyWith({
+    TextAlign? horizontalAlign,
+    TextOverflowBehavior? textOverflow,
+    TextVerticalAlign? verticalAlign,
+    double? rotationAngleDegrees,
+    Color? backgroundColor,
+    SheetValueFormat? valueFormat,
+    Border? border,
+  }) {
+    return CellStyle(
+      horizontalAlign: horizontalAlign ?? this.horizontalAlign,
+      verticalAlign: verticalAlign ?? this.verticalAlign,
+      textOverflow: textOverflow ?? this.textOverflow,
+      rotationAngleDegrees: rotationAngleDegrees ?? this.rotationAngleDegrees,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      valueFormat: valueFormat ?? this.valueFormat,
+      border: border ?? this.border,
+    );
   }
+
+  final SheetValueFormat? valueFormat;
+  final Color backgroundColor;
+  final double rotationAngleDegrees;
+  final TextAlign? horizontalAlign;
+  final TextOverflowBehavior textOverflow;
+  final TextVerticalAlign verticalAlign;
+  final Border? border;
 
   int? borderZIndex;
 
   @override
   List<Object?> get props => <Object?>[
-    textAlign,
+    horizontalAlign,
     textOverflow,
-    textVerticalAlign,
+    verticalAlign,
     rotationAngleDegrees,
     backgroundColor,
     valueFormat,
-    _border,
+    border,
     borderZIndex,
   ];
 }

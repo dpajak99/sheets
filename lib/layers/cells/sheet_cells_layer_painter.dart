@@ -10,6 +10,7 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/shared_paints.dart';
 import 'package:sheets/utils/edge_visibility.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
@@ -158,7 +159,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
     textPainter.layout(minWidth: width, maxWidth: width);
 
     // Get vertical alignment (default to top if not set)
-    TextVerticalAlign verticalAlign = cellStyle.textVerticalAlign;
+    TextVerticalAlign verticalAlign = cellStyle.verticalAlign;
 
     // Calculate the y-offset based on vertical alignment
     double yOffset;
