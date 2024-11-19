@@ -8,6 +8,7 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/sheet.dart';
 import 'package:sheets/widgets/sections/sheet_footer.dart';

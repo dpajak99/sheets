@@ -7,7 +7,6 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 abstract class SheetValueFormat with EquatableMixin {
   static SheetValueFormat auto(SheetRichText value) {
     try {
-      // print('Searching for format for value: ${value.getPlainText()}');
       List<SheetValueFormat> autoFormats = <SheetValueFormat>[
         SheetNumberFormat.decimalPattern(),
         SheetDateFormat('yyyy-MM-dd'),

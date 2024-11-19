@@ -3,6 +3,7 @@ import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_style.dart';
 
 class SheetResizeColumnGesture extends SheetGesture {
   SheetResizeColumnGesture(this.columnIndex, this.width);

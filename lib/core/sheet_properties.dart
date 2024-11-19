@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/actions/cell_style_format_action.dart';
 import 'package:sheets/core/values/actions/text_style_format_actions.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
@@ -16,44 +17,9 @@ class SheetProperties extends ChangeNotifier {
     Map<CellIndex, CellProperties>? data,
     this.columnCount = 100,
     this.rowCount = 200,
-  })  : _customRowStyles = customRowStyles ??
-            <RowIndex, RowStyle>{
-              RowIndex(2): RowStyle(height: 60),
-            },
+  })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
         _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{} {
-    this.data = data ??
-        <CellIndex, CellProperties>{
-          // CellIndex.raw(0, 0): CellProperties(value: SheetRichText.single(text: '1'), style: CellStyle()),
-          // CellIndex.raw(0, 1): CellProperties(value: SheetRichText.single(text: '1.1'), style: CellStyle()),
-          // CellIndex.raw(0, 2): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
-          // //
-          // CellIndex.raw(1, 0): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
-          // CellIndex.raw(1, 1): CellProperties(value: SheetRichText.single(text: '2.2'), style: CellStyle()),
-          // CellIndex.raw(1, 2): CellProperties(value: SheetRichText.single(text: '2'), style: CellStyle()),
-          // //
-          // CellIndex.raw(2, 0): CellProperties(value: SheetRichText.single(text: '3'), style: CellStyle()),
-          // CellIndex.raw(2, 1): CellProperties(value: SheetRichText.single(text: '3.3'), style: CellStyle()),
-          // CellIndex.raw(2, 2): CellProperties(
-          //     value: SheetRichText.single(
-          //         text:
-          //             'Szła dzieweczka do laseczka do zielonego ahahaha do zielonego ahahah do zieeeelooonegoooo... Napotkała myśliweczka mardzo szwarnego ahahahahah bardzo szwarnego ahahahhaha bardzo szwarnegooooo.... Gdzie jest ta ulica'),
-          //     style: CellStyle()),
-          // //
-          // CellIndex.raw(10, 5): CellProperties(
-          //   value: SheetRichText(
-          //     spans: <SheetTextSpan>[
-          //       SheetTextSpan(text: 'a'),
-          //       SheetTextSpan(text: 'bff', style: defaultTextStyle.copyWith(fontWeight: FontWeight.bold)),
-          //       SheetTextSpan(text: 'cvv', style: defaultTextStyle.copyWith(color: Colors.red)),
-          //       SheetTextSpan(text: 'd'),
-          //       // SheetTextSpan(text: 'ffe', style: defaultTextStyle.copyWith(fontSize: 14)),
-          //     ],
-          //   ),
-          //   style: CellStyle(
-          //     border: Border.all(),
-          //   ),
-          // ),
-        };
+    this.data = data ?? <CellIndex, CellProperties>{};
   }
 
   late final Map<CellIndex, CellProperties> data;
@@ -76,7 +42,7 @@ class SheetProperties extends ChangeNotifier {
         data[cellIndex]!.value.updateStyle(formatAction);
       } else if (formatAction is CellStyleFormatAction) {
         formatAction.format(data[cellIndex]!.style);
-      } else if(formatAction is FullFormatAction) {
+      } else if (formatAction is FullFormatAction) {
         formatAction.format(this);
       }
     }
@@ -189,42 +155,3 @@ class SheetProperties extends ChangeNotifier {
   }
 }
 
-class ColumnStyle with EquatableMixin {
-  ColumnStyle({
-    required this.width,
-  });
-
-  ColumnStyle.defaults() : width = defaultColumnWidth;
-  final double width;
-
-  ColumnStyle copyWith({
-    double? width,
-  }) {
-    return ColumnStyle(
-      width: width ?? this.width,
-    );
-  }
-
-  @override
-  List<Object?> get props => <Object?>[width];
-}
-
-class RowStyle with EquatableMixin {
-  RowStyle({
-    required this.height,
-  });
-
-  RowStyle.defaults() : height = defaultRowHeight;
-  final double height;
-
-  RowStyle copyWith({
-    double? height,
-  }) {
-    return RowStyle(
-      height: height ?? this.height,
-    );
-  }
-
-  @override
-  List<Object?> get props => <Object?>[height];
-}
