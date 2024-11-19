@@ -51,7 +51,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
                 onCompleted: (bool shouldSaveValue, SheetRichText richText, Size size) {
                   if(shouldSaveValue) {
                     widget.sheetController.setCellValue(activeCell.cell.index, richText, size: size);
-                    SheetSelectionMoveGesture(1, 0).resolve(widget.sheetController);
+                    SheetSelectionMoveGesture(0, 1).resolve(widget.sheetController);
                   } else {
                     widget.sheetController.resetActiveCell();
                   }

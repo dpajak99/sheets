@@ -35,6 +35,13 @@ class SheetRichText {
     return spans.map((SheetTextSpan span) => span.text).join();
   }
 
+  SheetRichText clear({bool clearStyle = true}) {
+    SheetTextSpan firstSpan = spans.first;
+    return SheetRichText(spans: <SheetTextSpan>[
+      SheetTextSpan(text: '', style: clearStyle ? firstSpan.style : constants.defaultTextStyle),
+    ]);
+  }
+
   SheetRichText withText(String text) {
     List<SheetTextSpan> newSpans = <SheetTextSpan>[
       SheetTextSpan(text: text, style: spans.first.style),

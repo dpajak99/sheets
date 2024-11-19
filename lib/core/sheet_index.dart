@@ -94,9 +94,9 @@ class CellIndex extends SheetIndex {
     return Rect.fromLTWH(xRect.left, yRect.top, xRect.width, yRect.height);
   }
 
-  CellIndex move(int rowOffset, int columnOffset) {
-    int movedRow = row.value + rowOffset;
-    int movedColumn = column.value + columnOffset;
+  CellIndex move({required int dx, required int dy}) {
+    int movedRow = row.value + dy;
+    int movedColumn = column.value + dx;
 
     return CellIndex(
       row: RowIndex(movedRow < 0 ? 0 : movedRow),

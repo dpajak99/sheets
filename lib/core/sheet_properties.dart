@@ -146,6 +146,16 @@ class SheetProperties extends ChangeNotifier {
     return _customColumnStyles[columnIndex] ?? ColumnStyle.defaults();
   }
 
+  void clearCells(List<CellIndex> cells) {
+    cells.forEach(clearCell);
+    notifyListeners();
+  }
+
+  void clearCell(CellIndex cellIndex) {
+    data[cellIndex] ??= CellProperties.empty();
+    data[cellIndex] = data[cellIndex]!.copyWith(value: data[cellIndex]!.value.clear());
+  }
+
   Map<int, double> get customRowExtents {
     return _customRowStyles.map((RowIndex key, RowStyle value) => MapEntry<int, double>(key.value, value.height));
   }

@@ -788,11 +788,6 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
       bindings: shortcuts,
       child: Focus(
         autofocus: true,
-        // onFocusChange: (bool hasFocus) {
-        //   if (hasFocus) {
-        //     SystemChannels.textInput.invokeMethod<void>('TextInput.show');
-        //   }
-        // },
         onKeyEvent: _handleKeyEvent,
         child: MouseRegion(
           cursor: SystemMouseCursors.text,

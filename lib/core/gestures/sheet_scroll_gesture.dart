@@ -11,7 +11,9 @@ class SheetScrollGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    if (controller.keyboard.equals(KeyboardShortcuts.reverseScroll)) {
+    HardwareKeyboard keyboard = HardwareKeyboard.instance;
+
+    if (keyboard.isShiftPressed) {
       controller.scroll.scrollBy(delta.reverse());
     } else {
       controller.scroll.scrollBy(delta);

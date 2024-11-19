@@ -2,18 +2,16 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
-import 'package:sheets/core/keyboard/keyboard_listener.dart';
-import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/mouse/mouse_listener.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/selection/selection_state.dart';
 import 'package:sheets/core/selection/selection_style.dart';
-import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
@@ -36,7 +34,6 @@ class SheetController {
 
     scroll = SheetScrollController();
     viewport = SheetViewport(properties, scroll);
-    keyboard = KeyboardListener();
     mouse = MouseListener(
       mouseActionRecognizers: <MouseGestureRecognizer>[
         MouseDoubleTapRecognizer(),
@@ -48,14 +45,12 @@ class SheetController {
       onChanged: (_) => resetActiveCell(),
       onFill: fill,
     );
-
-    _setupKeyboardShortcuts();
   }
 
+  final FocusNode sheetFocusNode = FocusNode()..requestFocus();
   final SheetProperties properties;
   late final SheetViewport viewport;
   late final SheetScrollController scroll;
-  late final KeyboardListener keyboard;
   late final MouseListener mouse;
   late final SilentValueNotifier<EditableViewportCell?> _editableCellNotifier;
 
@@ -65,9 +60,7 @@ class SheetController {
     return selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
   }
 
-  Future<void> dispose() async {
-    await keyboard.dispose();
-  }
+  Future<void> dispose() async {}
 
   SilentValueNotifier<EditableViewportCell?> get activeCellNotifier => _editableCellNotifier;
 
@@ -146,8 +139,8 @@ class SheetController {
   }
 
   void resetActiveCell() {
+    sheetFocusNode.requestFocus();
     _editableCellNotifier.setValue(null);
-    keyboard.enableListener();
   }
 
   void setActiveCellIndex(SheetIndex index, {String? value}) {
@@ -161,41 +154,29 @@ class SheetController {
   void setActiveViewportCell(ViewportCell cell, {String? value}) {
     selection.update(SheetSingleSelection(cell.index, fillHandleVisible: false), notifyAll: false);
 
+    sheetFocusNode.unfocus();
+    material.FocusNode textFieldFocusNode = material.FocusNode();
     if (value != null) {
-      _editableCellNotifier.setValue(EditableViewportCell(cell..setText(value)));
+      _editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: cell..setText(value)));
     } else {
-      _editableCellNotifier.setValue(EditableViewportCell(cell));
+      _editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: cell));
     }
-
-    keyboard.disableListener();
   }
 
-  void _setupKeyboardShortcuts() {
-    keyboard.pressStream.listen((KeyboardState state) {
-      return switch (state) {
-        KeyboardShortcuts.selectAll => selection.update(SheetSelectionFactory.all()),
-        KeyboardShortcuts.addRows => properties.addRows(10),
-        KeyboardShortcuts.addColumns => properties.addColumns(10),
-        KeyboardShortcuts.enter => setActiveCellIndex(selection.value.mainCell),
-        (_) => _handleKeyboardKey(state.keys),
-      };
-    });
-
-    keyboard.pressOrHoldStream.listen((KeyboardState state) {
-      if (state.containsState(KeyboardShortcuts.moveUp)) {
-        SheetSelectionMoveGesture(-1, 0).resolve(this);
-      }
-      if (state.containsState(KeyboardShortcuts.moveDown)) {
-        SheetSelectionMoveGesture(1, 0).resolve(this);
-      }
-      if (state.containsState(KeyboardShortcuts.moveLeft)) {
-        SheetSelectionMoveGesture(0, -1).resolve(this);
-      }
-      if (state.containsState(KeyboardShortcuts.moveRight)) {
-        SheetSelectionMoveGesture(0, 1).resolve(this);
-      }
-    });
+  void startEditing([String? initialValue]) {
+    if (activeCellNotifier.value == null) {
+      setActiveCellIndex(selection.value.mainCell, value: initialValue);
+    }
   }
+
+  void moveSelection(Offset offset) {
+    SheetSelectionMoveGesture(offset.dx.toInt(), offset.dy.toInt()).resolve(this);
+  }
+
+  void clearSelection() {
+    properties.clearCells(selectedCells);
+  }
+
 
   void _handleKeyboardKey(List<LogicalKeyboardKey> key) {
     List<String> keyLabels = key
@@ -225,7 +206,10 @@ class SheetController {
 }
 
 class EditableViewportCell with EquatableMixin {
-  EditableViewportCell(this.cell) {
+  EditableViewportCell({
+    required this.focusNode,
+    required this.cell,
+  }) {
     SheetRichText richText = cell.properties.editableRichText;
     controller = SheetTextEditingController(
       textAlign: cell.properties.visibleTextAlign,
@@ -233,7 +217,8 @@ class EditableViewportCell with EquatableMixin {
     );
   }
 
-  late final ViewportCell cell;
+  final material.FocusNode focusNode;
+  final ViewportCell cell;
   late final SheetTextEditingController controller;
 
   @override
