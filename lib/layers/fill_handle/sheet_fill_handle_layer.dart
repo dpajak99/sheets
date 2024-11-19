@@ -38,14 +38,14 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
-    widget.sheetController.properties.addListener(_updateFillHandle);
+    widget.sheetController.dataManager.addListener(_updateFillHandle);
     widget.sheetController.selection.addListener(_updateFillHandle);
     widget.sheetController.scroll.addListener(_updateFillHandle);
   }
 
   @override
   void dispose() {
-    widget.sheetController.properties.removeListener(_updateFillHandle);
+    widget.sheetController.dataManager.removeListener(_updateFillHandle);
     widget.sheetController.selection.removeListener(_updateFillHandle);
     widget.sheetController.scroll.removeListener(_updateFillHandle);
     super.dispose();

@@ -109,10 +109,7 @@ class _SpreadsheetTable extends StatelessWidget {
 
 class _SheetPageState extends State<_SheetPage> {
   final SheetController sheetController = SheetController(
-    properties: SheetProperties(
-      customColumnStyles: <ColumnIndex, ColumnStyle>{},
-      customRowStyles: <RowIndex, RowStyle>{},
-    ),
+    dataManager: SheetDataManager.dev(),
   );
 
   @override

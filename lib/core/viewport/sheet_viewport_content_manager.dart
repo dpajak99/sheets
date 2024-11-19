@@ -11,13 +11,11 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/directional_values.dart';
 
-class SheetViewportContent extends ChangeNotifier {
-  final SheetViewportContentData _data = SheetViewportContentData();
-  late SheetProperties _properties;
+class SheetViewportContentManager extends ChangeNotifier {
+  SheetViewportContentManager(this._dataManager) : _data = SheetViewportContentData();
 
-  void applyProperties(SheetProperties properties) {
-    _properties = properties;
-  }
+  final SheetViewportContentData _data;
+  final SheetDataManager _dataManager;
 
   void rebuild(SheetViewportRect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
     List<ViewportRow> rows = _calculateRows(viewportRect, scrollPosition);
@@ -36,27 +34,45 @@ class SheetViewportContent extends ChangeNotifier {
 
   List<ViewportItem> get all => _data.all;
 
-  bool containsCell(CellIndex cellIndex) => _data.containsCell(cellIndex.toRealIndex(_properties));
-
-  ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
-    return _data.findCellOrClosest(cellIndex.toRealIndex(_properties));
+  bool containsCell(CellIndex cellIndex) {
+    return _data.containsCell(cellIndex.toRealIndex(
+      columnCount: _dataManager.columnCount,
+      rowCount: _dataManager.rowCount,
+    ));
   }
 
-  ViewportCell? findCell(CellIndex cellIndex) => _data.findCell(cellIndex.toRealIndex(_properties));
+  ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
+    return _data.findCellOrClosest(cellIndex.toRealIndex(
+      columnCount: _dataManager.columnCount,
+      rowCount: _dataManager.rowCount,
+    ));
+  }
+
+  ViewportCell? findCell(CellIndex cellIndex) {
+    return _data.findCell(cellIndex.toRealIndex(
+      columnCount: _dataManager.columnCount,
+      rowCount: _dataManager.rowCount,
+    ));
+  }
 
   ViewportItem? findAnyByOffset(Offset mousePosition) => _data.findAnyByOffset(mousePosition);
 
-  ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) => _data.findClosestCell(cellIndex.toRealIndex(_properties));
+  ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) {
+    return _data.findClosestCell(cellIndex.toRealIndex(
+      columnCount: _dataManager.columnCount,
+      rowCount: _dataManager.rowCount,
+    ));
+  }
 
   List<ViewportRow> _calculateRows(SheetViewportRect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
-    return VisibleRowsRenderer(properties: _properties, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
+    return VisibleRowsRenderer(properties: _dataManager, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
   }
 
   List<ViewportColumn> _calculateColumns(SheetViewportRect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
-    return VisibleColumnsRenderer(properties: _properties, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
+    return VisibleColumnsRenderer(properties: _dataManager, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
   }
 
   List<ViewportCell> _calculateCells(List<ViewportRow> visibleRows, List<ViewportColumn> visibleColumns) {
-    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build(_properties);
+    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build(_dataManager);
   }
 }

@@ -31,16 +31,7 @@ class MaterialSheetExample extends StatefulWidget {
 
 class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   final SheetController sheetController = SheetController(
-    properties: SheetProperties(
-      customColumnStyles: <ColumnIndex, ColumnStyle>{},
-      customRowStyles: <RowIndex, RowStyle>{},
-      data: <CellIndex, CellProperties>{
-        CellIndex.raw(5, 5): CellProperties(
-          value: SheetRichText.single(text: '1'),
-          style: CellStyle(),
-        ),
-      },
-    ),
+    dataManager: SheetDataManager.dev(),
   );
 
   @override

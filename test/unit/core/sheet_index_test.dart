@@ -85,7 +85,7 @@ void main() {
     group('Tests of CellIndex.toRealIndex()', () {
       test('Should [return real index] when [CellIndex has max row and column]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(rowCount: 10, columnCount: 15);
+        SheetDataManager properties = SheetDataManager(rowCount: 10, columnCount: 15);
 
         CellIndex cellIndex = CellIndex(row: RowIndex.max, column: ColumnIndex.max);
 
@@ -99,7 +99,7 @@ void main() {
 
       test('Should [return same index] when [CellIndex is within bounds]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(rowCount: 10, columnCount: 15);
+        SheetDataManager properties = SheetDataManager(rowCount: 10, columnCount: 15);
 
         CellIndex cellIndex = CellIndex(row: RowIndex(5), column: ColumnIndex(7));
 
@@ -115,7 +115,7 @@ void main() {
     group('Tests of CellIndex.getSheetCoordinates()', () {
       test('Should [return correct Rect] when [calculating sheet coordinates]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(rowCount: 3, columnCount: 3);
+        SheetDataManager properties = SheetDataManager(rowCount: 3, columnCount: 3);
 
         CellIndex cellIndex = CellIndex(row: RowIndex(1), column: ColumnIndex(1));
 
@@ -283,7 +283,7 @@ void main() {
     group('Tests of RowIndex.toRealIndex()', () {
       test('Should [return real index] when [RowIndex is max]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(rowCount: 10, columnCount: 15);
+        SheetDataManager properties = SheetDataManager(rowCount: 10, columnCount: 15);
 
         RowIndex rowIndex = RowIndex.max;
 
@@ -296,7 +296,7 @@ void main() {
 
       test('Should [return same index] when [RowIndex is within bounds]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(rowCount: 10, columnCount: 15);
+        SheetDataManager properties = SheetDataManager(rowCount: 10, columnCount: 15);
 
         RowIndex rowIndex = RowIndex(7);
 
@@ -311,7 +311,7 @@ void main() {
     group('Tests of RowIndex.getSheetCoordinates()', () {
       test('Should [return correct Rect] when [calculating sheet coordinates]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(
+        SheetDataManager properties = SheetDataManager(
           rowCount: 3,
           columnCount: 3,
           customRowStyles: <RowIndex, RowStyle>{
@@ -468,7 +468,7 @@ void main() {
     group('Tests of ColumnIndex.toRealIndex()', () {
       test('Should [return real index] when [ColumnIndex is max]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(rowCount: 10, columnCount: 15);
+        SheetDataManager properties = SheetDataManager(rowCount: 10, columnCount: 15);
 
         ColumnIndex columnIndex = ColumnIndex.max;
 
@@ -481,7 +481,7 @@ void main() {
 
       test('Should [return same index] when [ColumnIndex is within bounds]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(rowCount: 10, columnCount: 15);
+        SheetDataManager properties = SheetDataManager(rowCount: 10, columnCount: 15);
 
         ColumnIndex columnIndex = ColumnIndex(7);
 
@@ -496,7 +496,7 @@ void main() {
     group('Tests of ColumnIndex.getSheetCoordinates()', () {
       test('Should [return correct Rect] when [calculating sheet coordinates]', () {
         // Arrange
-        SheetProperties properties = SheetProperties(
+        SheetDataManager properties = SheetDataManager(
           rowCount: 3,
           columnCount: 3,
           customColumnStyles: <ColumnIndex, ColumnStyle>{

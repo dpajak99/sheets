@@ -5,13 +5,12 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
-import 'package:sheets/core/viewport/sheet_viewport_content.dart';
+import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/shared_paints.dart';
 import 'package:sheets/utils/edge_visibility.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
-import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
   @override
@@ -26,14 +25,15 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
 
 class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   SheetCellsLayerPainter({
-    required SheetViewportContent viewportContent,
+    required SheetViewportContentManager viewportContent,
     EdgeInsets? padding,
-  }) : _viewportContent = viewportContent, _padding = padding ?? const EdgeInsets.all(3);
+  })  : _viewportContent = viewportContent,
+        _padding = padding ?? const EdgeInsets.all(3);
 
-  late SheetViewportContent _viewportContent;
+  late SheetViewportContentManager _viewportContent;
   final EdgeInsets _padding;
 
-  void update(SheetViewportContent viewportContent) {
+  void update(SheetViewportContentManager viewportContent) {
     _viewportContent = viewportContent;
     notifyListeners();
   }
@@ -57,14 +57,14 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       _paintCellBackground(canvas, cell);
       _paintCellText(canvas, cell);
 
-      if(cell.properties.style.border != null) {
+      if (cell.properties.style.border != null) {
         borderedCells.add(cell);
       }
     }
 
     _paintMesh(canvas, size);
 
-    for(ViewportCell cell in borderedCells) {
+    for (ViewportCell cell in borderedCells) {
       _paintCellBorder(canvas, cell);
     }
   }
@@ -73,7 +73,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   bool shouldRepaint(covariant SheetCellsLayerPainter oldDelegate) {
     return oldDelegate._viewportContent != _viewportContent || oldDelegate._padding != _padding;
   }
-  
+
   void _paintMesh(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
     List<ViewportColumn> visibleColumns = _viewportContent.columns;

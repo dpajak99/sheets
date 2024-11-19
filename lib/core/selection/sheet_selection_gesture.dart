@@ -115,7 +115,10 @@ class SheetSelectionMoveGesture extends SheetGesture {
       selectionBuilder.setStrategy(GestureSelectionStrategySingle());
     }
 
-    CellIndex maxIndex = CellIndex.max.toRealIndex(controller.properties);
+    CellIndex maxIndex = CellIndex.max.toRealIndex(
+      columnCount: controller.dataManager.columnCount,
+      rowCount: controller.dataManager.rowCount,
+    );
     selectedIndex = selectedIndex.move(dx: dx, dy: dy).clamp(maxIndex);
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);

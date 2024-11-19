@@ -31,9 +31,7 @@ sealed class SheetIndex with EquatableMixin {
     }
   }
 
-  SheetIndex toRealIndex(SheetProperties properties);
-
-  Rect getSheetCoordinates(SheetProperties properties);
+  Rect getSheetCoordinates(SheetDataManager properties);
 
   CellIndex toCellIndex() {
     return switch (this) {
@@ -78,16 +76,15 @@ class CellIndex extends SheetIndex {
   final RowIndex row;
   final ColumnIndex column;
 
-  @override
-  CellIndex toRealIndex(SheetProperties properties) {
-    ColumnIndex realColumnIndex = column.toRealIndex(properties);
-    RowIndex realRowIndex = row.toRealIndex(properties);
+  CellIndex toRealIndex({required int columnCount, required int rowCount}) {
+    ColumnIndex realColumnIndex = column.toRealIndex(columnCount: columnCount);
+    RowIndex realRowIndex = row.toRealIndex(rowCount: rowCount);
 
     return CellIndex(row: realRowIndex, column: realColumnIndex);
   }
 
   @override
-  Rect getSheetCoordinates(SheetProperties properties) {
+  Rect getSheetCoordinates(SheetDataManager properties) {
     Rect xRect = column.getSheetCoordinates(properties);
     Rect yRect = row.getSheetCoordinates(properties);
 
@@ -135,17 +132,16 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
 
   static ColumnIndex max = ColumnIndex(Int.max);
 
-  @override
-  ColumnIndex toRealIndex(SheetProperties properties) {
+  ColumnIndex toRealIndex({required int columnCount}) {
     if (this == max) {
-      return ColumnIndex(properties.columnCount - 1);
+      return ColumnIndex(columnCount - 1);
     } else {
       return this;
     }
   }
 
   @override
-  Rect getSheetCoordinates(SheetProperties properties) {
+  Rect getSheetCoordinates(SheetDataManager properties) {
     double x = 0;
     for (int i = 0; i < value; i++) {
       double columnWidth = properties.getColumnWidth(ColumnIndex(i));
@@ -216,10 +212,9 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
 
   static RowIndex max = RowIndex(Int.max);
 
-  @override
-  RowIndex toRealIndex(SheetProperties properties) {
+  RowIndex toRealIndex({required int rowCount}) {
     if (this == max) {
-      return RowIndex(properties.rowCount - 1);
+      return RowIndex(rowCount - 1);
     } else {
       return this;
     }
@@ -229,7 +224,7 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
   int get value => _value;
 
   @override
-  Rect getSheetCoordinates(SheetProperties properties) {
+  Rect getSheetCoordinates(SheetDataManager properties) {
     double y = 0;
     for (int i = 0; i < value; i++) {
       double rowHeight = properties.getRowHeight(RowIndex(i));

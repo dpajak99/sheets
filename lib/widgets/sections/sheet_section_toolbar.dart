@@ -63,7 +63,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
           child: ListenableBuilder(
             listenable: Listenable.merge(<Listenable?>[
               widget.sheetController.activeCellNotifier,
-              widget.sheetController.properties,
+              widget.sheetController.dataManager,
               widget.sheetController.selection,
             ]),
             builder: (BuildContext context, _) {

@@ -72,7 +72,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
                         listenable: widget.sheetController.selection,
                         builder: (BuildContext context, _) {
                           return Text(
-                            widget.sheetController.properties
+                            widget.sheetController.dataManager
                                 .getCellProperties(widget.sheetController.selection.value.mainCell)
                                 .editableRichText
                                 .toPlainText(),

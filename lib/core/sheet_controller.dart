@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/gestures/sheet_resize_gestures.dart';
@@ -30,12 +29,12 @@ import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 class SheetController {
   SheetController({
-    required this.properties,
+    required this.dataManager,
   }) {
     _editableCellNotifier = SilentValueNotifier<EditableViewportCell?>(null);
 
     scroll = SheetScrollController();
-    viewport = SheetViewport(properties, scroll);
+    viewport = SheetViewport(dataManager, scroll);
     mouse = MouseListener(
       mouseActionRecognizers: <MouseGestureRecognizer>[
         MouseDoubleTapRecognizer(),
@@ -50,7 +49,7 @@ class SheetController {
   }
 
   final FocusNode sheetFocusNode = FocusNode()..requestFocus();
-  final SheetProperties properties;
+  final SheetDataManager dataManager;
   late final SheetViewport viewport;
   late final SheetScrollController scroll;
   late final MouseListener mouse;
@@ -59,7 +58,7 @@ class SheetController {
   late SelectionState selection;
 
   List<CellIndex> get selectedCells {
-    return selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
+    return selection.value.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
   }
 
   Future<void> dispose() async {}
@@ -69,7 +68,7 @@ class SheetController {
   bool get hasActiveCell => activeCellNotifier.value != null;
 
   void formatSelection(StyleFormatIntent intent) {
-    List<CellIndex> selectedCells = selection.value.getSelectedCells(properties.columnCount, properties.rowCount);
+    List<CellIndex> selectedCells = selection.value.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
     SelectionStyle selectionStyle = getSelectionStyle();
 
     if (hasActiveCell && intent is TextStyleFormatIntent) {
@@ -78,21 +77,18 @@ class SheetController {
       return;
     }
 
-    switch (intent) {
-      case TextStyleFormatIntent intent:
-        TextStyleFormatAction<TextStyleFormatIntent> formatAction = intent.createAction(baseTextStyle: selectionStyle.textStyle);
-        properties.formatSelection(selectedCells, formatAction);
-      case CellStyleFormatIntent intent:
-        CellStyleFormatAction<CellStyleFormatIntent> formatAction = intent.createAction(cellStyle: selectionStyle.cellStyle);
-        properties.formatSelection(selectedCells, formatAction);
-      case SheetStyleFormatIntent intent:
-        SheetStyleFormatAction<SheetStyleFormatIntent> formatAction = intent.createAction();
-        properties.formatSelection(selectedCells, formatAction);
-    }
+    StyleFormatAction<StyleFormatIntent> formatAction = switch (intent) {
+      TextStyleFormatIntent intent => intent.createAction(baseTextStyle: selectionStyle.textStyle),
+      CellStyleFormatIntent intent => intent.createAction(cellStyle: selectionStyle.cellStyle),
+      SheetStyleFormatIntent intent => intent.createAction(),
+      (_) => throw UnimplementedError(),
+    };
+
+    dataManager.write((SheetData data) => data.formatSelection(selectedCells, formatAction));
   }
 
   SelectionStyle getSelectionStyle() {
-    CellProperties cellProperties = properties.getCellProperties(selection.value.mainCell);
+    CellProperties cellProperties = dataManager.getCellProperties(selection.value.mainCell);
 
     if (activeCellNotifier.value == null) {
       return CellSelectionStyle(cellProperties: cellProperties);
@@ -113,14 +109,14 @@ class SheetController {
   }
 
   Future<void> fill(SheetFillSelection selection) async {
-    List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(properties.columnCount, properties.rowCount);
-    List<CellIndex> fillCells = selection.getSelectedCells(properties.columnCount, properties.rowCount);
+    List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
+    List<CellIndex> fillCells = selection.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
 
     Map<CellIndex, CellProperties> baseProperties = <CellIndex, CellProperties>{
-      for (CellIndex index in selectedCells) index: properties.getCellProperties(index),
+      for (CellIndex index in selectedCells) index: dataManager.getCellProperties(index),
     };
     Map<CellIndex, CellProperties> fillProperties = <CellIndex, CellProperties>{
-      for (CellIndex index in fillCells) index: properties.getCellProperties(index),
+      for (CellIndex index in fillCells) index: dataManager.getCellProperties(index),
     };
 
     await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
@@ -135,14 +131,16 @@ class SheetController {
   }
 
   CellProperties getCellProperties(CellIndex index) {
-    return properties.getCellProperties(index);
+    return dataManager.getCellProperties(index);
   }
 
   void setCellValue(CellIndex index, SheetRichText value, {Size? size}) {
-    properties.setRichText(index, value);
-    if (size != null) {
-      SheetResizeCellGesture(index, size).resolve(this);
-    }
+    dataManager.write((SheetData data) {
+      data.setText(index, value);
+      if (size != null) {
+        SheetResizeCellGesture(index, size).resolve(this);
+      }
+    });
     resetActiveCell();
   }
 
@@ -182,7 +180,7 @@ class SheetController {
   }
 
   void clearSelection() {
-    properties.clearCells(selectedCells);
+    dataManager.write((SheetData data) => data.clearCells(selectedCells));
   }
 }
 

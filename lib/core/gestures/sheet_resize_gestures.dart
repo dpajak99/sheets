@@ -13,8 +13,8 @@ class SheetResizeColumnGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    ColumnStyle columnStyle = controller.properties.getColumnStyle(columnIndex);
-    controller.properties.setColumnStyle(columnIndex, columnStyle.copyWith(width: width));
+    ColumnStyle columnStyle = controller.dataManager.getColumnStyle(columnIndex);
+    controller.dataManager.write((SheetData data) => data.setColumnStyle(columnIndex, columnStyle.copyWith(width: width)));
   }
 
   @override
@@ -29,11 +29,10 @@ class SheetResizeRowGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    RowStyle rowStyle = controller.properties.getRowStyle(rowIndex);
-    controller.properties.setRowStyle(
-      rowIndex,
-      rowStyle.copyWith(height: height),
-    );
+    RowStyle rowStyle = controller.dataManager.getRowStyle(rowIndex);
+    controller.dataManager.write((SheetData data) {
+      data.setRowStyle(rowIndex, rowStyle.copyWith(height: height));
+    });
   }
 
   @override
@@ -48,13 +47,11 @@ class SheetResizeCellGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    RowStyle rowStyle = controller.properties.getRowStyle(cellIndex.row);
-    ColumnStyle columnStyle = controller.properties.getColumnStyle(cellIndex.column);
-    controller.properties.setCellSize(
-      cellIndex,
-      rowStyle.copyWith(height: size.height),
-      columnStyle.copyWith(width: size.width),
-    );
+    RowStyle rowStyle = controller.dataManager.getRowStyle(cellIndex.row);
+    ColumnStyle columnStyle = controller.dataManager.getColumnStyle(cellIndex.column);
+    controller.dataManager.write((SheetData data) {
+      data.setCellSize(cellIndex, rowStyle.copyWith(height: size.height), columnStyle.copyWith(width: size.width));
+    });
   }
 
   @override

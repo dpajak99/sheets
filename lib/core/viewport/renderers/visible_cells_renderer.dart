@@ -12,7 +12,7 @@ class VisibleCellsRenderer {
 
   final List<ViewportColumn> visibleColumns;
 
-  List<ViewportCell> build(SheetProperties properties) {
+  List<ViewportCell> build(SheetDataManager properties) {
     List<ViewportCell> visibleCells = <ViewportCell>[];
 
     for (ViewportRow row in visibleRows) {

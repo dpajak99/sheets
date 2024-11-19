@@ -16,7 +16,7 @@ class VisibleColumnsRenderer {
   });
 
   final SheetViewportRect viewportRect;
-  final SheetProperties properties;
+  final SheetDataManager properties;
   final DirectionalValues<SheetScrollPosition> scrollPosition;
 
   List<ViewportColumn> build() {

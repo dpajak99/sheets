@@ -15,7 +15,7 @@ abstract class SheetStyleFormatIntent extends StyleFormatIntent {
 abstract class SheetStyleFormatAction<I extends SheetStyleFormatIntent> extends StyleFormatAction<I> {
   SheetStyleFormatAction({required super.intent});
 
-  void format(SheetProperties properties);
+  void format(SheetData data);
 }
 
 // Border
@@ -40,93 +40,93 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
   SetBorderAction({required super.intent});
 
   @override
-  void format(SheetProperties properties) {
+  void format(SheetData data) {
     switch (intent.edges) {
       case BorderEdges.all:
-        _applyBorders(properties, <BorderEdge>{BorderEdge.top, BorderEdge.right, BorderEdge.bottom, BorderEdge.left});
+        _applyBorders(data, <BorderEdge>{BorderEdge.top, BorderEdge.right, BorderEdge.bottom, BorderEdge.left});
       case BorderEdges.clear:
-        _clearBorders(properties);
+        _clearBorders(data);
       case BorderEdges.inner:
-        _applyInnerBorders(properties, horizontal: true, vertical: true);
+        _applyInnerBorders(data, horizontal: true, vertical: true);
       case BorderEdges.horizontal:
-        _applyHorizontalBorders(properties);
+        _applyHorizontalBorders(data);
       case BorderEdges.vertical:
-        _applyVerticalBorders(properties);
+        _applyVerticalBorders(data);
       case BorderEdges.left:
-        _applyBorders(properties, <BorderEdge>{BorderEdge.left}, entireSelection: true);
+        _applyBorders(data, <BorderEdge>{BorderEdge.left}, entireSelection: true);
       case BorderEdges.right:
-        _applyBorders(properties, <BorderEdge>{BorderEdge.right}, entireSelection: true);
+        _applyBorders(data, <BorderEdge>{BorderEdge.right}, entireSelection: true);
       case BorderEdges.bottom:
-        _applyBorders(properties, <BorderEdge>{BorderEdge.bottom}, entireSelection: true);
+        _applyBorders(data, <BorderEdge>{BorderEdge.bottom}, entireSelection: true);
       case BorderEdges.top:
-        _applyBorders(properties, <BorderEdge>{BorderEdge.top}, entireSelection: true);
+        _applyBorders(data, <BorderEdge>{BorderEdge.top}, entireSelection: true);
       case BorderEdges.outer:
-        _applyOuterBorders(properties);
+        _applyOuterBorders(data);
     }
   }
 
-  void _applyHorizontalBorders(SheetProperties properties) {
+  void _applyHorizontalBorders(SheetData data) {
     RowIndex topRow = _getTopmostRow();
     RowIndex bottomRow = _getBottommostRow();
 
     for (CellIndex cellIndex in intent.selectedCells.where((CellIndex c) => c.row == topRow)) {
-      _updateCellBorder(properties, cellIndex, <BorderEdge>{BorderEdge.top}, isAdding: true);
+      _updateCellBorder(data, cellIndex, <BorderEdge>{BorderEdge.top}, isAdding: true);
     }
 
     for (CellIndex cellIndex in intent.selectedCells.where((CellIndex c) => c.row == bottomRow)) {
-      _updateCellBorder(properties, cellIndex, <BorderEdge>{BorderEdge.bottom}, isAdding: true);
+      _updateCellBorder(data, cellIndex, <BorderEdge>{BorderEdge.bottom}, isAdding: true);
     }
 
-    _applyInnerBorders(properties, horizontal: true);
+    _applyInnerBorders(data, horizontal: true);
   }
 
-  void _applyVerticalBorders(SheetProperties properties) {
+  void _applyVerticalBorders(SheetData data) {
     ColumnIndex leftColumn = _getLeftmostColumn();
     ColumnIndex rightColumn = _getRightmostColumn();
 
     for (CellIndex cellIndex in intent.selectedCells.where((CellIndex c) => c.column == leftColumn)) {
-      _updateCellBorder(properties, cellIndex, <BorderEdge>{BorderEdge.left}, isAdding: true);
+      _updateCellBorder(data, cellIndex, <BorderEdge>{BorderEdge.left}, isAdding: true);
     }
 
     for (CellIndex cellIndex in intent.selectedCells.where((CellIndex c) => c.column == rightColumn)) {
-      _updateCellBorder(properties, cellIndex, <BorderEdge>{BorderEdge.right}, isAdding: true);
+      _updateCellBorder(data, cellIndex, <BorderEdge>{BorderEdge.right}, isAdding: true);
     }
 
-    _applyInnerBorders(properties, vertical: true);
+    _applyInnerBorders(data, vertical: true);
   }
 
-  void _applyBorders(SheetProperties properties, Set<BorderEdge> edges, {bool entireSelection = false}) {
+  void _applyBorders(SheetData data, Set<BorderEdge> edges, {bool entireSelection = false}) {
     if (entireSelection) {
       Set<CellIndex> cellsToUpdate = _getEdgeCells(edges);
       for (CellIndex cellIndex in cellsToUpdate) {
-        _updateCellBorder(properties, cellIndex, edges, isAdding: true);
+        _updateCellBorder(data, cellIndex, edges, isAdding: true);
       }
     } else {
       for (CellIndex cellIndex in intent.selectedCells) {
-        _updateCellBorder(properties, cellIndex, edges, isAdding: true);
+        _updateCellBorder(data, cellIndex, edges, isAdding: true);
       }
     }
   }
 
-  void _clearBorders(SheetProperties properties) {
+  void _clearBorders(SheetData data) {
     for (CellIndex cellIndex in intent.selectedCells) {
       Set<BorderEdge> edges = <BorderEdge>{BorderEdge.top, BorderEdge.right, BorderEdge.bottom, BorderEdge.left};
-      _updateCellBorder(properties, cellIndex, edges, isAdding: false);
+      _updateCellBorder(data, cellIndex, edges, isAdding: false);
     }
   }
 
-  void _applyInnerBorders(SheetProperties properties, {bool horizontal = false, bool vertical = false}) {
+  void _applyInnerBorders(SheetData data, {bool horizontal = false, bool vertical = false}) {
     for (CellIndex cellIndex in intent.selectedCells) {
       Set<BorderEdge> internalEdges = _getInternalEdges(cellIndex, horizontal: horizontal, vertical: vertical);
-      _updateCellBorder(properties, cellIndex, internalEdges, isAdding: true);
+      _updateCellBorder(data, cellIndex, internalEdges, isAdding: true);
     }
   }
 
-  void _applyOuterBorders(SheetProperties properties) {
+  void _applyOuterBorders(SheetData data) {
     for (CellIndex cellIndex in intent.selectedCells) {
       Set<BorderEdge> outerEdges = _getOuterEdges(cellIndex);
       if (outerEdges.isNotEmpty) {
-        _updateCellBorder(properties, cellIndex, outerEdges, isAdding: true);
+        _updateCellBorder(data, cellIndex, outerEdges, isAdding: true);
       }
     }
   }
@@ -207,8 +207,8 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
   ColumnIndex _getRightmostColumn() =>
       intent.selectedCells.map((CellIndex c) => c.column).reduce((ColumnIndex a, ColumnIndex b) => a > b ? a : b);
 
-  void _updateCellBorder(SheetProperties properties, CellIndex cellIndex, Set<BorderEdge> edges, {required bool isAdding}) {
-    CellProperties cellProperties = properties.getCellProperties(cellIndex);
+  void _updateCellBorder(SheetData data, CellIndex cellIndex, Set<BorderEdge> edges, {required bool isAdding}) {
+    CellProperties cellProperties = data.getCellProperties(cellIndex);
     Border currentBorder = cellProperties.style.border ?? const Border();
 
     Border newBorder = Border(
@@ -218,12 +218,12 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
       left: edges.contains(BorderEdge.left) ? (isAdding ? intent.borderSide : BorderSide.none) : currentBorder.left,
     );
 
-    properties.setCellStyle(cellIndex, cellProperties.style.copyWith(border: newBorder));
+    data.setCellStyle(cellIndex, cellProperties.style.copyWith(border: newBorder));
 
     for (BorderEdge edge in edges) {
-      CellIndex? adjacentIndex = _getAdjacentCellIndex(properties, cellIndex, edge);
+      CellIndex? adjacentIndex = _getAdjacentCellIndex(data, cellIndex, edge);
       if (adjacentIndex != null) {
-        CellProperties adjacentCell = properties.getCellProperties(adjacentIndex);
+        CellProperties adjacentCell = data.getCellProperties(adjacentIndex);
         BorderEdge oppositeEdge = _getOppositeEdge(edge);
         Border adjacentBorder = adjacentCell.style.border ?? const Border();
 
@@ -234,7 +234,7 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
           left: oppositeEdge == BorderEdge.left ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.left,
         );
 
-        properties.setCellStyle(adjacentIndex, adjacentCell.style.copyWith(border: updatedAdjacentBorder));
+        data.setCellStyle(adjacentIndex, adjacentCell.style.copyWith(border: updatedAdjacentBorder));
       }
     }
   }
@@ -252,9 +252,9 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
     }
   }
 
-  CellIndex? _getAdjacentCellIndex(SheetProperties properties, CellIndex cellIndex, BorderEdge edge) {
-    int maxRow = properties.rowCount - 1;
-    int maxColumn = properties.columnCount - 1;
+  CellIndex? _getAdjacentCellIndex(SheetData data, CellIndex cellIndex, BorderEdge edge) {
+    int maxRow = data.rowCount - 1;
+    int maxColumn = data.columnCount - 1;
 
     switch (edge) {
       case BorderEdge.top:

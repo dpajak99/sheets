@@ -6,7 +6,7 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_properties.dart';
 
 void main() {
-  SheetProperties properties = SheetProperties(
+  SheetDataManager properties = SheetDataManager(
     rowCount: 3,
     columnCount: 3,
     customColumnStyles: <ColumnIndex, ColumnStyle>{

@@ -1,6 +1,7 @@
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
 import 'package:sheets/core/values/patterns/linear_duration_pattern.dart';
 import 'package:sheets/core/values/patterns/linear_numeric_pattern.dart';
@@ -55,7 +56,7 @@ class AutoFillEngine {
       }
     }
 
-    controller.properties.setCellsProperties(_fillCells);
+    controller.dataManager.write((SheetData data) => data.setCellsProperties(_fillCells));
   }
 
   Map<ColumnIndex, List<CellProperties>> groupByColumns(Map<CellIndex, CellProperties> cells) {
