@@ -2,10 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/widgets/material/toolbar_items/material_toolbar_color_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_icon_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_options_button.dart';
-import 'package:sheets/widgets/material/toolbar_items/material_toolbar_popup.dart';
 import 'package:sheets/widgets/material/toolbar_items/mixins/material_button_item_mixin.dart';
 import 'package:sheets/widgets/material/toolbar_items/mixins/material_toolbar_item_mixin.dart';
 import 'package:sheets/widgets/mouse_state_listener.dart';
@@ -114,7 +112,6 @@ class _OptionsPopupState extends State<_OptionsPopup> {
   Widget build(BuildContext context) {
     int columnsCount = widget.columnsCount;
     int rowsCount = (widget.options.length / columnsCount).ceil();
-    print('rowsCount: $rowsCount');
 
     return Material(
       borderRadius: BorderRadius.circular(3),

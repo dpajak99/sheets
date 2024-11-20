@@ -4,8 +4,8 @@ import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 class SheetScrollController extends ChangeNotifier {

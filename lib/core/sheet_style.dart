@@ -5,7 +5,6 @@ import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
-import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
 class CellStyle with EquatableMixin {
   CellStyle({

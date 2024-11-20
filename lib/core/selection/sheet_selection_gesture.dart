@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
-import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';

@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_data_manager.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/sheet_index.dart';
 
 class SheetResizeColumnGesture extends SheetGesture {
   SheetResizeColumnGesture(this.columnIndex, this.width);

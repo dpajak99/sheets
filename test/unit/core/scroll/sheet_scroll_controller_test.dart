@@ -2,23 +2,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_style.dart';
 
 void main() {
   SheetDataManager properties = SheetDataManager(
-    rowCount: 3,
-    columnCount: 3,
-    customColumnStyles: <ColumnIndex, ColumnStyle>{
-      ColumnIndex(0): ColumnStyle(width: 20),
-      ColumnIndex(1): ColumnStyle(width: 30),
-      ColumnIndex(2): ColumnStyle(width: 25),
-    },
-    customRowStyles: <RowIndex, RowStyle>{
-      RowIndex(0): RowStyle(height: 50),
-      RowIndex(1): RowStyle(height: 60),
-      RowIndex(2): RowStyle(height: 55),
-    },
+    data: SheetData(
+      rowCount: 3,
+      columnCount: 3,
+      customColumnStyles: <ColumnIndex, ColumnStyle>{
+        ColumnIndex(0): ColumnStyle(width: 20),
+        ColumnIndex(1): ColumnStyle(width: 30),
+        ColumnIndex(2): ColumnStyle(width: 25),
+      },
+      customRowStyles: <RowIndex, RowStyle>{
+        RowIndex(0): RowStyle(height: 50),
+        RowIndex(1): RowStyle(height: 60),
+        RowIndex(2): RowStyle(height: 55),
+      },
+    ),
   );
 
   group('Tests of SheetScrollController', () {

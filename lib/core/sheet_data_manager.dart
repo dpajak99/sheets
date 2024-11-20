@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
@@ -12,7 +11,6 @@ import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/widgets/text/sheet_text_field.dart';
 
 class SheetData {
   SheetData({
@@ -148,8 +146,6 @@ class SheetData {
 
     double textWidth = painter.width;
     double textHeight = painter.height;
-
-    print('textWidth: $textWidth, textHeight: $textHeight');
 
     double minCellWidth;
     double minCellHeight;

@@ -244,7 +244,6 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                 MaterialRotationButton(
                                   selectedRotation: TextRotation.none,
                                   onChanged: (TextRotation rotation) {
-                                    print('rotation: $rotation');
                                     widget.sheetController.formatSelection(SetRotationIntent(rotation));
                                   },
                                 ),

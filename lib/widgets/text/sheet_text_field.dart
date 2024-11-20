@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
 import 'package:sheets/utils/extensions/silent_value_notifier.dart';
