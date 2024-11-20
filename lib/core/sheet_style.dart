@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
-import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
 
 class CellStyle with EquatableMixin {
   CellStyle({

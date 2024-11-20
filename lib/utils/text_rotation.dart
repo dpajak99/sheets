@@ -11,6 +11,7 @@ class TextRotation with EquatableMixin {
   static const TextRotation down = TextRotation._(90);
   static const TextRotation up = TextRotation._(-90);
   static const TextRotation vertical = TextRotation._(10000);
+  static const List<TextRotation> values = <TextRotation>[none, angleDown, angleUp, down, up, vertical];
 
   final double _angle;
 

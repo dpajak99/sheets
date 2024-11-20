@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/widgets/material/toolbar_items/material_toolbar_icon_button.dart';
-import 'package:sheets/widgets/material/toolbar_items/mixins/material_toolbar_item_mixin.dart';
+import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarButtonsSectionWrapper extends StatefulWidget {
   const ToolbarButtonsSectionWrapper({
@@ -26,7 +26,7 @@ class _ToolbarButtonsSectionWrapperState extends State<ToolbarButtonsSectionWrap
           children: <Widget>[
             ...visibleSections,
             if (visibleSections.length != widget.sections.length)
-              MaterialToolbarIconButton(
+              ToolbarIconButton(
                 icon: SheetIcons.more_vert,
                 onTap: () {},
               ),
@@ -72,17 +72,17 @@ class _ToolbarButtonsSectionWrapperState extends State<ToolbarButtonsSectionWrap
 class ToolbarButtonsSection extends StatelessWidget {
   const ToolbarButtonsSection({
     required this.buttons,
-    this.smallButtons = const <Widget>[],
+    this.smallButtons = const <StaticSizeWidget>[],
     super.key,
   });
 
-  final List<Widget> buttons;
-  final List<Widget> smallButtons;
+  final List<StaticSizeWidget> buttons;
+  final List<StaticSizeWidget> smallButtons;
 
   double getSectionWidth(bool useSmall) {
-    List<Widget> items = useSmall && smallButtons.isNotEmpty ? smallButtons : buttons;
-    return items.fold<double>(0, (double previousValue, Widget element) {
-      return previousValue + (element as MaterialToolbarItemMixin).totalWidth;
+    List<StaticSizeWidget> items = useSmall && smallButtons.isNotEmpty ? smallButtons : buttons;
+    return items.fold<double>(0, (double previousValue, StaticSizeWidget element) {
+      return previousValue + element.size.width + element.margin.horizontal;
     });
   }
 

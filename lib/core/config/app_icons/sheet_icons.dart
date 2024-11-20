@@ -2,6 +2,13 @@ part of 'asset_icon.dart';
 
 // ignore_for_file: constant_identifier_names
 class SheetIcons {
+  static const AssetIconData add_circle = AssetIconData('assets/icons/add_circle.svg');
+  static const AssetIconData colorize = AssetIconData('assets/icons/colorize.svg');
+  static const AssetIconData check = AssetIconData('assets/icons/check.svg');
+  static const AssetIconData edit = AssetIconData('assets/icons/edit.svg');
+  static const AssetIconData format_color_reset = AssetIconData('assets/icons/format_color_reset.svg');
+  static const AssetIconData add_fonts = AssetIconData('assets/icons/add_fonts.svg');
+  static const AssetIconData text_increase = AssetIconData('assets/icons/text_increase.svg');
   static const AssetIconData add = AssetIconData('assets/icons/add.svg');
   static const AssetIconData more_vert = AssetIconData('assets/icons/more_vert.svg');
   static const AssetIconData arrow_up = AssetIconData('assets/icons/arrow_up.svg');

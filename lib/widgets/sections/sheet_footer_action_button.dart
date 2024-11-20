@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/widgets/mouse_state_listener.dart';
+import 'package:sheets/widgets/widget_state_builder.dart';
 
 class SheetFooterActionButton extends StatelessWidget {
   const SheetFooterActionButton({
@@ -25,10 +25,10 @@ class SheetFooterActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MouseStateListener(
+    return WidgetStateBuilder(
       onTap: () {},
-      mouseCursor: SystemMouseCursors.click,
-      childBuilder: (Set<WidgetState> states) {
+      cursor: SystemMouseCursors.click,
+      builder: (Set<WidgetState> states) {
         return Container(
           width: 34,
           height: 34,

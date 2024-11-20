@@ -33,7 +33,10 @@ abstract class SheetValueFormat with EquatableMixin {
 typedef NumberFormatter = NumberFormat Function(String value);
 
 class SheetNumberFormat extends SheetValueFormat {
-  SheetNumberFormat({required this.numberFormat});
+  SheetNumberFormat({
+    required this.numberFormat,
+    bool? rounded,
+  }) : rounded = rounded ?? false;
 
   factory SheetNumberFormat.custom([String? newPattern]) {
     String? locale;
@@ -79,7 +82,7 @@ class SheetNumberFormat extends SheetValueFormat {
     );
   }
 
-  factory SheetNumberFormat.currency() {
+  factory SheetNumberFormat.currency({bool? rounded}) {
     String? locale;
     String? name;
     String? symbol;
@@ -87,6 +90,7 @@ class SheetNumberFormat extends SheetValueFormat {
     String? customPattern;
 
     return SheetNumberFormat(
+      rounded: rounded,
       numberFormat: NumberFormat.currency(
         locale: locale,
         name: name,
@@ -165,6 +169,7 @@ class SheetNumberFormat extends SheetValueFormat {
     );
   }
 
+  final bool rounded;
   final NumberFormat numberFormat;
 
   @override
@@ -172,6 +177,9 @@ class SheetNumberFormat extends SheetValueFormat {
     try {
       String text = richText.toPlainText();
       num number = numberFormat.parse(text);
+      if(rounded) {
+        number = number.round();
+      }
       String formatted = numberFormat.format(number);
       return richText.withText(formatted);
     } catch (e) {

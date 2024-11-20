@@ -65,7 +65,7 @@ class SetVerticalAlignAction extends CellStyleFormatAction<SetVerticalAlignInten
 class SetBackgroundColorIntent extends CellStyleFormatIntent {
   SetBackgroundColorIntent({required this.color});
 
-  final Color color;
+  final Color? color;
 
   @override
   CellStyleFormatAction<SetBackgroundColorIntent> createAction({CellStyle? cellStyle}) {
@@ -86,7 +86,7 @@ class SetBackgroundColorAction extends CellStyleFormatAction<SetBackgroundColorI
 class SetValueFormatIntent extends CellStyleFormatIntent {
   SetValueFormatIntent({required this.format});
 
-  final SheetValueFormat format;
+  final SheetValueFormat? format;
 
   @override
   CellStyleFormatAction<SetValueFormatIntent> createAction({CellStyle? cellStyle}) {
