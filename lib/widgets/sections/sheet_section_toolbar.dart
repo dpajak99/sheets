@@ -9,6 +9,7 @@ import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
+import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_border_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_color_button.dart';
@@ -16,6 +17,7 @@ import 'package:sheets/widgets/material/toolbar_items/material_toolbar_divider.d
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_font_family_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_font_size_textfield.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/toolbar_items/material_toolbar_rotation_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_searchbar.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_align_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_button.dart';
@@ -114,14 +116,14 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                 MaterialToolbarIconButton(
                                     icon: SheetIcons.decimal_decrease,
                                     onTap: () {
-                                      widget.sheetController
-                                          .formatSelection(SetValueFormatIntent(format: selectionStyle.valueFormat.decreaseDecimal()));
+                                      widget.sheetController.formatSelection(
+                                          SetValueFormatIntent(format: selectionStyle.valueFormat.decreaseDecimal()));
                                     }),
                                 MaterialToolbarIconButton(
                                     icon: SheetIcons.decimal_increase,
                                     onTap: () {
-                                      widget.sheetController
-                                          .formatSelection(SetValueFormatIntent(format: selectionStyle.valueFormat.increaseDecimal()));
+                                      widget.sheetController.formatSelection(
+                                          SetValueFormatIntent(format: selectionStyle.valueFormat.increaseDecimal()));
                                     }),
                                 MaterialToolbarFormatButton(
                                   onChanged: (SheetValueFormat value) {
@@ -169,16 +171,14 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                   icon: SheetIcons.format_bold,
                                   active: selectionStyle.fontWeight == FontWeight.bold,
                                   onTap: () {
-                                    widget.sheetController
-                                        .formatSelection(ToggleFontWeightIntent());
+                                    widget.sheetController.formatSelection(ToggleFontWeightIntent());
                                   },
                                 ),
                                 MaterialToolbarIconButton(
                                   icon: SheetIcons.format_italic,
                                   active: selectionStyle.fontStyle == FontStyle.italic,
                                   onTap: () {
-                                    widget.sheetController
-                                        .formatSelection(ToggleFontStyleIntent());
+                                    widget.sheetController.formatSelection(ToggleFontStyleIntent());
                                   },
                                 ),
                                 MaterialToolbarIconButton(
@@ -241,7 +241,13 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                     // widget.sheetController.formatSelection(UpdateVerticalAlignAction(selectionStyle, value));
                                   },
                                 ),
-                                MaterialToolbarIconButton.withDropdown(icon: SheetIcons.text_rotation_none, onTap: () {}),
+                                MaterialRotationButton(
+                                  selectedRotation: TextRotation.none,
+                                  onChanged: (TextRotation rotation) {
+                                    print('rotation: $rotation');
+                                    widget.sheetController.formatSelection(SetRotationIntent(rotation));
+                                  },
+                                ),
                                 const MaterialToolbarDivider(),
                               ],
                             ),

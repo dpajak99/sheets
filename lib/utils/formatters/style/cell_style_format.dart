@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
+import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
 
@@ -102,3 +103,25 @@ class SetValueFormatAction extends CellStyleFormatAction<SetValueFormatIntent> {
     return currentStyle.copyWith(valueFormat: intent.format);
   }
 }
+
+// Rotation
+class SetRotationIntent extends CellStyleFormatIntent {
+  SetRotationIntent(this.rotation);
+
+  final TextRotation rotation;
+
+  @override
+  CellStyleFormatAction<SetRotationIntent> createAction({CellStyle? cellStyle}) {
+    return SetRotationAction(intent: this, baseCellStyle: cellStyle);
+  }
+}
+
+class SetRotationAction extends CellStyleFormatAction<SetRotationIntent> {
+  SetRotationAction({required super.intent, super.baseCellStyle});
+
+  @override
+  CellStyle format(CellStyle currentStyle) {
+    return currentStyle.copyWith(rotation: intent.rotation);
+  }
+}
+

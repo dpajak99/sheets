@@ -10,6 +10,8 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/shared_paints.dart';
 import 'package:sheets/utils/edge_visibility.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
+import 'package:sheets/utils/extensions/text_span_extensions.dart';
+import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
@@ -146,8 +148,12 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       return;
     }
 
-    TextSpan textSpan = richText.toTextSpan();
     TextAlign textAlign = properties.visibleTextAlign;
+    TextRotation textRotation = cellStyle.rotation;
+    TextSpan textSpan = richText.toTextSpan();
+    if(textRotation == TextRotation.vertical) {
+      textSpan = textSpan.applyDivider('\n');
+    }
 
     TextPainter textPainter = TextPainter(
       text: textSpan,
@@ -155,41 +161,80 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       textAlign: textAlign,
     );
 
-    double width = cell.rect.width - _padding.horizontal;
-    textPainter.layout(minWidth: width, maxWidth: width);
+    // Use cell's width minus padding for text layout
+    double cellWidth = cell.rect.width - _padding.horizontal;
+    double cellHeight = cell.rect.height - _padding.vertical;
+    textPainter.layout();
 
-    // Get vertical alignment (default to top if not set)
-    TextVerticalAlign verticalAlign = cellStyle.verticalAlign;
+    // Calculate the size of the rotated text's bounding box
+    double angle = textRotation.angle;
+    double angleRad = angle * pi / 180;
+    double cosTheta = cos(angleRad).abs();
+    double sinTheta = sin(angleRad).abs();
+    double rotatedWidth = textPainter.width * cosTheta + textPainter.height * sinTheta;
+    double rotatedHeight = textPainter.width * sinTheta + textPainter.height * cosTheta;
 
-    // Calculate the y-offset based on vertical alignment
+    // Adjust xOffset and yOffset based on alignment
+    // Horizontal Alignment
+    double xOffset;
+    switch (textAlign) {
+      case TextAlign.justify:
+      case TextAlign.left:
+      case TextAlign.start:
+        xOffset = _padding.left;
+      case TextAlign.center:
+        xOffset = _padding.left + (cellWidth - rotatedWidth) / 2;
+      case TextAlign.right:
+      case TextAlign.end:
+        xOffset = _padding.left + (cellWidth - rotatedWidth);
+    }
+
+    // Vertical Alignment
     double yOffset;
-    double availableHeight = cell.rect.height - _padding.vertical;
-
-    if (verticalAlign == TextVerticalAlign.top || textPainter.height >= availableHeight) {
+    TextVerticalAlign verticalAlign = cellStyle.verticalAlign;
+    if (verticalAlign == TextVerticalAlign.top) {
       yOffset = _padding.top;
     } else if (verticalAlign == TextVerticalAlign.center) {
-      yOffset = _padding.top + (availableHeight - textPainter.height) / 2;
+      yOffset = _padding.top + (cellHeight - rotatedHeight) / 2;
     } else if (verticalAlign == TextVerticalAlign.bottom) {
-      yOffset = cell.rect.height - _padding.bottom - textPainter.height;
+      yOffset = _padding.top + (cellHeight - rotatedHeight);
     } else {
       yOffset = _padding.top;
     }
 
-    if (cellStyle.rotationAngleDegrees != 0) {
-      Offset position = cell.rect.topLeft + Offset(_padding.left, yOffset);
+    // Position where the text should be painted
+    Offset textPosition = cell.rect.topLeft + Offset(xOffset, yOffset);
 
-      double textWidth = textPainter.width;
-      double textHeight = textPainter.height;
-      Offset textCenter = position + Offset(textWidth / 2, textHeight / 2);
+    // Save the canvas state
+    canvas.save();
 
-      canvas.save();
-      canvas.translate(textCenter.dx, textCenter.dy);
-      canvas.rotate(cellStyle.rotationAngleDegrees * pi / 180);
-      canvas.translate(-textWidth / 2, -textHeight / 2);
+    // Clip the canvas to the cell rectangle
+    canvas.clipRect(cell.rect);
+
+    if( textRotation == TextRotation.vertical) {
+      // Paint the text at the calculated position
+      textPainter.paint(canvas, textPosition);
+    } else if (angle != 0) {
+      // Translate to the center of the rotated bounding box
+      canvas.translate(
+        textPosition.dx + rotatedWidth / 2,
+        textPosition.dy + rotatedHeight / 2,
+      );
+
+      // Rotate the canvas
+      canvas.rotate(angleRad);
+
+      // Translate back to the top-left of the text
+      canvas.translate(-textPainter.width / 2, -textPainter.height / 2);
+
+      // Paint the text at (0,0)
       textPainter.paint(canvas, Offset.zero);
-      canvas.restore();
     } else {
-      textPainter.paint(canvas, cell.rect.topLeft + Offset(_padding.left, yOffset));
+      // Paint the text at the calculated position
+      textPainter.paint(canvas, textPosition);
     }
+
+    // Restore the canvas state
+    canvas.restore();
   }
 }

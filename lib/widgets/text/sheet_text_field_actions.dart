@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/utils/formatters/style/double_extensions.dart';
+import 'package:sheets/utils/formatters/style/int_extensions.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
 
@@ -80,7 +82,7 @@ class _MoveCursorAction extends SheetTextFieldAction {
   }
 
   SheetTextEditingValue _moveCursorHorizontally(SheetTextEditingController controller) {
-    int newOffset = (controller.selection.extentOffset + offset.dx).clamp(0, controller.value.length).toInt();
+    int newOffset = (controller.selection.extentOffset + offset.dx).safeClamp(0, controller.value.length).toInt();
     TextSelection newSelection = expandSelection
         ? controller.selection.copyWith(extentOffset: newOffset) //
         : TextSelection.collapsed(offset: newOffset);
@@ -100,7 +102,7 @@ class _MoveCursorAction extends SheetTextFieldAction {
     } else if (currentLine == controller.state.linesCount - 1 && offset.dy > 0) {
       newPosition = TextPosition(offset: controller.length);
     } else {
-      int targetLine = (currentLine + offset.dy).clamp(0, controller.state.linesCount - 1).toInt();
+      int targetLine = (currentLine + offset.dy).safeClamp(0, controller.state.linesCount - 1).toInt();
 
       double dx = caretOffset.dx;
       double dy = controller.state.lines[targetLine].baseline;
@@ -205,7 +207,7 @@ class _RemoveTextAction extends SheetTextFieldAction {
     int removeEnd;
 
     if (controller.selection.isCollapsed) {
-      removeStart = (controller.selection.start + range).clamp(0, controller.length);
+      removeStart = (controller.selection.start + range).safeClamp(0, controller.length);
       removeEnd = controller.selection.start;
 
       if (removeEnd == 0 && range < 0) {

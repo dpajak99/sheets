@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_overflow_button.dart';
 import 'package:sheets/widgets/material/toolbar_items/material_toolbar_text_vertical_align_button.dart';
@@ -11,7 +12,7 @@ class CellStyle with EquatableMixin {
     this.horizontalAlign,
     this.textOverflow = TextOverflowBehavior.clip,
     this.verticalAlign = TextVerticalAlign.bottom,
-    this.rotationAngleDegrees = 0.0,
+    this.rotation = TextRotation.none,
     this.backgroundColor = Colors.white,
     this.valueFormat,
     this.border,
@@ -22,6 +23,7 @@ class CellStyle with EquatableMixin {
   CellStyle copyWith({
     TextAlign? horizontalAlign,
     TextOverflowBehavior? textOverflow,
+    TextRotation? rotation,
     TextVerticalAlign? verticalAlign,
     double? rotationAngleDegrees,
     Color? backgroundColor,
@@ -31,8 +33,8 @@ class CellStyle with EquatableMixin {
     return CellStyle(
       horizontalAlign: horizontalAlign ?? this.horizontalAlign,
       verticalAlign: verticalAlign ?? this.verticalAlign,
+      rotation: rotation ?? this.rotation,
       textOverflow: textOverflow ?? this.textOverflow,
-      rotationAngleDegrees: rotationAngleDegrees ?? this.rotationAngleDegrees,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       valueFormat: valueFormat ?? this.valueFormat,
       border: border ?? this.border,
@@ -41,8 +43,8 @@ class CellStyle with EquatableMixin {
 
   final SheetValueFormat? valueFormat;
   final Color backgroundColor;
-  final double rotationAngleDegrees;
   final TextAlign? horizontalAlign;
+  final TextRotation rotation;
   final TextOverflowBehavior textOverflow;
   final TextVerticalAlign verticalAlign;
   final Border? border;
@@ -54,7 +56,6 @@ class CellStyle with EquatableMixin {
     horizontalAlign,
     textOverflow,
     verticalAlign,
-    rotationAngleDegrees,
     backgroundColor,
     valueFormat,
     border,

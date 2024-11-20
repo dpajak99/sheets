@@ -49,9 +49,15 @@ class SheetIcons {
   static const AssetIconData strikethrough = AssetIconData('assets/icons/strikethrough.svg');
   static const AssetIconData table_view = AssetIconData('assets/icons/table_view.svg');
   static const AssetIconData text_rotation_none = AssetIconData('assets/icons/text_rotation_none.svg');
+  static const AssetIconData text_rotation_up = AssetIconData('assets/icons/text_rotation_up.svg');
+  static const AssetIconData text_rotation_vertical = AssetIconData('assets/icons/text_rotation_vertical.svg');
+  static const AssetIconData text_rotation_angledown = AssetIconData('assets/icons/text_rotation_angledown.svg');
+  static const AssetIconData text_rotation_angleup = AssetIconData('assets/icons/text_rotation_angleup.svg');
+  static const AssetIconData text_rotation_down = AssetIconData('assets/icons/text_rotation_down.svg');
   static const AssetIconData undo = AssetIconData('assets/icons/undo.svg');
   static const AssetIconData vertical_align_bottom = AssetIconData('assets/icons/vertical_align_bottom.svg');
   static const AssetIconData vertical_align_center = AssetIconData('assets/icons/vertical_align_center.svg');
   static const AssetIconData vertical_align_top = AssetIconData('assets/icons/vertical_align_top.svg');
   static const AssetIconData keyboard_arrow_up = AssetIconData('assets/icons/keyboard_arrow_up.svg');
+  static const AssetIconData right_angle = AssetIconData('assets/icons/right_angle.svg');
 }

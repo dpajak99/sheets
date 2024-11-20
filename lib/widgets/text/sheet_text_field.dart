@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
 import 'package:sheets/utils/extensions/silent_value_notifier.dart';
+import 'package:sheets/utils/formatters/style/double_extensions.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
@@ -433,17 +434,17 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   double _calculateTextfieldWidth(double previousWidth) {
     TextPainter painter = buildTextPainter(value.span, customWidth: previousWidth, useMinWidth: false);
 
-    double updatedWidth = previousWidth.clamp(minWidth, maxWidth);
+    double updatedWidth = previousWidth.safeClamp(minWidth, maxWidth);
 
     bool expandPossible = previousWidth < maxWidth && step != null;
     bool expandNeeded = previousWidth <= painter.width;
 
     if(expandNeeded && step == null) {
-      return painter.width.clamp(minWidth, maxWidth);
+      return painter.width.safeClamp(minWidth, maxWidth);
     } else if (expandPossible && expandNeeded) {
       return _calculateTextfieldWidth(updatedWidth + (textAlign == TextAlign.center ? step! * 2 : step!));
     } else {
-      return updatedWidth.clamp(minWidth, maxWidth);
+      return updatedWidth.safeClamp(minWidth, maxWidth);
     }
   }
 
@@ -455,9 +456,9 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
 
     TextPainter painter = buildTextPainter(span, customWidth: width, useMinWidth: false);
     if (previousHeight < maxHeight) {
-      return painter.height.clamp(minHeight, maxHeight);
+      return painter.height.safeClamp(minHeight, maxHeight);
     } else {
-      return previousHeight.clamp(minHeight, maxHeight);
+      return previousHeight.safeClamp(minHeight, maxHeight);
     }
   }
 
