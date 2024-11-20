@@ -45,7 +45,7 @@ class _SheetState extends State<Sheet> {
     return _SheetKeyboardGestureDetector(
       focusNode: sheetController.sheetFocusNode,
       onSelectAll: () => sheetController.selection.update(SheetSelectionFactory.all()),
-      onStartEditing: sheetController.startEditing,
+      onStartEditing: sheetController.enableEditing,
       onMove: (CellMoveDirection direction) => sheetController.moveSelection(direction.toOffset()),
       onRemove: () => sheetController.clearSelection(),
       onFontWeightUpdate: (FontWeight fontWeight) => widget.sheetController.formatSelection(ToggleFontWeightIntent()),

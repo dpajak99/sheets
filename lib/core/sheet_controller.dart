@@ -15,7 +15,7 @@ import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -43,7 +43,7 @@ class SheetController {
       sheetController: this,
     );
     selection = SelectionState.defaultSelection(
-      onChanged: (_) => resetActiveCell(),
+      onChanged: (_) => disableEditing(),
       onFill: fill,
     );
   }
@@ -63,16 +63,16 @@ class SheetController {
 
   Future<void> dispose() async {}
 
-  SilentValueNotifier<EditableViewportCell?> get activeCellNotifier => _editableCellNotifier;
+  SilentValueNotifier<EditableViewportCell?> get editableCellNotifier => _editableCellNotifier;
 
-  bool get hasActiveCell => activeCellNotifier.value != null;
+  bool get isEditingMode => editableCellNotifier.value != null;
 
   void formatSelection(StyleFormatIntent intent) {
     List<CellIndex> selectedCells = selection.value.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
     SelectionStyle selectionStyle = getSelectionStyle();
 
-    if (hasActiveCell && intent is TextStyleFormatIntent) {
-      SheetTextEditingController controller = activeCellNotifier.value!.controller;
+    if (isEditingMode && intent is TextStyleFormatIntent) {
+      SheetTextEditingController controller = editableCellNotifier.value!.controller;
       unawaited(controller.handleAction(SheetTextFieldActions.format(intent)));
       return;
     }
@@ -84,17 +84,19 @@ class SheetController {
       (_) => throw UnimplementedError(),
     };
 
-    dataManager.write((SheetData data) => data.formatSelection(selectedCells, formatAction));
+    dataManager.write((SheetData data) {
+      data.formatSelection(selectedCells, formatAction);
+    });
   }
 
   SelectionStyle getSelectionStyle() {
     CellProperties cellProperties = dataManager.getCellProperties(selection.value.mainCell);
 
-    if (activeCellNotifier.value == null) {
+    if (editableCellNotifier.value == null) {
       return CellSelectionStyle(cellProperties: cellProperties);
     }
 
-    SheetTextEditingController textEditingController = activeCellNotifier.value!.controller;
+    SheetTextEditingController textEditingController = editableCellNotifier.value!.controller;
     if (textEditingController.selection.isCollapsed) {
       return CursorSelectionStyle(
         cellProperties: cellProperties,
@@ -134,17 +136,20 @@ class SheetController {
     return dataManager.getCellProperties(index);
   }
 
-  void setCellValue(CellIndex index, SheetRichText value, {Size? size}) {
+  void setCellValue(CellIndex index, SheetRichText value) {
     dataManager.write((SheetData data) {
       data.setText(index, value);
-      if (size != null) {
-        SheetResizeCellGesture(index, size).resolve(this);
-      }
+      data.adjustCellHeight(index);
     });
-    resetActiveCell();
   }
 
-  void resetActiveCell() {
+  void enableEditing([String? initialValue]) {
+    if (editableCellNotifier.value == null) {
+      setActiveCellIndex(selection.value.mainCell, value: initialValue);
+    }
+  }
+
+  void disableEditing() {
     sheetFocusNode.requestFocus();
     _editableCellNotifier.setValue(null);
   }
@@ -163,15 +168,9 @@ class SheetController {
     sheetFocusNode.unfocus();
     material.FocusNode textFieldFocusNode = material.FocusNode();
     if (value != null) {
-      _editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: cell..setText(value)));
+      _editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: cell.withText(value)));
     } else {
       _editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: cell));
-    }
-  }
-
-  void startEditing([String? initialValue]) {
-    if (activeCellNotifier.value == null) {
-      setActiveCellIndex(selection.value.mainCell, value: initialValue);
     }
   }
 

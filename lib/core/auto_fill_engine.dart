@@ -1,7 +1,7 @@
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
 import 'package:sheets/core/values/patterns/linear_duration_pattern.dart';
 import 'package:sheets/core/values/patterns/linear_numeric_pattern.dart';

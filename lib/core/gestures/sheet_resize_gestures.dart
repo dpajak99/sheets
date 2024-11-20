@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_style.dart';
 
 class SheetResizeColumnGesture extends SheetGesture {
@@ -13,8 +13,7 @@ class SheetResizeColumnGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    ColumnStyle columnStyle = controller.dataManager.getColumnStyle(columnIndex);
-    controller.dataManager.write((SheetData data) => data.setColumnStyle(columnIndex, columnStyle.copyWith(width: width)));
+    controller.dataManager.write((SheetData data) => data.setColumnWidth(columnIndex, width));
   }
 
   @override
@@ -29,31 +28,11 @@ class SheetResizeRowGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    RowStyle rowStyle = controller.dataManager.getRowStyle(rowIndex);
     controller.dataManager.write((SheetData data) {
-      data.setRowStyle(rowIndex, rowStyle.copyWith(height: height));
+      data.setRowHeight(rowIndex, height);
     });
   }
 
   @override
   List<Object?> get props => <Object?>[rowIndex, height];
-}
-
-class SheetResizeCellGesture extends SheetGesture {
-  SheetResizeCellGesture(this.cellIndex, this.size);
-
-  final CellIndex cellIndex;
-  final Size size;
-
-  @override
-  void resolve(SheetController controller) {
-    RowStyle rowStyle = controller.dataManager.getRowStyle(cellIndex.row);
-    ColumnStyle columnStyle = controller.dataManager.getColumnStyle(cellIndex.column);
-    controller.dataManager.write((SheetData data) {
-      data.setCellSize(cellIndex, rowStyle.copyWith(height: size.height), columnStyle.copyWith(width: size.width));
-    });
-  }
-
-  @override
-  List<Object?> get props => <Object?>[cellIndex, size];
 }

@@ -30,35 +30,72 @@ class SheetTextfieldLayer extends StatefulWidget {
 class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
   @override
   Widget build(BuildContext context) {
+    Border outerBorder = Border.all(
+      color: const Color(0xffB2C5F4),
+      width: 2,
+      strokeAlign: BorderSide.strokeAlignOutside,
+    );
+    Border innerBorder = Border.all(color: const Color(0xff3056C6), width: 2);
+    EdgeInsets contentPadding = const EdgeInsets.only(left: 2, right: 2, top: 2, bottom: 1);
+
+    double horizontalBorderWidth = innerBorder.left.width + innerBorder.right.width;
+    double horizontalPadding = horizontalBorderWidth + contentPadding.horizontal;
+
+    double verticalBorderWidth = innerBorder.top.width + innerBorder.bottom.width;
+    double verticalPadding = verticalBorderWidth + contentPadding.vertical;
+
     return ValueListenableBuilder<EditableViewportCell?>(
-      valueListenable: widget.sheetController.activeCellNotifier,
+      valueListenable: widget.sheetController.editableCellNotifier,
       builder: (BuildContext context, EditableViewportCell? activeCell, Widget? child) {
         if (activeCell == null) {
           return const SizedBox();
         }
 
+        ViewportCell viewportCell = activeCell.cell;
+        activeCell.controller.layout(
+          minWidth: viewportCell.rect.width - horizontalPadding,
+          minHeight: viewportCell.rect.height - verticalPadding,
+          maxWidth: widget.sheetController.viewport.width - activeCell.cell.rect.left - 10,
+          maxHeight: widget.sheetController.viewport.height - activeCell.cell.rect.top - 10,
+          step: 100,
+        );
+
         return Stack(
           children: <Widget>[
-            Positioned(
-              left: activeCell.cell.rect.left,
-              top: activeCell.cell.rect.top,
-              child: SheetTextfieldLayout(
-                sheetController: widget.sheetController,
-                textAlign: activeCell.cell.properties.visibleTextAlign,
-                maxWidth: widget.sheetController.viewport.width - activeCell.cell.rect.left - 10,
-                maxHeight: widget.sheetController.viewport.height - activeCell.cell.rect.top - 10,
-                backgroundColor: activeCell.cell.properties.style.backgroundColor,
-                onCompleted: (bool shouldSaveValue, SheetRichText richText, Size size) {
-                  if(shouldSaveValue) {
-                    widget.sheetController.setCellValue(activeCell.cell.index, richText, size: size);
-                    SheetSelectionMoveGesture(0, 1).resolve(widget.sheetController);
-                  } else {
-                    widget.sheetController.resetActiveCell();
-                  }
-                },
-                controller: activeCell.controller,
-                viewportCell: activeCell.cell,
-              ),
+            ValueListenableBuilder<Size>(
+              valueListenable: activeCell.controller.sizeNotifier,
+              builder: (BuildContext context, Size size, _) {
+                double expandedWidth = size.width - activeCell.cell.rect.width + horizontalPadding;
+                double horizontalShift = switch (activeCell.cell.properties.visibleTextAlign) {
+                  TextAlign.left => 0,
+                  TextAlign.center => expandedWidth / 2,
+                  TextAlign.right => expandedWidth,
+                  (_) => 0,
+                };
+
+                return Positioned(
+                  left: activeCell.cell.rect.left - horizontalShift,
+                  top: activeCell.cell.rect.top,
+                  child: SheetTextfieldLayout(
+                    outerBorder: outerBorder,
+                    innerBorder: innerBorder,
+                    contentPadding: contentPadding,
+                    sheetController: widget.sheetController,
+                    textAlign: activeCell.cell.properties.visibleTextAlign,
+                    backgroundColor: activeCell.cell.properties.style.backgroundColor,
+                    onCompleted: (bool shouldSaveValue, SheetRichText richText) {
+                      if (shouldSaveValue) {
+                        widget.sheetController.setCellValue(activeCell.cell.index, richText);
+                        widget.sheetController.disableEditing();
+                        SheetSelectionMoveGesture(0, 1).resolve(widget.sheetController);
+                      } else {
+                        widget.sheetController.disableEditing();
+                      }
+                    },
+                    editableViewportCell: activeCell,
+                  ),
+                );
+              },
             ),
           ],
         );
@@ -68,65 +105,43 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
 }
 
 class SheetTextfieldLayout extends StatefulWidget {
-  SheetTextfieldLayout({
+  const SheetTextfieldLayout({
     required this.sheetController,
-    required this.controller,
-    required this.viewportCell,
+    required this.editableViewportCell,
     required this.textAlign,
     required this.onCompleted,
-    required this.maxWidth,
-    required this.maxHeight,
+    required this.outerBorder,
+    required this.innerBorder,
+    required this.contentPadding,
     this.backgroundColor = Colors.white,
     this.offset = Offset.zero,
-    Border? outerBorder,
-    Border? innerBorder,
-    EdgeInsets? contentPadding,
     super.key,
-  }) {
-    this.outerBorder =
-        outerBorder ?? Border.all(color: const Color(0xffB2C5F4), width: 2, strokeAlign: BorderSide.strokeAlignOutside);
-    this.innerBorder = innerBorder ?? Border.all(color: const Color(0xff3056C6), width: 2);
-    this.contentPadding = contentPadding ?? const EdgeInsets.only(left: 2, right: 2, top: 2, bottom: 1);
-
-    controller.layout(
-      minWidth: viewportCell.rect.width - paddingHorizontal,
-      minHeight: viewportCell.rect.height - paddingVertical,
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      step: 100,
-    );
-  }
+  });
 
   final SheetController sheetController;
-  final SheetTextEditingController controller;
-  final ViewportCell viewportCell;
+  final EditableViewportCell editableViewportCell;
   final TextAlign textAlign;
-  final void Function(bool shouldSaveValue, SheetRichText richText, Size size) onCompleted;
+  final void Function(bool shouldSaveValue, SheetRichText richText) onCompleted;
   final Color backgroundColor;
   final Offset offset;
-  final double maxWidth;
-  final double maxHeight;
-  late final Border outerBorder;
-  late final Border innerBorder;
-  late final EdgeInsets contentPadding;
+  final Border outerBorder;
+  final Border innerBorder;
+  final EdgeInsets contentPadding;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<ViewportCell>('viewportCell', viewportCell));
     properties.add(DiagnosticsProperty<Border>('outerBorder', outerBorder));
     properties.add(DiagnosticsProperty<Border>('innerBorder', innerBorder));
     properties.add(ColorProperty('backgroundColor', backgroundColor));
     properties.add(DiagnosticsProperty<Offset>('offset', offset));
     properties.add(DiagnosticsProperty<EdgeInsets>('contentPadding', contentPadding));
-    properties.add(DiagnosticsProperty<SheetTextEditingController>('controller', controller));
-    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, SheetRichText richText, Size size)>.has('onCompleted', onCompleted));
-    properties.add(DoubleProperty('maxWidth', maxWidth));
-    properties.add(DoubleProperty('maxHeight', maxHeight));
     properties.add(DoubleProperty('paddingHorizontal', paddingHorizontal));
     properties.add(DoubleProperty('paddingVertical', paddingVertical));
     properties.add(EnumProperty<TextAlign>('textAlign', textAlign));
     properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<EditableViewportCell>('editableViewportCell', editableViewportCell));
+    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, SheetRichText richText)>.has('onCompleted', onCompleted));
   }
 
   double get paddingHorizontal {
@@ -148,7 +163,7 @@ class SheetTextfieldLayout extends StatefulWidget {
 }
 
 class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
-  ViewportCell get viewportCell => widget.viewportCell;
+  ViewportCell get viewportCell => widget.editableViewportCell.cell;
   bool controlPressed = false;
 
   late final TextfieldHoveredGestureRecognizer _recognizer;
@@ -182,7 +197,8 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
         decoration: BoxDecoration(border: widget.innerBorder),
         padding: widget.contentPadding,
         child: SheetTextField(
-          controller: widget.controller,
+          controller: widget.editableViewportCell.controller,
+          focusNode: widget.editableViewportCell.focusNode,
           backgroundColor: widget.backgroundColor,
           onSizeChanged: (Size size) {
             Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
@@ -190,8 +206,7 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
           },
           onCompleted: (bool shouldSaveValue, TextSpan textSpan, Size size) {
             SheetRichText sheetRichText = SheetRichText.fromTextSpan(textSpan);
-            Size newSize = Size(size.width + widget.paddingHorizontal, size.height + widget.paddingVertical);
-            widget.onCompleted(shouldSaveValue, sheetRichText, newSize);
+            widget.onCompleted(shouldSaveValue, sheetRichText);
           },
         ),
       ),

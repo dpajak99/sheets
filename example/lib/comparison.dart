@@ -1,9 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/sheet.dart';
 import 'package:sheets/widgets/sections/sheet_footer.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';

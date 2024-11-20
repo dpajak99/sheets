@@ -1,5 +1,5 @@
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 class VisibleCellsRenderer {

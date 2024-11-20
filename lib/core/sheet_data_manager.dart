@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
@@ -9,6 +10,7 @@ import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
+import 'package:sheets/widgets/text/sheet_text_field.dart';
 
 class SheetData {
   SheetData({
@@ -52,6 +54,7 @@ class SheetData {
         case SheetStyleFormatAction<SheetStyleFormatIntent> formatAction:
           formatAction.format(this);
       }
+      adjustCellHeight(cellIndex);
     }
   }
 
@@ -66,9 +69,15 @@ class SheetData {
     }
   }
 
-  void setCellSize(CellIndex cellIndex, RowStyle rowStyle, ColumnStyle columnStyle) {
-    _customRowStyles[cellIndex.row] = rowStyle;
-    _customColumnStyles[cellIndex.column] = columnStyle;
+  Size getCellSize(CellIndex cellIndex) {
+    double height = getRowStyle(cellIndex.row).height;
+    double width = getColumnStyle(cellIndex.column).width;
+    return Size(width, height);
+  }
+
+  void setCellSize(CellIndex cellIndex, double height, double width) {
+    setRowHeight(cellIndex.row, height);
+    setColumnWidth(cellIndex.column, width);
   }
 
   void setCellStyle(CellIndex cellIndex, CellStyle cellStyle) {
@@ -76,12 +85,14 @@ class SheetData {
     _data[cellIndex] = _data[cellIndex]!.copyWith(style: cellStyle);
   }
 
-  void setRowStyle(RowIndex rowIndex, RowStyle rowStyle) {
-    _customRowStyles[rowIndex] = rowStyle;
+  void setRowHeight(RowIndex rowIndex, double height) {
+    _customRowStyles[rowIndex] ??= RowStyle.defaults();
+    _customRowStyles[rowIndex] = _customRowStyles[rowIndex]!.copyWith(height: height);
   }
 
-  void setColumnStyle(ColumnIndex columnIndex, ColumnStyle columnStyle) {
-    _customColumnStyles[columnIndex] = columnStyle;
+  void setColumnWidth(ColumnIndex columnIndex, double width) {
+    _customColumnStyles[columnIndex] ??= ColumnStyle.defaults();
+    _customColumnStyles[columnIndex] = _customColumnStyles[columnIndex]!.copyWith(width: width);
   }
 
   void clearCells(List<CellIndex> cells) {
@@ -91,6 +102,35 @@ class SheetData {
   void clearCell(CellIndex cellIndex) {
     _data[cellIndex] ??= CellProperties.empty();
     _data[cellIndex] = _data[cellIndex]!.copyWith(value: _data[cellIndex]!.value.clear());
+  }
+
+  void adjustCellHeight(CellIndex cellIndex) {
+    double minRowHeight = getMinRowHeight(cellIndex.row);
+    setRowHeight(cellIndex.row, minRowHeight);
+  }
+
+  double getMinRowHeight(RowIndex rowIndex) {
+    List<CellIndex> cellIndexes = _data.keys.where((CellIndex cellIndex) => cellIndex.row == rowIndex).toList();
+    double minRowHeight = cellIndexes.map(getMinCellHeight).reduce(max);
+    return minRowHeight;
+  }
+
+  double getMinCellHeight(CellIndex cellIndex) {
+    CellProperties cellProperties = getCellProperties(cellIndex);
+    if (cellProperties.value.isEmpty) {
+      double height = getRowStyle(cellIndex.row).height;
+      return height;
+    }
+
+    TextPainter painter = TextPainter(
+      text: cellProperties.value.toTextSpan(),
+      textDirection: TextDirection.ltr,
+      textAlign: cellProperties.visibleTextAlign,
+    )..layout();
+
+    // TODO(dominik): Magic number 7. It's probably the padding between the text and the cell border but I'm not sure yet
+    double minCellHeight = painter.size.height + 7;
+    return minCellHeight;
   }
 }
 

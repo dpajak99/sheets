@@ -29,7 +29,13 @@ class SheetRichText {
 
   final List<SheetTextSpan> spans;
 
-  bool get isEmpty => spans.isEmpty;
+  bool get isEmpty {
+    if(spans.isEmpty) {
+      return true;
+    } else {
+      return spans.every((SheetTextSpan span) => span.text.isEmpty);
+    }
+  }
 
   String toPlainText() {
     return spans.map((SheetTextSpan span) => span.text).join();

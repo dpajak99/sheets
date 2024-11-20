@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
 import 'package:sheets/utils/extensions/silent_value_notifier.dart';
@@ -334,11 +335,11 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   final TextAlign textAlign;
   final _HistoryManager<SheetTextEditingValue> _historyManager = _HistoryManager<SheetTextEditingValue>();
 
-  late final double minWidth;
-  late final double minHeight;
-  late final double maxWidth;
-  late final double maxHeight;
-  late final double step;
+  late double minWidth;
+  late double minHeight;
+  late double maxWidth;
+  late double maxHeight;
+  late double? step;
   final SilentValueNotifier<Size> sizeNotifier = SilentValueNotifier<Size>(Size.zero);
 
   late SheetTextfieldState state = SheetTextfieldState.empty;
@@ -346,9 +347,9 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   void layout({
     required double minWidth,
     required double minHeight,
-    required double maxWidth,
-    required double maxHeight,
-    required double step,
+    double maxWidth = double.infinity,
+    double maxHeight = double.infinity,
+    double? step,
   }) {
     this.minWidth = minWidth;
     this.minHeight = minHeight;
@@ -434,11 +435,13 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
 
     double updatedWidth = previousWidth.clamp(minWidth, maxWidth);
 
-    bool expandPossible = previousWidth < maxWidth;
+    bool expandPossible = previousWidth < maxWidth && step != null;
     bool expandNeeded = previousWidth <= painter.width;
 
-    if (expandPossible && expandNeeded) {
-      return _calculateTextfieldWidth(updatedWidth + step);
+    if(expandNeeded && step == null) {
+      return painter.width.clamp(minWidth, maxWidth);
+    } else if (expandPossible && expandNeeded) {
+      return _calculateTextfieldWidth(updatedWidth + (textAlign == TextAlign.center ? step! * 2 : step!));
     } else {
       return updatedWidth.clamp(minWidth, maxWidth);
     }
@@ -500,6 +503,7 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
 class SheetTextField extends StatefulWidget {
   const SheetTextField({
     required this.controller,
+    required this.focusNode,
     required this.onSizeChanged,
     required this.onCompleted,
     this.backgroundColor = Colors.white,
@@ -507,6 +511,7 @@ class SheetTextField extends StatefulWidget {
   });
 
   final SheetTextEditingController controller;
+  final FocusNode focusNode;
   final ValueChanged<Size> onSizeChanged;
   final void Function(bool shouldSaveValue, TextSpan textSpan, Size size) onCompleted;
   final Color backgroundColor;
@@ -522,15 +527,32 @@ class SheetTextField extends StatefulWidget {
     properties.add(ObjectFlagProperty<ValueChanged<Size>>.has('onSizeChanged', onSizeChanged));
     properties.add(
         ObjectFlagProperty<void Function(bool shouldSaveValue, TextSpan textSpan, Size size)>.has('onCompleted', onCompleted));
+    properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode));
   }
 }
 
 class _SheetTextFieldState extends State<SheetTextField> {
+  bool _completed = false;
+
   @override
   void initState() {
     super.initState();
     widget.controller.sizeNotifier.addListener(_handleSizeChange);
+    widget.focusNode.addListener(_autocompleteEditing);
     _handleSizeChange();
+  }
+
+  @override
+  void dispose() {
+    widget.controller.sizeNotifier.removeListener(_handleSizeChange);
+    widget.focusNode.removeListener(_autocompleteEditing);
+    super.dispose();
+  }
+
+  void _autocompleteEditing() {
+    if (!widget.focusNode.hasFocus && !_completed) {
+      _complete(true);
+    }
   }
 
   void _handleSizeChange() {
@@ -540,6 +562,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
   @override
   Widget build(BuildContext context) {
     return _SheetKeyboardGestureDetector(
+      focusNode: widget.focusNode,
       onCursorMove: _moveCursor,
       onExpandSelection: (CursorMoveDirection direction) => _moveCursor(direction, expandSelection: true),
       onSelectAll: _selectAll,
@@ -644,6 +667,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
   }
 
   void _complete(bool shouldSaveValue) {
+    _completed = true;
     Size size = widget.controller.sizeNotifier.value;
     TextSpan textSpan = widget.controller.value.text.toTextSpan();
     widget.onCompleted(shouldSaveValue, textSpan, size);
@@ -677,6 +701,7 @@ enum TextRemoveDirection { indexLeft, indexRight, wordLeft, wordRight }
 class _SheetKeyboardGestureDetector extends StatelessWidget {
   _SheetKeyboardGestureDetector({
     required this.child,
+    required this.focusNode,
     required this.onCursorMove,
     required this.onSelectAll,
     required this.onExpandSelection,
@@ -741,6 +766,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
   }
 
   final Widget child;
+  final FocusNode focusNode;
   final ValueChanged<CursorMoveDirection> onCursorMove;
   final VoidCallback onSelectAll;
   final ValueChanged<CursorMoveDirection> onExpandSelection;
@@ -763,6 +789,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
       bindings: shortcuts,
       child: Focus(
         autofocus: true,
+        focusNode: focusNode,
         onKeyEvent: _handleKeyEvent,
         child: MouseRegion(
           cursor: SystemMouseCursors.text,
@@ -806,6 +833,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
     properties.add(ObjectFlagProperty<ValueChanged<TextDecoration>>.has('onTextDecorationUpdate', onTextDecorationUpdate));
     properties.add(DiagnosticsProperty<Map<ShortcutActivator, VoidCallback>>('shortcuts', shortcuts));
     properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue)>.has('onCompleted', onCompleted));
+    properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode));
   }
 }
 
@@ -1025,7 +1053,6 @@ class _CursorPainter extends ChangeNotifier implements CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.clipRect(Rect.fromLTWH(0, 0, _controller.size.width, _controller.size.height));
     if (!_cursorVisible) {
       return;
     }
@@ -1055,7 +1082,13 @@ class _CursorPainter extends ChangeNotifier implements CustomPainter {
       TextPainter painter = _controller.buildTextPainter(TextSpan(text: 'I', style: previousStyle));
 
       currentLine = 0;
-      offsetX = 0;
+      offsetX = switch (_controller.textAlign) {
+        TextAlign.left => 0,
+        TextAlign.center => painter.width / 2,
+        TextAlign.right => painter.width,
+        (_) => 0,
+      };
+
       lines = painter.computeLineMetrics();
     } else {
       TextSelection selection = _controller.value.selection;

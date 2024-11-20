@@ -211,8 +211,10 @@ class ViewportCell extends ViewportItem {
   @override
   CellIndex get index => _index;
 
-  void setText(String text) {
-    _properties.value = _properties.value.withText(text);
+  ViewportCell withText(String text) {
+    return copyWith(
+      properties: _properties.copyWith(value: _properties.value.withText(text)),
+    );
   }
 
   CellProperties get properties => _properties;
