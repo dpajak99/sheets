@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/widgets/material/dialogs/color_palette_dialog.dart';
-import 'package:sheets/widgets/material/dropdown_list_menu.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
 import 'package:sheets/widgets/material/material_sheet_theme.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
-class ColorsGridPicker extends StatelessWidget {
-  const ColorsGridPicker({
+class ColorGridPicker extends StatelessWidget {
+  const ColorGridPicker({
     required Color defaultColor,
     required Color selectedColor,
     required ValueChanged<Color> onChanged,
@@ -31,25 +31,32 @@ class ColorsGridPicker extends StatelessWidget {
           onPressed: () => _onChanged(_defaultColor),
         ),
         const SizedBox(height: 2),
-        _ColorsGrid(
+        _ColorGrid(
           columns: 10,
           selectedColor: _selectedColor,
           onChanged: _onChanged,
           colors: MaterialSheetTheme.baseColors,
         ),
         const SizedBox(height: 2),
-        const DropdownListMenuSubtitle(label: 'STANDARDOWY', icon: SheetIcons.edit),
+        const DropdownListMenuSubtitle(
+          label: 'STANDARDOWY',
+          icon: SheetIcons.edit,
+          padding: EdgeInsets.only(bottom: 4, left: 6, right: 6),
+        ),
         const SizedBox(height: 2),
-        _ColorsGrid(
+        _ColorGrid(
           columns: 10,
           selectedColor: MaterialSheetTheme.baseColors.contains(_selectedColor.value) ? null : _selectedColor,
           onChanged: _onChanged,
           colors: MaterialSheetTheme.standardColors,
         ),
         const DropdownListMenuDivider(padding: EdgeInsets.symmetric(vertical: 6)),
-        const DropdownListMenuSubtitle(label: 'NIESTANDARDOWE'),
+        const DropdownListMenuSubtitle(
+          label: 'NIESTANDARDOWE',
+          padding: EdgeInsets.only(bottom: 4, left: 6, right: 6),
+        ),
         const SizedBox(height: 2),
-        _CustomColorsSection(
+        _CustomColorSection(
           selectedColor: MaterialSheetTheme.baseColors.contains(_selectedColor.value) ? null : _selectedColor,
           onChanged: _onChanged,
         ),
@@ -58,8 +65,8 @@ class ColorsGridPicker extends StatelessWidget {
   }
 }
 
-class _CustomColorsSection extends StatefulWidget {
-  const _CustomColorsSection({
+class _CustomColorSection extends StatefulWidget {
+  const _CustomColorSection({
     required this.onChanged,
     this.selectedColor,
   });
@@ -68,7 +75,7 @@ class _CustomColorsSection extends StatefulWidget {
   final Color? selectedColor;
 
   @override
-  State<StatefulWidget> createState() => _CustomColorsSectionState();
+  State<StatefulWidget> createState() => _CustomColorSectionState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -78,22 +85,22 @@ class _CustomColorsSection extends StatefulWidget {
   }
 }
 
-class _CustomColorsSectionState extends State<_CustomColorsSection> {
+class _CustomColorSectionState extends State<_CustomColorSection> {
   final List<Color> _customColors = <Color>[];
 
   @override
   Widget build(BuildContext context) {
-    return _ColorsGrid(
+    return _ColorGrid(
       columns: 10,
       selectedColor: widget.selectedColor,
       onChanged: widget.onChanged,
       colors: _customColors.map((Color color) => color.value).toList(),
       customWidgets: <Widget>[
-        _ColorsGridIconButton(
+        _ColorGridIconButton(
           icon: SheetIcons.add_circle,
           onPressed: _requestCustomColor,
         ),
-        _ColorsGridIconButton(
+        _ColorGridIconButton(
           icon: SheetIcons.colorize,
           onPressed: () {
             // TODO(dominik): Missing implementation
@@ -119,8 +126,8 @@ class _CustomColorsSectionState extends State<_CustomColorsSection> {
   }
 }
 
-class _ColorsGrid extends StatelessWidget {
-  const _ColorsGrid({
+class _ColorGrid extends StatelessWidget {
+  const _ColorGrid({
     required int columns,
     required List<int> colors,
     required ValueChanged<Color> onChanged,
@@ -142,7 +149,7 @@ class _ColorsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> colorWidgets = _colors.map((int color) {
-      return _ColorsGridItem(
+      return _ColorGridItem(
         selected: _selectedColor?.value == color,
         color: Color(color),
         onPressed: _onChanged,
@@ -173,15 +180,14 @@ class _ColorsGrid extends StatelessWidget {
   }
 }
 
-class _ColorsGridIconButton extends StatelessWidget {
-  const _ColorsGridIconButton({
+class _ColorGridIconButton extends StatelessWidget {
+  const _ColorGridIconButton({
     required AssetIconData icon,
     required VoidCallback onPressed,
     double? size,
-    super.key,
   })  : _icon = icon,
         _onPressed = onPressed,
-        _size = size ?? 16;
+        _size = size ?? 19;
 
   final AssetIconData _icon;
   final VoidCallback _onPressed;
@@ -221,8 +227,8 @@ class _ColorsGridIconButton extends StatelessWidget {
   }
 }
 
-class _ColorsGridItem extends StatelessWidget {
-  const _ColorsGridItem({
+class _ColorGridItem extends StatelessWidget {
+  const _ColorGridItem({
     required bool selected,
     required Color color,
     required ValueChanged<Color> onPressed,

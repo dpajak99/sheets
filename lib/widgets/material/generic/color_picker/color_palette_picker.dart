@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// PalettePicker widget allows selection of a color value based on position.
-class PalettePicker extends StatefulWidget {
-  const PalettePicker({
+class ColorPalettePicker extends StatefulWidget {
+  const ColorPalettePicker({
     required this.color,
     required this.position,
     required this.onChanged,
@@ -31,9 +31,6 @@ class PalettePicker extends StatefulWidget {
   final BorderRadius? borderRadius;
 
   @override
-  State<StatefulWidget> createState() => _PalettePickerState();
-
-  @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(ColorProperty('color', color));
@@ -48,36 +45,12 @@ class PalettePicker extends StatefulWidget {
     properties.add(DiagnosticsProperty<Border?>('border', border));
     properties.add(DiagnosticsProperty<BorderRadius?>('borderRadius', borderRadius));
   }
+
+  @override
+  State<StatefulWidget> createState() => _ColorPalettePickerState();
 }
 
-class _PalettePickerState extends State<PalettePicker> {
-  Offset get _ratio {
-    double ratioX = ((widget.position.dx - widget.leftPosition) / (widget.rightPosition - widget.leftPosition)).clamp(0.0, 1.0);
-    double ratioY = ((widget.position.dy - widget.topPosition) / (widget.bottomPosition - widget.topPosition)).clamp(0.0, 1.0);
-    return Offset(ratioX, ratioY);
-  }
-
-  void _updatePosition(Offset localPosition, Size size) {
-    double dx = localPosition.dx.clamp(0.0, size.width);
-    double dy = localPosition.dy.clamp(0.0, size.height);
-
-    double ratioX = dx / size.width;
-    double ratioY = dy / size.height;
-
-    double positionX = widget.leftPosition + ratioX * (widget.rightPosition - widget.leftPosition);
-    double positionY = widget.topPosition + ratioY * (widget.bottomPosition - widget.topPosition);
-
-    widget.onChanged(Offset(positionX, positionY));
-  }
-
-  void _onPanUpdate(DragUpdateDetails details) {
-    _updatePosition(details.localPosition, context.size!);
-  }
-
-  void _onTapDown(TapDownDetails details) {
-    _updatePosition(details.localPosition, context.size!);
-  }
-
+class _ColorPalettePickerState extends State<ColorPalettePicker> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -115,6 +88,33 @@ class _PalettePickerState extends State<PalettePicker> {
         ),
       ],
     );
+  }
+
+  Offset get _ratio {
+    double ratioX = ((widget.position.dx - widget.leftPosition) / (widget.rightPosition - widget.leftPosition)).clamp(0.0, 1.0);
+    double ratioY = ((widget.position.dy - widget.topPosition) / (widget.bottomPosition - widget.topPosition)).clamp(0.0, 1.0);
+    return Offset(ratioX, ratioY);
+  }
+
+  void _updatePosition(Offset localPosition, Size size) {
+    double dx = localPosition.dx.clamp(0.0, size.width);
+    double dy = localPosition.dy.clamp(0.0, size.height);
+
+    double ratioX = dx / size.width;
+    double ratioY = dy / size.height;
+
+    double positionX = widget.leftPosition + ratioX * (widget.rightPosition - widget.leftPosition);
+    double positionY = widget.topPosition + ratioY * (widget.bottomPosition - widget.topPosition);
+
+    widget.onChanged(Offset(positionX, positionY));
+  }
+
+  void _onPanUpdate(DragUpdateDetails details) {
+    _updatePosition(details.localPosition, context.size!);
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    _updatePosition(details.localPosition, context.size!);
   }
 }
 

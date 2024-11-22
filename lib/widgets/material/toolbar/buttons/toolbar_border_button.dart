@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/border_edges.dart';
-import 'package:sheets/widgets/material/dropdown_button.dart';
-import 'package:sheets/widgets/material/dropdown_grid_menu.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_border_style_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_border_button.dart';
@@ -36,12 +36,15 @@ class ToolbarBorderButton extends StatefulWidget implements StaticSizeWidget {
 }
 
 class _ToolbarBorderButtonState extends State<ToolbarBorderButton> {
+  final DropdownButtonController _dropdownController = DropdownButtonController();
+  final DropdownButtonController _colorDropdownController = DropdownButtonController();
   late Color _selectedColor = Colors.black;
   late int _selectedWidth = 1;
 
   @override
   Widget build(BuildContext context) {
     return SheetDropdownButton(
+      controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
         return ToolbarIconButton.withDropdown(
           icon: SheetIcons.border_all,
@@ -56,8 +59,11 @@ class _ToolbarBorderButtonState extends State<ToolbarBorderButton> {
           trailing: Column(
             children: <Widget>[
               ToolbarColorBorderButton(
+                controller: _colorDropdownController,
                 value: _selectedColor,
                 onChanged: (Color color) {
+
+                  _colorDropdownController.close();
                   setState(() => _selectedColor = color);
                 },
               ),
@@ -75,6 +81,7 @@ class _ToolbarBorderButtonState extends State<ToolbarBorderButton> {
               value: edge,
               onPressed: (BorderEdges border) {
                 widget.onChanged(border, _selectedColor, _selectedWidth.toDouble());
+                _dropdownController.close();
               },
             );
           }).toList(),

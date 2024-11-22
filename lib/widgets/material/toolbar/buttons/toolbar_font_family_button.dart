@@ -1,36 +1,63 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/widgets/material/dropdown_button.dart';
-import 'package:sheets/widgets/material/dropdown_list_menu.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
-class ToolbarFontFamilyButton extends StatelessWidget implements StaticSizeWidget {
+class ToolbarFontFamilyButton extends StatefulWidget implements StaticSizeWidget {
   const ToolbarFontFamilyButton({
-    required String? value,
-    required ValueChanged<String> onChanged,
+    required this.value,
+    required this.onChanged,
     super.key,
-  })  : _value = value,
-        _onChanged = onChanged;
+  });
 
+  final String? value;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Size get size => const Size(97, 30);
+
+  @override
+  EdgeInsets get margin => const EdgeInsets.symmetric(horizontal: 1);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('value', value));
+    properties.add(ObjectFlagProperty<ValueChanged<String>>.has('onChanged', onChanged));
+  }
+
+  @override
+  State<StatefulWidget> createState() => _ToolbarFontFamilyButtonState();
+}
+
+class _ToolbarFontFamilyButtonState extends State<ToolbarFontFamilyButton> {
   static const String _defaultFont = 'Arial';
   static const List<String> _supportedFonts = <String>['Arial', 'Times New Roman', 'Courier New', 'Roboto'];
   static const List<String> _recentFonts = _supportedFonts;
 
-  final String? _value;
-  final ValueChanged<String> _onChanged;
+  late final DropdownButtonController _dropdownController;
+
+  @override
+  void initState() {
+    super.initState();
+    _dropdownController = DropdownButtonController();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SheetDropdownButton(
+      controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
         return _FontFamilyDropdownButton(
           opened: isOpen,
-          size: size,
-          margin: margin,
-          fontFamily: _value ?? _defaultFont,
+          size: widget.size,
+          margin: widget.margin,
+          fontFamily: widget.value ?? _defaultFont,
         );
       },
       popupBuilder: (BuildContext context) {
@@ -48,29 +75,29 @@ class ToolbarFontFamilyButton extends StatelessWidget implements StaticSizeWidge
             const DropdownListMenuSubtitle(label: 'MOTYW'),
             const SizedBox(height: 2),
             _FontFamilyOption(
-              selected: _value == _defaultFont,
+              selected: widget.value == _defaultFont,
               label: 'Domyślna ($_defaultFont)',
               fontFamily: _defaultFont,
-              onSelect: _onChanged,
+              onSelect: _handleFontFamilyChanged,
             ),
             const SizedBox(height: 2),
             const DropdownListMenuSubtitle(label: 'OSTATNIE'),
             const SizedBox(height: 2),
             ..._recentFonts.map((String fontFamily) {
               return _FontFamilyOption(
-                selected: _value == fontFamily,
+                selected: widget.value == fontFamily,
                 label: fontFamily,
                 fontFamily: fontFamily,
-                onSelect: _onChanged,
+                onSelect: _handleFontFamilyChanged,
               );
             }),
             const DropdownListMenuDivider(),
             ..._supportedFonts.map((String fontFamily) {
               return _FontFamilyOption(
-                selected: _value == fontFamily,
+                selected: widget.value == fontFamily,
                 label: fontFamily,
                 fontFamily: fontFamily,
-                onSelect: _onChanged,
+                onSelect: _handleFontFamilyChanged,
               );
             }),
           ],
@@ -79,11 +106,10 @@ class ToolbarFontFamilyButton extends StatelessWidget implements StaticSizeWidge
     );
   }
 
-  @override
-  Size get size => const Size(97, 30);
-
-  @override
-  EdgeInsets get margin => const EdgeInsets.symmetric(horizontal: 1);
+  void _handleFontFamilyChanged(String fontFamily) {
+    widget.onChanged.call(fontFamily);
+    _dropdownController.close();
+  }
 }
 
 class _FontFamilyDropdownButton extends StatelessWidget {

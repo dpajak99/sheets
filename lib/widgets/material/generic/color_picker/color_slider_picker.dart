@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// SliderPicker widget allows selection of a value between [min] and [max].
-class SliderPicker extends StatefulWidget {
-  const SliderPicker({
+class ColorSliderPicker extends StatefulWidget {
+  const ColorSliderPicker({
     required this.value,
     required this.onChanged,
     super.key,
@@ -29,7 +29,7 @@ class SliderPicker extends StatefulWidget {
   final double height;
 
   @override
-  State<StatefulWidget> createState() => _SliderPickerState();
+  State<StatefulWidget> createState() => _ColorSliderPickerState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -46,25 +46,8 @@ class SliderPicker extends StatefulWidget {
   }
 }
 
-class _SliderPickerState extends State<SliderPicker> {
+class _ColorSliderPickerState extends State<ColorSliderPicker> {
   final GlobalKey _sliderKey = GlobalKey();
-
-  double get _ratio => ((widget.value - widget.min) / (widget.max - widget.min)).clamp(0.0, 1.0);
-
-  void _updateValue(Offset localPosition) {
-    RenderBox renderBox = _sliderKey.currentContext!.findRenderObject()! as RenderBox;
-    double ratio = localPosition.dx / renderBox.size.width;
-    double newValue = (ratio * (widget.max - widget.min) + widget.min).clamp(widget.min, widget.max);
-    widget.onChanged(newValue);
-  }
-
-  void _onPanUpdate(DragUpdateDetails details) {
-    _updateValue(details.localPosition);
-  }
-
-  void _onTapDown(TapDownDetails details) {
-    _updateValue(details.localPosition);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +94,23 @@ class _SliderPickerState extends State<SliderPicker> {
         ),
       ),
     );
+  }
+
+  double get _ratio => ((widget.value - widget.min) / (widget.max - widget.min)).clamp(0.0, 1.0);
+
+  void _updateValue(Offset localPosition) {
+    RenderBox renderBox = _sliderKey.currentContext!.findRenderObject()! as RenderBox;
+    double ratio = localPosition.dx / renderBox.size.width;
+    double newValue = (ratio * (widget.max - widget.min) + widget.min).clamp(widget.min, widget.max);
+    widget.onChanged(newValue);
+  }
+
+  void _onPanUpdate(DragUpdateDetails details) {
+    _updateValue(details.localPosition);
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    _updateValue(details.localPosition);
   }
 }
 

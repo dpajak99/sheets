@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
-import 'package:sheets/widgets/material/dropdown_button.dart';
-import 'package:sheets/widgets/material/dropdown_grid_menu.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
@@ -32,7 +32,7 @@ class ToolbarTextOverflowButton extends StatelessWidget implements StaticSizeWid
             return _TextOverflowOption(
               selected: _value == textOverflow,
               icon: icon,
-              onPressed: () => _onChanged(_value),
+              onPressed: () => _onChanged(textOverflow),
             );
           }).toList(),
         );

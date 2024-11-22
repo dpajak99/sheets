@@ -57,6 +57,14 @@ class _MouseStateListener extends State<WidgetStateBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.disabled) {
+      return IgnorePointer(
+        child: Opacity(
+          opacity: 0.3,
+          child: widget.builder(<WidgetState>{}),
+        ),
+      );
+    }
     return MouseRegion(
       onEnter: (PointerEnterEvent event) {
         _addState(WidgetState.hovered);

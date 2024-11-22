@@ -32,8 +32,8 @@ import 'package:sheets/widgets/sections/sheet_toolbar/toolbar_buttons_section.da
 import 'package:sheets/widgets/sheet_theme.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
-class SheetSectionToolbar extends StatefulWidget {
-  const SheetSectionToolbar({
+class SheetToolbar extends StatefulWidget {
+  const SheetToolbar({
     required this.sheetController,
     super.key,
   });
@@ -41,7 +41,7 @@ class SheetSectionToolbar extends StatefulWidget {
   final SheetController sheetController;
 
   @override
-  State<StatefulWidget> createState() => _SheetSectionToolbarState();
+  State<StatefulWidget> createState() => _SheetToolbarState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -50,7 +50,7 @@ class SheetSectionToolbar extends StatefulWidget {
   }
 }
 
-class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
+class _SheetToolbarState extends State<SheetToolbar> {
   @override
   Widget build(BuildContext context) {
     return SheetTheme(
@@ -96,10 +96,10 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarIconButton(icon: SheetIcons.undo, onTap: () {}),
-                                ToolbarIconButton(icon: SheetIcons.redo, onTap: () {}),
-                                ToolbarIconButton(icon: SheetIcons.print, onTap: () {}),
-                                ToolbarIconButton(icon: SheetIcons.paint, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.undo, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.redo, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.print, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.paint, onTap: () {}),
                                 ToolbarZoomButton(value: 100, onChanged: (_) {}),
                                 const ToolbarDivider(),
                               ],
@@ -247,7 +247,7 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                                   },
                                 ),
                                 ToolbarTextRotationButton(
-                                  value: TextRotation.none,
+                                  value: selectionStyle.cellStyle.rotation,
                                   onChanged: (TextRotation rotation) {
                                     widget.sheetController.formatSelection(SetRotationIntent(rotation));
                                   },
@@ -257,18 +257,18 @@ class _SheetSectionToolbarState extends State<SheetSectionToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarIconButton(icon: SheetIcons.link, onTap: () {}),
-                                ToolbarIconButton(icon: SheetIcons.add_comment, onTap: () {}),
-                                ToolbarIconButton(icon: SheetIcons.insert_chart, onTap: () {}),
-                                ToolbarIconButton(icon: SheetIcons.filter_alt, onTap: () {}),
-                                ToolbarIconButton.withDropdown(icon: SheetIcons.table_view, onTap: () {}),
-                                ToolbarIconButton(icon: SheetIcons.functions, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.link, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.add_comment, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.insert_chart, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.filter_alt, onTap: () {}),
+                                ToolbarIconButton.withDropdown(disabled: true, icon: SheetIcons.table_view, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.functions, onTap: () {}),
                               ],
                             ),
                           ],
                         ),
                       ),
-                      ToolbarIconButton(icon: SheetIcons.arrow_up, onTap: () {}),
+                      ToolbarIconButton(disabled: true, icon: SheetIcons.arrow_up, onTap: () {}),
                     ],
                   );
                 },

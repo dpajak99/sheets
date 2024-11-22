@@ -38,6 +38,7 @@ class SheetDropdownButton extends StatefulWidget {
     required this.popupBuilder,
     this.level = 1,
     this.controller,
+    this.disabled = false,
     super.key,
   });
 
@@ -45,6 +46,7 @@ class SheetDropdownButton extends StatefulWidget {
   final DropdownPopupBuilder popupBuilder;
   final int level;
   final DropdownButtonController? controller;
+  final bool disabled;
 
   @override
   State<StatefulWidget> createState() => _SheetDropdownButtonState();
@@ -56,6 +58,7 @@ class SheetDropdownButton extends StatefulWidget {
     properties.add(ObjectFlagProperty<DropdownPopupBuilder>.has('popupBuilder', popupBuilder));
     properties.add(IntProperty('level', level));
     properties.add(DiagnosticsProperty<DropdownButtonController?>('controller', controller));
+    properties.add(DiagnosticsProperty<bool>('disabled', disabled));
   }
 }
 
@@ -116,7 +119,7 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
 
     _overlayEntry = newOverlayEntry;
     _currentlyOpenPopups[widget.level] = this;
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
   }
@@ -133,7 +136,7 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
     if (_currentlyOpenPopups[widget.level] == this) {
       _currentlyOpenPopups.remove(widget.level);
     }
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
   }
@@ -218,6 +221,15 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.disabled) {
+      return IgnorePointer(
+        child: Opacity(
+          opacity: 0.3,
+          child: widget.buttonBuilder(context, false),
+        ),
+      );
+    }
+
     return GestureDetector(
       key: _buttonKey,
       behavior: HitTestBehavior.translucent,

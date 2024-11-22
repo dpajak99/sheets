@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/widgets/material/dropdown_button.dart';
-import 'package:sheets/widgets/material/dropdown_list_menu.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
@@ -107,6 +106,7 @@ class _BorderStyleOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return WidgetStateBuilder(
       onTap: _onTap,
+      cursor: SystemMouseCursors.click,
       builder: (Set<WidgetState> states) {
         Color? backgroundColor = _resolveBackgroundColor(states);
         Color? foregroundColor = _resolveForegroundColor(states);
@@ -165,6 +165,7 @@ class _BorderStyleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WidgetStateBuilder(
+      cursor: SystemMouseCursors.click,
       builder: (Set<WidgetState> states) {
         Set<WidgetState> updatedStates = <WidgetState>{
           if (_opened) WidgetState.pressed,

@@ -119,14 +119,14 @@ class DropdownListMenuItem extends StatelessWidget {
         Color backgroundColor = _resolveBackgroundColor(states);
         Color foregroundColor = _resolveForegroundColor(states);
 
-        TextStyle defaultLabelStyle = TextStyle(
+        TextStyle defaultLabelStyle = const TextStyle(
           fontFamily: 'Roboto',
           package: 'sheets',
           fontSize: 14,
           height: 20 / 14,
           letterSpacing: 0.2,
           fontWeight: FontWeight.w400,
-          color: foregroundColor,
+          color: Color(0xff26272a),
         );
 
         Widget? iconWidget = _icon != null
@@ -264,7 +264,7 @@ class _DropdownListMenuSubtitleButton extends StatelessWidget {
     double? size,
   })  : _icon = icon,
         _onPressed = onPressed,
-        _size = size ?? 16;
+        _size = size ?? 12;
 
   final AssetIconData _icon;
   final VoidCallback _onPressed;
@@ -279,13 +279,12 @@ class _DropdownListMenuSubtitleButton extends StatelessWidget {
         Color? foregroundColor = _resolveForegroundColor(states);
 
         return Container(
-          height: _size,
-          width: _size,
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(3),
           ),
-          child: AssetIcon(_icon, size: _size, color: foregroundColor),
+          child: Center( child: AssetIcon(_icon, size: _size, color: foregroundColor)),
         );
       },
     );

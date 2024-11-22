@@ -12,6 +12,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
     bool? opened,
     bool? selected,
     bool? hasDropdown,
+    bool? disabled,
     super.key,
   })  : _hasDropdown = hasDropdown ?? false,
         _icon = icon,
@@ -19,7 +20,8 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
         _size = size ?? const Size(30, 30),
         _margin = margin ?? const EdgeInsets.symmetric(horizontal: 1),
         _opened = opened ?? false,
-        _selected = selected ?? false;
+        _selected = selected ?? false,
+        _disabled = disabled ?? false;
 
   const ToolbarIconButton.small({
     required AssetIconData icon,
@@ -28,6 +30,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
     EdgeInsets? margin,
     bool? opened,
     bool? selected,
+    bool? disabled,
     Key? key,
   }) : this(
           hasDropdown: false,
@@ -37,6 +40,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
           margin: margin,
           opened: opened,
           selected: selected,
+    disabled: disabled,
           key: key,
         );
 
@@ -47,6 +51,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
     EdgeInsets? margin,
     bool? opened,
     bool? selected,
+    bool? disabled,
     Key? key,
   }) : this(
           hasDropdown: true,
@@ -56,6 +61,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
           margin: margin,
           opened: opened,
           selected: selected,
+    disabled: disabled,
           key: key,
         );
 
@@ -66,6 +72,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
   final bool _opened;
   final bool _selected;
   final bool _hasDropdown;
+  final bool _disabled;
 
   @override
   EdgeInsets get margin => _margin;
@@ -76,6 +83,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
   @override
   Widget build(BuildContext context) {
     return WidgetStateBuilder(
+      disabled: _disabled,
       onTap: _onTap ?? () {},
       builder: (Set<WidgetState> states) {
         Set<WidgetState> updatedStates = <WidgetState>{

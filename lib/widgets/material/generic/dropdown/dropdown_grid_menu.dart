@@ -47,7 +47,14 @@ class DropdownGridMenu extends StatelessWidget {
         children: <Widget>[
           child,
           const SizedBox(width: 1),
-          const VerticalDivider(color: Color(0xffeeeeee), width: 1, thickness: 1),
+          SizedBox(
+            height: _columns != null ? (_children.length / _columns).ceil() * 32 : 32,
+            child: const VerticalDivider(
+              color: Color(0xffdadce0),
+              width: 1,
+              thickness: 1,
+            ),
+          ),
           const SizedBox(width: 8),
           _trailing,
         ],

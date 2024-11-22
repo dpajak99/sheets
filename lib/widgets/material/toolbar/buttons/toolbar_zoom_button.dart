@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/widgets/material/dropdown_button.dart';
-import 'package:sheets/widgets/material/dropdown_list_menu.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_field_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
@@ -63,6 +63,7 @@ class _ToolbarZoomButtonState extends State<ToolbarZoomButton> {
   @override
   Widget build(BuildContext context) {
     return SheetDropdownButton(
+      disabled: true,
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
         return ToolbarTextFieldButton(

@@ -1,45 +1,53 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/widgets/material/components/colors_grid_picker.dart';
-import 'package:sheets/widgets/material/dropdown_button.dart';
-import 'package:sheets/widgets/material/dropdown_list_menu.dart';
+import 'package:sheets/widgets/material/generic/color_picker/color_grid_picker.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_color_picker_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
-class ToolbarColorFillButton extends StatelessWidget implements StaticSizeWidget {
+class ToolbarColorFillButton extends StatefulWidget implements StaticSizeWidget {
   const ToolbarColorFillButton({
-    required Color value,
-    required ValueChanged<Color?> onChanged,
-    Size? size,
-    EdgeInsets? margin,
+    required this.value,
+    required this.onChanged,
     super.key,
-  })  : _value = value,
-        _onChanged = onChanged,
-        _size = size ?? const Size(32, 30),
-        _margin = margin ?? const EdgeInsets.symmetric(horizontal: 1);
+  });
 
+  final Color value;
+  final ValueChanged<Color?> onChanged;
+
+  @override
+  Size get size => const Size(32, 30);
+
+  @override
+  EdgeInsets get margin => const EdgeInsets.symmetric(horizontal: 1);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ColorProperty('value', value));
+    properties.add(ObjectFlagProperty<ValueChanged<Color?>>.has('onChanged', onChanged));
+  }
+
+  @override
+  State<StatefulWidget> createState() => _ToolbarColorFillButtonState();
+}
+
+class _ToolbarColorFillButtonState extends State<ToolbarColorFillButton> {
+  final DropdownButtonController _dropdownController = DropdownButtonController();
   static const Color _defaultColor = Colors.white;
-
-  final Size _size;
-  final EdgeInsets _margin;
-  final Color _value;
-  final ValueChanged<Color?> _onChanged;
-
-  @override
-  Size get size => _size;
-
-  @override
-  EdgeInsets get margin => _margin;
 
   @override
   Widget build(BuildContext context) {
     return SheetDropdownButton(
+      controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
         return ToolbarColorPickerButton(
-          size: size,
-          margin: margin,
+          size: widget.size,
+          margin: widget.margin,
           opened: isOpen,
-          selectedColor: _value,
+          selectedColor: widget.value,
           icon: SheetIcons.format_color_fill,
         );
       },
@@ -48,10 +56,10 @@ class ToolbarColorFillButton extends StatelessWidget implements StaticSizeWidget
           width: 244,
           padding: const EdgeInsets.all(11),
           children: <Widget>[
-            ColorsGridPicker(
+            ColorGridPicker(
               defaultColor: _defaultColor,
-              selectedColor: _value,
-              onChanged: handleColorChanged,
+              selectedColor: widget.value,
+              onChanged: _handleColorChanged,
             ),
           ],
         );
@@ -59,11 +67,12 @@ class ToolbarColorFillButton extends StatelessWidget implements StaticSizeWidget
     );
   }
 
-  void handleColorChanged(Color? color) {
+  void _handleColorChanged(Color? color) {
+    _dropdownController.close();
     if (color == _defaultColor || color == Colors.transparent) {
-      _onChanged(null);
+      widget.onChanged(null);
     } else {
-      _onChanged(color);
+      widget.onChanged(color);
     }
   }
 }

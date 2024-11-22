@@ -1,28 +1,55 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
-import 'package:sheets/widgets/material/dropdown_button.dart';
-import 'package:sheets/widgets/material/dropdown_grid_menu.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
-class ToolbarTextAlignVerticalButton extends StatelessWidget implements StaticSizeWidget {
+class ToolbarTextAlignVerticalButton extends StatefulWidget implements StaticSizeWidget {
   const ToolbarTextAlignVerticalButton({
-    required TextVerticalAlign value,
-    required ValueChanged<TextVerticalAlign> onChanged,
+    required this.value,
+    required this.onChanged,
     super.key,
-  })  : _value = value,
-        _onChanged = onChanged;
+  });
 
-  final TextVerticalAlign _value;
-  final ValueChanged<TextVerticalAlign> _onChanged;
+  final TextVerticalAlign value;
+  final ValueChanged<TextVerticalAlign> onChanged;
+
+  @override
+  Size get size => const Size(39, 30);
+
+  @override
+  EdgeInsets get margin => const EdgeInsets.symmetric(horizontal: 1);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(EnumProperty<TextVerticalAlign>('value', value));
+    properties.add(ObjectFlagProperty<ValueChanged<TextVerticalAlign>>.has('onChanged', onChanged));
+  }
+
+  @override
+  State<StatefulWidget> createState() => _ToolbarTextAlignVerticalButtonState();
+}
+
+class _ToolbarTextAlignVerticalButtonState extends State<ToolbarTextAlignVerticalButton> {
+  late final DropdownButtonController _dropdownController;
+
+  @override
+  void initState() {
+    super.initState();
+    _dropdownController = DropdownButtonController();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SheetDropdownButton(
+      controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        AssetIconData icon = _resolveIcon(_value);
-        return ToolbarIconButton.withDropdown(icon: icon, size: size, margin: margin);
+        AssetIconData icon = _resolveIcon(widget.value);
+        return ToolbarIconButton.withDropdown(icon: icon, size: widget.size, margin: widget.margin);
       },
       popupBuilder: (BuildContext context) {
         return DropdownGridMenu(
@@ -30,10 +57,12 @@ class ToolbarTextAlignVerticalButton extends StatelessWidget implements StaticSi
           children: TextVerticalAlign.values.map((TextVerticalAlign textAlign) {
             AssetIconData icon = _resolveIcon(textAlign);
             return _TextAlignOption(
-              selected: _value == textAlign,
-              icon: icon,
-              onPressed: () => _onChanged(_value),
-            );
+                selected: widget.value == textAlign,
+                icon: icon,
+                onPressed: () {
+                  widget.onChanged(textAlign);
+                  _dropdownController.close();
+                });
           }).toList(),
         );
       },
@@ -47,12 +76,6 @@ class ToolbarTextAlignVerticalButton extends StatelessWidget implements StaticSi
       TextVerticalAlign.bottom => SheetIcons.vertical_align_bottom,
     };
   }
-
-  @override
-  Size get size => const Size(39, 30);
-
-  @override
-  EdgeInsets get margin => const EdgeInsets.symmetric(horizontal: 1);
 }
 
 class _TextAlignOption extends StatelessWidget {

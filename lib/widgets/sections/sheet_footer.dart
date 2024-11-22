@@ -30,7 +30,7 @@ class SheetFooter extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             SheetFooterTab(
-              title: 'Sheet1',
+              title: 'Arkusz1',
               selected: true,
               onPressed: () {},
             ),
