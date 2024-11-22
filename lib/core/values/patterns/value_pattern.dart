@@ -1,9 +1,9 @@
 import 'package:sheets/core/cell_properties.dart';
 
 abstract class ValuePatternMatcher {
-  ValuePattern? detect(List<CellProperties> baseCells);
+  ValuePattern? detect(List<IndexedCellProperties> baseCells);
 }
 
 abstract class ValuePattern {
-  void apply(List<CellProperties> baseCells, List<CellProperties> fillCells);
+  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells);
 }

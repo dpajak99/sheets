@@ -5,7 +5,7 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearDurationPatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<CellProperties> values) {
+  ValuePattern? detect(List<IndexedCellProperties> values) {
     try {
       List<Duration> durationValues = _parseDurationValues(values);
       List<Duration> steps = _calculateSteps(durationValues);
@@ -20,11 +20,11 @@ class LinearDurationPatternMatcher implements ValuePatternMatcher {
     }
   }
 
-  List<Duration> _parseDurationValues(List<CellProperties> values) {
-    return values.map((CellProperties cell) {
-      SheetValueFormat format = cell.visibleValueFormat;
+  List<Duration> _parseDurationValues(List<IndexedCellProperties> values) {
+    return values.map((IndexedCellProperties cell) {
+      SheetValueFormat format = cell.properties.visibleValueFormat;
       if (format is SheetDurationFormat) {
-        return format.toDuration(cell.value.toPlainText());
+        return format.toDuration(cell.properties.value.toPlainText());
       } else {
         throw ArgumentError('Invalid format: $format');
       }
@@ -59,22 +59,28 @@ class DurationSequencePattern implements ValuePattern {
   final Duration lastDuration;
 
   @override
-  void apply(List<CellProperties> baseCells, List<CellProperties> fillCells) {
+  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
     Duration lastDuration = this.lastDuration;
 
     for (int i = 0; i < fillCells.length; i++) {
+      IndexedCellProperties templateProperties = baseCells[i];
+      IndexedCellProperties fillProperties = fillCells[i];
+
       Duration step = steps[i % steps.length];
       Duration newDurationValue = lastDuration + step;
       lastDuration = newDurationValue;
 
-      SheetRichText previousRichText = baseCells[i % baseCells.length].value;
+      SheetRichText previousRichText = templateProperties.properties.value;
       SheetRichText updatedRichText = previousRichText.withText(newDurationValue.toString());
 
-      CellProperties cellProperties = fillCells[i];
-      fillCells[i] = cellProperties.copyWith(
-        value: updatedRichText,
-        style: baseCells[i % steps.length].style,
+      fillCells[i] = fillProperties.copyWith(
+        properties: fillProperties.properties.copyWith(
+          value: updatedRichText,
+          style: templateProperties.properties.style,
+        ),
       );
     }
+
+    return fillCells;
   }
 }

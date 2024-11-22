@@ -5,7 +5,7 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearStringPatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<CellProperties> baseCells) {
+  ValuePattern? detect(List<IndexedCellProperties> baseCells) {
     List<_SegmentedStringCellValue>? segmentedValues = _segmentCellValues(baseCells);
     if (segmentedValues == null || segmentedValues.isEmpty) {
       return null;
@@ -37,11 +37,11 @@ class LinearStringPatternMatcher implements ValuePatternMatcher {
     );
   }
 
-  List<_SegmentedStringCellValue>? _segmentCellValues(List<CellProperties> baseCells) {
+  List<_SegmentedStringCellValue>? _segmentCellValues(List<IndexedCellProperties> baseCells) {
     List<_SegmentedStringCellValue> segmentedValues = <_SegmentedStringCellValue>[];
 
-    for (CellProperties cell in baseCells) {
-      String plainText = cell.value.toPlainText();
+    for (IndexedCellProperties cell in baseCells) {
+      String plainText = cell.properties.value.toPlainText();
 
       _SegmentedStringCellValue? segmentedValue = _segmentText(plainText);
       if (segmentedValue == null) {
@@ -118,10 +118,13 @@ class LinearStringPattern implements ValuePattern {
   final List<String> values;
 
   @override
-  void apply(List<CellProperties> baseCells, List<CellProperties> fillCells) {
+  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
     int lastIntegerValue = this.lastIntegerValue;
 
     for (int i = 0; i < fillCells.length; i++) {
+      IndexedCellProperties templateProperties = baseCells[i];
+      IndexedCellProperties fillProperties = fillCells[i];
+
       int step = steps[i % steps.length];
       String value = values[i % values.length];
       int newIntegerValue = lastIntegerValue + step;
@@ -134,15 +137,17 @@ class LinearStringPattern implements ValuePattern {
         newTextValue = '$value${newIntegerValue.abs()}';
       }
 
-      SheetRichText previousRichText = baseCells[i % baseCells.length].value;
+      SheetRichText previousRichText = templateProperties.properties.value;
       SheetRichText updatedRichText = previousRichText.withText(newTextValue);
 
-      CellProperties cellProperties = fillCells[i];
-      fillCells[i] = cellProperties.copyWith(
-        value: updatedRichText,
-        style: baseCells[i % steps.length].style,
+      fillCells[i] = fillProperties.copyWith(
+        properties: fillProperties.properties.copyWith(
+          value: updatedRichText,
+          style: templateProperties.properties.style,
+        ),
       );
     }
+    return fillCells;
   }
 }
 

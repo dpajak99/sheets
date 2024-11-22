@@ -114,12 +114,12 @@ class SheetController {
     List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
     List<CellIndex> fillCells = selection.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
 
-    Map<CellIndex, CellProperties> baseProperties = <CellIndex, CellProperties>{
-      for (CellIndex index in selectedCells) index: dataManager.getCellProperties(index),
-    };
-    Map<CellIndex, CellProperties> fillProperties = <CellIndex, CellProperties>{
-      for (CellIndex index in fillCells) index: dataManager.getCellProperties(index),
-    };
+    List<IndexedCellProperties> baseProperties = <IndexedCellProperties>[
+      for (CellIndex index in selectedCells) IndexedCellProperties(index: index, properties: dataManager.getCellProperties(index)),
+    ];
+    List<IndexedCellProperties> fillProperties = <IndexedCellProperties>[
+      for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: dataManager.getCellProperties(index)),
+    ];
 
     await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
   }

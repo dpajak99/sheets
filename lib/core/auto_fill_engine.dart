@@ -14,67 +14,66 @@ class AutoFillEngine {
   AutoFillEngine(this.fillDirection, this._baseCells, this._fillCells);
 
   final Direction fillDirection;
-  final Map<CellIndex, CellProperties> _baseCells;
-  final Map<CellIndex, CellProperties> _fillCells;
+  final List<IndexedCellProperties> _baseCells;
+  final List<IndexedCellProperties> _fillCells;
 
   Future<void> resolve(SheetController controller) async {
     PatternDetector detector = PatternDetector();
 
+    List<IndexedCellProperties> updatedCells = <IndexedCellProperties>[];
     if (fillDirection.isVertical) {
-      Map<ColumnIndex, List<CellProperties>> groupedBaseCells = groupByColumns(_baseCells);
-      for (MapEntry<ColumnIndex, List<CellProperties>> cells in groupedBaseCells.entries) {
-        ValuePattern pattern = fillDirection == Direction.top
-            ? detector.detectPattern(cells.value.reversed.toList()) //
-            : detector.detectPattern(cells.value);
+      Map<ColumnIndex, List<IndexedCellProperties>> groupedBaseCells = _baseCells.groupByColumns();
+      for (MapEntry<ColumnIndex, List<IndexedCellProperties>> cells in groupedBaseCells.entries) {
+        List<IndexedCellProperties> propertiesToFill = fillDirection == Direction.top
+            ? cells.value.toList().reversed.toList() //
+            : cells.value.toList();
 
-        List<CellProperties> columnFillCells = _fillCells.entries.where((MapEntry<CellIndex, CellProperties> cell) {
-          return cell.key.column == cells.key;
-        }).map((MapEntry<CellIndex, CellProperties> cell) => cell.value).toList();
+        ValuePattern pattern = detector.detectPattern(propertiesToFill);
+        List<IndexedCellProperties> columnFillCells = _fillCells.whereColumn(cells.key);
 
         if (fillDirection == Direction.top) {
-          pattern.apply(cells.value, columnFillCells.reversed.toList());
+          updatedCells = pattern.apply(propertiesToFill, columnFillCells.reversed.toList());
         } else {
-          pattern.apply(cells.value, columnFillCells);
+          updatedCells = pattern.apply(propertiesToFill, columnFillCells);
         }
       }
     } else if (fillDirection.isHorizontal) {
-      Map<RowIndex, List<CellProperties>> groupedBaseCells = groupByRows(_baseCells);
-      for (MapEntry<RowIndex, List<CellProperties>> cells in groupedBaseCells.entries) {
-        ValuePattern pattern = fillDirection == Direction.left
-            ? detector.detectPattern(cells.value.reversed.toList()) //
-            : detector.detectPattern(cells.value);
+      Map<RowIndex, List<IndexedCellProperties>> groupedBaseCells = _baseCells.groupByRows();
+      for (MapEntry<RowIndex, List<IndexedCellProperties>> cells in groupedBaseCells.entries) {
+        List<IndexedCellProperties> propertiesToFill = fillDirection == Direction.left
+            ? cells.value.toList().reversed.toList() //
+            : cells.value.toList();
 
-        List<CellProperties> rowFillCells = _fillCells.entries.where((MapEntry<CellIndex, CellProperties> cell) {
-          return cell.key.row == cells.key;
-        }).map((MapEntry<CellIndex, CellProperties> cell) => cell.value).toList();
+        ValuePattern pattern = detector.detectPattern(propertiesToFill);
+        List<IndexedCellProperties> rowFillCells = _fillCells.whereRow(cells.key);
 
         if (fillDirection == Direction.left) {
-          pattern.apply(cells.value, rowFillCells.reversed.toList());
+          updatedCells = pattern.apply(propertiesToFill, rowFillCells.reversed.toList());
         } else {
-          pattern.apply(cells.value, rowFillCells);
+          updatedCells = pattern.apply(propertiesToFill, rowFillCells);
         }
       }
     }
 
-    controller.dataManager.write((SheetData data) => data.setCellsProperties(_fillCells));
+    controller.dataManager.write((SheetData data) => data.setCellsProperties(updatedCells));
   }
 
-  Map<ColumnIndex, List<CellProperties>> groupByColumns(Map<CellIndex, CellProperties> cells) {
-    Map<ColumnIndex, List<CellProperties>> groupedCells = <ColumnIndex, List<CellProperties>>{};
+  Map<ColumnIndex, Map<CellIndex, CellProperties>> groupByColumns(Map<CellIndex, CellProperties> cells) {
+    Map<ColumnIndex, Map<CellIndex, CellProperties>> groupedCells = <ColumnIndex, Map<CellIndex, CellProperties>>{};
     for (MapEntry<CellIndex, CellProperties> cellEntry in cells.entries) {
       ColumnIndex columnIndex = cellEntry.key.column;
-      groupedCells[columnIndex] ??= <CellProperties>[];
-      groupedCells[columnIndex]!.add(cellEntry.value);
+      groupedCells[columnIndex] ??= <CellIndex, CellProperties>{};
+      groupedCells[columnIndex]![cellEntry.key]= cellEntry.value;
     }
     return groupedCells;
   }
 
-  Map<RowIndex, List<CellProperties>> groupByRows(Map<CellIndex, CellProperties> cells) {
-    Map<RowIndex, List<CellProperties>> groupedCells = <RowIndex, List<CellProperties>>{};
+  Map<RowIndex, Map<CellIndex, CellProperties>> groupByRows(Map<CellIndex, CellProperties> cells) {
+    Map<RowIndex, Map<CellIndex, CellProperties>> groupedCells = <RowIndex, Map<CellIndex, CellProperties>>{};
     for (MapEntry<CellIndex, CellProperties> cellEntry in cells.entries) {
       RowIndex rowIndex = cellEntry.key.row;
-      groupedCells[rowIndex] ??= <CellProperties>[];
-      groupedCells[rowIndex]!.add(cellEntry.value);
+      groupedCells[rowIndex] ??= <CellIndex, CellProperties>{};
+      groupedCells[rowIndex]![cellEntry.key] = cellEntry.value;
     }
     return groupedCells;
   }
@@ -88,7 +87,7 @@ class PatternDetector {
     LinearDurationPatternMatcher(),
   ];
 
-  ValuePattern detectPattern(List<CellProperties> baseCells) {
+  ValuePattern detectPattern(List<IndexedCellProperties> baseCells) {
     for (ValuePatternMatcher matcher in matchers) {
       ValuePattern? pattern = matcher.detect(baseCells);
       if (pattern != null) {

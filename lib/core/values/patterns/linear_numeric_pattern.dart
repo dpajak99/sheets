@@ -5,7 +5,7 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearNumericPatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<CellProperties> values) {
+  ValuePattern? detect(List<IndexedCellProperties> values) {
     try {
       List<num> numericValues = _parseNumericValues(values);
       List<num> steps = _calculateSteps(numericValues);
@@ -26,11 +26,11 @@ class LinearNumericPatternMatcher implements ValuePatternMatcher {
     }
   }
 
-  List<num> _parseNumericValues(List<CellProperties> values) {
-    return values.map((CellProperties cell) {
-      SheetValueFormat format = cell.visibleValueFormat;
+  List<num> _parseNumericValues(List<IndexedCellProperties> values) {
+    return values.map((IndexedCellProperties cell) {
+      SheetValueFormat format = cell.properties.visibleValueFormat;
       if (format is SheetNumberFormat) {
-        return format.toNumber(cell.value.toPlainText());
+        return format.toNumber(cell.properties.value.toPlainText());
       } else {
         throw ArgumentError('Invalid format: $format');
       }
@@ -66,23 +66,28 @@ class LinearNumericPattern implements ValuePattern {
   final int precision;
 
   @override
-  void apply(List<CellProperties> baseCells, List<CellProperties> fillCells) {
+  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
     num lastNumValue = this.lastNumValue;
 
     for (int i = 0; i < fillCells.length; i++) {
+      IndexedCellProperties templateProperties = baseCells[i];
+      IndexedCellProperties fillProperties = fillCells[i];
+
       num step = steps[i % steps.length];
       num newNumValue = lastNumValue + step;
       newNumValue = double.parse(newNumValue.toStringAsFixed(precision));
       lastNumValue = newNumValue;
 
-      SheetRichText previousRichText = baseCells[i % baseCells.length].value;
+      SheetRichText previousRichText = templateProperties.properties.value;
       SheetRichText updatedRichText = previousRichText.withText(newNumValue.toString());
 
-      CellProperties cellProperties = fillCells[i];
-      fillCells[i] = cellProperties.copyWith(
-        value: updatedRichText,
-        style: baseCells[i % steps.length].style,
+      fillCells[i] = fillProperties.copyWith(
+        properties: fillProperties.properties.copyWith(
+          value: updatedRichText,
+          style: templateProperties.properties.style,
+        ),
       );
     }
+    return fillCells;
   }
 }

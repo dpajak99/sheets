@@ -65,9 +65,9 @@ class SheetData {
     _data[cellIndex] = cellProperties.copyWith(value: text);
   }
 
-  void setCellsProperties(Map<CellIndex, CellProperties> cellProperties) {
-    for (MapEntry<CellIndex, CellProperties> entry in cellProperties.entries) {
-      _data[entry.key] = entry.value;
+  void setCellsProperties(List<IndexedCellProperties> properties) {
+    for (IndexedCellProperties entry in properties) {
+      _data[entry.index] = entry.properties;
     }
   }
 

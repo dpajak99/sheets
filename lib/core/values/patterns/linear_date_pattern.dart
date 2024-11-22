@@ -5,7 +5,7 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearDatePatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<CellProperties> values) {
+  ValuePattern? detect(List<IndexedCellProperties> values) {
     try {
       List<DateTime> dateValues = _parseDateValues(values);
       List<Duration> steps = _calculateSteps(dateValues);
@@ -20,11 +20,11 @@ class LinearDatePatternMatcher implements ValuePatternMatcher {
     }
   }
 
-  List<DateTime> _parseDateValues(List<CellProperties> values) {
-    return values.map((CellProperties cell) {
-      SheetValueFormat format = cell.visibleValueFormat;
+  List<DateTime> _parseDateValues(List<IndexedCellProperties> values) {
+    return values.map((IndexedCellProperties cell) {
+      SheetValueFormat format = cell.properties.visibleValueFormat;
       if (format is SheetDateFormat) {
-        return format.toDate(cell.value.toPlainText());
+        return format.toDate(cell.properties.value.toPlainText());
       } else {
         throw ArgumentError('Invalid format: $format');
       }
@@ -59,22 +59,27 @@ class DateSequencePattern implements ValuePattern {
   final DateTime lastDate;
 
   @override
-  void apply(List<CellProperties> baseCells, List<CellProperties> fillCells) {
+  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
     DateTime lastDate = this.lastDate;
 
     for (int i = 0; i < fillCells.length; i++) {
+      IndexedCellProperties templateProperties = baseCells[i];
+      IndexedCellProperties fillProperties = fillCells[i];
+
       Duration step = steps[i % steps.length];
       DateTime newDateTimeValue = lastDate.add(step);
       lastDate = newDateTimeValue;
 
-      SheetRichText previousRichText = baseCells[i % baseCells.length].value;
+      SheetRichText previousRichText = templateProperties.properties.value;
       SheetRichText updatedRichText = previousRichText.withText(newDateTimeValue.toString());
 
-      CellProperties cellProperties = fillCells[i];
-      fillCells[i] = cellProperties.copyWith(
-        value: updatedRichText,
-        style: baseCells[i % steps.length].style,
+      fillCells[i] = fillProperties.copyWith(
+        properties: fillProperties.properties.copyWith(
+          value: updatedRichText,
+          style: templateProperties.properties.style,
+        ),
       );
     }
+    return fillCells;
   }
 }
