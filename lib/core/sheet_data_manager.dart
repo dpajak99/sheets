@@ -48,9 +48,11 @@ class SheetData {
 
       switch (formatAction) {
         case TextStyleFormatAction<TextStyleFormatIntent> formatAction:
-          _data[cellIndex]!.value = _data[cellIndex]!.value.updateStyle(formatAction);
+          CellProperties cellProperties = _data[cellIndex]!;
+          _data[cellIndex] = cellProperties.copyWith(value: cellProperties.value.updateStyle(formatAction));
         case CellStyleFormatAction<CellStyleFormatIntent> formatAction:
-          _data[cellIndex]!.style = formatAction.format(_data[cellIndex]!.style);
+          CellProperties cellProperties = _data[cellIndex]!;
+          _data[cellIndex] = cellProperties.copyWith(style: formatAction.format(_data[cellIndex]!.style));
         case SheetStyleFormatAction<SheetStyleFormatIntent> formatAction:
           formatAction.format(this);
       }
@@ -59,8 +61,8 @@ class SheetData {
   }
 
   void setText(CellIndex cellIndex, SheetRichText text) {
-    _data[cellIndex] ??= CellProperties.empty();
-    _data[cellIndex]!.value = text;
+    CellProperties cellProperties = _data[cellIndex] ?? CellProperties.empty();
+    _data[cellIndex] = cellProperties.copyWith(value: text);
   }
 
   void setCellsProperties(Map<CellIndex, CellProperties> cellProperties) {

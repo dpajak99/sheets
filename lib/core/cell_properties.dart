@@ -14,8 +14,8 @@ class CellProperties with EquatableMixin {
       : value = SheetRichText(),
         style = CellStyle();
 
-  CellStyle style;
-  SheetRichText value;
+  final CellStyle style;
+  final SheetRichText value;
 
   CellProperties copyWith({SheetRichText? value, CellStyle? style}) {
     return CellProperties(

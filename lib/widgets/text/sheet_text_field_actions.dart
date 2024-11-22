@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/utils/formatters/style/double_extensions.dart';
@@ -47,7 +46,7 @@ class SheetTextFieldActions {
   static SheetTextFieldAction format(TextStyleFormatIntent intent) => _FormatAction(intent);
 }
 
-abstract class SheetTextFieldAction with EquatableMixin {
+abstract class SheetTextFieldAction {
   bool? _saveToHistory;
 
   FutureOr<SheetTextEditingValue> execute(SheetTextEditingController controller);
@@ -116,9 +115,6 @@ class _MoveCursorAction extends SheetTextFieldAction {
 
     return controller.value.copyWith(selection: newSelection);
   }
-
-  @override
-  List<Object?> get props => <Object?>[offset, expandSelection];
 }
 
 class _MoveCursorByWordAction extends SheetTextFieldAction {
@@ -158,9 +154,6 @@ class _MoveCursorByWordAction extends SheetTextFieldAction {
 
     return controller.value.copyWith(selection: newSelection);
   }
-
-  @override
-  List<Object?> get props => <Object?>[offset, expandSelection];
 }
 
 /// Inserts text at the current selection or cursor position.
@@ -191,9 +184,6 @@ class _InsertTextAction extends SheetTextFieldAction {
       selection: TextSelection.collapsed(offset: newOffset),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[text];
 }
 
 class _RemoveTextAction extends SheetTextFieldAction {
@@ -233,9 +223,6 @@ class _RemoveTextAction extends SheetTextFieldAction {
       selection: TextSelection.collapsed(offset: newOffset),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[range];
 }
 
 /// Removes a word based on the given direction.
@@ -301,9 +288,6 @@ class _RemoveWordAction extends SheetTextFieldAction {
       selection: TextSelection.collapsed(offset: newOffset),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[direction];
 }
 
 class _ClearAction extends SheetTextFieldAction {
@@ -317,9 +301,6 @@ class _ClearAction extends SheetTextFieldAction {
       selection: const TextSelection.collapsed(offset: 0),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[];
 }
 
 /// Updates the selection to the position at the given [offset].
@@ -338,9 +319,6 @@ class _SelectByOffsetAction extends SheetTextFieldAction {
       selection: TextSelection.collapsed(offset: textPosition.offset),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[offset];
 }
 
 /// Selects the word at the given [offset].
@@ -364,9 +342,6 @@ class _SelectWordByOffsetAction extends SheetTextFieldAction {
       selection: TextSelection(baseOffset: wordRange.start, extentOffset: wordRange.end),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[offset];
 }
 
 /// Updates the selection by extending it to the given [offset].
@@ -403,9 +378,6 @@ class _ExtendSelectionByOffsetAction extends SheetTextFieldAction {
     );
     return controller.value.copyWith(selection: newSelection);
   }
-
-  @override
-  List<Object?> get props => <Object?>[offset];
 }
 
 /// Selects all text.
@@ -420,9 +392,6 @@ class _SelectAllAction extends SheetTextFieldAction {
       selection: TextSelection(baseOffset: 0, extentOffset: textLength),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[];
 }
 
 /// Copies the selected text to the clipboard.
@@ -441,9 +410,6 @@ class _CopyAction extends SheetTextFieldAction {
     unawaited(Clipboard.setData(ClipboardData(text: selectedText)));
     return controller.value;
   }
-
-  @override
-  List<Object?> get props => <Object?>[];
 }
 
 /// Cuts the selected text and copies it to the clipboard.
@@ -466,9 +432,6 @@ class _CutAction extends SheetTextFieldAction {
       selection: TextSelection.collapsed(offset: selection.start),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[];
 }
 
 /// Pastes text from the clipboard at the current cursor position.
@@ -497,9 +460,6 @@ class _PasteAction extends SheetTextFieldAction {
       selection: TextSelection.collapsed(offset: newOffset),
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[];
 }
 
 /// Formats the selected text using the provided formatter function.
@@ -522,9 +482,6 @@ class _FormatAction extends SheetTextFieldAction {
 
     return controller.value.copyWith(text: textSpan);
   }
-
-  @override
-  List<Object?> get props => <Object?>[intent];
 }
 
 bool _containsWordDelimiter(String text) {

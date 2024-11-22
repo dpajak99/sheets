@@ -133,7 +133,6 @@ class _ColorGrid extends StatelessWidget {
     required ValueChanged<Color> onChanged,
     List<Widget>? customWidgets,
     Color? selectedColor,
-    super.key,
   })  : _columns = columns,
         _colors = colors,
         _onChanged = onChanged,

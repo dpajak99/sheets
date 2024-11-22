@@ -1,7 +1,6 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
+class SheetScrollPosition extends ChangeNotifier {
   SheetScrollPosition();
 
   SheetScrollPosition.zero();
@@ -17,7 +16,4 @@ class SheetScrollPosition extends ChangeNotifier with EquatableMixin {
     _offset = offset;
     notifyListeners();
   }
-
-  @override
-  List<Object?> get props => <Object?>[_offset];
 }

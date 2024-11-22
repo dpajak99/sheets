@@ -47,8 +47,7 @@ class CellStyle with EquatableMixin {
   final TextOverflowBehavior textOverflow;
   final TextVerticalAlign verticalAlign;
   final Border? border;
-
-  int? borderZIndex;
+  final int? borderZIndex;
 
   @override
   List<Object?> get props => <Object?>[

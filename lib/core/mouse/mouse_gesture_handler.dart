@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
@@ -9,7 +8,7 @@ import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
-abstract class MouseGestureHandler extends ChangeNotifier with EquatableMixin {
+abstract class MouseGestureHandler extends ChangeNotifier {
   Completer<void>? _completer;
 
   bool get isActive => _completer != null && !_completer!.isCompleted;
@@ -29,9 +28,6 @@ abstract class MouseGestureHandler extends ChangeNotifier with EquatableMixin {
   void reset(SheetController controller);
 
   void resolve(SheetController controller, SheetMouseGesture gesture);
-
-  @override
-  List<Object?> get props => <Object>[isActive];
 }
 
 class MouseDoubleClickGestureHandler extends MouseGestureHandler {
@@ -103,9 +99,6 @@ abstract class DraggableGestureHandler extends MouseGestureHandler {
       controller.mouse.resetCursor();
     }
   }
-
-  @override
-  List<Object?> get props => <Object>[hoverCursor, isHovered, isActive];
 }
 
 class MouseSelectionGestureHandler extends MouseGestureHandler {

@@ -136,8 +136,12 @@ class LinearStringPattern implements ValuePattern {
 
       SheetRichText previousRichText = baseCells[i % baseCells.length].value;
       SheetRichText updatedRichText = previousRichText.withText(newTextValue);
-      fillCells[i].value = updatedRichText;
-      fillCells[i].style = baseCells[i % steps.length].style;
+
+      CellProperties cellProperties = fillCells[i];
+      fillCells[i] = cellProperties.copyWith(
+        value: updatedRichText,
+        style: baseCells[i % steps.length].style,
+      );
     }
   }
 }

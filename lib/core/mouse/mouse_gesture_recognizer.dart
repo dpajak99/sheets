@@ -1,11 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 
-abstract class MouseGestureRecognizer with EquatableMixin {
+abstract class MouseGestureRecognizer {
   MouseGestureRecognizer(this.handler);
 
   final MouseGestureHandler handler;
@@ -45,9 +44,6 @@ class MouseDoubleTapRecognizer extends MouseGestureRecognizer {
       return null;
     }
   }
-
-  @override
-  List<Object?> get props => <Object?>[_lastTapTime, _lastTapIndex];
 }
 
 class MouseSelectionGestureRecognizer extends MouseGestureRecognizer {
@@ -55,9 +51,6 @@ class MouseSelectionGestureRecognizer extends MouseGestureRecognizer {
 
   @override
   MouseGestureHandler? recognize(SheetController controller, SheetMouseGesture gesture) => handler;
-
-  @override
-  List<Object?> get props => <Object?>[];
 }
 
 class DraggableGestureRecognizer extends MouseGestureRecognizer {
@@ -83,9 +76,6 @@ class DraggableGestureRecognizer extends MouseGestureRecognizer {
 
   @override
   DraggableGestureHandler get handler => super.handler as DraggableGestureHandler;
-
-  @override
-  List<Object?> get props => <Object?>[handler];
 }
 
 class TextfieldHoveredGestureRecognizer extends DraggableGestureRecognizer {
