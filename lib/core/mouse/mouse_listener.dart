@@ -7,8 +7,8 @@ import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/extensions/silent_value_notifier.dart';
 import 'package:sheets/utils/repeat_action_timer.dart';
+import 'package:sheets/utils/silent_value_notifier.dart';
 import 'package:sheets/utils/streamable.dart';
 
 class MouseListener extends Streamable<SheetMouseGesture> {

@@ -19,11 +19,11 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/extensions/silent_value_notifier.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
+import 'package:sheets/utils/silent_value_notifier.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
 import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
@@ -121,7 +121,9 @@ class SheetController {
       for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: dataManager.getCellProperties(index)),
     ];
 
-    await AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve(this);
+    List<IndexedCellProperties> filledCells = AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve();
+    dataManager.write((SheetData data) => data.setCellsProperties(filledCells));
+
   }
 
   void resizeColumn(ColumnIndex column, double width) {

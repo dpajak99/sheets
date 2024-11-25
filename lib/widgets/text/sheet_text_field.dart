@@ -6,9 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
-import 'package:sheets/utils/extensions/silent_value_notifier.dart';
-import 'package:sheets/utils/formatters/style/double_extensions.dart';
+import 'package:sheets/utils/extensions/double_extensions.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
+import 'package:sheets/utils/silent_value_notifier.dart';
 import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 /// Represents a single character with an associated [TextStyle].

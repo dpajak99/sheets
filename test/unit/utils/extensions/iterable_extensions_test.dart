@@ -17,5 +17,7 @@ void main() {
         expect(actualResult, expectedResult);
       });
     });
+
+    group('Tests of IterableExtensions.withDivider()', () {});
   });
 }

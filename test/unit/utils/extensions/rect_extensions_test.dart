@@ -32,6 +32,8 @@ void main() {
       });
     });
 
+    group('Tests of RectExtensions.expand()', () {});
+
     group('Tests of RectExtensions.within()', () {
       test('Should [return true] if given point is within the rect', () {
         // Arrange

@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/utils/formatters/style/double_extensions.dart';
-import 'package:sheets/utils/formatters/style/int_extensions.dart';
+import 'package:sheets/utils/extensions/double_extensions.dart';
+import 'package:sheets/utils/extensions/int_extensions.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
 

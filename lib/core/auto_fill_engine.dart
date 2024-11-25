@@ -1,6 +1,4 @@
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
 import 'package:sheets/core/values/patterns/linear_duration_pattern.dart';
@@ -9,6 +7,7 @@ import 'package:sheets/core/values/patterns/linear_string_pattern.dart';
 import 'package:sheets/core/values/patterns/repeat_value_pattern.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/utils/direction.dart';
+import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
 
 class AutoFillEngine {
   AutoFillEngine(this.fillDirection, this._baseCells, this._fillCells);
@@ -17,13 +16,11 @@ class AutoFillEngine {
   final List<IndexedCellProperties> _baseCells;
   final List<IndexedCellProperties> _fillCells;
 
-  Future<void> resolve(SheetController controller) async {
+  List<IndexedCellProperties> resolve() {
     if (fillDirection.isVertical) {
-      List<IndexedCellProperties> filledCells = _getVerticallyFilledCells();
-      controller.dataManager.write((SheetData data) => data.setCellsProperties(filledCells));
-    } else if (fillDirection.isHorizontal) {
-      List<IndexedCellProperties> filledCells = _getHorizontallyFilledCells();
-      controller.dataManager.write((SheetData data) => data.setCellsProperties(filledCells));
+      return _getVerticallyFilledCells();
+    } else {
+      return _getHorizontallyFilledCells();
     }
   }
 
