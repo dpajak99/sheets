@@ -13,7 +13,6 @@ class SheetViewport extends ChangeNotifier {
       : _scrollController = scrollController,
         _dataManager = dataManager,
         visibleContent = SheetViewportContentManager(dataManager) {
-
     _scrollPosition = _scrollController.position;
     _scrollController.applyProperties(dataManager);
 

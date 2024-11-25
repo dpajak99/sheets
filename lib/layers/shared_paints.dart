@@ -3,47 +3,6 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/edge_visibility.dart';
 
 class SharedPaints {
-  // void paint(Canvas canvas) {
-  // // canvas.saveLayer(
-  // //     Rect.fromLTRB(
-  // //       cell.rect.left - 1,
-  // //       cell.rect.top,
-  // //       cell.rect.right,
-  // //       cell.rect.bottom + 1,
-  // //     ),
-  // //     Paint());
-  //
-  // _paintBackground(canvas);
-  // // _paintBorder(canvas);
-  // // _paintText(canvas);
-  //
-  // // canvas.restore();
-  // }
-  //
-  // void _paintText(Canvas canvas) {
-  // TextSpan textSpan = cell.properties.value.toTextSpan();
-  // TextAlign textAlign = cell.properties.style.textAlign;
-  //
-  // TextPainter textPainter = TextPainter(
-  // text: textSpan,
-  // textDirection: TextDirection.ltr,
-  // textAlign: textAlign,
-  // );
-  //
-  // double width = cell.rect.width - padding.horizontal;
-  // textPainter.layout(minWidth: width, maxWidth: width);
-  // textPainter.paint(canvas, cell.rect.topLeft + Offset(padding.left, padding.top));
-  // }
-  //
-  // void _paintBackground(Canvas canvas) {
-  // Paint backgroundPaint = Paint()
-  // ..color = Colors.white
-  // ..isAntiAlias = false
-  // ..style = PaintingStyle.fill;
-  //
-  // canvas.drawRect(cell.rect, backgroundPaint);
-  // }
-
   static void paintBorder({
     required Canvas canvas,
     required BorderRect rect,

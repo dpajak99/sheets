@@ -438,7 +438,7 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
     bool expandPossible = previousWidth < maxWidth && step != null;
     bool expandNeeded = previousWidth <= painter.width;
 
-    if(expandNeeded && step == null) {
+    if (expandNeeded && step == null) {
       return painter.width.safeClamp(minWidth, maxWidth);
     } else if (expandPossible && expandNeeded) {
       return _calculateTextfieldWidth(updatedWidth + (textAlign == TextAlign.center ? step! * 2 : step!));
@@ -513,7 +513,7 @@ class SheetTextField extends StatefulWidget {
   final SheetTextEditingController controller;
   final FocusNode focusNode;
   final ValueChanged<Size> onSizeChanged;
-  final void Function(bool shouldSaveValue, TextSpan textSpan, Size size) onCompleted;
+  final void Function(bool shouldSaveValue, bool shouldMove, TextSpan textSpan, Size size) onCompleted;
   final Color backgroundColor;
 
   @override
@@ -525,9 +525,9 @@ class SheetTextField extends StatefulWidget {
     properties.add(DiagnosticsProperty<SheetTextEditingController>('controller', controller));
     properties.add(ColorProperty('backgroundColor', backgroundColor));
     properties.add(ObjectFlagProperty<ValueChanged<Size>>.has('onSizeChanged', onSizeChanged));
-    properties.add(
-        ObjectFlagProperty<void Function(bool shouldSaveValue, TextSpan textSpan, Size size)>.has('onCompleted', onCompleted));
     properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode));
+    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, bool shouldMove, TextSpan textSpan, Size size)>.has(
+        'onCompleted', onCompleted));
   }
 }
 
@@ -551,7 +551,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
 
   void _autocompleteEditing() {
     if (!widget.focusNode.hasFocus && !_completed) {
-      _complete(true);
+      _complete(true, false);
     }
   }
 
@@ -568,7 +568,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
       onSelectAll: _selectAll,
       onRemoveText: _remove,
       onInsertText: _insertText,
-      onCompleted: _complete,
+      onCompleted: (bool shouldSave) => _complete(shouldSave, true),
       onCopy: _copy,
       onCut: _cut,
       onPaste: _paste,
@@ -666,11 +666,11 @@ class _SheetTextFieldState extends State<SheetTextField> {
     widget.controller.redo();
   }
 
-  void _complete(bool shouldSaveValue) {
+  void _complete(bool shouldSaveValue, bool shouldMove) {
     _completed = true;
     Size size = widget.controller.sizeNotifier.value;
     TextSpan textSpan = widget.controller.value.text.toTextSpan();
-    widget.onCompleted(shouldSaveValue, textSpan, size);
+    widget.onCompleted(shouldSaveValue, shouldMove, textSpan, size);
   }
 
   void _copy() {

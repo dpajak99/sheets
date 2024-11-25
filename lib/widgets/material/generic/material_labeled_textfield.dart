@@ -11,20 +11,20 @@ class MaterialLabeledTextField extends StatelessWidget {
     List<TextInputFormatter>? formatters,
     ValueChanged<String>? onChanged,
     super.key,
-  }) : _controller = controller,
-       _focusNode = focusNode,
-       _label = label,
-       _width = width,
-       _textFieldWidth = textFieldWidth ?? width,
-       _formatters = formatters,
-       _onChanged = onChanged;
+  })  : _controller = controller,
+        _focusNode = focusNode,
+        _label = label,
+        _width = width,
+        _textFieldWidth = textFieldWidth ?? width,
+        _formatters = formatters,
+        _onChanged = onChanged;
 
   final TextEditingController _controller;
   final FocusNode _focusNode;
   final String _label;
   final double _width;
   final double _textFieldWidth;
-  final List<TextInputFormatter> ?_formatters;
+  final List<TextInputFormatter>? _formatters;
   final ValueChanged<String>? _onChanged;
 
   @override

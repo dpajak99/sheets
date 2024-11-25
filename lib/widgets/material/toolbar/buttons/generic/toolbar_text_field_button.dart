@@ -114,10 +114,10 @@ class ToolbarTextFieldButton extends StatelessWidget implements StaticSizeWidget
   }
 
   Color _resolveBackgroundColor(Set<WidgetState> states) {
-    if(!_hoverAnimation) {
+    if (!_hoverAnimation) {
       return Colors.transparent;
     }
-    if(_backgroundColor != null) {
+    if (_backgroundColor != null) {
       return _backgroundColor;
     }
 

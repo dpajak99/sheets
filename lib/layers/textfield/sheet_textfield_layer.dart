@@ -83,13 +83,16 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
                     sheetController: widget.sheetController,
                     textAlign: activeCell.cell.properties.visibleTextAlign,
                     backgroundColor: activeCell.cell.properties.style.backgroundColor,
-                    onCompleted: (bool shouldSaveValue, SheetRichText richText) {
+                    onCompleted: (bool shouldSaveValue, bool shouldMove, SheetRichText richText) {
                       if (shouldSaveValue) {
                         widget.sheetController.setCellValue(activeCell.cell.index, richText);
                         widget.sheetController.disableEditing();
-                        SheetSelectionMoveGesture(0, 1).resolve(widget.sheetController);
                       } else {
                         widget.sheetController.disableEditing();
+                      }
+
+                      if (shouldMove) {
+                        SheetSelectionMoveGesture(0, 1).resolve(widget.sheetController);
                       }
                     },
                     editableViewportCell: activeCell,
@@ -121,7 +124,7 @@ class SheetTextfieldLayout extends StatefulWidget {
   final SheetController sheetController;
   final EditableViewportCell editableViewportCell;
   final TextAlign textAlign;
-  final void Function(bool shouldSaveValue, SheetRichText richText) onCompleted;
+  final void Function(bool shouldSaveValue, bool shouldMove, SheetRichText richText) onCompleted;
   final Color backgroundColor;
   final Offset offset;
   final Border outerBorder;
@@ -141,7 +144,8 @@ class SheetTextfieldLayout extends StatefulWidget {
     properties.add(EnumProperty<TextAlign>('textAlign', textAlign));
     properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
     properties.add(DiagnosticsProperty<EditableViewportCell>('editableViewportCell', editableViewportCell));
-    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, SheetRichText richText)>.has('onCompleted', onCompleted));
+    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, bool shouldMove, SheetRichText richText)>.has(
+        'onCompleted', onCompleted));
   }
 
   double get paddingHorizontal {
@@ -204,9 +208,9 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
             Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
             _recognizer.setDraggableArea(textfieldRect);
           },
-          onCompleted: (bool shouldSaveValue, TextSpan textSpan, Size size) {
+          onCompleted: (bool shouldSaveValue, bool shouldMove, TextSpan textSpan, Size size) {
             SheetRichText sheetRichText = SheetRichText.fromTextSpan(textSpan);
-            widget.onCompleted(shouldSaveValue, sheetRichText);
+            widget.onCompleted(shouldSaveValue, shouldMove, sheetRichText);
           },
         ),
       ),

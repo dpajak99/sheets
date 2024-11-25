@@ -40,7 +40,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
           margin: margin,
           opened: opened,
           selected: selected,
-    disabled: disabled,
+          disabled: disabled,
           key: key,
         );
 
@@ -61,7 +61,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
           margin: margin,
           opened: opened,
           selected: selected,
-    disabled: disabled,
+          disabled: disabled,
           key: key,
         );
 

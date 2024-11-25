@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 extension TextStyleExtensions on TextStyle {
   TextStyle join(TextStyle? other) {
-    if(other == null) {
+    if (other == null) {
       return this;
     }
 
@@ -26,10 +26,12 @@ extension TextStyleExtensions on TextStyle {
       decoration: other.decoration != emptyTextStyle.decoration ? other.decoration : decoration,
       decorationColor: other.decorationColor != emptyTextStyle.decorationColor ? other.decorationColor : decorationColor,
       decorationStyle: other.decorationStyle != emptyTextStyle.decorationStyle ? other.decorationStyle : decorationStyle,
-      decorationThickness: other.decorationThickness != emptyTextStyle.decorationThickness ? other.decorationThickness : decorationThickness,
+      decorationThickness:
+          other.decorationThickness != emptyTextStyle.decorationThickness ? other.decorationThickness : decorationThickness,
       debugLabel: other.debugLabel != emptyTextStyle.debugLabel ? other.debugLabel : debugLabel,
       fontFamily: other.fontFamily != emptyTextStyle.fontFamily ? other.fontFamily : fontFamily,
-      fontFamilyFallback: other.fontFamilyFallback != emptyTextStyle.fontFamilyFallback ? other.fontFamilyFallback : fontFamilyFallback,
+      fontFamilyFallback:
+          other.fontFamilyFallback != emptyTextStyle.fontFamilyFallback ? other.fontFamilyFallback : fontFamilyFallback,
     );
   }
 }

@@ -284,7 +284,7 @@ class _DropdownListMenuSubtitleButton extends StatelessWidget {
             color: backgroundColor,
             borderRadius: BorderRadius.circular(3),
           ),
-          child: Center( child: AssetIcon(_icon, size: _size, color: foregroundColor)),
+          child: Center(child: AssetIcon(_icon, size: _size, color: foregroundColor)),
         );
       },
     );

@@ -45,7 +45,7 @@ class MouseDoubleClickGestureHandler extends MouseGestureHandler {
   }
 
   void _doubleTap(SheetController controller, SheetDragStartGesture gesture) {
-    if( gesture.startDetails.hoveredItem is! ViewportCell) {
+    if (gesture.startDetails.hoveredItem is! ViewportCell) {
       return;
     }
     ViewportCell cell = gesture.startDetails.hoveredItem! as ViewportCell;
@@ -68,7 +68,6 @@ class TextfieldHoverGestureHandler extends DraggableGestureHandler {
     setActive(false);
     resetCursor(controller);
   }
-
 }
 
 abstract class DraggableGestureHandler extends MouseGestureHandler {

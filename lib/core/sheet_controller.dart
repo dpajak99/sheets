@@ -115,7 +115,8 @@ class SheetController {
     List<CellIndex> fillCells = selection.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
 
     List<IndexedCellProperties> baseProperties = <IndexedCellProperties>[
-      for (CellIndex index in selectedCells) IndexedCellProperties(index: index, properties: dataManager.getCellProperties(index)),
+      for (CellIndex index in selectedCells)
+        IndexedCellProperties(index: index, properties: dataManager.getCellProperties(index)),
     ];
     List<IndexedCellProperties> fillProperties = <IndexedCellProperties>[
       for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: dataManager.getCellProperties(index)),
@@ -123,7 +124,6 @@ class SheetController {
 
     List<IndexedCellProperties> filledCells = AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve();
     dataManager.write((SheetData data) => data.setCellsProperties(filledCells));
-
   }
 
   void resizeColumn(ColumnIndex column, double width) {

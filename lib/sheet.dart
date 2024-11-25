@@ -50,7 +50,8 @@ class _SheetState extends State<Sheet> {
       onRemove: () => sheetController.clearSelection(),
       onFontWeightUpdate: (FontWeight fontWeight) => widget.sheetController.formatSelection(ToggleFontWeightIntent()),
       onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.formatSelection(ToggleFontStyleIntent()),
-      onTextDecorationUpdate: (TextDecoration decoration) => widget.sheetController.formatSelection(ToggleTextDecorationIntent(value: decoration)),
+      onTextDecorationUpdate: (TextDecoration decoration) =>
+          widget.sheetController.formatSelection(ToggleTextDecorationIntent(value: decoration)),
       onUndo: () {},
       onRedo: () {},
       onPaste: () {},

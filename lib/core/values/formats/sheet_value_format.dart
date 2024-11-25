@@ -182,7 +182,7 @@ class SheetNumberFormat extends SheetValueFormat {
     try {
       String text = richText.toPlainText();
       num number = numberFormat.parse(text);
-      if(rounded) {
+      if (rounded) {
         number = number.round();
       }
       String formatted = numberFormat.format(number);

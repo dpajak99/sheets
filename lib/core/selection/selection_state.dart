@@ -28,7 +28,7 @@ class SelectionState extends ChangeNotifier {
   }
 
   void complete() {
-    if(value is SheetFillSelection) {
+    if (value is SheetFillSelection) {
       onFill?.call(value as SheetFillSelection);
     }
     SheetSelection completedSelection = value.complete();

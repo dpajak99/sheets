@@ -41,9 +41,9 @@ class _ColorPaletteDialogState extends State<ColorPaletteDialog> {
     const Color.fromARGB(255, 255, 0, 255),
     const Color.fromARGB(255, 255, 0, 0)
   ];
-  
+
   late HSVColor _color = HSVColor.fromColor(widget.selectedColor);
-  
+
   @override
   Widget build(BuildContext context) {
     return Dialog(

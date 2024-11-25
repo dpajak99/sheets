@@ -16,7 +16,7 @@ class TextRotation with EquatableMixin {
   final double _angle;
 
   double get angle {
-    if(_angle >= -90 && _angle <= 90) {
+    if (_angle >= -90 && _angle <= 90) {
       return _angle;
     } else {
       return 0;

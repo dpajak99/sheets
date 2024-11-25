@@ -105,7 +105,7 @@ class _ZoomSizeOption extends StatelessWidget {
     return DropdownListMenuItem(
       iconPlaceholderVisible: false,
       label: '$_size%',
-      labelStyle: const TextStyle( fontWeight: FontWeight.w400),
+      labelStyle: const TextStyle(fontWeight: FontWeight.w400),
       onPressed: _onPressed,
       padding: const EdgeInsets.symmetric(horizontal: 10),
     );

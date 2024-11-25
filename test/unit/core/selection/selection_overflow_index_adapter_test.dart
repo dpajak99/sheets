@@ -41,7 +41,7 @@ void main() {
       SheetIndex actualIndex = SelectionOverflowIndexAdapter.adaptToCellIndex(rowIndex, firstVisibleRow, firstVisibleColumn);
 
       // Assert
-      CellIndex expectedIndex = CellIndex(row: rowIndex, column: firstVisibleColumn).move(dx: -1 , dy: 0);
+      CellIndex expectedIndex = CellIndex(row: rowIndex, column: firstVisibleColumn).move(dx: -1, dy: 0);
       expect(actualIndex, equals(expectedIndex));
     });
   });

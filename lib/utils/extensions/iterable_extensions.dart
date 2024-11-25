@@ -4,7 +4,7 @@ extension IterableExtensions<E> on Iterable<E> {
   }
 
   List<T> withDivider<T>(T divider) {
-    if(isEmpty) {
+    if (isEmpty) {
       return <T>[];
     }
     return expand((E element) sync* {

@@ -61,8 +61,8 @@ abstract class SheetTextFieldAction {
 }
 
 class _MoveCursorAction extends SheetTextFieldAction {
-
   _MoveCursorAction(this.offset, {this.expandSelection = false});
+
   final Offset offset;
   final bool expandSelection;
 
@@ -118,8 +118,8 @@ class _MoveCursorAction extends SheetTextFieldAction {
 }
 
 class _MoveCursorByWordAction extends SheetTextFieldAction {
-
   _MoveCursorByWordAction(this.offset, {this.expandSelection = false});
+
   final int offset;
   final bool expandSelection;
 
@@ -127,7 +127,7 @@ class _MoveCursorByWordAction extends SheetTextFieldAction {
   bool get shouldUpdateHistory => false;
 
   @override
-  SheetTextEditingValue execute(SheetTextEditingController controller)  {
+  SheetTextEditingValue execute(SheetTextEditingController controller) {
     int currentOffset = expandSelection ? controller.selection.extentOffset : controller.selection.baseOffset;
     int newOffset = currentOffset;
 
@@ -158,8 +158,8 @@ class _MoveCursorByWordAction extends SheetTextFieldAction {
 
 /// Inserts text at the current selection or cursor position.
 class _InsertTextAction extends SheetTextFieldAction {
-
   _InsertTextAction(this.text);
+
   final String text;
 
   @override
@@ -187,8 +187,8 @@ class _InsertTextAction extends SheetTextFieldAction {
 }
 
 class _RemoveTextAction extends SheetTextFieldAction {
-
   _RemoveTextAction(this.range);
+
   final int range;
 
   @override
@@ -229,8 +229,8 @@ class _RemoveTextAction extends SheetTextFieldAction {
 /// If [direction] < 0, removes the word before the cursor.
 /// If [direction] > 0, removes the word after the cursor.
 class _RemoveWordAction extends SheetTextFieldAction {
-
   _RemoveWordAction(this.direction);
+
   final int direction;
 
   @override
@@ -305,8 +305,8 @@ class _ClearAction extends SheetTextFieldAction {
 
 /// Updates the selection to the position at the given [offset].
 class _SelectByOffsetAction extends SheetTextFieldAction {
-
   _SelectByOffsetAction(this.offset);
+
   final Offset offset;
 
   @override
@@ -323,8 +323,8 @@ class _SelectByOffsetAction extends SheetTextFieldAction {
 
 /// Selects the word at the given [offset].
 class _SelectWordByOffsetAction extends SheetTextFieldAction {
-
   _SelectWordByOffsetAction(this.offset);
+
   final Offset offset;
 
   @override
@@ -347,8 +347,8 @@ class _SelectWordByOffsetAction extends SheetTextFieldAction {
 /// Updates the selection by extending it to the given [offset].
 /// If [selectWords] is true, selection will be extended by whole words.
 class _ExtendSelectionByOffsetAction extends SheetTextFieldAction {
-
   _ExtendSelectionByOffsetAction(this.offset, {this.selectWords = false});
+
   final Offset offset;
   final bool selectWords;
 

@@ -62,7 +62,6 @@ class _ToolbarBorderButtonState extends State<ToolbarBorderButton> {
                 controller: _colorDropdownController,
                 value: _selectedColor,
                 onChanged: (Color color) {
-
                   _colorDropdownController.close();
                   setState(() => _selectedColor = color);
                 },

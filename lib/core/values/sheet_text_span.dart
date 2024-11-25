@@ -31,7 +31,7 @@ class SheetRichText with EquatableMixin {
   final List<SheetTextSpan> spans;
 
   bool get isEmpty {
-    if(spans.isEmpty) {
+    if (spans.isEmpty) {
       return true;
     } else {
       return spans.every((SheetTextSpan span) => span.text.isEmpty);

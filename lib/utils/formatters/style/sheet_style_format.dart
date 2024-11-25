@@ -199,7 +199,8 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
 
   RowIndex _getTopmostRow() => intent.selectedCells.map((CellIndex c) => c.row).reduce((RowIndex a, RowIndex b) => a < b ? a : b);
 
-  RowIndex _getBottommostRow() => intent.selectedCells.map((CellIndex c) => c.row).reduce((RowIndex a, RowIndex b) => a > b ? a : b);
+  RowIndex _getBottommostRow() =>
+      intent.selectedCells.map((CellIndex c) => c.row).reduce((RowIndex a, RowIndex b) => a > b ? a : b);
 
   ColumnIndex _getLeftmostColumn() =>
       intent.selectedCells.map((CellIndex c) => c.column).reduce((ColumnIndex a, ColumnIndex b) => a < b ? a : b);

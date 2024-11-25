@@ -151,7 +151,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
     TextAlign textAlign = properties.visibleTextAlign;
     TextRotation textRotation = cellStyle.rotation;
     TextSpan textSpan = richText.toTextSpan();
-    if(textRotation == TextRotation.vertical) {
+    if (textRotation == TextRotation.vertical) {
       textSpan = textSpan.applyDivider('\n');
     }
 
@@ -211,7 +211,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
     // Clip the canvas to the cell rectangle
     canvas.clipRect(cell.rect);
 
-    if( textRotation == TextRotation.vertical) {
+    if (textRotation == TextRotation.vertical) {
       // Paint the text at the calculated position
       textPainter.paint(canvas, textPosition);
     } else if (angle != 0) {

@@ -110,13 +110,13 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                     text: NumberFormat.currency().currencySymbol,
                                     onTap: () {
                                       widget.sheetController
-                                          .formatSelection(SetValueFormatIntent(format: (_) =>SheetNumberFormat.currency()));
+                                          .formatSelection(SetValueFormatIntent(format: (_) => SheetNumberFormat.currency()));
                                     }),
                                 ToolbarIconButton(
                                     icon: SheetIcons.percentage,
                                     onTap: () {
-                                      widget.sheetController
-                                          .formatSelection(SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern()));
+                                      widget.sheetController.formatSelection(
+                                          SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern()));
                                     }),
                                 ToolbarIconButton(
                                   icon: SheetIcons.decimal_decrease,

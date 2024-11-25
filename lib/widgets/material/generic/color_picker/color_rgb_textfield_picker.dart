@@ -36,7 +36,7 @@ class _ColorRGBTextfieldPickerState extends State<ColorRGBTextfieldPicker> {
     _greenController = _ColorController(() => widget.color.green);
     _blueController = _ColorController(() => widget.color.blue);
   }
-  
+
   @override
   void dispose() {
     _redController.dispose();
