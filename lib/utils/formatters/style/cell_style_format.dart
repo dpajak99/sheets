@@ -26,7 +26,7 @@ class SetHorizontalAlignIntent extends CellStyleFormatIntent {
   final TextAlign align;
 
   @override
-  CellStyleFormatAction<SetHorizontalAlignIntent> createAction({CellStyle? cellStyle}) {
+  SetHorizontalAlignAction createAction({CellStyle? cellStyle}) {
     return SetHorizontalAlignAction(intent: this, baseCellStyle: cellStyle);
   }
 }
@@ -47,7 +47,7 @@ class SetVerticalAlignIntent extends CellStyleFormatIntent {
   final TextVerticalAlign align;
 
   @override
-  CellStyleFormatAction<SetVerticalAlignIntent> createAction({CellStyle? cellStyle}) {
+  SetVerticalAlignAction createAction({CellStyle? cellStyle}) {
     return SetVerticalAlignAction(intent: this, baseCellStyle: cellStyle);
   }
 }
@@ -68,7 +68,7 @@ class SetBackgroundColorIntent extends CellStyleFormatIntent {
   final Color? color;
 
   @override
-  CellStyleFormatAction<SetBackgroundColorIntent> createAction({CellStyle? cellStyle}) {
+  SetBackgroundColorAction createAction({CellStyle? cellStyle}) {
     return SetBackgroundColorAction(intent: this, baseCellStyle: cellStyle);
   }
 }
@@ -89,7 +89,7 @@ class SetValueFormatIntent extends CellStyleFormatIntent {
   final SheetValueFormat? Function(SheetValueFormat? previousFormat)? format;
 
   @override
-  CellStyleFormatAction<SetValueFormatIntent> createAction({CellStyle? cellStyle}) {
+  SetValueFormatAction createAction({CellStyle? cellStyle}) {
     return SetValueFormatAction(intent: this, baseCellStyle: cellStyle);
   }
 }
@@ -115,7 +115,7 @@ class SetRotationIntent extends CellStyleFormatIntent {
   final TextRotation rotation;
 
   @override
-  CellStyleFormatAction<SetRotationIntent> createAction({CellStyle? cellStyle}) {
+  SetRotationAction createAction({CellStyle? cellStyle}) {
     return SetRotationAction(intent: this, baseCellStyle: cellStyle);
   }
 }

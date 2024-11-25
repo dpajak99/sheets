@@ -31,7 +31,7 @@ class SetBorderIntent extends SheetStyleFormatIntent {
   final BorderSide borderSide;
 
   @override
-  SheetStyleFormatAction<SetBorderIntent> createAction() {
+  SetBorderAction createAction() {
     return SetBorderAction(intent: this);
   }
 }
@@ -228,31 +228,17 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
       CellIndex? adjacentIndex = _getAdjacentCellIndex(data, cellIndex, edge);
       if (adjacentIndex != null) {
         CellProperties adjacentCell = data.getCellProperties(adjacentIndex);
-        BorderEdge oppositeEdge = _getOppositeEdge(edge);
         Border adjacentBorder = adjacentCell.style.border ?? const Border();
 
         Border updatedAdjacentBorder = Border(
-          top: oppositeEdge == BorderEdge.top ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.top,
-          right: oppositeEdge == BorderEdge.right ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.right,
-          bottom: oppositeEdge == BorderEdge.bottom ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.bottom,
-          left: oppositeEdge == BorderEdge.left ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.left,
+          top: edge.opposite == BorderEdge.top ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.top,
+          right: edge.opposite == BorderEdge.right ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.right,
+          bottom: edge.opposite == BorderEdge.bottom ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.bottom,
+          left: edge.opposite == BorderEdge.left ? (isAdding ? intent.borderSide : BorderSide.none) : adjacentBorder.left,
         );
 
         data.setCellStyle(adjacentIndex, adjacentCell.style.copyWith(border: updatedAdjacentBorder));
       }
-    }
-  }
-
-  BorderEdge _getOppositeEdge(BorderEdge edge) {
-    switch (edge) {
-      case BorderEdge.top:
-        return BorderEdge.bottom;
-      case BorderEdge.bottom:
-        return BorderEdge.top;
-      case BorderEdge.left:
-        return BorderEdge.right;
-      case BorderEdge.right:
-        return BorderEdge.left;
     }
   }
 

@@ -109,7 +109,7 @@ class LinearStringPatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class LinearStringPattern implements ValuePattern {
+class LinearStringPattern extends ValuePattern {
   LinearStringPattern(this.direction, this.lastIntegerValue, this.steps, this.values);
 
   final HorizontalDirection direction;
@@ -149,6 +149,9 @@ class LinearStringPattern implements ValuePattern {
     }
     return fillCells;
   }
+
+  @override
+  List<Object?> get props => <Object?>[direction, lastIntegerValue, steps, values];
 }
 
 class _SegmentedStringCellValue with EquatableMixin {

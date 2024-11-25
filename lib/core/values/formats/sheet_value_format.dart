@@ -222,7 +222,7 @@ class SheetNumberFormat extends SheetValueFormat {
   }
 
   @override
-  List<Object?> get props => <Object?>[numberFormat];
+  List<Object?> get props => <Object?>[numberFormat.toString()];
 }
 
 class SheetDateFormat extends SheetValueFormat {
@@ -261,7 +261,7 @@ class SheetDateFormat extends SheetValueFormat {
   SheetValueFormat increaseDecimal() => this;
 
   @override
-  List<Object?> get props => <Object?>[dateFormat];
+  List<Object?> get props => <Object?>[dateFormat.toString()];
 }
 
 class SheetDurationFormat extends SheetValueFormat {

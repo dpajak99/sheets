@@ -2,7 +2,7 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
-class RepeatValuePattern implements ValuePattern {
+class RepeatValuePattern extends ValuePattern {
   @override
   List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
     for (int i = 0; i < fillCells.length; i++) {
@@ -21,4 +21,7 @@ class RepeatValuePattern implements ValuePattern {
 
     return fillCells;
   }
+
+  @override
+  List<Object?> get props => <Object?>[];
 }

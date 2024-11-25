@@ -26,7 +26,7 @@ class ToggleFontWeightIntent extends TextStyleFormatIntent {
   final FontWeight value;
 
   @override
-  TextStyleFormatAction<ToggleFontWeightIntent> createAction({TextStyle? baseTextStyle}) {
+  ToggleFontWeightAction createAction({TextStyle? baseTextStyle}) {
     return ToggleFontWeightAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -56,7 +56,7 @@ class ToggleFontStyleIntent extends TextStyleFormatIntent {
   final FontStyle value;
 
   @override
-  TextStyleFormatAction<ToggleFontStyleIntent> createAction({TextStyle? baseTextStyle}) {
+  ToggleFontStyleAction createAction({TextStyle? baseTextStyle}) {
     return ToggleFontStyleAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -84,7 +84,7 @@ class ToggleTextDecorationIntent extends TextStyleFormatIntent {
   final TextDecoration value;
 
   @override
-  TextStyleFormatAction<ToggleTextDecorationIntent> createAction({TextStyle? baseTextStyle}) {
+  ToggleTextDecorationAction createAction({TextStyle? baseTextStyle}) {
     return ToggleTextDecorationAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -122,7 +122,7 @@ class SetFontColorIntent extends TextStyleFormatIntent {
   final Color color;
 
   @override
-  TextStyleFormatAction<SetFontColorIntent> createAction({TextStyle? baseTextStyle}) {
+  SetFontColorAction createAction({TextStyle? baseTextStyle}) {
     return SetFontColorAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -141,7 +141,7 @@ class DecreaseFontSizeIntent extends TextStyleFormatIntent {
   DecreaseFontSizeIntent();
 
   @override
-  TextStyleFormatAction<DecreaseFontSizeIntent> createAction({TextStyle? baseTextStyle}) {
+  DecreaseFontSizeAction createAction({TextStyle? baseTextStyle}) {
     return DecreaseFontSizeAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -164,7 +164,7 @@ class IncreaseFontSizeIntent extends TextStyleFormatIntent {
   IncreaseFontSizeIntent();
 
   @override
-  TextStyleFormatAction<IncreaseFontSizeIntent> createAction({TextStyle? baseTextStyle}) {
+  IncreaseFontSizeAction createAction({TextStyle? baseTextStyle}) {
     return IncreaseFontSizeAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -191,7 +191,7 @@ class SetFontSizeIntent extends TextStyleFormatIntent {
   final double fontSize;
 
   @override
-  TextStyleFormatAction<SetFontSizeIntent> createAction({TextStyle? baseTextStyle}) {
+  SetFontSizeAction createAction({TextStyle? baseTextStyle}) {
     return SetFontSizeAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -214,7 +214,7 @@ class SetFontFamilyIntent extends TextStyleFormatIntent {
   final String fontFamily;
 
   @override
-  TextStyleFormatAction<SetFontFamilyIntent> createAction({TextStyle? baseTextStyle}) {
+  SetFontFamilyAction createAction({TextStyle? baseTextStyle}) {
     return SetFontFamilyAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }

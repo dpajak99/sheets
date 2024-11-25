@@ -68,10 +68,10 @@ class AutoFillEngine {
 
 class PatternDetector {
   final List<ValuePatternMatcher> matchers = <ValuePatternMatcher>[
-    LinearStringPatternMatcher(),
     LinearNumericPatternMatcher(),
     LinearDatePatternMatcher(),
     LinearDurationPatternMatcher(),
+    LinearStringPatternMatcher(),
   ];
 
   ValuePattern detectPattern(List<IndexedCellProperties> baseCells) {

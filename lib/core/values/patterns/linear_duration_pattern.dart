@@ -14,7 +14,7 @@ class LinearDurationPatternMatcher implements ValuePatternMatcher {
       }
 
       Duration lastDuration = durationValues.last;
-      return DurationSequencePattern(steps, lastDuration);
+      return DurationSequencePattern(steps: steps, lastDuration: lastDuration);
     } catch (e) {
       return null;
     }
@@ -52,8 +52,11 @@ class LinearDurationPatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class DurationSequencePattern implements ValuePattern {
-  DurationSequencePattern(this.steps, this.lastDuration);
+class DurationSequencePattern extends ValuePattern {
+  DurationSequencePattern({
+    required this.steps,
+    required this.lastDuration,
+  });
 
   final List<Duration> steps;
   final Duration lastDuration;
@@ -83,4 +86,7 @@ class DurationSequencePattern implements ValuePattern {
 
     return fillCells;
   }
+
+  @override
+  List<Object?> get props => <Object?>[steps, lastDuration];
 }

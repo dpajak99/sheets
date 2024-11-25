@@ -20,7 +20,7 @@ class LinearNumericPatternMatcher implements ValuePatternMatcher {
         return precision > maxPrecision ? precision : maxPrecision;
       });
 
-      return LinearNumericPattern(steps, lastNumValue, precision);
+      return LinearNumericPattern(steps: steps, lastNumValue: lastNumValue, precision: precision);
     } catch (e) {
       return null;
     }
@@ -58,8 +58,12 @@ class LinearNumericPatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class LinearNumericPattern implements ValuePattern {
-  LinearNumericPattern(this.steps, this.lastNumValue, this.precision);
+class LinearNumericPattern extends ValuePattern {
+  LinearNumericPattern({
+    required this.steps,
+    required this.lastNumValue,
+    required this.precision,
+  });
 
   final List<num> steps;
   final num lastNumValue;
@@ -90,4 +94,7 @@ class LinearNumericPattern implements ValuePattern {
     }
     return fillCells;
   }
+
+  @override
+  List<Object?> get props => <Object?>[steps, lastNumValue, precision];
 }

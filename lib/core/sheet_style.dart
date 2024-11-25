@@ -52,11 +52,12 @@ class CellStyle with EquatableMixin {
 
   @override
   List<Object?> get props => <Object?>[
+        valueFormat,
+        backgroundColor,
         horizontalAlign,
+        rotation,
         textOverflow,
         verticalAlign,
-        backgroundColor,
-        valueFormat,
         border,
         borderZIndex,
       ];

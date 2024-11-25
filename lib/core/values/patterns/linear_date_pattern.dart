@@ -14,7 +14,7 @@ class LinearDatePatternMatcher implements ValuePatternMatcher {
       }
 
       DateTime lastDate = dateValues.last;
-      return DateSequencePattern(steps, lastDate);
+      return DateSequencePattern(steps: steps, lastDate: lastDate);
     } catch (e) {
       return null;
     }
@@ -52,8 +52,11 @@ class LinearDatePatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class DateSequencePattern implements ValuePattern {
-  DateSequencePattern(this.steps, this.lastDate);
+class DateSequencePattern extends ValuePattern {
+  DateSequencePattern({
+    required this.steps,
+    required this.lastDate,
+  });
 
   final List<Duration> steps;
   final DateTime lastDate;
@@ -82,4 +85,7 @@ class DateSequencePattern implements ValuePattern {
     }
     return fillCells;
   }
+
+  @override
+  List<Object?> get props => <Object?>[steps, lastDate];
 }
