@@ -29,6 +29,10 @@ extension IndexedValuesProperties on Iterable<IndexedCellProperties> {
   List<IndexedCellProperties> whereRow(RowIndex index) {
     return where((IndexedCellProperties cell) => cell.index.row == index).toList();
   }
+
+  List<IndexedCellProperties> maybeReverse(bool value) {
+    return value ? toList().reversed.toList() : toList();
+  }
 }
 
 class IndexedCellProperties with EquatableMixin {

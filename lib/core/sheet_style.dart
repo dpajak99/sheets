@@ -15,7 +15,7 @@ class CellStyle with EquatableMixin {
     this.backgroundColor = Colors.white,
     this.valueFormat,
     this.border,
-  })  : borderZIndex = border != null ? globalBorderZIndex++ : null;
+  }) : borderZIndex = border != null ? globalBorderZIndex++ : null;
 
   static int globalBorderZIndex = 0;
 
@@ -27,6 +27,7 @@ class CellStyle with EquatableMixin {
     double? rotationAngleDegrees,
     Color? backgroundColor,
     SheetValueFormat? valueFormat,
+    bool valueFormatNull = false,
     Border? border,
   }) {
     return CellStyle(
@@ -35,7 +36,7 @@ class CellStyle with EquatableMixin {
       rotation: rotation ?? this.rotation,
       textOverflow: textOverflow ?? this.textOverflow,
       backgroundColor: backgroundColor ?? this.backgroundColor,
-      valueFormat: valueFormat ?? this.valueFormat,
+      valueFormat: valueFormatNull ? null : valueFormat ?? this.valueFormat,
       border: border ?? this.border,
     );
   }
@@ -51,14 +52,14 @@ class CellStyle with EquatableMixin {
 
   @override
   List<Object?> get props => <Object?>[
-    horizontalAlign,
-    textOverflow,
-    verticalAlign,
-    backgroundColor,
-    valueFormat,
-    border,
-    borderZIndex,
-  ];
+        horizontalAlign,
+        textOverflow,
+        verticalAlign,
+        backgroundColor,
+        valueFormat,
+        border,
+        borderZIndex,
+      ];
 }
 
 class ColumnStyle with EquatableMixin {
@@ -81,20 +82,28 @@ class ColumnStyle with EquatableMixin {
 }
 
 class RowStyle with EquatableMixin {
-  RowStyle({required this.height});
+  RowStyle({
+    required this.height,
+    this.customHeight,
+  });
 
-  RowStyle.defaults() : height = defaultRowHeight;
+  RowStyle.defaults()
+      : height = defaultRowHeight,
+        customHeight = null;
 
   final double height;
+  final double? customHeight;
 
   RowStyle copyWith({
     double? height,
+    double? customHeight,
   }) {
     return RowStyle(
       height: height ?? this.height,
+      customHeight: customHeight ?? this.customHeight,
     );
   }
 
   @override
-  List<Object?> get props => <Object?>[height];
+  List<Object?> get props => <Object?>[height, customHeight];
 }

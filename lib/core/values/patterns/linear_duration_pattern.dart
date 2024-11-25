@@ -63,7 +63,7 @@ class DurationSequencePattern implements ValuePattern {
     Duration lastDuration = this.lastDuration;
 
     for (int i = 0; i < fillCells.length; i++) {
-      IndexedCellProperties templateProperties = baseCells[i];
+      IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
       IndexedCellProperties fillProperties = fillCells[i];
 
       Duration step = steps[i % steps.length];

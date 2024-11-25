@@ -15,7 +15,7 @@ class ToolbarColorFillButton extends StatefulWidget implements StaticSizeWidget 
   });
 
   final Color value;
-  final ValueChanged<Color?> onChanged;
+  final ValueChanged<Color> onChanged;
 
   @override
   Size get size => const Size(32, 30);
@@ -27,7 +27,7 @@ class ToolbarColorFillButton extends StatefulWidget implements StaticSizeWidget 
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(ColorProperty('value', value));
-    properties.add(ObjectFlagProperty<ValueChanged<Color?>>.has('onChanged', onChanged));
+    properties.add(ObjectFlagProperty<ValueChanged<Color>>.has('onChanged', onChanged));
   }
 
   @override
@@ -67,10 +67,10 @@ class _ToolbarColorFillButtonState extends State<ToolbarColorFillButton> {
     );
   }
 
-  void _handleColorChanged(Color? color) {
+  void _handleColorChanged(Color color) {
     _dropdownController.close();
     if (color == _defaultColor || color == Colors.transparent) {
-      widget.onChanged(null);
+      widget.onChanged(_defaultColor);
     } else {
       widget.onChanged(color);
     }

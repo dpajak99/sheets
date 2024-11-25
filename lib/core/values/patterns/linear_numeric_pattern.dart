@@ -70,7 +70,7 @@ class LinearNumericPattern implements ValuePattern {
     num lastNumValue = this.lastNumValue;
 
     for (int i = 0; i < fillCells.length; i++) {
-      IndexedCellProperties templateProperties = baseCells[i];
+      IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
       IndexedCellProperties fillProperties = fillCells[i];
 
       num step = steps[i % steps.length];

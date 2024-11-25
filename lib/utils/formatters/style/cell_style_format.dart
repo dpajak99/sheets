@@ -86,7 +86,7 @@ class SetBackgroundColorAction extends CellStyleFormatAction<SetBackgroundColorI
 class SetValueFormatIntent extends CellStyleFormatIntent {
   SetValueFormatIntent({required this.format});
 
-  final SheetValueFormat? format;
+  final SheetValueFormat? Function(SheetValueFormat? previousFormat)? format;
 
   @override
   CellStyleFormatAction<SetValueFormatIntent> createAction({CellStyle? cellStyle}) {
@@ -99,7 +99,12 @@ class SetValueFormatAction extends CellStyleFormatAction<SetValueFormatIntent> {
 
   @override
   CellStyle format(CellStyle currentStyle) {
-    return currentStyle.copyWith(valueFormat: intent.format);
+    SheetValueFormat? newFormat = intent.format?.call(currentStyle.valueFormat);
+    if (newFormat == null) {
+      return currentStyle.copyWith(valueFormatNull: true);
+    } else {
+      return currentStyle.copyWith(valueFormat: newFormat);
+    }
   }
 }
 

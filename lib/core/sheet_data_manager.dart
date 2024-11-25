@@ -87,9 +87,9 @@ class SheetData {
     _data[cellIndex] = _data[cellIndex]!.copyWith(style: cellStyle);
   }
 
-  void setRowHeight(RowIndex rowIndex, double height) {
+  void setRowHeight(RowIndex rowIndex, double height, {bool keepValue = false}) {
     _customRowStyles[rowIndex] ??= RowStyle.defaults();
-    _customRowStyles[rowIndex] = _customRowStyles[rowIndex]!.copyWith(height: height);
+    _customRowStyles[rowIndex] = _customRowStyles[rowIndex]!.copyWith(height: height, customHeight: keepValue ? height : null);
   }
 
   void setColumnWidth(ColumnIndex columnIndex, double width) {
@@ -113,15 +113,22 @@ class SheetData {
 
   double getMinRowHeight(RowIndex rowIndex) {
     List<CellIndex> cellIndexes = _data.keys.where((CellIndex cellIndex) => cellIndex.row == rowIndex).toList();
+
+    double? staticHeight = getRowStyle(rowIndex).customHeight;
     double minRowHeight = cellIndexes.map(getMinCellSize).map((Size size) => size.height).reduce(max);
-    return minRowHeight;
+
+    if (staticHeight != null) {
+      return max(minRowHeight, staticHeight);
+    } else {
+      return minRowHeight;
+    }
   }
 
   Size getMinCellSize(CellIndex cellIndex) {
     CellProperties cellProperties = getCellProperties(cellIndex);
 
-    // Get the padding from the cell style or default to EdgeInsets.zero
-    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 3);
+    // TODO(Dominik): Magic padding. No idea where it comes from. Should be analyzed and removed.
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 3.5);
 
     if (cellProperties.value.isEmpty) {
       double height = getRowStyle(cellIndex.row).height;
@@ -131,7 +138,7 @@ class SheetData {
 
     TextRotation textRotation = cellProperties.style.rotation;
     TextSpan textSpan = cellProperties.value.toTextSpan();
-    if(textRotation == TextRotation.vertical) {
+    if (textRotation == TextRotation.vertical) {
       textSpan = textSpan.applyDivider('\n');
     }
 
@@ -154,7 +161,7 @@ class SheetData {
 
     double angle = textRotation.angle;
 
-    if(textRotation == TextRotation.vertical) {
+    if (textRotation == TextRotation.vertical) {
       // Vertical text
       minCellWidth = textWidth + padding.horizontal;
       minCellHeight = textHeight + padding.vertical;
@@ -178,7 +185,6 @@ class SheetData {
 
     return Size(minCellWidth, minCellHeight);
   }
-
 }
 
 class SheetDataManager extends ChangeNotifier {

@@ -13,7 +13,7 @@ abstract class SheetValueFormat with EquatableMixin {
         SheetDurationFormat.auto(),
       ];
 
-      return autoFormats.firstWhere((SheetValueFormat format) => format.formatVisible(value) != null);
+      return autoFormats.firstWhere((SheetValueFormat format) => format.hasStrongMatch(value));
     } catch (e) {
       return SheetStringFormat();
     }
@@ -28,6 +28,11 @@ abstract class SheetValueFormat with EquatableMixin {
   SheetValueFormat increaseDecimal();
 
   TextAlign get textAlign;
+
+  bool hasStrongMatch(SheetRichText value) {
+    SheetRichText? visibleText = formatVisible(value);
+    return visibleText != null;
+  }
 }
 
 typedef NumberFormatter = NumberFormat Function(String value);
@@ -271,6 +276,13 @@ class SheetDurationFormat extends SheetValueFormat {
   static const String _patternWithoutMilliseconds = 'HH:mm:ss';
 
   final String _pattern;
+
+  @override
+  bool hasStrongMatch(SheetRichText value) {
+    SheetRichText? visibleText = formatVisible(value);
+    bool containsColons = RegExp(r'\d+:\d+:\d+').hasMatch(value.toPlainText());
+    return visibleText != null && containsColons;
+  }
 
   @override
   SheetRichText? formatVisible(SheetRichText richText) {

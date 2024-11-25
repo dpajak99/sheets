@@ -110,29 +110,37 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                     text: NumberFormat.currency().currencySymbol,
                                     onTap: () {
                                       widget.sheetController
-                                          .formatSelection(SetValueFormatIntent(format: SheetNumberFormat.currency()));
+                                          .formatSelection(SetValueFormatIntent(format: (_) =>SheetNumberFormat.currency()));
                                     }),
                                 ToolbarIconButton(
                                     icon: SheetIcons.percentage,
                                     onTap: () {
                                       widget.sheetController
-                                          .formatSelection(SetValueFormatIntent(format: SheetNumberFormat.percentPattern()));
+                                          .formatSelection(SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern()));
                                     }),
                                 ToolbarIconButton(
-                                    icon: SheetIcons.decimal_decrease,
-                                    onTap: () {
-                                      widget.sheetController.formatSelection(
-                                          SetValueFormatIntent(format: selectionStyle.valueFormat.decreaseDecimal()));
-                                    }),
+                                  icon: SheetIcons.decimal_decrease,
+                                  onTap: () {
+                                    widget.sheetController.formatSelection(SetValueFormatIntent(
+                                      format: (SheetValueFormat? previous) {
+                                        return previous?.decreaseDecimal() ?? SheetNumberFormat.decimalPattern();
+                                      },
+                                    ));
+                                  },
+                                ),
                                 ToolbarIconButton(
-                                    icon: SheetIcons.decimal_increase,
-                                    onTap: () {
-                                      widget.sheetController.formatSelection(
-                                          SetValueFormatIntent(format: selectionStyle.valueFormat.increaseDecimal()));
-                                    }),
+                                  icon: SheetIcons.decimal_increase,
+                                  onTap: () {
+                                    widget.sheetController.formatSelection(SetValueFormatIntent(
+                                      format: (SheetValueFormat? previous) {
+                                        return previous?.increaseDecimal() ?? SheetNumberFormat.decimalPattern();
+                                      },
+                                    ));
+                                  },
+                                ),
                                 ToolbarValueFormatButton(
                                   onChanged: (SheetValueFormat? value) {
-                                    widget.sheetController.formatSelection(SetValueFormatIntent(format: value));
+                                    widget.sheetController.formatSelection(SetValueFormatIntent(format: (_) => value));
                                   },
                                 ),
                                 const ToolbarDivider(),
@@ -208,8 +216,8 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
                                 ToolbarColorFillButton(
-                                  value: selectionStyle.backgroundColor ?? defaultTextStyle.backgroundColor ?? Colors.white,
-                                  onChanged: (Color? color) {
+                                  value: selectionStyle.backgroundColor ?? Colors.white,
+                                  onChanged: (Color color) {
                                     widget.sheetController.formatSelection(SetBackgroundColorIntent(color: color));
                                   },
                                 ),

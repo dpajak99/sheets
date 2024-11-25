@@ -111,7 +111,7 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
   void _clearBorders(SheetData data) {
     for (CellIndex cellIndex in intent.selectedCells) {
       Set<BorderEdge> edges = <BorderEdge>{BorderEdge.top, BorderEdge.right, BorderEdge.bottom, BorderEdge.left};
-      _updateCellBorder(data, cellIndex, edges, isAdding: false);
+      _clearCellBorder(data, cellIndex, edges, isAdding: false);
     }
   }
 
@@ -219,6 +219,10 @@ class SetBorderAction extends SheetStyleFormatAction<SetBorderIntent> {
     );
 
     data.setCellStyle(cellIndex, cellProperties.style.copyWith(border: newBorder));
+  }
+
+  void _clearCellBorder(SheetData data, CellIndex cellIndex, Set<BorderEdge> edges, {required bool isAdding}) {
+    _updateCellBorder(data, cellIndex, edges, isAdding: false);
 
     for (BorderEdge edge in edges) {
       CellIndex? adjacentIndex = _getAdjacentCellIndex(data, cellIndex, edge);

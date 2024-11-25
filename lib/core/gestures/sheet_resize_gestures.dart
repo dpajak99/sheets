@@ -27,7 +27,7 @@ class SheetResizeRowGesture extends SheetGesture {
   @override
   void resolve(SheetController controller) {
     controller.dataManager.write((SheetData data) {
-      data.setRowHeight(rowIndex, height);
+      data.setRowHeight(rowIndex, height, keepValue: true);
     });
   }
 

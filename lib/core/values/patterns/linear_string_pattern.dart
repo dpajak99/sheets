@@ -122,7 +122,7 @@ class LinearStringPattern implements ValuePattern {
     int lastIntegerValue = this.lastIntegerValue;
 
     for (int i = 0; i < fillCells.length; i++) {
-      IndexedCellProperties templateProperties = baseCells[i];
+      IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
       IndexedCellProperties fillProperties = fillCells[i];
 
       int step = steps[i % steps.length];
