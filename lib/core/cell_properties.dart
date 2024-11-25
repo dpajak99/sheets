@@ -57,16 +57,15 @@ class IndexedCellProperties with EquatableMixin {
 
 class CellProperties with EquatableMixin {
   CellProperties({
-    required this.style,
-    required this.value,
-  });
+    CellStyle? style,
+    SheetRichText? value,
+  }) {
+    this.style = style ?? CellStyle();
+    this.value = value ?? SheetRichText();
+  }
 
-  CellProperties.empty()
-      : value = SheetRichText(),
-        style = CellStyle();
-
-  final CellStyle style;
-  final SheetRichText value;
+  late final CellStyle style;
+  late final SheetRichText value;
 
   CellProperties copyWith({SheetRichText? value, CellStyle? style}) {
     return CellProperties(

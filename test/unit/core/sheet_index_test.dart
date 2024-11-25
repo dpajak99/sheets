@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
@@ -118,18 +117,12 @@ void main() {
 
         CellIndex cellIndex = CellIndex(row: RowIndex(1), column: ColumnIndex(1));
 
-        // Expected values:
-        // x = sum of column widths before column 1: 100.0
-        // y = sum of row heights before row 1: 21.0
-        // width = properties.getColumnWidth(column 1): 100.0
-        // height = properties.getRowHeight(row 1): 21.0
-
-        Rect expectedRect = const Rect.fromLTWH(100, 21, 100, 21);
-
         // Act
         Rect actualRect = cellIndex.getSheetCoordinates(properties);
 
         // Assert
+        Rect expectedRect = const Rect.fromLTRB(101, 22, 202, 44);
+
         expect(actualRect, equals(expectedRect));
       });
     });
@@ -319,21 +312,14 @@ void main() {
             },
           ),
         );
-
         RowIndex rowIndex = RowIndex(1);
-
-        // Expected values:
-        // y = sum of row heights before row 1: 20.0
-        // height = properties.getRowHeight(row 1): 30.0
-        // x = 0
-        // width = rowHeadersWidth
-
-        Rect expectedRect = Rect.fromLTWH(0, 20, rowHeadersWidth, 30);
 
         // Act
         Rect actualRect = rowIndex.getSheetCoordinates(properties);
 
         // Assert
+        Rect expectedRect = const Rect.fromLTRB(0, 21, 101, 52);
+
         expect(actualRect, equals(expectedRect));
       });
     });
@@ -507,18 +493,12 @@ void main() {
 
         ColumnIndex columnIndex = ColumnIndex(1);
 
-        // Expected values:
-        // x = sum of column widths before column 1: 50.0
-        // width = properties.getColumnWidth(column 1): 60.0
-        // y = 0
-        // height = columnHeadersHeight
-
-        Rect expectedRect = Rect.fromLTWH(50, 0, 60, columnHeadersHeight);
-
         // Act
         Rect actualRect = columnIndex.getSheetCoordinates(properties);
 
         // Assert
+        Rect expectedRect = const Rect.fromLTRB(51, 0, 112, 22);
+
         expect(actualRect, equals(expectedRect));
       });
     });

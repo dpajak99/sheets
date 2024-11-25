@@ -25,9 +25,11 @@ abstract class ViewportItem with EquatableMixin {
 }
 
 class BorderRect extends Rect {
-  BorderRect.fromLTWH(super.left, super.top, super.width, super.height) : super.fromLTWH();
+  const BorderRect.fromLTWH(super.left, super.top, super.width, super.height) : super.fromLTWH();
 
-  BorderRect.fromLTRB(super.left, super.top, super.right, super.bottom) : super.fromLTRB();
+  const BorderRect.fromLTRB(super.left, super.top, super.right, super.bottom) : super.fromLTRB();
+
+  static BorderRect zero = const BorderRect.fromLTWH(0, 0, 0, 0);
 
   Line getTopBorder(Border border) {
     double topWidth = border.top.width;
@@ -162,14 +164,12 @@ class ViewportColumn extends ViewportItem {
 
 class ViewportCell extends ViewportItem {
   factory ViewportCell({
-    required CellIndex index,
     required ViewportRow row,
     required ViewportColumn column,
-    required CellProperties properties,
+    CellProperties? properties,
   }) {
     return ViewportCell._(
       rect: BorderRect.fromLTWH(column.rect.left, row.rect.top, column.rect.width, row.rect.height),
-      index: index,
       row: row,
       column: column,
       properties: properties,
@@ -178,25 +178,23 @@ class ViewportCell extends ViewportItem {
 
   ViewportCell._({
     required super.rect,
-    required CellIndex index,
     required ViewportRow row,
     required ViewportColumn column,
-    required CellProperties properties,
-  })  : _index = index,
+    CellProperties? properties,
+  })  : _index = CellIndex(row: row.index, column: column.index),
         _row = row,
-        _column = column,
-        _properties = properties;
+        _column = column {
+    _properties = properties ?? CellProperties();
+  }
 
   ViewportCell copyWith({
     BorderRect? rect,
-    CellIndex? index,
     ViewportRow? row,
     ViewportColumn? column,
     CellProperties? properties,
   }) {
     return ViewportCell._(
       rect: rect ?? this.rect,
-      index: index ?? _index,
       row: row ?? _row,
       column: column ?? _column,
       properties: properties ?? _properties,
@@ -206,7 +204,7 @@ class ViewportCell extends ViewportItem {
   final CellIndex _index;
   final ViewportRow _row;
   final ViewportColumn _column;
-  final CellProperties _properties;
+  late final CellProperties _properties;
 
   @override
   CellIndex get index => _index;

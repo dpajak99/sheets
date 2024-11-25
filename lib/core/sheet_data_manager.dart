@@ -31,7 +31,7 @@ class SheetData {
   int rowCount;
 
   CellProperties getCellProperties(CellIndex cellIndex) {
-    return _data[cellIndex] ?? CellProperties.empty();
+    return _data[cellIndex] ?? CellProperties();
   }
 
   RowStyle getRowStyle(RowIndex rowIndex) {
@@ -44,7 +44,7 @@ class SheetData {
 
   void formatSelection(List<CellIndex> cells, StyleFormatAction<StyleFormatIntent> formatAction) {
     for (CellIndex cellIndex in cells) {
-      _data[cellIndex] ??= CellProperties.empty();
+      _data[cellIndex] ??= CellProperties();
 
       switch (formatAction) {
         case TextStyleFormatAction<TextStyleFormatIntent> formatAction:
@@ -61,7 +61,7 @@ class SheetData {
   }
 
   void setText(CellIndex cellIndex, SheetRichText text) {
-    CellProperties cellProperties = _data[cellIndex] ?? CellProperties.empty();
+    CellProperties cellProperties = _data[cellIndex] ?? CellProperties();
     _data[cellIndex] = cellProperties.copyWith(value: text);
   }
 
@@ -83,7 +83,7 @@ class SheetData {
   }
 
   void setCellStyle(CellIndex cellIndex, CellStyle cellStyle) {
-    _data[cellIndex] ??= CellProperties.empty();
+    _data[cellIndex] ??= CellProperties();
     _data[cellIndex] = _data[cellIndex]!.copyWith(style: cellStyle);
   }
 
@@ -102,7 +102,7 @@ class SheetData {
   }
 
   void clearCell(CellIndex cellIndex) {
-    _data[cellIndex] ??= CellProperties.empty();
+    _data[cellIndex] ??= CellProperties();
     _data[cellIndex] = _data[cellIndex]!.copyWith(value: _data[cellIndex]!.value.clear());
   }
 

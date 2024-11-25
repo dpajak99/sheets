@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 
-class SheetRichText {
+class SheetRichText with EquatableMixin {
   SheetRichText({List<SheetTextSpan>? spans})
       : spans = spans == null || spans.isEmpty
             ? <SheetTextSpan>[SheetTextSpan(text: '', style: constants.defaultTextStyle)] //
@@ -78,9 +79,12 @@ class SheetRichText {
     }
     return SheetRichText(spans: newSpans);
   }
+
+  @override
+  List<Object?> get props => <Object?>[spans];
 }
 
-class SheetTextSpan {
+class SheetTextSpan with EquatableMixin {
   SheetTextSpan({
     required this.text,
     required this.style,
@@ -102,4 +106,7 @@ class SheetTextSpan {
   TextSpan toTextSpan() {
     return TextSpan(text: text, style: style);
   }
+
+  @override
+  List<Object?> get props => <Object?>[text, style];
 }
