@@ -13,6 +13,7 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
     super.endIndex, {
     required this.baseSelection,
     required this.fillDirection,
+    super.customMainCell,
   })  : assert(baseSelection is! SheetFillSelection, 'Cannot fill a fill selection'),
         super(completed: false);
 
@@ -26,12 +27,14 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
     bool? completed,
     SheetSelection? baseSelection,
     Direction? fillDirection,
+    CellIndex? customMainCell,
   }) {
     return SheetFillSelection(
       startIndex ?? start.index as CellIndex,
       endIndex ?? end.index as CellIndex,
       baseSelection: baseSelection ?? this.baseSelection,
       fillDirection: fillDirection ?? this.fillDirection,
+      customMainCell: customMainCell ?? mainCell,
     );
   }
 

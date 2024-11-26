@@ -1,5 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -31,6 +36,57 @@ class SelectionCellCorners with EquatableMixin {
   final CellIndex topRight;
   final CellIndex bottomLeft;
   final CellIndex bottomRight;
+
+  SelectionCellCorners includeMergedCells(SheetData data) {
+    int minRow = topLeft.row.value;
+    int maxRow = bottomRight.row.value;
+    int minCol = topLeft.column.value;
+    int maxCol = bottomRight.column.value;
+
+    bool changed;
+    do {
+      changed = false;
+
+      for (int row = minRow; row <= maxRow; row++) {
+        for (int col = minCol; col <= maxCol; col++) {
+          CellIndex currentCell = CellIndex.raw(row, col);
+          CellProperties properties = data.getCellProperties(currentCell);
+          CellMergeStatus mergeStatus = properties.mergeStatus;
+
+          if (mergeStatus is MergedCell) {
+            int mergeStartRow = mergeStatus.start.row.value;
+            int mergeEndRow = mergeStatus.end.row.value;
+            int mergeStartCol = mergeStatus.start.column.value;
+            int mergeEndCol = mergeStatus.end.column.value;
+
+            if (mergeStartRow < minRow) {
+              minRow = mergeStartRow;
+              changed = true;
+            }
+            if (mergeEndRow > maxRow) {
+              maxRow = mergeEndRow;
+              changed = true;
+            }
+            if (mergeStartCol < minCol) {
+              minCol = mergeStartCol;
+              changed = true;
+            }
+            if (mergeEndCol > maxCol) {
+              maxCol = mergeEndCol;
+              changed = true;
+            }
+          }
+        }
+      }
+    } while (changed);
+
+    CellIndex newTopLeft = CellIndex.raw( minRow,  minCol);
+    CellIndex newTopRight = CellIndex.raw( minRow, maxCol);
+    CellIndex newBottomLeft = CellIndex.raw( maxRow,  minCol);
+    CellIndex newBottomRight = CellIndex.raw( maxRow,  maxCol);
+
+    return SelectionCellCorners(newTopLeft, newTopRight, newBottomLeft, newBottomRight);
+  }
 
   Direction getRelativePosition(CellIndex cellIndex) {
     Map<Direction, int> directionSpaces = <Direction, int>{

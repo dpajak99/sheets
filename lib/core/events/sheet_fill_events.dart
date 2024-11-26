@@ -1,7 +1,6 @@
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
-import 'package:sheets/core/events/sheet_scroll_events.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';

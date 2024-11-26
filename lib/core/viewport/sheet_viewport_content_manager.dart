@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/renderers/visible_cells_renderer.dart';
@@ -9,7 +8,6 @@ import 'package:sheets/core/viewport/sheet_viewport_content_data.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/closest_visible.dart';
-import 'package:sheets/utils/directional_values.dart';
 
 class SheetViewportContentManager {
   SheetViewportContentManager(this._data) : _contentData = SheetViewportContentData();
@@ -41,14 +39,14 @@ class SheetViewportContentManager {
   }
 
   ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
-    return _contentData.findCellOrClosest(cellIndex.toRealIndex(
+    return _contentData.findCellOrClosest(_data, cellIndex.toRealIndex(
       columnCount: _data.columnCount,
       rowCount: _data.rowCount,
     ));
   }
 
   ViewportCell? findCell(CellIndex cellIndex) {
-    return _contentData.findCell(cellIndex.toRealIndex(
+    return _contentData.findCell(_data, cellIndex.toRealIndex(
       columnCount: _data.columnCount,
       rowCount: _data.rowCount,
     ));
@@ -57,7 +55,7 @@ class SheetViewportContentManager {
   ViewportItem? findAnyByOffset(Offset mousePosition) => _contentData.findAnyByOffset(mousePosition);
 
   ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) {
-    return _contentData.findClosestCell(cellIndex.toRealIndex(
+    return _contentData.findClosestCell(_data, cellIndex.toRealIndex(
       columnCount: _data.columnCount,
       rowCount: _data.rowCount,
     ));

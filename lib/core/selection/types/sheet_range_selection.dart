@@ -24,12 +24,12 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
   final CellIndex? _customMainCell;
 
   @override
-  SheetRangeSelection<T> copyWith({T? startIndex, T? endIndex, bool? completed}) {
+  SheetRangeSelection<T> copyWith({T? startIndex, T? endIndex, bool? completed, CellIndex? customMainCell}) {
     return SheetRangeSelection<T>(
       startIndex ?? start.index as T,
       endIndex ?? end.index as T,
       completed: completed ?? isCompleted,
-      customMainCell: _customMainCell,
+      customMainCell: customMainCell ?? _customMainCell,
     );
   }
 
@@ -72,7 +72,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
 
   @override
   SheetSelection modifyEnd(SheetIndex itemIndex) {
-    return SheetSelectionFactory.range(start: start.index, end: itemIndex);
+    return SheetSelectionFactory.range(start: mainCell, end: itemIndex);
   }
 
   @override

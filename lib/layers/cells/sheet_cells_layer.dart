@@ -55,7 +55,6 @@ class _SheetCellsLayerState extends State<SheetCellsLayer> {
   }
 
   void _updateVisibleCells() {
-    print('Rebuild cells layer');
     _layerPainter.update(widget.sheetController.viewport.visibleContent);
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
@@ -21,9 +19,6 @@ class SheetControllerNotifier extends ChangeNotifier {
   SheetRebuildProperties _value = SheetRebuildProperties();
 
   void notify(SheetRebuildProperties value) {
-    print('------');
-    print('Notify: $value');
-    print('------');
     _value = value;
     notifyListeners();
   }
@@ -66,7 +61,6 @@ class SheetController extends SheetControllerNotifier {
     bool mainEvent = eventsQueue.isEmpty;
     SheetAction<SheetEvent>? action = event.createAction(this);
     if(action == null) {
-      print('Action is null for event: $event');
       return;
     }
     eventsQueue.add(event);
@@ -81,8 +75,6 @@ class SheetController extends SheetControllerNotifier {
       if(rebuildProperties.rebuildViewport || rebuildProperties.rebuildCellsLayer) {
         viewport.rebuild(scroll.offset);
       }
-
-      print('Resolve MAIN event: $event with children: $eventsQueue');
 
       notify(rebuildProperties);
       eventsQueue.clear();

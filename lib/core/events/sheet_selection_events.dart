@@ -1,10 +1,14 @@
 import 'package:flutter/services.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/selection/selection_corners.dart';
+import 'package:sheets/core/selection/selection_direction.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -84,7 +88,13 @@ class UpdateSelectionEvent extends SheetEvent {
   final ViewportItem selectionEnd;
 
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller) => UpdateSelectionAction(this, controller);
+  SheetAction<SheetEvent>? createAction(SheetController controller) {
+    if (controller.isEditingMode) {
+      return null;
+    } else {
+      return UpdateSelectionAction(this, controller);
+    }
+  }
 
   @override
   SheetRebuildProperties get rebuildProperties {
@@ -121,6 +131,11 @@ class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
     }
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
+
+    if (updatedSelection is SheetRangeSelection<CellIndex>) {
+      updatedSelection = ensureMergedCellsVisible(updatedSelection);
+    }
+
     controller.selection.update(updatedSelection);
 
     ensureFullyVisible(selectedIndex);
@@ -207,6 +222,11 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
     selectedIndex = selectedIndex.move(dx: event.dx, dy: event.dy).clamp(maxIndex);
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
+
+    if (updatedSelection is SheetRangeSelection<CellIndex>) {
+      updatedSelection = ensureMergedCellsVisible(updatedSelection);
+    }
+
     controller.selection.update(updatedSelection);
     controller.selection.complete();
 

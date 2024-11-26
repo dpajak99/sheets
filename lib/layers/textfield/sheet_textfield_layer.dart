@@ -49,8 +49,6 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
         if (activeCell == null) {
           return const SizedBox();
         }
-        print('Rebuild textfield layer');
-
         ViewportCell viewportCell = activeCell.cell;
         activeCell.controller.layout(
           minWidth: viewportCell.rect.width - horizontalPadding,

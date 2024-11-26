@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/calculators/closest_visible_cell_index_calculator.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -25,14 +27,24 @@ class SheetViewportContentData {
     return cells.any((ViewportCell cell) => cell.index == cellIndex);
   }
 
-  ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
-    if (containsCell(cellIndex)) {
-      return ClosestVisible<ViewportCell>.fullyVisible(findCell(cellIndex)!);
+  ClosestVisible<ViewportCell> findCellOrClosest(SheetData data, CellIndex cellIndex) {
+    CellMergeStatus mergeStatus = data.getCellProperties(cellIndex).mergeStatus;
+    if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
+      return findCellOrClosest(data, mergeStatus.start);
     }
-    return findClosestCell(cellIndex);
+
+    if (containsCell(cellIndex)) {
+      return ClosestVisible<ViewportCell>.fullyVisible(findCell(data, cellIndex)!);
+    }
+    return findClosestCell(data, cellIndex);
   }
 
-  ViewportCell? findCell(CellIndex cellIndex) {
+  ViewportCell? findCell(SheetData data, CellIndex cellIndex) {
+    CellProperties properties = data.getCellProperties(cellIndex);
+    CellMergeStatus mergeStatus = properties.mergeStatus;
+    if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
+      return findCell(data, mergeStatus.start);
+    }
     return cells.where((ViewportCell cell) => cell.index == cellIndex).firstOrNull;
   }
 
@@ -47,12 +59,12 @@ class SheetViewportContentData {
     }
   }
 
-  ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) {
+  ClosestVisible<ViewportCell> findClosestCell(SheetData data, CellIndex cellIndex) {
     ClosestVisibleCellIndexCalculator calculator = ClosestVisibleCellIndexCalculator(visibleRows: rows, visibleColumns: columns);
     ClosestVisible<CellIndex> closestVisibleCellIndex = calculator.findFor(cellIndex);
 
     return ClosestVisible<ViewportCell>.partiallyVisible(
-      value: findCell(closestVisibleCellIndex.value)!,
+      value: findCell(data, closestVisibleCellIndex.value)!,
       hiddenBorders: closestVisibleCellIndex.hiddenBorders,
     );
   }

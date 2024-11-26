@@ -1,1 +1,1 @@
-enum SelectionDirection { topRight, topLeft, bottomRight, bottomLeft }
+enum SelectionDirection { topRight, topLeft, bottomRight, bottomLeft; }

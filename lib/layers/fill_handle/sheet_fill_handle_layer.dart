@@ -81,7 +81,6 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 
   void _updateFillHandle() {
-    print('Rebuild fill handle layer');
     SheetSelectionRenderer<SheetSelection> selectionRenderer =
         widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
 

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:sheets/core/events/sheet_event.dart';
-import 'package:sheets/core/events/sheet_fill_events.dart';
 import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';

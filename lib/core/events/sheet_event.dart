@@ -2,6 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/events/sheet_scroll_events.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
+import 'package:sheets/core/selection/selection_corners.dart';
+import 'package:sheets/core/selection/selection_direction.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -84,6 +87,46 @@ abstract class SheetAction<T extends SheetEvent> {
     if(!controller.isFullyVisible(index)) {
       controller.resolve(ScrollToElementEvent(index));
     }
+  }
+
+  SheetRangeSelection<CellIndex> ensureMergedCellsVisible(SheetRangeSelection<CellIndex> selection) {
+    SelectionCellCorners corners = selection.cellCorners;
+    SelectionCellCorners cornersWithMergedCells = selection.cellCorners.includeMergedCells(controller.data);
+    if (corners == cornersWithMergedCells) {
+      return selection;
+    }
+
+    ColumnIndex newColumnMin = cornersWithMergedCells.topLeft.column;
+    ColumnIndex newColumnMax = cornersWithMergedCells.bottomRight.column;
+    RowIndex newRowMin = cornersWithMergedCells.topLeft.row;
+    RowIndex newRowMax = cornersWithMergedCells.bottomRight.row;
+
+    return switch (selection.direction) {
+      SelectionDirection.bottomRight => SheetRangeSelection<CellIndex>(
+        CellIndex(row: newRowMin, column: newColumnMin),
+        CellIndex(row: newRowMax, column: newColumnMax),
+        completed: selection.isCompleted,
+        customMainCell: selection.mainCell,
+      ),
+      SelectionDirection.bottomLeft => SheetRangeSelection<CellIndex>(
+        CellIndex(row: newRowMin, column: newColumnMax),
+        CellIndex(row: newRowMax, column: newColumnMin),
+        completed: selection.isCompleted,
+        customMainCell: selection.mainCell,
+      ),
+      SelectionDirection.topRight => SheetRangeSelection<CellIndex>(
+        CellIndex(row: newRowMax, column: newColumnMin),
+        CellIndex(row: newRowMin, column: newColumnMax),
+        completed: selection.isCompleted,
+        customMainCell: selection.mainCell,
+      ),
+      SelectionDirection.topLeft => SheetRangeSelection<CellIndex>(
+        CellIndex(row: newRowMax, column: newColumnMax),
+        CellIndex(row: newRowMin, column: newColumnMin),
+        completed: selection.isCompleted,
+        customMainCell: selection.mainCell,
+      ),
+    };
   }
 }
 

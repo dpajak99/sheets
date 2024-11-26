@@ -73,15 +73,11 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   }
 
   void _updateVisibleColumns() {
-    print('Rebuild Column headers');
-
     columnHeadersPainter.visibleColumns = widget.sheetController.viewport.visibleContent.columns;
     columnHeadersPainter.selection = widget.sheetController.selection.value;
   }
 
   void _updateVisibleRows() {
-    print('Rebuild Row headers');
-
     rowHeadersPainter.visibleRows = widget.sheetController.viewport.visibleContent.rows;
     rowHeadersPainter.selection = widget.sheetController.selection.value;
   }

@@ -51,7 +51,6 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
   void _handleSheetControllerChanged() {
     SheetRebuildProperties properties = widget.sheetController.value;
     if (properties.rebuildSelection) {
-      print('Rebuild selection layer');
       _layerPainter.setSheetSelection(widget.sheetController.selection.value);
       _layerPainter.setViewport(widget.sheetController.viewport);
     }

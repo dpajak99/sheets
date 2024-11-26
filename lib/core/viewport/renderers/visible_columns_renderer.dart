@@ -1,12 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/directional_values.dart';
 
 class VisibleColumnsRenderer {
   VisibleColumnsRenderer({

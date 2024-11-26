@@ -67,7 +67,6 @@ class _SheetHorizontalHeadersResizerLayerState extends State<SheetHorizontalHead
   }
 
   void _updateVisibleRows() {
-    print('Rebuild Row resizers');
     setState(() => _visibleRows = widget.sheetController.viewport.visibleContent.rows);
   }
 }

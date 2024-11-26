@@ -67,7 +67,6 @@ class _SheetVerticalHeadersResizerLayersState extends State<SheetVerticalHeaders
   }
 
   void _updateVisibleColumns() {
-    print('Rebuild Column resizers');
     setState(() => _visibleColumns = widget.sheetController.viewport.visibleContent.columns);
   }
 }
