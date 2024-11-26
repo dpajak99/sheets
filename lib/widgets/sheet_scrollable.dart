@@ -4,21 +4,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/events/sheet_scroll_events.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
-import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
 class SheetScrollable extends StatefulWidget {
   const SheetScrollable({
     required this.child,
-    required this.scrollController,
+    required this.sheetController,
     super.key,
   });
 
   final Widget child;
-  final SheetScrollController scrollController;
+  final SheetController sheetController;
 
   @override
   State<SheetScrollable> createState() => _SheetScrollableState();
@@ -26,7 +27,7 @@ class SheetScrollable extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetScrollController>('scrollController', scrollController));
+    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
   }
 }
 
@@ -37,27 +38,14 @@ class _SheetScrollableState extends State<SheetScrollable> {
   @override
   void initState() {
     super.initState();
-
-    widget.scrollController.position.vertical.addListener(_updateVerticalPosition);
-    widget.scrollController.position.horizontal.addListener(_updateHorizontalPosition);
-    widget.scrollController.metrics.addListener(_updateMetrics);
-
-    _updateVerticalPosition();
-    _updateHorizontalPosition();
-    _updateMetrics();
+    widget.sheetController.addListener(_rebuild);
+    _rebuild();
   }
 
-  void _updateVerticalPosition() {
-    verticalScrollbarPainter.scrollPosition = widget.scrollController.position.vertical;
-  }
-
-  void _updateHorizontalPosition() {
-    horizontalScrollbarPainter.scrollPosition = widget.scrollController.position.horizontal;
-  }
-
-  void _updateMetrics() {
-    verticalScrollbarPainter.scrollMetrics = widget.scrollController.metrics.vertical;
-    horizontalScrollbarPainter.scrollMetrics = widget.scrollController.metrics.horizontal;
+  @override
+  void dispose() {
+    widget.sheetController.removeListener(_rebuild);
+    super.dispose();
   }
 
   @override
@@ -74,7 +62,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             child: SheetScrollbar(
               painter: verticalScrollbarPainter,
               onScroll: (double offset) {
-                widget.scrollController.scrollBy(Offset(0, offset));
+                widget.sheetController.resolve(ScrollByEvent(Offset(0, offset)));
               },
             ),
           ),
@@ -83,7 +71,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_drop_up,
             onPressed: () {
-              widget.scrollController.scrollBy(const Offset(0, -20));
+              widget.sheetController.resolve(ScrollByEvent(const Offset(0, -20)));
             },
           ),
           Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -91,7 +79,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_drop_down,
             onPressed: () {
-              widget.scrollController.scrollBy(const Offset(0, 20));
+              widget.sheetController.resolve(ScrollByEvent(const Offset(0, 20)));
             },
           ),
         ],
@@ -104,7 +92,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             child: SheetScrollbar(
               painter: horizontalScrollbarPainter,
               onScroll: (double offset) {
-                widget.scrollController.scrollBy(Offset(offset, 0));
+                widget.sheetController.resolve(ScrollByEvent(Offset(offset, 0)));
               },
             ),
           ),
@@ -113,7 +101,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_left,
             onPressed: () {
-              widget.scrollController.scrollBy(const Offset(-20, 0));
+              widget.sheetController.resolve(ScrollByEvent(const Offset(-20, 0)));
             },
           ),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -121,7 +109,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_right,
             onPressed: () {
-              widget.scrollController.scrollBy(const Offset(20, 0));
+              widget.sheetController.resolve(ScrollByEvent(const Offset(20, 0)));
             },
           ),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -131,12 +119,31 @@ class _SheetScrollableState extends State<SheetScrollable> {
       child: Listener(
         onPointerSignal: (PointerSignalEvent event) {
           if (event is PointerScrollEvent) {
-            widget.scrollController.scrollBy(event.scrollDelta);
+            widget.sheetController.resolve(ScrollByEvent(event.scrollDelta));
           }
         },
         child: widget.child,
       ),
     );
+  }
+
+  void _rebuild() {
+    _updateVerticalPosition();
+    _updateHorizontalPosition();
+    _updateMetrics();
+  }
+
+  void _updateVerticalPosition() {
+    verticalScrollbarPainter.scrollPosition = widget.sheetController.scroll.position.vertical;
+  }
+
+  void _updateHorizontalPosition() {
+    horizontalScrollbarPainter.scrollPosition = widget.sheetController.scroll.position.horizontal;
+  }
+
+  void _updateMetrics() {
+    verticalScrollbarPainter.scrollMetrics = widget.sheetController.scroll.metrics.vertical;
+    horizontalScrollbarPainter.scrollMetrics = widget.sheetController.scroll.metrics.horizontal;
   }
 
   @override

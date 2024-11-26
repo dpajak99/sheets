@@ -10,11 +10,10 @@ class SheetSingleSelection extends SheetSelectionBase {
   SheetSingleSelection(
     this._selectedIndex, {
     this.fillHandleVisible = true,
-    super.completed = false,
-  }) : super(startIndex: _selectedIndex, endIndex: _selectedIndex);
+  }) : super(startIndex: _selectedIndex, endIndex: _selectedIndex, completed: true);
 
   factory SheetSingleSelection.defaultSelection() {
-    return SheetSingleSelection(CellIndex.zero, completed: true);
+    return SheetSingleSelection(CellIndex.zero);
   }
 
   final CellIndex _selectedIndex;
@@ -28,7 +27,6 @@ class SheetSingleSelection extends SheetSelectionBase {
   }) {
     return SheetSingleSelection(
       selectedIndex ?? _selectedIndex,
-      completed: completed ?? isCompleted,
       fillHandleVisible: fillHandleVisible ?? this.fillHandleVisible,
     );
   }
@@ -96,5 +94,5 @@ class SheetSingleSelection extends SheetSelectionBase {
   }
 
   @override
-  List<Object?> get props => <Object?>[_selectedIndex, isCompleted];
+  List<Object?> get props => <Object?>[_selectedIndex, isCompleted, fillHandleVisible];
 }

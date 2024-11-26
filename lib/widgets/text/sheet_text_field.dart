@@ -513,7 +513,7 @@ class SheetTextField extends StatefulWidget {
   final SheetTextEditingController controller;
   final FocusNode focusNode;
   final ValueChanged<Size> onSizeChanged;
-  final void Function(bool shouldSaveValue, bool shouldMove, TextSpan textSpan, Size size) onCompleted;
+  final void Function(bool shouldSaveValue, bool shouldMove) onCompleted;
   final Color backgroundColor;
 
   @override
@@ -526,8 +526,7 @@ class SheetTextField extends StatefulWidget {
     properties.add(ColorProperty('backgroundColor', backgroundColor));
     properties.add(ObjectFlagProperty<ValueChanged<Size>>.has('onSizeChanged', onSizeChanged));
     properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode));
-    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, bool shouldMove, TextSpan textSpan, Size size)>.has(
-        'onCompleted', onCompleted));
+    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, bool shouldMove)>.has('onCompleted', onCompleted));
   }
 }
 
@@ -668,9 +667,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
 
   void _complete(bool shouldSaveValue, bool shouldMove) {
     _completed = true;
-    Size size = widget.controller.sizeNotifier.value;
-    TextSpan textSpan = widget.controller.value.text.toTextSpan();
-    widget.onCompleted(shouldSaveValue, shouldMove, textSpan, size);
+    widget.onCompleted(shouldSaveValue, shouldMove);
   }
 
   void _copy() {

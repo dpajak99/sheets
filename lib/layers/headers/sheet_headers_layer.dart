@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/headers/sheet_headers_painter.dart';
 
@@ -37,16 +38,12 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
       selection: widget.sheetController.selection.value,
     );
 
-    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleColumns);
-    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleRows);
-    widget.sheetController.selection.addListener(_updateSelection);
+    widget.sheetController.addListener(_handleSheetControllerChanged);
   }
 
   @override
   void dispose() {
-    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleColumns);
-    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleRows);
-    widget.sheetController.selection.removeListener(_updateSelection);
+    widget.sheetController.removeListener(_handleSheetControllerChanged);
     super.dispose();
   }
 
@@ -65,16 +62,27 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
     );
   }
 
+  void _handleSheetControllerChanged() {
+    SheetRebuildProperties properties = widget.sheetController.value;
+    if (properties.rebuildHorizontalHeaders) {
+      _updateVisibleColumns();
+    }
+    if(properties.rebuildVerticalHeaders) {
+      _updateVisibleRows();
+    }
+  }
+
   void _updateVisibleColumns() {
+    print('Rebuild Column headers');
+
     columnHeadersPainter.visibleColumns = widget.sheetController.viewport.visibleContent.columns;
+    columnHeadersPainter.selection = widget.sheetController.selection.value;
   }
 
   void _updateVisibleRows() {
-    rowHeadersPainter.visibleRows = widget.sheetController.viewport.visibleContent.rows;
-  }
+    print('Rebuild Row headers');
 
-  void _updateSelection() {
-    columnHeadersPainter.selection = widget.sheetController.selection.value;
+    rowHeadersPainter.visibleRows = widget.sheetController.viewport.visibleContent.rows;
     rowHeadersPainter.selection = widget.sheetController.selection.value;
   }
 

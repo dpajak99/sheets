@@ -150,7 +150,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
 
   SheetSelection _simplify() {
     if (T == CellIndex && start.index == end.index) {
-      return SheetSingleSelection(start.cell, completed: isCompleted);
+      return SheetSingleSelection(start.cell);
     } else {
       return this;
     }

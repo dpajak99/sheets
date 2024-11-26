@@ -11,16 +11,16 @@ import 'package:sheets/utils/directional_values.dart';
 class VisibleColumnsRenderer {
   VisibleColumnsRenderer({
     required this.viewportRect,
-    required this.properties,
-    required this.scrollPosition,
+    required this.data,
+    required this.scrollOffset,
   });
 
   final SheetViewportRect viewportRect;
-  final SheetDataManager properties;
-  final DirectionalValues<SheetScrollPosition> scrollPosition;
+  final SheetData data;
+  final double scrollOffset;
 
   List<ViewportColumn> build() {
-    double firstVisibleCoordinate = scrollPosition.horizontal.offset;
+    double firstVisibleCoordinate = scrollOffset;
     _FirstVisibleColumnInfo firstVisibleColumnInfo = _findColumnByX(firstVisibleCoordinate);
 
     double maxContentWidth = viewportRect.width - rowHeadersWidth;
@@ -29,9 +29,9 @@ class VisibleColumnsRenderer {
     List<ViewportColumn> visibleColumns = <ViewportColumn>[];
     int index = firstVisibleColumnInfo.index.value;
 
-    while (currentContentWidth < maxContentWidth && index < properties.columnCount) {
+    while (currentContentWidth < maxContentWidth && index < data.columnCount) {
       ColumnIndex columnIndex = ColumnIndex(index);
-      ColumnStyle columnStyle = properties.getColumnStyle(columnIndex);
+      ColumnStyle columnStyle = data.getColumnStyle(columnIndex);
 
       ViewportColumn viewportColumn = ViewportColumn(
         index: columnIndex,
@@ -55,13 +55,13 @@ class VisibleColumnsRenderer {
 
     while (firstVisibleColumnInfo == null) {
       ColumnIndex columnIndex = ColumnIndex(actualColumnIndex);
-      ColumnStyle columnStyle = properties.getColumnStyle(columnIndex);
+      ColumnStyle columnStyle = data.getColumnStyle(columnIndex);
       double columnWidthEnd = currentWidthStart + columnStyle.width + borderWidth;
 
       if (x >= currentWidthStart && x < columnWidthEnd) {
         firstVisibleColumnInfo = _FirstVisibleColumnInfo(
           index: columnIndex,
-          startCoordinate: currentWidthStart,
+          startCoordinate: currentWidthStart - borderWidth,
           visibleWidth: columnWidthEnd - x,
           hiddenWidth: x - currentWidthStart,
         );

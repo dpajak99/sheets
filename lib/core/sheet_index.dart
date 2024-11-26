@@ -31,7 +31,7 @@ sealed class SheetIndex with EquatableMixin {
     }
   }
 
-  Rect getSheetCoordinates(SheetDataManager properties);
+  Rect getSheetCoordinates(SheetData data);
 
   CellIndex toCellIndex() {
     return switch (this) {
@@ -84,9 +84,9 @@ class CellIndex extends SheetIndex {
   }
 
   @override
-  Rect getSheetCoordinates(SheetDataManager properties) {
-    Rect xRect = column.getSheetCoordinates(properties);
-    Rect yRect = row.getSheetCoordinates(properties);
+  Rect getSheetCoordinates(SheetData data) {
+    Rect xRect = column.getSheetCoordinates(data);
+    Rect yRect = row.getSheetCoordinates(data);
 
     return Rect.fromLTWH(xRect.left, yRect.top, xRect.width, yRect.height);
   }
@@ -141,14 +141,14 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
   }
 
   @override
-  Rect getSheetCoordinates(SheetDataManager properties) {
+  Rect getSheetCoordinates(SheetData data) {
     double x = 0;
     for (int i = 0; i < value; i++) {
-      double columnWidth = properties.getColumnWidth(ColumnIndex(i));
+      double columnWidth = data.getColumnWidth(ColumnIndex(i));
       x += columnWidth + borderWidth;
     }
 
-    double width = properties.getColumnWidth(this);
+    double width = data.getColumnWidth(this);
 
     return Rect.fromLTWH(x, 0, width + borderWidth, defaultRowHeight + borderWidth);
   }
@@ -224,14 +224,14 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
   int get value => _value;
 
   @override
-  Rect getSheetCoordinates(SheetDataManager properties) {
+  Rect getSheetCoordinates(SheetData data) {
     double y = 0;
     for (int i = 0; i < value; i++) {
-      double rowHeight = properties.getRowHeight(RowIndex(i));
+      double rowHeight = data.getRowHeight(RowIndex(i));
       y += rowHeight + borderWidth;
     }
 
-    double height = properties.getRowHeight(this);
+    double height = data.getRowHeight(this);
     return Rect.fromLTWH(0, y, defaultColumnWidth + borderWidth, height + borderWidth);
   }
 

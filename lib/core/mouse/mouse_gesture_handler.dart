@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_fill_events.dart';
+import 'package:sheets/core/events/sheet_formatting_events.dart';
+import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
-import 'package:sheets/core/selection/sheet_fill_gesture.dart';
-import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -51,7 +53,7 @@ class MouseDoubleClickGestureHandler extends MouseGestureHandler {
     ViewportCell cell = gesture.startDetails.hoveredItem! as ViewportCell;
 
     setActive(true);
-    controller.setActiveViewportCell(cell);
+    controller.resolve(EnableEditingEvent(cell: cell.index));
     setActive(false);
   }
 }
@@ -124,7 +126,7 @@ class MouseSelectionGestureHandler extends MouseGestureHandler {
       return;
     }
 
-    SheetSelectionStartGesture(selectionStart).resolve(controller);
+    controller.resolve(StartSelectionEvent(selectionStart));
   }
 
   void _updateSelection(SheetController controller, SheetDragUpdateGesture gesture) {
@@ -134,11 +136,11 @@ class MouseSelectionGestureHandler extends MouseGestureHandler {
       return;
     }
 
-    SheetSelectionUpdateGesture(selectionStart, selectionUpdate).resolve(controller);
+    controller.resolve(UpdateSelectionEvent(selectionStart, selectionUpdate));
   }
 
   void _endSelection(SheetController controller, SheetDragEndGesture gesture) {
-    SheetSelectionEndGesture().resolve(controller);
+    controller.resolve(CompleteSelectionEvent());
     reset(controller);
   }
 }
@@ -171,7 +173,7 @@ class MouseFillGestureHandler extends DraggableGestureHandler {
       return;
     }
 
-    SheetFillStartGesture().resolve(controller);
+    controller.resolve(StartFillSelectionEvent());
     controller.mouse.setCursor(SystemMouseCursors.precise);
   }
 
@@ -182,11 +184,11 @@ class MouseFillGestureHandler extends DraggableGestureHandler {
       return;
     }
 
-    SheetFillUpdateGesture(selectionStart, selectionUpdate).resolve(controller);
+    controller.resolve(UpdateFillSelectionEvent(selectionStart, selectionUpdate));
   }
 
   void _endFill(SheetController controller, SheetDragEndGesture gesture) {
-    SheetFillEndGesture().resolve(controller);
+    controller.resolve(CompleteFillSelectionEvent());
     reset(controller);
   }
 }
@@ -240,7 +242,7 @@ class MouseColumnResizeGestureHandler extends DraggableGestureHandler {
   }
 
   void _endResize(SheetController controller, SheetDragEndGesture gesture) {
-    controller.resizeColumn(viewportColumn.index, newWidth!);
+    controller.resolve(ResizeColumnEvent(viewportColumn.index, newWidth!));
     _refreshColumnSize(controller);
     reset(controller);
   }
@@ -301,7 +303,7 @@ class MouseRowResizeGestureHandler extends DraggableGestureHandler {
   }
 
   void _endResize(SheetController controller, SheetDragEndGesture gesture) {
-    controller.resizeRow(viewportRow.index, newHeight!);
+    controller.resolve(ResizeRowEvent(viewportRow.index, newHeight!));
     _refreshRowSize(controller);
     reset(controller);
     setActive(false);

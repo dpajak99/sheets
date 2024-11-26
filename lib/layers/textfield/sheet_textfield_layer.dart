@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
-import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
 
@@ -50,6 +49,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
         if (activeCell == null) {
           return const SizedBox();
         }
+        print('Rebuild textfield layer');
 
         ViewportCell viewportCell = activeCell.cell;
         activeCell.controller.layout(
@@ -83,17 +83,8 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
                     sheetController: widget.sheetController,
                     textAlign: activeCell.cell.properties.visibleTextAlign,
                     backgroundColor: activeCell.cell.properties.style.backgroundColor,
-                    onCompleted: (bool shouldSaveValue, bool shouldMove, SheetRichText richText) {
-                      if (shouldSaveValue) {
-                        widget.sheetController.setCellValue(activeCell.cell.index, richText);
-                        widget.sheetController.disableEditing();
-                      } else {
-                        widget.sheetController.disableEditing();
-                      }
-
-                      if (shouldMove) {
-                        SheetSelectionMoveGesture(0, 1).resolve(widget.sheetController);
-                      }
+                    onCompleted: (bool shouldSaveValue, bool shouldMove) {
+                        widget.sheetController.resolve(DisableEditingEvent(save: shouldSaveValue, move: shouldMove));
                     },
                     editableViewportCell: activeCell,
                   ),
@@ -124,7 +115,7 @@ class SheetTextfieldLayout extends StatefulWidget {
   final SheetController sheetController;
   final EditableViewportCell editableViewportCell;
   final TextAlign textAlign;
-  final void Function(bool shouldSaveValue, bool shouldMove, SheetRichText richText) onCompleted;
+  final void Function(bool shouldSaveValue, bool shouldMove) onCompleted;
   final Color backgroundColor;
   final Offset offset;
   final Border outerBorder;
@@ -144,8 +135,7 @@ class SheetTextfieldLayout extends StatefulWidget {
     properties.add(EnumProperty<TextAlign>('textAlign', textAlign));
     properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
     properties.add(DiagnosticsProperty<EditableViewportCell>('editableViewportCell', editableViewportCell));
-    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, bool shouldMove, SheetRichText richText)>.has(
-        'onCompleted', onCompleted));
+    properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, bool shouldMove)>.has('onCompleted', onCompleted));
   }
 
   double get paddingHorizontal {
@@ -208,9 +198,8 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
             Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
             _recognizer.setDraggableArea(textfieldRect);
           },
-          onCompleted: (bool shouldSaveValue, bool shouldMove, TextSpan textSpan, Size size) {
-            SheetRichText sheetRichText = SheetRichText.fromTextSpan(textSpan);
-            widget.onCompleted(shouldSaveValue, shouldMove, sheetRichText);
+          onCompleted: (bool shouldSaveValue, bool shouldMove) {
+            widget.onCompleted(shouldSaveValue, shouldMove);
           },
         ),
       ),

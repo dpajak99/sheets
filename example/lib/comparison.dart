@@ -107,12 +107,11 @@ class _SpreadsheetTable extends StatelessWidget {
 
 class _SheetPageState extends State<_SheetPage> {
   final SheetController sheetController = SheetController(
-    dataManager: SheetDataManager.dev(),
+    data: SheetData.dev(),
   );
 
   @override
   Future<void> dispose() async {
-    await sheetController.dispose();
     super.dispose();
   }
 

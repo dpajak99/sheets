@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_formatting_events.dart';
+import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/cells/sheet_cells_layer.dart';
@@ -45,13 +48,14 @@ class _SheetState extends State<Sheet> {
     return _SheetKeyboardGestureDetector(
       focusNode: sheetController.sheetFocusNode,
       onSelectAll: () => sheetController.selection.update(SheetSelectionFactory.all()),
-      onStartEditing: sheetController.enableEditing,
-      onMove: (CellMoveDirection direction) => sheetController.moveSelection(direction.toOffset()),
-      onRemove: () => sheetController.clearSelection(),
-      onFontWeightUpdate: (FontWeight fontWeight) => widget.sheetController.formatSelection(ToggleFontWeightIntent()),
-      onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.formatSelection(ToggleFontStyleIntent()),
+      onStartEditing: ([String? initialValue]) => sheetController.resolve(EnableEditingEvent(initialValue: initialValue)),
+      onMove: (CellMoveDirection direction) => sheetController.resolve(MoveSelectionEvent.fromOffset(direction.toOffset())),
+      onRemove: () => sheetController.resolve(ClearSelectionEvent()),
+      onFontWeightUpdate: (FontWeight fontWeight) =>
+          widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent())),
+      onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent())),
       onTextDecorationUpdate: (TextDecoration decoration) =>
-          widget.sheetController.formatSelection(ToggleTextDecorationIntent(value: decoration)),
+          widget.sheetController.resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: decoration))),
       onUndo: () {},
       onRedo: () {},
       onPaste: () {},
@@ -63,7 +67,7 @@ class _SheetState extends State<Sheet> {
             color: Color(0xfff8faf8),
           ),
           child: SheetScrollable(
-            scrollController: sheetController.scroll,
+            sheetController: sheetController,
             child: SheetMouseGestureDetector(
               mouseListener: sheetController.mouse,
               child: LayoutBuilder(
@@ -133,12 +137,12 @@ class SheetContentState extends State<SheetContent> {
     }
 
     Offset position = renderBox.localToGlobal(Offset.zero);
-    widget.sheetController.viewport.setViewportRect(Rect.fromLTRB(
+    widget.sheetController.resolve(SetViewportSizeEvent(Rect.fromLTRB(
       position.dx,
       position.dy,
       renderBox.size.width + position.dx,
       renderBox.size.height + position.dy,
-    ));
+    )));
   }
 }
 

@@ -27,12 +27,11 @@ class MaterialSheetExample extends StatefulWidget {
 
 class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   final SheetController sheetController = SheetController(
-    dataManager: SheetDataManager.dev(),
+    data: SheetData.dev(),
   );
 
   @override
   Future<void> dispose() async {
-    await sheetController.dispose();
     super.dispose();
   }
 

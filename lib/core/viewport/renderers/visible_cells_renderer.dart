@@ -15,7 +15,7 @@ class VisibleCellsRenderer {
 
   final List<ViewportColumn> visibleColumns;
 
-  List<ViewportCell> build(SheetDataManager dataManager) {
+  List<ViewportCell> build(SheetData data) {
     List<ViewportCell> visibleCells = <ViewportCell>[];
     List<ViewportCell> mergedCells = <ViewportCell>[];
     List<MergedCell> resolvedMergedCells = <MergedCell>[];
@@ -27,11 +27,11 @@ class VisibleCellsRenderer {
         ViewportColumn column = visibleColumns[x];
 
         CellIndex cellIndex = CellIndex(column: column.index, row: row.index);
-        CellProperties cellProperties = dataManager.getCellProperties(cellIndex);
+        CellProperties cellProperties = data.getCellProperties(cellIndex);
 
         if (cellProperties.mergeStatus is MergedCell) {
           MergedCell mergedCell = cellProperties.mergeStatus as MergedCell;
-          CellProperties startCellProperties = dataManager.getCellProperties(mergedCell.start);
+          CellProperties startCellProperties = data.getCellProperties(mergedCell.start);
 
           if (mergedCell.isMainCell(cellIndex) || (y == 0 || x == 0) && !resolvedMergedCells.contains(mergedCell)) {
             CellIndex mergeEnd = mergedCell.end;
@@ -45,9 +45,7 @@ class VisibleCellsRenderer {
               rowEnd: rowEnd,
               columnStart: column,
               columnEnd: columnEnd,
-              properties: startCellProperties.copyWith(
-                value: SheetRichText.single(text: 'Merged'),
-              ),
+              properties: startCellProperties,
             ));
             resolvedMergedCells.add(mergedCell);
           }
@@ -55,9 +53,7 @@ class VisibleCellsRenderer {
           visibleCells.add(ViewportCell(
             column: column,
             row: row,
-            properties: cellProperties.copyWith(
-              value: SheetRichText.single(text: '--'),
-            ),
+            properties: cellProperties,
           ));
         }
       }

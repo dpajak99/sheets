@@ -11,68 +11,67 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/directional_values.dart';
 
-class SheetViewportContentManager extends ChangeNotifier {
-  SheetViewportContentManager(this._dataManager) : _data = SheetViewportContentData();
+class SheetViewportContentManager {
+  SheetViewportContentManager(this._data) : _contentData = SheetViewportContentData();
 
-  final SheetViewportContentData _data;
-  final SheetDataManager _dataManager;
+  final SheetViewportContentData _contentData;
+  final SheetData _data;
 
-  void rebuild(SheetViewportRect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
-    List<ViewportRow> rows = _calculateRows(viewportRect, scrollPosition);
-    List<ViewportColumn> columns = _calculateColumns(viewportRect, scrollPosition);
+  void rebuild(SheetViewportRect viewportRect, Offset scrollOffset) {
+    List<ViewportRow> rows = _calculateRows(viewportRect, scrollOffset.dy);
+    List<ViewportColumn> columns = _calculateColumns(viewportRect, scrollOffset.dx);
     List<ViewportCell> cells = _calculateCells(rows, columns);
 
-    _data.update(rows, columns, cells);
-    notifyListeners();
+    _contentData.update(rows, columns, cells);
   }
 
-  List<ViewportRow> get rows => _data.rows;
+  List<ViewportRow> get rows => _contentData.rows;
 
-  List<ViewportColumn> get columns => _data.columns;
+  List<ViewportColumn> get columns => _contentData.columns;
 
-  List<ViewportCell> get cells => _data.cells;
+  List<ViewportCell> get cells => _contentData.cells;
 
-  List<ViewportItem> get all => _data.all;
+  List<ViewportItem> get all => _contentData.all;
 
   bool containsCell(CellIndex cellIndex) {
-    return _data.containsCell(cellIndex.toRealIndex(
-      columnCount: _dataManager.columnCount,
-      rowCount: _dataManager.rowCount,
+    return _contentData.containsCell(cellIndex.toRealIndex(
+      columnCount: _data.columnCount,
+      rowCount: _data.rowCount,
     ));
   }
 
   ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
-    return _data.findCellOrClosest(cellIndex.toRealIndex(
-      columnCount: _dataManager.columnCount,
-      rowCount: _dataManager.rowCount,
+    return _contentData.findCellOrClosest(cellIndex.toRealIndex(
+      columnCount: _data.columnCount,
+      rowCount: _data.rowCount,
     ));
   }
 
   ViewportCell? findCell(CellIndex cellIndex) {
-    return _data.findCell(cellIndex.toRealIndex(
-      columnCount: _dataManager.columnCount,
-      rowCount: _dataManager.rowCount,
+    return _contentData.findCell(cellIndex.toRealIndex(
+      columnCount: _data.columnCount,
+      rowCount: _data.rowCount,
     ));
   }
 
-  ViewportItem? findAnyByOffset(Offset mousePosition) => _data.findAnyByOffset(mousePosition);
+  ViewportItem? findAnyByOffset(Offset mousePosition) => _contentData.findAnyByOffset(mousePosition);
 
   ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) {
-    return _data.findClosestCell(cellIndex.toRealIndex(
-      columnCount: _dataManager.columnCount,
-      rowCount: _dataManager.rowCount,
+    return _contentData.findClosestCell(cellIndex.toRealIndex(
+      columnCount: _data.columnCount,
+      rowCount: _data.rowCount,
     ));
   }
 
-  List<ViewportRow> _calculateRows(SheetViewportRect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
-    return VisibleRowsRenderer(properties: _dataManager, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
+  List<ViewportRow> _calculateRows(SheetViewportRect viewportRect, double scrollOffset) {
+    return VisibleRowsRenderer(data: _data, viewportRect: viewportRect, scrollOffset: scrollOffset).build();
   }
 
-  List<ViewportColumn> _calculateColumns(SheetViewportRect viewportRect, DirectionalValues<SheetScrollPosition> scrollPosition) {
-    return VisibleColumnsRenderer(properties: _dataManager, viewportRect: viewportRect, scrollPosition: scrollPosition).build();
+  List<ViewportColumn> _calculateColumns(SheetViewportRect viewportRect, double scrollOffset) {
+    return VisibleColumnsRenderer(data: _data, viewportRect: viewportRect, scrollOffset: scrollOffset).build();
   }
 
   List<ViewportCell> _calculateCells(List<ViewportRow> visibleRows, List<ViewportColumn> visibleColumns) {
-    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build(_dataManager);
+    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build(_data);
   }
 }

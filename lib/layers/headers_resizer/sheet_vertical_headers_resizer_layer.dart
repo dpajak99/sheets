@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -31,13 +33,13 @@ class _SheetVerticalHeadersResizerLayersState extends State<SheetVerticalHeaders
   @override
   void initState() {
     super.initState();
+    widget.sheetController.addListener(_handleSheetControllerChanged);
     _updateVisibleColumns();
-    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleColumns);
   }
 
   @override
   void dispose() {
-    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleColumns);
+    widget.sheetController.removeListener(_handleSheetControllerChanged);
     super.dispose();
   }
 
@@ -50,13 +52,22 @@ class _SheetVerticalHeadersResizerLayersState extends State<SheetVerticalHeaders
           sheetController: widget.sheetController,
           height: widget.sheetController.viewport.height,
           column: column,
-          onResize: (Offset delta) => widget.sheetController.resizeColumn(column.index, delta.dx),
+          // TODO(Dominik): Duplication?
+          onResize: (Offset delta) => widget.sheetController.resolve(ResizeColumnEvent(column.index, delta.dx)),
         );
       }).toList(),
     );
   }
 
+  void _handleSheetControllerChanged() {
+    SheetRebuildProperties properties = widget.sheetController.value;
+    if (properties.rebuildVerticalHeaderResizer) {
+      _updateVisibleColumns();
+    }
+  }
+
   void _updateVisibleColumns() {
+    print('Rebuild Column resizers');
     setState(() => _visibleColumns = widget.sheetController.viewport.visibleContent.columns);
   }
 }
