@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/calculators/closest_visible_cell_index_calculator.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -37,7 +38,10 @@ class SheetViewportContentData {
 
   ViewportItem? findAnyByOffset(Offset mousePosition) {
     try {
-      return all.firstWhere((ViewportItem element) => element.rect.within(mousePosition));
+      return all.firstWhere((ViewportItem element) {
+        Rect itemRect = element.rect.expand(borderWidth / 2);
+        return itemRect.within(mousePosition);
+      });
     } catch (e) {
       return null;
     }

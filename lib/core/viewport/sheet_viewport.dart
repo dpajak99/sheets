@@ -1,42 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
-import 'package:sheets/core/viewport/sheet_viewport_content.dart';
+import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
+import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 class SheetViewport extends ChangeNotifier {
-  SheetViewport(SheetProperties properties, SheetScrollController scrollController)
+  SheetViewport(SheetDataManager dataManager, SheetScrollController scrollController)
       : _scrollController = scrollController,
-        _properties = properties {
+        _dataManager = dataManager,
+        visibleContent = SheetViewportContentManager(dataManager) {
     _scrollPosition = _scrollController.position;
-    _scrollController.applyProperties(properties);
+    _scrollController.applyProperties(dataManager);
 
     viewportRect = SheetViewportRect(Rect.zero);
 
-    visibleContent.applyProperties(_properties);
     visibleContent.addListener(notifyListeners);
 
-    _properties.addListener(() => _updateSheetProperties(_properties));
+    _dataManager.addListener(() => _updateSheetProperties(_dataManager));
     _scrollController.addListener(() => _updateScrollPosition(_scrollController));
   }
 
-  final SheetViewportContent visibleContent = SheetViewportContent();
-
-  final SheetProperties _properties;
-
+  final SheetViewportContentManager visibleContent;
+  final SheetDataManager _dataManager;
   final SheetScrollController _scrollController;
-
   late DirectionalValues<SheetScrollPosition> _scrollPosition;
-
   late SheetViewportRect viewportRect;
 
   @override
   void dispose() {
     visibleContent.removeListener(notifyListeners);
-    _properties.removeListener(() => _updateSheetProperties(_properties));
+    _dataManager.removeListener(() => _updateSheetProperties(_dataManager));
     _scrollController.removeListener(() => _updateScrollPosition(_scrollController));
 
     super.dispose();
@@ -77,27 +74,34 @@ class SheetViewport extends ChangeNotifier {
     _scrollController.setViewportSize(rect.size);
   }
 
-  void ensureIndexFullyVisible(SheetIndex index) {
+  ViewportItem? ensureIndexFullyVisible(SheetIndex index) {
     Offset scrollOffset = _scrollController.offset;
 
-    Rect sheetCoords = index.getSheetCoordinates(_properties);
-    double sheetHeight = viewportRect.innerRectLocal.height;
-    double sheetWidth = viewportRect.innerRectLocal.width;
+    Rect cellSheetCoords = index.getSheetCoordinates(_dataManager);
 
-    double topMargin = sheetCoords.top;
-    double bottomMargin = sheetCoords.bottom;
-    double leftMargin = sheetCoords.left;
-    double rightMargin = sheetCoords.right;
+    double sheetWidth = viewportRect.innerRectLocal.width;
+    double sheetHeight = viewportRect.innerRectLocal.height;
+
+    double topMargin = cellSheetCoords.top;
+    double bottomMargin = cellSheetCoords.bottom;
+    double leftMargin = cellSheetCoords.left;
+    double rightMargin = cellSheetCoords.right;
 
     if (topMargin < scrollOffset.dy) {
-      _scrollController.scrollToVertical(sheetCoords.top - 1);
+      double shift = cellSheetCoords.top;
+      _scrollController.scrollToVertical(shift);
     } else if (bottomMargin > scrollOffset.dy + sheetHeight) {
-      _scrollController.scrollToVertical(sheetCoords.bottom - sheetHeight + 1);
+      double shift = cellSheetCoords.bottom - sheetHeight;
+      _scrollController.scrollToVertical(shift);
     } else if (leftMargin < scrollOffset.dx) {
-      _scrollController.scrollToHorizontal(sheetCoords.left - 1);
+      double shift = cellSheetCoords.left;
+      _scrollController.scrollToHorizontal(shift);
     } else if (rightMargin > scrollOffset.dx + sheetWidth) {
-      _scrollController.scrollToHorizontal(sheetCoords.right - sheetWidth + 1);
+      double shift = cellSheetCoords.right - sheetWidth;
+      _scrollController.scrollToHorizontal(shift);
     }
+
+    return visibleContent.findCell(index.toCellIndex());
   }
 
   void _updateScrollPosition(SheetScrollController scrollController) {
@@ -105,10 +109,8 @@ class SheetViewport extends ChangeNotifier {
     visibleContent.rebuild(viewportRect, _scrollPosition);
   }
 
-  void _updateSheetProperties(SheetProperties sheetProperties) {
+  void _updateSheetProperties(SheetDataManager sheetProperties) {
     _scrollController.applyProperties(sheetProperties);
-
-    visibleContent.applyProperties(sheetProperties);
     visibleContent.rebuild(viewportRect, _scrollPosition);
   }
 }

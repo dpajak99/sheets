@@ -4,8 +4,8 @@ class SelectionOverflowIndexAdapter {
   static SheetIndex adaptToCellIndex(SheetIndex selectedIndex, RowIndex firstVisibleRow, ColumnIndex firstVisibleColumn) {
     return switch (selectedIndex) {
       CellIndex cellIndex => cellIndex,
-      ColumnIndex columnIndex => CellIndex(row: firstVisibleRow, column: columnIndex).move(-1, 0),
-      RowIndex rowIndex => CellIndex(row: rowIndex, column: firstVisibleColumn).move(0, -1),
+      ColumnIndex columnIndex => CellIndex(row: firstVisibleRow, column: columnIndex).move(dx: 0, dy: -1),
+      RowIndex rowIndex => CellIndex(row: rowIndex, column: firstVisibleColumn).move(dx: -1, dy: 0),
     };
   }
 }

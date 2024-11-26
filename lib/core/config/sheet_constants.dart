@@ -17,10 +17,11 @@ double resizerGapSize = 5;
 double resizerWeight = 3;
 double resizerLength = 16;
 
-TextStyle defaultTextStyle = const TextStyle(
-  color: Color(0xff000000),
-  fontSize: 13,
-  height: 1,
+const TextStyle defaultTextStyle = TextStyle(
+  fontFamily: 'Arial',
+  fontSize: 12,
+  color: Colors.black,
+  letterSpacing: 0,
 );
 
 TextStyle defaultHeaderTextStyle = const TextStyle(

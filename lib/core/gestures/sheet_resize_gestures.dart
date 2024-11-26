@@ -1,7 +1,7 @@
 import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
 
 class SheetResizeColumnGesture extends SheetGesture {
   SheetResizeColumnGesture(this.columnIndex, this.width);
@@ -11,8 +11,7 @@ class SheetResizeColumnGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    ColumnStyle columnStyle = controller.properties.getColumnStyle(columnIndex);
-    controller.properties.setColumnStyle(columnIndex, columnStyle.copyWith(width: width));
+    controller.dataManager.write((SheetData data) => data.setColumnWidth(columnIndex, width));
   }
 
   @override
@@ -27,11 +26,9 @@ class SheetResizeRowGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    RowStyle rowStyle = controller.properties.getRowStyle(rowIndex);
-    controller.properties.setRowStyle(
-      rowIndex,
-      rowStyle.copyWith(height: height),
-    );
+    controller.dataManager.write((SheetData data) {
+      data.setRowHeight(rowIndex, height, keepValue: true);
+    });
   }
 
   @override

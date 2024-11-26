@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/sheet.dart';
+import 'package:sheets/widgets/material/toolbar/sheet_toolbar.dart';
 import 'package:sheets/widgets/sections/sheet_footer.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
-import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 import 'package:spreadsheet_table/spreadsheet_table.dart';
 
 void main() {
@@ -108,10 +107,7 @@ class _SpreadsheetTable extends StatelessWidget {
 
 class _SheetPageState extends State<_SheetPage> {
   final SheetController sheetController = SheetController(
-    properties: SheetProperties(
-      customColumnStyles: <ColumnIndex, ColumnStyle>{},
-      customRowStyles: <RowIndex, RowStyle>{},
-    ),
+    dataManager: SheetDataManager.dev(),
   );
 
   @override
@@ -129,7 +125,7 @@ class _SheetPageState extends State<_SheetPage> {
         body: SafeArea(
           child: Column(
             children: <Widget>[
-              const SheetSectionToolbar(),
+              SheetToolbar(sheetController: sheetController),
               SheetSectionDetailsBar(sheetController: sheetController),
               Expanded(
                 child: Sheet(sheetController: sheetController),

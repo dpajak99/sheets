@@ -8,7 +8,7 @@ import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/widgets/mouse_state_listener.dart';
+import 'package:sheets/widgets/widget_state_builder.dart';
 
 class SheetScrollable extends StatefulWidget {
   const SheetScrollable({
@@ -408,10 +408,10 @@ class _ScrollbarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MouseStateListener(
+    return WidgetStateBuilder(
       onTap: onPressed,
-      mouseCursor: SystemMouseCursors.basic,
-      childBuilder: (Set<WidgetState> states) {
+      cursor: SystemMouseCursors.basic,
+      builder: (Set<WidgetState> states) {
         return Container(
           width: size,
           height: size,

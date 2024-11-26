@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/renderers/visible_cells_renderer.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -14,7 +14,7 @@ void main() {
         return ViewportRow(
           index: RowIndex(i),
           style: RowStyle(height: 20),
-          rect: Rect.fromLTWH(0, 30.0 + i * 20.0, 50, 20),
+          rect: BorderRect.fromLTWH(0, 30.0 + i * 20.0, 50, 20),
         );
       });
 
@@ -23,56 +23,56 @@ void main() {
         return ViewportColumn(
           index: ColumnIndex(i),
           style: ColumnStyle(width: 60),
-          rect: Rect.fromLTWH(50.0 + i * 60.0, 0, 60, 30),
+          rect: BorderRect.fromLTWH(50.0 + i * 60.0, 0, 60, 30),
         );
       });
 
-      VisibleCellsRenderer renderer = VisibleCellsRenderer(
-        visibleRows: visibleRows,
-        visibleColumns: visibleColumns,
-      );
+      VisibleCellsRenderer renderer = VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns);
+      SheetDataManager dataManager = SheetDataManager(data: SheetData(columnCount: 3, rowCount: 3));
 
       // Act
-      List<ViewportCell> visibleCells = renderer.build();
+      List<ViewportCell> visibleCells = renderer.build(dataManager);
 
       // Assert
       List<ViewportCell> expectedCells = <ViewportCell>[
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(50, 0, 110, 30)),
-          ViewportRow(index: RowIndex(0), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 30, 50, 50)),
+        // @formatter:off
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(50, 0, 110, 30)),
+          row: ViewportRow(index: RowIndex(0), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 30, 50, 50)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(110, 0, 170, 30)),
-          ViewportRow(index: RowIndex(0), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 30, 50, 50)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(110, 0, 170, 30)),
+          row: ViewportRow(index: RowIndex(0), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 30, 50, 50)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(170, 0, 230, 30)),
-          ViewportRow(index: RowIndex(0), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 30, 50, 50)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(170, 0, 230, 30)),
+          row: ViewportRow(index: RowIndex(0), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 30, 50, 50)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(50, 0, 110, 30)),
-          ViewportRow(index: RowIndex(1), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 50, 50, 70)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(50, 0, 110, 30)),
+          row: ViewportRow(index: RowIndex(1), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 50, 50, 70)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(110, 0, 170, 30)),
-          ViewportRow(index: RowIndex(1), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 50, 50, 70)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(110, 0, 170, 30)),
+          row: ViewportRow(index: RowIndex(1), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 50, 50, 70)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(170, 0, 230, 30)),
-          ViewportRow(index: RowIndex(1), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 50, 50, 70)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(170, 0, 230, 30)),
+          row: ViewportRow(index: RowIndex(1), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 50, 50, 70)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(50, 0, 110, 30)),
-          ViewportRow(index: RowIndex(2), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 70, 50, 90)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(50, 0, 110, 30)),
+          row: ViewportRow(index: RowIndex(2), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 70, 50, 90)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(110, 0, 170, 30)),
-          ViewportRow(index: RowIndex(2), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 70, 50, 90)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(110, 0, 170, 30)),
+          row: ViewportRow(index: RowIndex(2), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 70, 50, 90)),
         ),
-        ViewportCell.fromColumnRow(
-          ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const Rect.fromLTRB(170, 0, 230, 30)),
-          ViewportRow(index: RowIndex(2), style: RowStyle(height: 20), rect: const Rect.fromLTRB(0, 70, 50, 90)),
+        ViewportCell(
+          column: ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(170, 0, 230, 30)),
+          row: ViewportRow(index: RowIndex(2), style: RowStyle(height: 20), rect: const BorderRect.fromLTRB(0, 70, 50, 90)),
         ),
+        // @formatter:on
       ];
 
       expect(visibleCells, expectedCells);
@@ -84,9 +84,10 @@ void main() {
         visibleRows: <ViewportRow>[],
         visibleColumns: <ViewportColumn>[],
       );
+      SheetDataManager dataManager = SheetDataManager(data: SheetData(columnCount: 0, rowCount: 0));
 
       // Act
-      List<ViewportCell> visibleCells = renderer.build();
+      List<ViewportCell> visibleCells = renderer.build(dataManager);
 
       // Assert
       List<ViewportCell> expectedCells = <ViewportCell>[];

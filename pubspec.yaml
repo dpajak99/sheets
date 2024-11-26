@@ -8,18 +8,18 @@ environment:
 
 dependencies:
   async: ^2.11.0
-  equatable: ^2.0.5
+  equatable: ^2.0.7
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^2.0.15
   google_fonts: ^6.2.1
-  rxdart: ^0.28.0
   uuid: ^4.5.1
+  intl: ^0.20.0
   visibility_detector: ^0.4.0+2
+  html: ^0.15.5
 
 dev_dependencies:
-  dartdoc: ^8.1.0
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
 
@@ -43,6 +43,38 @@ flutter:
           weight: 600
         - asset: assets/fonts/GoogleSans/GoogleSans-BoldItalic.ttf
           weight: 600
+          style: italic
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Roboto/Roboto-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/Roboto/Roboto-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Roboto/Roboto-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Roboto/Roboto-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Roboto/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto/Roboto-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Roboto/Roboto-Bold.ttf
+          weight: 600
+        - asset: assets/fonts/Roboto/Roboto-BoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/Roboto/Roboto-Black.ttf
+          weight: 800
+        - asset: assets/fonts/Roboto/Roboto-BlackItalic.ttf
+          weight: 800
           style: italic
 
   assets:

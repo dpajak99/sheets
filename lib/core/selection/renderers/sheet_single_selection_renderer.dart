@@ -17,7 +17,7 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSel
   late final CachedValue<ViewportCell?> _selectedCell;
 
   @override
-  bool get fillHandleVisible => selection.isCompleted;
+  bool get fillHandleVisible => selection.fillHandleVisible && selection.isCompleted;
 
   @override
   Offset? get fillHandleOffset => selectedCell?.rect.bottomRight;

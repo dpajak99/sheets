@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
@@ -9,7 +8,7 @@ import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
-abstract class MouseGestureHandler extends ChangeNotifier with EquatableMixin {
+abstract class MouseGestureHandler extends ChangeNotifier {
   Completer<void>? _completer;
 
   bool get isActive => _completer != null && !_completer!.isCompleted;
@@ -29,9 +28,46 @@ abstract class MouseGestureHandler extends ChangeNotifier with EquatableMixin {
   void reset(SheetController controller);
 
   void resolve(SheetController controller, SheetMouseGesture gesture);
+}
+
+class MouseDoubleClickGestureHandler extends MouseGestureHandler {
+  @override
+  void resolve(SheetController controller, SheetMouseGesture gesture) {
+    return switch (gesture) {
+      SheetDragStartGesture gesture => _doubleTap(controller, gesture),
+      _ => null,
+    };
+  }
 
   @override
-  List<Object?> get props => <Object>[isActive];
+  void reset(SheetController controller) {
+    setActive(false);
+  }
+
+  void _doubleTap(SheetController controller, SheetDragStartGesture gesture) {
+    if (gesture.startDetails.hoveredItem is! ViewportCell) {
+      return;
+    }
+    ViewportCell cell = gesture.startDetails.hoveredItem! as ViewportCell;
+
+    setActive(true);
+    controller.setActiveViewportCell(cell);
+    setActive(false);
+  }
+}
+
+class TextfieldHoverGestureHandler extends DraggableGestureHandler {
+  @override
+  SystemMouseCursor get hoverCursor => SystemMouseCursors.text;
+
+  @override
+  void resolve(SheetController controller, SheetMouseGesture gesture) {}
+
+  @override
+  void reset(SheetController controller) {
+    setActive(false);
+    resetCursor(controller);
+  }
 }
 
 abstract class DraggableGestureHandler extends MouseGestureHandler {
@@ -62,9 +98,6 @@ abstract class DraggableGestureHandler extends MouseGestureHandler {
       controller.mouse.resetCursor();
     }
   }
-
-  @override
-  List<Object?> get props => <Object>[hoverCursor, isHovered, isActive];
 }
 
 class MouseSelectionGestureHandler extends MouseGestureHandler {

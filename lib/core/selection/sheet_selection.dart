@@ -52,6 +52,8 @@ abstract interface class SheetSelection {
 
   List<SheetSelection> subtract(SheetSelection subtractedSelection);
 
+  List<CellIndex> getSelectedCells(int maxColumns, int maxRows);
+
   SheetSelectionRenderer<SheetSelection> createRenderer(SheetViewport viewport);
 
   String stringifySelection();
@@ -140,6 +142,31 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
     ColumnIndex rightColumn = start.column < end.column ? end.column : start.column;
 
     return index.value >= leftColumn.value && index.value <= rightColumn.value;
+  }
+
+  @override
+  List<CellIndex> getSelectedCells(int maxColumns, int maxRows) {
+    SelectionCellCorners? corners = cellCorners;
+
+    if (corners == null) {
+      return <CellIndex>[];
+    }
+
+    int rowStart = corners.topLeft.row.value;
+    int rowEnd = end.row == RowIndex.max ? maxRows : corners.bottomLeft.row.value;
+
+    int columnStart = corners.topLeft.column.value;
+    int columnEnd = end.column == ColumnIndex.max ? maxColumns : corners.topRight.column.value;
+
+    List<CellIndex> cells = <CellIndex>[];
+
+    for (int row = rowStart; row <= rowEnd; row++) {
+      for (int column = columnStart; column <= columnEnd; column++) {
+        cells.add(CellIndex(row: RowIndex(row), column: ColumnIndex(column)));
+      }
+    }
+
+    return cells;
   }
 
   @override

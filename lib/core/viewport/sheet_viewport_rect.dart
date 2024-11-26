@@ -1,9 +1,8 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/viewport/viewport_offset_transformer.dart';
 
-class SheetViewportRect with EquatableMixin {
+class SheetViewportRect {
   SheetViewportRect(this.global) {
     _updateLocalRect();
   }
@@ -38,7 +37,4 @@ class SheetViewportRect with EquatableMixin {
   void _updateLocalRect() {
     local = Rect.fromLTWH(0, 0, global.width, global.height);
   }
-
-  @override
-  List<Object?> get props => <Object?>[global];
 }

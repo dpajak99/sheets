@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/directional_values.dart';
@@ -16,7 +16,7 @@ class VisibleColumnsRenderer {
   });
 
   final SheetViewportRect viewportRect;
-  final SheetProperties properties;
+  final SheetDataManager properties;
   final DirectionalValues<SheetScrollPosition> scrollPosition;
 
   List<ViewportColumn> build() {
@@ -36,10 +36,10 @@ class VisibleColumnsRenderer {
       ViewportColumn viewportColumn = ViewportColumn(
         index: columnIndex,
         style: columnStyle,
-        rect: Rect.fromLTWH(currentContentWidth + rowHeadersWidth, 0, columnStyle.width, columnHeadersHeight),
+        rect: BorderRect.fromLTWH(currentContentWidth + rowHeadersWidth, 0, columnStyle.width, columnHeadersHeight),
       );
       visibleColumns.add(viewportColumn);
-      currentContentWidth += viewportColumn.style.width;
+      currentContentWidth += viewportColumn.style.width + borderWidth;
 
       index++;
     }
@@ -56,7 +56,7 @@ class VisibleColumnsRenderer {
     while (firstVisibleColumnInfo == null) {
       ColumnIndex columnIndex = ColumnIndex(actualColumnIndex);
       ColumnStyle columnStyle = properties.getColumnStyle(columnIndex);
-      double columnWidthEnd = currentWidthStart + columnStyle.width;
+      double columnWidthEnd = currentWidthStart + columnStyle.width + borderWidth;
 
       if (x >= currentWidthStart && x < columnWidthEnd) {
         firstVisibleColumnInfo = _FirstVisibleColumnInfo(

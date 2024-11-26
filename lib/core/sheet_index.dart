@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/utils/extensions/int_extensions.dart';
 import 'package:sheets/utils/numeric_index_mixin.dart';
 
@@ -31,9 +31,7 @@ sealed class SheetIndex with EquatableMixin {
     }
   }
 
-  SheetIndex toRealIndex(SheetProperties properties);
-
-  Rect getSheetCoordinates(SheetProperties properties);
+  Rect getSheetCoordinates(SheetDataManager properties);
 
   CellIndex toCellIndex() {
     return switch (this) {
@@ -78,38 +76,24 @@ class CellIndex extends SheetIndex {
   final RowIndex row;
   final ColumnIndex column;
 
-  @override
-  CellIndex toRealIndex(SheetProperties properties) {
-    ColumnIndex realColumnIndex = column.toRealIndex(properties);
-    RowIndex realRowIndex = row.toRealIndex(properties);
+  CellIndex toRealIndex({required int columnCount, required int rowCount}) {
+    ColumnIndex realColumnIndex = column.toRealIndex(columnCount: columnCount);
+    RowIndex realRowIndex = row.toRealIndex(rowCount: rowCount);
 
     return CellIndex(row: realRowIndex, column: realColumnIndex);
   }
 
   @override
-  Rect getSheetCoordinates(SheetProperties properties) {
-    double x = 0;
-    for (int i = 0; i < column.value; i++) {
-      double columnWidth = properties.getColumnWidth(ColumnIndex(i));
-      x += columnWidth;
-    }
+  Rect getSheetCoordinates(SheetDataManager properties) {
+    Rect xRect = column.getSheetCoordinates(properties);
+    Rect yRect = row.getSheetCoordinates(properties);
 
-    double width = properties.getColumnWidth(column);
-
-    double y = 0;
-    for (int i = 0; i < row.value; i++) {
-      double rowHeight = properties.getRowHeight(RowIndex(i));
-      y += rowHeight;
-    }
-
-    double height = properties.getRowHeight(row);
-
-    return Rect.fromLTWH(x, y, width, height);
+    return Rect.fromLTWH(xRect.left, yRect.top, xRect.width, yRect.height);
   }
 
-  CellIndex move(int rowOffset, int columnOffset) {
-    int movedRow = row.value + rowOffset;
-    int movedColumn = column.value + columnOffset;
+  CellIndex move({required int dx, required int dy}) {
+    int movedRow = row.value + dy;
+    int movedColumn = column.value + dx;
 
     return CellIndex(
       row: RowIndex(movedRow < 0 ? 0 : movedRow),
@@ -148,26 +132,29 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
 
   static ColumnIndex max = ColumnIndex(Int.max);
 
-  @override
-  ColumnIndex toRealIndex(SheetProperties properties) {
+  ColumnIndex toRealIndex({required int columnCount}) {
     if (this == max) {
-      return ColumnIndex(properties.columnCount - 1);
+      return ColumnIndex(columnCount - 1);
     } else {
       return this;
     }
   }
 
   @override
-  Rect getSheetCoordinates(SheetProperties properties) {
+  Rect getSheetCoordinates(SheetDataManager properties) {
     double x = 0;
     for (int i = 0; i < value; i++) {
       double columnWidth = properties.getColumnWidth(ColumnIndex(i));
-      x += columnWidth;
+      x += columnWidth + borderWidth;
     }
 
     double width = properties.getColumnWidth(this);
 
-    return Rect.fromLTWH(x, 0, width, columnHeadersHeight);
+    return Rect.fromLTWH(x, 0, width + borderWidth, defaultRowHeight + borderWidth);
+  }
+
+  ColumnIndex operator +(int number) {
+    return ColumnIndex(value + number);
   }
 
   ColumnIndex operator -(int number) {
@@ -225,10 +212,9 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
 
   static RowIndex max = RowIndex(Int.max);
 
-  @override
-  RowIndex toRealIndex(SheetProperties properties) {
+  RowIndex toRealIndex({required int rowCount}) {
     if (this == max) {
-      return RowIndex(properties.rowCount - 1);
+      return RowIndex(rowCount - 1);
     } else {
       return this;
     }
@@ -238,16 +224,15 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
   int get value => _value;
 
   @override
-  Rect getSheetCoordinates(SheetProperties properties) {
+  Rect getSheetCoordinates(SheetDataManager properties) {
     double y = 0;
     for (int i = 0; i < value; i++) {
       double rowHeight = properties.getRowHeight(RowIndex(i));
-      y += rowHeight;
+      y += rowHeight + borderWidth;
     }
 
     double height = properties.getRowHeight(this);
-
-    return Rect.fromLTWH(0, y, rowHeadersWidth, height);
+    return Rect.fromLTWH(0, y, defaultColumnWidth + borderWidth, height + borderWidth);
   }
 
   RowIndex move(int number) {
@@ -265,6 +250,10 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
 
   RowIndex operator +(int number) {
     return RowIndex(value + number);
+  }
+
+  RowIndex operator -(int number) {
+    return RowIndex(value - number);
   }
 
   @override

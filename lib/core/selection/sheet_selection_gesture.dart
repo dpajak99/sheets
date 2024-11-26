@@ -1,5 +1,5 @@
+import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
-import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
@@ -20,11 +20,13 @@ class SheetSelectionStartGesture extends SheetGesture {
 
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
-    if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
+    HardwareKeyboard keyboard = HardwareKeyboard.instance;
+
+    if (keyboard.isControlPressed && keyboard.isShiftPressed) {
       selectionBuilder.setStrategy(GestureSelectionStrategyModify());
-    } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
+    } else if (keyboard.isControlPressed) {
       selectionBuilder.setStrategy(GestureSelectionStrategyAppend());
-    } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
+    } else if (keyboard.isShiftPressed) {
       selectionBuilder.setStrategy(GestureSelectionStrategyRange());
     } else {
       selectionBuilder.setStrategy(GestureSelectionStrategySingle());
@@ -57,11 +59,12 @@ class SheetSelectionUpdateGesture extends SheetGesture {
     SheetSelection previousSelection = controller.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
-    if (controller.keyboard.equals(KeyboardShortcuts.modifyAppendSelection)) {
+    HardwareKeyboard keyboard = HardwareKeyboard.instance;
+    if (keyboard.isControlPressed && keyboard.isShiftPressed) {
       selectionBuilder.setStrategy(GestureSelectionStrategyModify());
-    } else if (controller.keyboard.equals(KeyboardShortcuts.appendSelection)) {
+    } else if (keyboard.isControlPressed) {
       selectionBuilder.setStrategy(GestureSelectionStrategyModify());
-    } else if (controller.keyboard.equals(KeyboardShortcuts.modifySelection)) {
+    } else if (keyboard.isShiftPressed) {
       selectionBuilder.setStrategy(GestureSelectionStrategyModify());
     } else {
       selectionBuilder.setStrategy(GestureSelectionStrategyRange());
@@ -102,7 +105,8 @@ class SheetSelectionMoveGesture extends SheetGesture {
 
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
-    if (controller.keyboard.state.containsState(KeyboardShortcuts.modifySelection)) {
+    HardwareKeyboard keyboard = HardwareKeyboard.instance;
+    if (keyboard.isShiftPressed) {
       selectedIndex = previousSelection.end.cell;
       selectionBuilder.setStrategy(GestureSelectionStrategyRange());
     } else {
@@ -110,8 +114,11 @@ class SheetSelectionMoveGesture extends SheetGesture {
       selectionBuilder.setStrategy(GestureSelectionStrategySingle());
     }
 
-    CellIndex maxIndex = CellIndex.max.toRealIndex(controller.properties);
-    selectedIndex = selectedIndex.move(dx, dy).clamp(maxIndex);
+    CellIndex maxIndex = CellIndex.max.toRealIndex(
+      columnCount: controller.dataManager.columnCount,
+      rowCount: controller.dataManager.rowCount,
+    );
+    selectedIndex = selectedIndex.move(dx: dx, dy: dy).clamp(maxIndex);
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
     controller.selection.update(updatedSelection);

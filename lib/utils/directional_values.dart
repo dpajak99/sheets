@@ -1,7 +1,6 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableMixin {
+class DirectionalValues<A extends Object> extends ChangeNotifier {
   DirectionalValues(this._vertical, this._horizontal) {
     if (_vertical is Listenable) {
       (_vertical as Listenable).addListener(notifyListeners);
@@ -53,7 +52,4 @@ class DirectionalValues<A extends Object> extends ChangeNotifier with EquatableM
     _vertical = vertical;
     notifyListeners();
   }
-
-  @override
-  List<Object?> get props => <Object?>[_vertical, _horizontal];
 }

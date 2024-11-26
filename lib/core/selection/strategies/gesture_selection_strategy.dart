@@ -75,17 +75,17 @@ class GestureSelectionStrategyFill implements GestureSelectionStrategy {
 
     switch (direction) {
       case Direction.top:
-        start = corners.topLeft.move(-1, 0);
+        start = corners.topLeft.move(dx: 0, dy: -1);
         end = CellIndex(row: selectedIndex.row, column: corners.topRight.column);
       case Direction.bottom:
         start = CellIndex(row: selectedIndex.row, column: corners.bottomLeft.column);
-        end = corners.bottomRight.move(1, 0);
+        end = corners.bottomRight.move(dx: 0, dy: 1);
       case Direction.left:
-        start = corners.topLeft.move(0, -1);
+        start = corners.topLeft.move(dx: -1, dy: 0);
         end = CellIndex(row: corners.bottomLeft.row, column: selectedIndex.column);
       case Direction.right:
         start = CellIndex(row: corners.topRight.row, column: selectedIndex.column);
-        end = corners.bottomRight.move(0, 1);
+        end = corners.bottomRight.move(dx: 1, dy: 0);
     }
 
     return SheetSelectionFactory.fill(

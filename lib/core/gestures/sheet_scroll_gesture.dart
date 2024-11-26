@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/gestures/sheet_gesture.dart';
-import 'package:sheets/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/utils/extensions/offset_extensions.dart';
 
@@ -11,7 +10,9 @@ class SheetScrollGesture extends SheetGesture {
 
   @override
   void resolve(SheetController controller) {
-    if (controller.keyboard.equals(KeyboardShortcuts.reverseScroll)) {
+    HardwareKeyboard keyboard = HardwareKeyboard.instance;
+
+    if (keyboard.isShiftPressed) {
       controller.scroll.scrollBy(delta.reverse());
     } else {
       controller.scroll.scrollBy(delta);

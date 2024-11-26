@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
+import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/direction.dart';
+import 'package:sheets/utils/edge_visibility.dart';
 
-class SelectionRect extends Rect {
+class SelectionRect extends BorderRect {
   factory SelectionRect(
     Rect startRect,
     Rect endRect,
@@ -35,4 +37,11 @@ class SelectionRect extends Rect {
   bool get isRightBorderVisible => !_hiddenBorders.contains(Direction.right);
 
   bool get isBottomBorderVisible => !_hiddenBorders.contains(Direction.bottom);
+
+  EdgeVisibility get edgeVisibility => EdgeVisibility(
+        top: isTopBorderVisible,
+        right: isRightBorderVisible,
+        bottom: isBottomBorderVisible,
+        left: isLeftBorderVisible,
+      );
 }

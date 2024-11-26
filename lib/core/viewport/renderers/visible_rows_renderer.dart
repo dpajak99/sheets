@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/directional_values.dart';
@@ -17,7 +17,7 @@ class VisibleRowsRenderer {
 
   final SheetViewportRect viewportRect;
 
-  final SheetProperties properties;
+  final SheetDataManager properties;
 
   final DirectionalValues<SheetScrollPosition> scrollPosition;
 
@@ -38,10 +38,10 @@ class VisibleRowsRenderer {
       ViewportRow viewportRow = ViewportRow(
         index: rowIndex,
         style: rowStyle,
-        rect: Rect.fromLTWH(0, currentContentHeight + columnHeadersHeight, rowHeadersWidth, rowStyle.height),
+        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight, rowHeadersWidth, rowStyle.height),
       );
       visibleRows.add(viewportRow);
-      currentContentHeight += viewportRow.style.height;
+      currentContentHeight += viewportRow.style.height + borderWidth;
 
       index++;
     }
@@ -58,7 +58,7 @@ class VisibleRowsRenderer {
     while (firstVisibleRowInfo == null) {
       RowIndex rowIndex = RowIndex(actualRowIndex);
       RowStyle rowStyle = properties.getRowStyle(rowIndex);
-      double rowHeightEnd = currentHeightStart + rowStyle.height;
+      double rowHeightEnd = currentHeightStart + rowStyle.height + borderWidth;
 
       if (y >= currentHeightStart && y < rowHeightEnd) {
         firstVisibleRowInfo = _FirstVisibleRowInfo(

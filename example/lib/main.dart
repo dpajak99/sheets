@@ -1,14 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/sheet.dart';
+import 'package:sheets/widgets/material/toolbar/sheet_toolbar.dart';
 import 'package:sheets/widgets/sections/sheet_footer.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
-import 'package:sheets/widgets/sections/sheet_section_toolbar.dart';
 
-void main() {
+void main() async {
+  Intl.defaultLocale = 'pl_PL';
+  await initializeDateFormatting('pl_PL');
+
   runApp(const MaterialSheetExample());
 }
 
@@ -21,10 +27,7 @@ class MaterialSheetExample extends StatefulWidget {
 
 class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   final SheetController sheetController = SheetController(
-    properties: SheetProperties(
-      customColumnStyles: <ColumnIndex, ColumnStyle>{},
-      customRowStyles: <RowIndex, RowStyle>{},
-    ),
+    dataManager: SheetDataManager.dev(),
   );
 
   @override
@@ -37,12 +40,13 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sheets example',
+      locale: const Locale('pl_PL'),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
           child: Column(
             children: <Widget>[
-              const SheetSectionToolbar(),
+              SheetToolbar(sheetController: sheetController),
               SheetSectionDetailsBar(sheetController: sheetController),
               Expanded(
                 child: Sheet(sheetController: sheetController),

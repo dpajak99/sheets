@@ -27,7 +27,7 @@ class SheetFooterTab extends StatelessWidget {
     Color foregroundColor = Color(selected ? 0xff0B57D0 : 444746);
 
     return Container(
-      width: 91,
+      width: 95,
       height: double.infinity,
       decoration: BoxDecoration(color: backgroundColor),
       padding: const EdgeInsets.only(left: 10, right: 5),

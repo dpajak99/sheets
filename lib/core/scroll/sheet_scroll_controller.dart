@@ -4,7 +4,8 @@ import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/core/sheet_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/directional_values.dart';
 
 class SheetScrollController extends ChangeNotifier {
@@ -43,16 +44,16 @@ class SheetScrollController extends ChangeNotifier {
     super.notifyListeners();
   }
 
-  void applyProperties(SheetProperties properties) {
+  void applyProperties(SheetDataManager properties) {
     double contentHeight = 0;
     for (int i = 0; i < properties.rowCount; i++) {
-      double rowHeight = properties.customRowExtents[i] ?? defaultRowHeight;
+      double rowHeight = properties.getRowHeight(RowIndex(i));
       contentHeight += rowHeight;
     }
 
     double contentWidth = 0;
     for (int i = 0; i < properties.columnCount; i++) {
-      double columnWidth = properties.customColumnExtents[i] ?? defaultColumnWidth;
+      double columnWidth = properties.getColumnWidth(ColumnIndex(i));
       contentWidth += columnWidth;
     }
 

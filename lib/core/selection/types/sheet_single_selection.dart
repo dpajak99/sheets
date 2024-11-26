@@ -9,6 +9,7 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 class SheetSingleSelection extends SheetSelectionBase {
   SheetSingleSelection(
     this._selectedIndex, {
+    this.fillHandleVisible = true,
     super.completed = false,
   }) : super(startIndex: _selectedIndex, endIndex: _selectedIndex);
 
@@ -17,15 +18,18 @@ class SheetSingleSelection extends SheetSelectionBase {
   }
 
   final CellIndex _selectedIndex;
+  final bool fillHandleVisible;
 
   @override
   SheetSingleSelection copyWith({
     CellIndex? selectedIndex,
     bool? completed,
+    bool? fillHandleVisible,
   }) {
     return SheetSingleSelection(
       selectedIndex ?? _selectedIndex,
       completed: completed ?? isCompleted,
+      fillHandleVisible: fillHandleVisible ?? this.fillHandleVisible,
     );
   }
 
@@ -69,7 +73,7 @@ class SheetSingleSelection extends SheetSelectionBase {
 
   @override
   SheetSelection complete() {
-    return SheetSingleSelection(_selectedIndex, completed: true);
+    return copyWith(selectedIndex: _selectedIndex, completed: true);
   }
 
   @override
