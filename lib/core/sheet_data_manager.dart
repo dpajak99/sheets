@@ -42,6 +42,20 @@ class SheetData {
     return _customColumnStyles[columnIndex] ?? ColumnStyle.defaults();
   }
 
+  void mergeCells(List<CellIndex> cells) {
+    if (cells.length < 2) {
+      return;
+    }
+
+    CellIndex start = cells.first;
+    CellIndex end = cells.last;
+
+    for (CellIndex cellIndex in cells) {
+      _data[cellIndex] ??= CellProperties();
+      _data[cellIndex] = _data[cellIndex]!.copyWith(mergeStatus: MergedCell(start: start, end: end));
+    }
+  }
+
   void formatSelection(List<CellIndex> cells, StyleFormatAction<StyleFormatIntent> formatAction) {
     for (CellIndex cellIndex in cells) {
       _data[cellIndex] ??= CellProperties();
@@ -194,7 +208,30 @@ class SheetDataManager extends ChangeNotifier {
 
   SheetDataManager.dev() {
     _data = SheetData(columnCount: 200, rowCount: 100, data: <CellIndex, CellProperties>{
-      CellIndex.raw(5, 5): CellProperties(value: SheetRichText.single(text: '1'), style: CellStyle()),
+      // CellIndex.raw(5, 5): CellProperties(
+      //   value: SheetRichText.single(text: '1'),
+      //   style: CellStyle(),
+      //   mergeStatus: MergedCell(
+      //     start: CellIndex.raw(5, 5),
+      //     end: CellIndex.raw(5, 7),
+      //   ),
+      // ),
+      // CellIndex.raw(5, 6): CellProperties(
+      //   value: SheetRichText.single(text: '2'),
+      //   style: CellStyle(),
+      //   mergeStatus: MergedCell(
+      //     start: CellIndex.raw(5, 5),
+      //     end: CellIndex.raw(5, 7),
+      //   ),
+      // ),
+      // CellIndex.raw(5, 7): CellProperties(
+      //   value: SheetRichText.single(text: '3'),
+      //   style: CellStyle(),
+      //   mergeStatus: MergedCell(
+      //     start: CellIndex.raw(5, 5),
+      //     end: CellIndex.raw(5, 7),
+      //   ),
+      // ),
     });
   }
 

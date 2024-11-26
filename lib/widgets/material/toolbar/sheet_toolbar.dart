@@ -230,7 +230,12 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                     ));
                                   },
                                 ),
-                                ToolbarIconButton.withDropdown(icon: SheetIcons.cell_merge, onTap: () {}),
+                                ToolbarIconButton.withDropdown(
+                                  icon: SheetIcons.cell_merge,
+                                  onTap: () {
+                                    widget.sheetController.mergeSelection();
+                                  },
+                                ),
                                 const ToolbarDivider(),
                               ],
                             ),

@@ -8,28 +8,34 @@ class SharedPaints {
     required BorderRect rect,
     required Border border,
     required EdgeVisibility edgeVisibility,
+    BorderSide? defaultBorderSide,
   }) {
+    BorderSide topBorderSide = _buildBorderSide(border.top, defaultBorderSide);
+    BorderSide rightBorderSide = _buildBorderSide(border.right, defaultBorderSide);
+    BorderSide bottomBorderSide = _buildBorderSide(border.bottom, defaultBorderSide);
+    BorderSide leftBorderSide = _buildBorderSide(border.left, defaultBorderSide);
+
     Paint topBorderPaint = Paint()
-      ..color = border.top.color
-      ..strokeWidth = border.top.width
+      ..color = topBorderSide.color
+      ..strokeWidth = topBorderSide.width
       ..isAntiAlias = false
       ..style = PaintingStyle.stroke;
 
     Paint rightBorderPaint = Paint()
-      ..color = border.right.color
-      ..strokeWidth = border.right.width
+      ..color = rightBorderSide.color
+      ..strokeWidth = rightBorderSide.width
       ..isAntiAlias = false
       ..style = PaintingStyle.stroke;
 
     Paint bottomBorderPaint = Paint()
-      ..color = border.bottom.color
-      ..strokeWidth = border.bottom.width
+      ..color = bottomBorderSide.color
+      ..strokeWidth = bottomBorderSide.width
       ..isAntiAlias = false
       ..style = PaintingStyle.stroke;
 
     Paint leftBorderPaint = Paint()
-      ..color = border.left.color
-      ..strokeWidth = border.left.width
+      ..color = leftBorderSide.color
+      ..strokeWidth = leftBorderSide.width
       ..isAntiAlias = false
       ..style = PaintingStyle.stroke;
 
@@ -38,20 +44,28 @@ class SharedPaints {
     Line bottomBorderLine = rect.getBottomBorder(border);
     Line leftBorderLine = rect.getLeftBorder(border);
 
-    if (border.top.width > 0 && border.top != BorderSide.none && edgeVisibility.top) {
+    if (topBorderSide.width > 0 && topBorderSide != BorderSide.none && edgeVisibility.top) {
       canvas.drawLine(topBorderLine.start, topBorderLine.end, topBorderPaint);
     }
 
-    if (border.right.width > 0 && border.right != BorderSide.none && edgeVisibility.right) {
+    if (rightBorderSide.width > 0 && rightBorderSide != BorderSide.none && edgeVisibility.right) {
       canvas.drawLine(rightBorderLine.start, rightBorderLine.end, rightBorderPaint);
     }
 
-    if (border.bottom.width > 0 && border.bottom != BorderSide.none) {
+    if (bottomBorderSide.width > 0 && bottomBorderSide != BorderSide.none) {
       canvas.drawLine(bottomBorderLine.start, bottomBorderLine.end, bottomBorderPaint);
     }
 
-    if (border.left.width > 0 && border.left != BorderSide.none) {
+    if (leftBorderSide.width > 0 && leftBorderSide != BorderSide.none) {
       canvas.drawLine(leftBorderLine.start, leftBorderLine.end, leftBorderPaint);
+    }
+  }
+
+  static BorderSide _buildBorderSide(BorderSide borderSide, BorderSide? defaultBorderSide) {
+    if(borderSide == BorderSide.none) {
+      return defaultBorderSide ?? BorderSide.none;
+    }  else {
+      return borderSide;
     }
   }
 }

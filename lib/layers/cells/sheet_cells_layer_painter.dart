@@ -53,22 +53,14 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    List<ViewportCell> borderedCells = <ViewportCell>[];
-
     for (ViewportCell cell in visibleCells) {
       _paintCellBackground(canvas, cell);
       _paintCellText(canvas, cell);
-
-      if (cell.properties.style.border != null) {
-        borderedCells.add(cell);
-      }
-    }
-
-    _paintMesh(canvas, size);
-
-    for (ViewportCell cell in borderedCells) {
       _paintCellBorder(canvas, cell);
     }
+
+    // _paintMesh(canvas, size);
+
   }
 
   @override
@@ -124,6 +116,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   }
 
   void _paintCellBorder(Canvas canvas, ViewportCell cell) {
+    BorderSide defaultBorderSide = BorderSide(width: borderWidth, color: const Color(0xffe1e1e1));
     Border border = Border(
       top: cell.properties.style.border?.top ?? BorderSide.none,
       right: cell.properties.style.border?.right ?? BorderSide.none,
@@ -135,6 +128,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       canvas: canvas,
       rect: cell.rect,
       border: border,
+      defaultBorderSide: defaultBorderSide,
       edgeVisibility: EdgeVisibility.allVisible(),
     );
   }

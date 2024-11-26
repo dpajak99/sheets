@@ -13,6 +13,7 @@ import 'package:sheets/core/selection/selection_state.dart';
 import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/selection/sheet_selection_gesture.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -143,6 +144,16 @@ class SheetController {
       data.setText(index, value);
       data.adjustCellHeight(index);
     });
+  }
+
+  void mergeSelection() {
+    if(selection.value is SheetRangeSelection) {
+      List<CellIndex> selectedCells = selection.value.getSelectedCells(dataManager.columnCount, dataManager.rowCount);
+      selection.update(SheetSingleSelection(selection.value.mainCell));
+      dataManager.write((SheetData data) {
+        data.mergeCells(selectedCells);
+      });
+    }
   }
 
   void enableEditing([String? initialValue]) {

@@ -21,9 +21,12 @@ class SheetSingleSelectionPaint extends SheetSelectionPaint {
       return;
     }
 
+    print('SheetSingleSelectionPaint');
     if (mainCellVisible) {
+      print('paintMainCell');
       paintMainCell(canvas, selectedCell.rect);
     } else {
+      print('paintSelectionBorder');
       paintSelectionBorder(canvas, selectedCell.rect, EdgeVisibility.allVisible());
     }
 
