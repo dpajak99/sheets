@@ -219,7 +219,20 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
       columnCount: controller.data.columnCount,
       rowCount: controller.data.rowCount,
     );
-    selectedIndex = selectedIndex.move(dx: event.dx, dy: event.dy).clamp(maxIndex);
+
+    int dx = event.dx;
+    int dy = event.dy;
+    CellProperties cellProperties = controller.data.getCellProperties(selectedIndex);
+    if (cellProperties.mergeStatus is MergedCell) {
+      int symbolX = dx > 0 ? 1 : dx < 0 ? -1 : 0;
+      int symbolY = dy > 0 ? 1 : dy < 0 ? -1 : 0;
+
+      MergedCell mergeStatus = cellProperties.mergeStatus as MergedCell;
+      dx += (mergeStatus.end.column.value - mergeStatus.start.column.value) * symbolX;
+      dy += (mergeStatus.end.row.value - mergeStatus.start.row.value) * symbolY;
+    }
+
+    selectedIndex = selectedIndex.move(dx: dx, dy: dy).clamp(maxIndex);
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 

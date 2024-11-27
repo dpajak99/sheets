@@ -122,8 +122,12 @@ class SheetData {
 
   void setCellsProperties(List<IndexedCellProperties> properties) {
     for (IndexedCellProperties entry in properties) {
-      _data[entry.index] = entry.properties;
+      setCellProperties(entry.index, entry.properties);
     }
+  }
+
+  void setCellProperties(CellIndex index, CellProperties properties) {
+      _data[index] = properties;
   }
 
   Size getCellSize(CellIndex cellIndex) {

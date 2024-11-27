@@ -8,6 +8,8 @@ enum Direction {
 
   bool get isHorizontal => this == Direction.left || this == Direction.right;
 
+  bool get isReversed => this == Direction.top || this == Direction.left;
+
   /// Returns the opposite direction.
   Direction get opposite {
     switch (this) {

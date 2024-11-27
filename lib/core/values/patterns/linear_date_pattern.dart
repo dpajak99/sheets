@@ -1,7 +1,9 @@
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/utils/direction.dart';
 
 class LinearDatePatternMatcher implements ValuePatternMatcher {
   @override
@@ -52,40 +54,24 @@ class LinearDatePatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class DateSequencePattern extends ValuePattern {
+class DateSequencePattern extends ValuePattern<DateTime, Duration> {
   DateSequencePattern({
-    required this.steps,
-    required this.lastDate,
-  });
-
-  final List<Duration> steps;
-  final DateTime lastDate;
+    required super.steps,
+    required DateTime lastDate,
+  }) : super(lastValue: lastDate);
 
   @override
-  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
-    DateTime lastDate = this.lastDate;
-
-    for (int i = 0; i < fillCells.length; i++) {
-      IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
-      IndexedCellProperties fillProperties = fillCells[i];
-
-      Duration step = steps[i % steps.length];
-      DateTime newDateTimeValue = lastDate.add(step);
-      lastDate = newDateTimeValue;
-
-      SheetRichText previousRichText = templateProperties.properties.value;
-      SheetRichText updatedRichText = previousRichText.withText(newDateTimeValue.toString());
-
-      fillCells[i] = fillProperties.copyWith(
-        properties: fillProperties.properties.copyWith(
-          value: updatedRichText,
-          style: templateProperties.properties.style,
-        ),
-      );
-    }
-    return fillCells;
+  DateTime calculateNewValue(int index, CellProperties templateProperties, DateTime lastValue, Duration? step) {
+    return lastValue.add(step!);
   }
 
   @override
-  List<Object?> get props => <Object?>[steps, lastDate];
+  SheetRichText formatValue(SheetRichText previousRichText, DateTime value) {
+    return previousRichText.withText(value.toString());
+  }
+
+  @override
+  void updateState(DateTime newValue) {
+    lastValue = newValue;
+  }
 }

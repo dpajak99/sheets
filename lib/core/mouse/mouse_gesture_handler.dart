@@ -173,7 +173,7 @@ class MouseFillGestureHandler extends DraggableGestureHandler {
       return;
     }
 
-    controller.resolve(StartFillSelectionEvent());
+    controller.resolve(StartFillSelectionEvent(selectionStart));
     controller.mouse.setCursor(SystemMouseCursors.precise);
   }
 

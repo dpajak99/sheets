@@ -65,12 +65,26 @@ class CellProperties with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => <Object?>[style, value];
+  List<Object?> get props => <Object?>[style, mergeStatus, value];
 }
 
-abstract class CellMergeStatus with EquatableMixin {}
+abstract class CellMergeStatus with EquatableMixin {
+  CellMergeStatus move({required int dx, required int dy});
+
+  int get width => 0;
+
+  int get height => 0;
+
+  bool contains(CellIndex index) {
+    return false;
+  }
+}
 
 class NoCellMerge extends CellMergeStatus {
+  @override
+  CellMergeStatus move({required int dx, required int dy}) {
+    return this;
+  }
   @override
   List<Object?> get props => <Object>[];
 }
@@ -84,8 +98,37 @@ class MergedCell extends CellMergeStatus {
   final CellIndex start;
   final CellIndex end;
 
+  @override
+  int get width => end.column.value - start.column.value;
+
+  @override
+  int get height => end.row.value - start.row.value;
+
   bool isMainCell(CellIndex index) {
     return index == start;
+  }
+
+  @override
+  bool contains(CellIndex index) {
+    return index.row.value >= start.row.value && index.row.value <= end.row.value && index.column.value >= start.column.value && index.column.value <= end.column.value;
+  }
+
+  List<CellIndex> get mergedCells {
+    List<CellIndex> mergedCells = <CellIndex>[];
+    for (int i = start.row.value; i <= end.row.value; i++) {
+      for (int j = start.column.value; j <= end.column.value; j++) {
+        mergedCells.add(CellIndex(row: RowIndex(i), column: ColumnIndex(j)));
+      }
+    }
+    return mergedCells;
+  }
+
+  @override
+  CellMergeStatus move({required int dx, required int dy}) {
+    return MergedCell(
+      start: start.move(dx: dx, dy: dy),
+      end: end.move(dx: dx, dy: dy),
+    );
   }
 
   @override

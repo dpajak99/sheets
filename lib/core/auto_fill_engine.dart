@@ -1,4 +1,5 @@
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
 import 'package:sheets/core/values/patterns/linear_duration_pattern.dart';
@@ -10,38 +11,35 @@ import 'package:sheets/utils/direction.dart';
 import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
 
 class AutoFillEngine {
-  AutoFillEngine(this.fillDirection, this._baseCells, this._fillCells);
+  AutoFillEngine(this.data, this.fillDirection, this._baseCells, this._fillCells);
 
+  final SheetData data;
   final Direction fillDirection;
   final List<IndexedCellProperties> _baseCells;
   final List<IndexedCellProperties> _fillCells;
 
-  List<IndexedCellProperties> resolve() {
+  void resolve() {
     if (fillDirection.isVertical) {
-      return _getVerticallyFilledCells();
+       _fillCellsVertical();
     } else {
-      return _getHorizontallyFilledCells();
+       _fillCellsHorizontal();
     }
   }
 
-  List<IndexedCellProperties> _getVerticallyFilledCells() {
-    List<IndexedCellProperties> filledCells = <IndexedCellProperties>[];
-
+  void _fillCellsVertical() {
     Map<ColumnIndex, List<IndexedCellProperties>> groupedBaseCells = _baseCells.groupByColumns();
     for (MapEntry<ColumnIndex, List<IndexedCellProperties>> cells in groupedBaseCells.entries) {
+      print('Fill cells for column: ${cells.key.value}');
       bool reversed = fillDirection == Direction.top;
       List<IndexedCellProperties> patternCells = cells.value.maybeReverse(reversed);
       List<IndexedCellProperties> fillCells = _fillCells.whereColumn(cells.key).maybeReverse(reversed);
 
       ValuePattern pattern = _detectPattern(patternCells);
-      filledCells.addAll(pattern.apply(patternCells, fillCells));
+      pattern.apply(fillDirection, data, patternCells, fillCells);
     }
-    return filledCells;
   }
 
-  List<IndexedCellProperties> _getHorizontallyFilledCells() {
-    List<IndexedCellProperties> filledCells = <IndexedCellProperties>[];
-
+  void _fillCellsHorizontal() {
     Map<RowIndex, List<IndexedCellProperties>> groupedBaseCells = _baseCells.groupByRows();
     for (MapEntry<RowIndex, List<IndexedCellProperties>> cells in groupedBaseCells.entries) {
       bool reversed = fillDirection == Direction.left;
@@ -49,9 +47,8 @@ class AutoFillEngine {
       List<IndexedCellProperties> fillCells = _fillCells.whereRow(cells.key).maybeReverse(reversed);
 
       ValuePattern pattern = _detectPattern(patternCells);
-      filledCells.addAll(pattern.apply(patternCells, fillCells));
+      pattern.apply(fillDirection, data, patternCells, fillCells);
     }
-    return filledCells;
   }
 
   ValuePattern _detectPattern(List<IndexedCellProperties> cells) {

@@ -1,7 +1,9 @@
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/utils/direction.dart';
 
 class LinearDurationPatternMatcher implements ValuePatternMatcher {
   @override
@@ -52,41 +54,24 @@ class LinearDurationPatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class DurationSequencePattern extends ValuePattern {
+class DurationSequencePattern extends ValuePattern<Duration, Duration> {
   DurationSequencePattern({
-    required this.steps,
-    required this.lastDuration,
-  });
-
-  final List<Duration> steps;
-  final Duration lastDuration;
+    required super.steps,
+    required Duration lastDuration,
+  }) : super(lastValue: lastDuration);
 
   @override
-  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
-    Duration lastDuration = this.lastDuration;
-
-    for (int i = 0; i < fillCells.length; i++) {
-      IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
-      IndexedCellProperties fillProperties = fillCells[i];
-
-      Duration step = steps[i % steps.length];
-      Duration newDurationValue = lastDuration + step;
-      lastDuration = newDurationValue;
-
-      SheetRichText previousRichText = templateProperties.properties.value;
-      SheetRichText updatedRichText = previousRichText.withText(newDurationValue.toString());
-
-      fillCells[i] = fillProperties.copyWith(
-        properties: fillProperties.properties.copyWith(
-          value: updatedRichText,
-          style: templateProperties.properties.style,
-        ),
-      );
-    }
-
-    return fillCells;
+  Duration calculateNewValue(int index, CellProperties templateProperties, Duration lastValue, Duration? step) {
+    return lastValue + step!;
   }
 
   @override
-  List<Object?> get props => <Object?>[steps, lastDuration];
+  SheetRichText formatValue(SheetRichText previousRichText, Duration value) {
+    return previousRichText.withText(value.toString());
+  }
+
+  @override
+  void updateState(Duration newValue) {
+    lastValue = newValue;
+  }
 }

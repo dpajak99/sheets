@@ -1,27 +1,22 @@
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_data_manager.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
-abstract class FillSelectionEvent extends SheetEvent {
-  @override
-  FillSelectionAction<FillSelectionEvent> createAction(SheetController controller);
-}
-
-abstract class FillSelectionAction<T extends FillSelectionEvent> extends SheetAction<T> {
-  FillSelectionAction(super.event, super.controller);
-}
-
 // Start Fill
-class StartFillSelectionEvent extends FillSelectionEvent {
+class StartFillSelectionEvent extends StartSelectionEvent {
+  StartFillSelectionEvent(super.selectionStart);
+
   @override
   StartFillSelectionAction createAction(SheetController controller) => StartFillSelectionAction(this, controller);
 
@@ -34,7 +29,7 @@ class StartFillSelectionEvent extends FillSelectionEvent {
   List<Object?> get props => <Object?>[];
 }
 
-class StartFillSelectionAction extends FillSelectionAction<StartFillSelectionEvent> {
+class StartFillSelectionAction extends StartSelectionAction {
   StartFillSelectionAction(super.event, super.controller);
 
   @override
@@ -42,11 +37,8 @@ class StartFillSelectionAction extends FillSelectionAction<StartFillSelectionEve
 }
 
 // Update fill
-class UpdateFillSelectionEvent extends FillSelectionEvent {
-  UpdateFillSelectionEvent(this.selectionStart, this.selectionEnd);
-
-  final ViewportItem selectionStart;
-  final ViewportItem selectionEnd;
+class UpdateFillSelectionEvent extends UpdateSelectionEvent {
+  UpdateFillSelectionEvent(super.selectionStart, super.selectionEnd);
 
   @override
   UpdateFillSelectionAction createAction(SheetController controller) => UpdateFillSelectionAction(this, controller);
@@ -60,7 +52,7 @@ class UpdateFillSelectionEvent extends FillSelectionEvent {
   List<Object?> get props => <Object?>[selectionStart, selectionEnd];
 }
 
-class UpdateFillSelectionAction extends FillSelectionAction<UpdateFillSelectionEvent> {
+class UpdateFillSelectionAction extends UpdateSelectionAction {
   UpdateFillSelectionAction(super.event, super.controller);
 
   @override
@@ -76,26 +68,30 @@ class UpdateFillSelectionAction extends FillSelectionAction<UpdateFillSelectionE
     selectionBuilder.setStrategy(GestureSelectionStrategyFill());
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
+
     controller.selection.update(updatedSelection);
     ensureFullyVisible(selectedIndex);
   }
 }
 
 // Complete fill
-class CompleteFillSelectionEvent extends FillSelectionEvent {
+class CompleteFillSelectionEvent extends CompleteSelectionEvent {
   @override
   CompleteFillSelectionAction createAction(SheetController controller) => CompleteFillSelectionAction(this, controller);
 
   @override
   SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(rebuildSelection: true);
+    return SheetRebuildProperties(
+      rebuildSelection: true,
+      rebuildData: true,
+    );
   }
 
   @override
   List<Object?> get props => <Object?>[];
 }
 
-class CompleteFillSelectionAction extends FillSelectionAction<CompleteFillSelectionEvent> {
+class CompleteFillSelectionAction extends CompleteSelectionAction {
   CompleteFillSelectionAction(super.event, super.controller);
 
   @override
@@ -106,6 +102,8 @@ class CompleteFillSelectionAction extends FillSelectionAction<CompleteFillSelect
     List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(data.columnCount, data.rowCount);
     List<CellIndex> fillCells = selection.getSelectedCells(data.columnCount, data.rowCount);
 
+    print('Selection: $selection');
+    print('Selected cells: $selectedCells');
     List<IndexedCellProperties> baseProperties = <IndexedCellProperties>[
       for (CellIndex index in selectedCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
     ];
@@ -113,9 +111,22 @@ class CompleteFillSelectionAction extends FillSelectionAction<CompleteFillSelect
       for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
     ];
 
-    List<IndexedCellProperties> filledCells = AutoFillEngine(selection.fillDirection, baseProperties, fillProperties).resolve();
-    data.setCellsProperties(filledCells);
+    _removeMergedCells(baseProperties);
+    // _removeMergedCells(fillProperties);
+
+    AutoFillEngine(data, selection.fillDirection, baseProperties, fillProperties).resolve();
 
     controller.selection.complete();
+  }
+
+  void _removeMergedCells(List<IndexedCellProperties> cells) {
+    cells.removeWhere((IndexedCellProperties element) {
+      CellMergeStatus mergeStatus = element.properties.mergeStatus;
+      if(mergeStatus is MergedCell) {
+        return !mergeStatus.isMainCell(element.index);
+      } else {
+        return false;
+      }
+    });
   }
 }
