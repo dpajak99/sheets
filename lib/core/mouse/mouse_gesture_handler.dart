@@ -7,6 +7,7 @@ import 'package:sheets/core/events/sheet_fill_events.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/gestures/sheet_drag_gesture.dart';
+import 'package:sheets/core/mouse/mouse_listener.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -90,13 +91,13 @@ abstract class DraggableGestureHandler extends MouseGestureHandler {
   }
 
   void setCursor(SheetController controller, SystemMouseCursor cursor) {
-    if (controller.mouse.cursor.value != cursor) {
-      controller.mouse.setCursor(cursor);
+    if (SheetCursor.instance.value != cursor) {
+      SheetCursor.instance.value = cursor;
     }
   }
 
   void resetCursor(SheetController controller) {
-    if (controller.mouse.cursor.value != SystemMouseCursors.basic) {
+    if (SheetCursor.instance.value != SystemMouseCursors.basic) {
       controller.mouse.resetCursor();
     }
   }
