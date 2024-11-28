@@ -8,6 +8,7 @@ class SelectionStartDetails with EquatableMixin {
 
   CellIndex get cell {
     return switch (index) {
+      MergedCellIndex mergedCellIndex => mergedCellIndex,
       CellIndex cellIndex => cellIndex,
       ColumnIndex columnIndex => CellIndex.fromColumnMin(columnIndex),
       RowIndex rowIndex => CellIndex.fromRowMin(rowIndex),

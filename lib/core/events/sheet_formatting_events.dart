@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/selection/selection_style.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
@@ -144,7 +147,7 @@ class MergeSelectionEvent extends SheetFormattingEvent {
   @override
   SheetRebuildProperties get rebuildProperties {
     return SheetRebuildProperties(
-      rebuildViewport: true,
+      rebuildSelection: true,
       rebuildData: true,
     );
   }
@@ -158,12 +161,48 @@ class MergeSelectionAction extends SheetFormattingAction<MergeSelectionEvent> {
 
   @override
   void execute() {
-    if (controller.selection.value is SheetRangeSelection) {
-      List<CellIndex> selectedCells =
-          controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
-      controller.selection.update(SheetSingleSelection(controller.selection.value.mainCell));
+    SheetSelection selection = controller.selection.value;
+    if (selection is SheetRangeSelection) {
+      List<CellIndex> selectedCells = selection.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
+      controller.selection.update(SheetSingleSelection(MergedCellIndex(start: selectedCells.first, end: selectedCells.last)));
       controller.data.mergeCells(selectedCells);
+    } else if (selection is SheetSingleSelection) {
+      CellProperties cellProperties = controller.data.getCellProperties(selection.mainCell);
+      CellMergeStatus mergeStatus = cellProperties.mergeStatus;
+      if (mergeStatus is MergedCell) {
+        List<CellIndex> mergedCells = mergeStatus.mergedCells;
+        controller.data.unmergeCells(mergedCells);
+        controller.selection.update(SheetSelectionFactory.range(start: mergeStatus.start, end: mergeStatus.end, completed: true));
+      }
     }
+  }
+}
+
+// Unmerge Selection
+class UnmergeSelectionEvent extends SheetFormattingEvent {
+  @override
+  UnmergeSelectionAction createAction(SheetController controller) => UnmergeSelectionAction(this, controller);
+
+  @override
+  SheetRebuildProperties get rebuildProperties {
+    return SheetRebuildProperties(
+      rebuildSelection: true,
+      rebuildData: true,
+    );
+  }
+
+  @override
+  List<Object?> get props => <Object?>[];
+}
+
+class UnmergeSelectionAction extends SheetFormattingAction<UnmergeSelectionEvent> {
+  UnmergeSelectionAction(super.event, super.controller);
+
+  @override
+  void execute() {
+    SheetSelection selection = controller.selection.value;
+    List<CellIndex> selectedCells = selection.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
+    selectedCells.forEach(controller.data.unmergeCell);
   }
 }
 

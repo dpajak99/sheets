@@ -21,6 +21,22 @@ class IndexedCellProperties with EquatableMixin {
     );
   }
 
+  CellIndex get startIndex {
+    CellMergeStatus mergeStatus = properties.mergeStatus;
+    if (mergeStatus is MergedCell) {
+      return mergeStatus.start;
+    }
+    return index;
+  }
+
+  CellIndex get endIndex {
+    CellMergeStatus mergeStatus = properties.mergeStatus;
+    if (mergeStatus is MergedCell) {
+      return mergeStatus.end;
+    }
+    return index;
+  }
+
   @override
   List<Object?> get props => <Object?>[index, properties];
 }
@@ -75,6 +91,8 @@ abstract class CellMergeStatus with EquatableMixin {
 
   int get height => 0;
 
+  List<CellIndex> get mergedCells => <CellIndex>[];
+
   bool contains(CellIndex index) {
     return false;
   }
@@ -82,9 +100,10 @@ abstract class CellMergeStatus with EquatableMixin {
 
 class NoCellMerge extends CellMergeStatus {
   @override
-  CellMergeStatus move({required int dx, required int dy}) {
+  NoCellMerge move({required int dx, required int dy}) {
     return this;
   }
+
   @override
   List<Object?> get props => <Object>[];
 }
@@ -98,8 +117,14 @@ class MergedCell extends CellMergeStatus {
   final CellIndex start;
   final CellIndex end;
 
+  MergedCellIndex get index => MergedCellIndex(start: start, end: end);
+
   @override
-  int get width => end.column.value - start.column.value;
+  int get width {
+    return end.column.value - start.column.value;
+  }
+
+  String get id => '${width + 1}x${height + 1}';
 
   @override
   int get height => end.row.value - start.row.value;
@@ -110,9 +135,16 @@ class MergedCell extends CellMergeStatus {
 
   @override
   bool contains(CellIndex index) {
-    return index.row.value >= start.row.value && index.row.value <= end.row.value && index.column.value >= start.column.value && index.column.value <= end.column.value;
+    if (index is MergedCellIndex) {
+      return index.selectedCells.any(contains);
+    }
+    return index.row.value >= start.row.value &&
+        index.row.value <= end.row.value &&
+        index.column.value >= start.column.value &&
+        index.column.value <= end.column.value;
   }
 
+  @override
   List<CellIndex> get mergedCells {
     List<CellIndex> mergedCells = <CellIndex>[];
     for (int i = start.row.value; i <= end.row.value; i++) {
@@ -124,10 +156,26 @@ class MergedCell extends CellMergeStatus {
   }
 
   @override
-  CellMergeStatus move({required int dx, required int dy}) {
+  MergedCell move({required int dx, required int dy}) {
     return MergedCell(
       start: start.move(dx: dx, dy: dy),
       end: end.move(dx: dx, dy: dy),
+    );
+  }
+
+  MergedCell moveVertical({required int dy, bool reverse = false}) {
+    int updatedDy = reverse ? dy - height : dy;
+    return MergedCell(
+      start: start.move(dx: 0, dy: updatedDy),
+      end: end.move(dx: 0, dy: updatedDy),
+    );
+  }
+
+  MergedCell moveHorizontal({required int dx, bool reverse = false}) {
+    int updatedDx = reverse ? dx - width : dx;
+    return MergedCell(
+      start: start.move(dx: updatedDx, dy: 0),
+      end: end.move(dx: updatedDx, dy: 0),
     );
   }
 

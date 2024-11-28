@@ -2,6 +2,7 @@ import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
+import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
@@ -9,9 +10,8 @@ import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/viewport/viewport_item.dart';
 
 // Start Fill
 class StartFillSelectionEvent extends StartSelectionEvent {
@@ -62,10 +62,11 @@ class UpdateFillSelectionAction extends UpdateSelectionAction {
       controller.viewport.firstVisibleRow,
       controller.viewport.firstVisibleColumn,
     );
+    selectedIndex = controller.data.fillCellIndex(selectedIndex);
 
     SheetSelection previousSelection = controller.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
-    selectionBuilder.setStrategy(GestureSelectionStrategyFill());
+    selectionBuilder.setStrategy(GestureSelectionStrategyFill(controller.data));
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 
@@ -96,37 +97,36 @@ class CompleteFillSelectionAction extends CompleteSelectionAction {
 
   @override
   void execute() {
+    if (controller.selection.value is! SheetFillSelection) {
+      return;
+    }
     SheetData data = controller.data;
-    SheetFillSelection selection = controller.selection.value as SheetFillSelection;
+    SheetFillSelection fillSelection = controller.selection.value as SheetFillSelection;
 
-    List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(data.columnCount, data.rowCount);
-    List<CellIndex> fillCells = selection.getSelectedCells(data.columnCount, data.rowCount);
 
-    print('Selection: $selection');
-    print('Selected cells: $selectedCells');
+    List<CellIndex> fillCells = fillSelection.getSelectedCells(data.columnCount, data.rowCount);
+    List<CellIndex> templateCells = fillSelection.baseSelection.getSelectedCells(data.columnCount, data.rowCount);
+
     List<IndexedCellProperties> baseProperties = <IndexedCellProperties>[
-      for (CellIndex index in selectedCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
+      for (CellIndex index in templateCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
     ];
     List<IndexedCellProperties> fillProperties = <IndexedCellProperties>[
       for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
     ];
 
-    _removeMergedCells(baseProperties);
-    // _removeMergedCells(fillProperties);
+    AutoFillEngine(data, fillSelection.fillDirection, baseProperties, fillProperties).resolve();
 
-    AutoFillEngine(data, selection.fillDirection, baseProperties, fillProperties).resolve();
-
-    controller.selection.complete();
+    SheetSelection newSelection = controller.selection.value.complete();
+    SelectionCellCorners? corners = newSelection.cellCorners?.includeMergedCells(controller.data);
+    if (corners != null) {
+      controller.selection.update(SheetRangeSelection<CellIndex>(corners.topLeft, corners.bottomRight));
+    } else {
+      controller.selection.update(newSelection);
+    }
   }
 
-  void _removeMergedCells(List<IndexedCellProperties> cells) {
-    cells.removeWhere((IndexedCellProperties element) {
-      CellMergeStatus mergeStatus = element.properties.mergeStatus;
-      if(mergeStatus is MergedCell) {
-        return !mergeStatus.isMainCell(element.index);
-      } else {
-        return false;
-      }
-    });
+  int missingToBeDivisible(int b, int a) {
+    int remainder = a % b;
+    return remainder == 0 ? 0 : b - remainder;
   }
 }

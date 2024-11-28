@@ -32,6 +32,11 @@ class DropdownButtonController {
   }
 }
 
+enum ActivateDropdownBehavior {
+  auto,
+  manual,
+}
+
 class SheetDropdownButton extends StatefulWidget {
   const SheetDropdownButton({
     required this.buttonBuilder,
@@ -39,6 +44,7 @@ class SheetDropdownButton extends StatefulWidget {
     this.level = 1,
     this.controller,
     this.disabled = false,
+    this.activateDropdownBehavior = ActivateDropdownBehavior.auto,
     super.key,
   });
 
@@ -47,6 +53,7 @@ class SheetDropdownButton extends StatefulWidget {
   final int level;
   final DropdownButtonController? controller;
   final bool disabled;
+  final ActivateDropdownBehavior activateDropdownBehavior;
 
   @override
   State<StatefulWidget> createState() => _SheetDropdownButtonState();
@@ -59,6 +66,7 @@ class SheetDropdownButton extends StatefulWidget {
     properties.add(IntProperty('level', level));
     properties.add(DiagnosticsProperty<DropdownButtonController?>('controller', controller));
     properties.add(DiagnosticsProperty<bool>('disabled', disabled));
+    properties.add(EnumProperty<ActivateDropdownBehavior>('activateDropdownBehavior', activateDropdownBehavior));
   }
 }
 
@@ -233,7 +241,11 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
     return GestureDetector(
       key: _buttonKey,
       behavior: HitTestBehavior.translucent,
-      onTap: _togglePopup,
+      onTap: () {
+        if(widget.activateDropdownBehavior == ActivateDropdownBehavior.auto) {
+          _togglePopup();
+        }
+      },
       child: widget.buttonBuilder(context, _overlayEntry != null),
     );
   }

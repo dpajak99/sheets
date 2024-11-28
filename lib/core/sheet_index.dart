@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/utils/extensions/int_extensions.dart';
 import 'package:sheets/utils/numeric_index_mixin.dart';
 
@@ -47,6 +48,74 @@ sealed class SheetIndex with EquatableMixin {
   }
 }
 
+class MergedCellIndex extends CellIndex {
+  MergedCellIndex({
+    required this.start,
+    required this.end,
+  }) : super(row: start.row, column: start.column);
+
+  final CellIndex start;
+  final CellIndex end;
+
+  MergedCell toCellMergeStatus() {
+    return MergedCell(start: start, end: end);
+  }
+
+  bool containsRow(RowIndex rowIndex) {
+    return rowIndex >= start.row && rowIndex <= end.row;
+  }
+
+  bool containsColumn(ColumnIndex columnIndex) {
+    return columnIndex >= start.column && columnIndex <= end.column;
+  }
+
+  bool containsCell(CellIndex cellIndex) {
+    return containsRow(cellIndex.row) && containsColumn(cellIndex.column);
+  }
+
+  @override
+  MergedCellIndex clamp(CellIndex max) {
+    return MergedCellIndex(
+      start: start.clamp(max),
+      end: end.clamp(max),
+    );
+  }
+
+  @override
+  CellIndex move({required int dx, required int dy}) {
+    print('Move MergedCellIndex: $dx, $dy');
+    RowIndex row = dy < 0 ? start.row + dy : end.row + dy;
+    ColumnIndex column = dx < 0 ? start.column + dx : end.column + dx;
+
+    return CellIndex(row: row, column: column);
+  }
+
+  int get width {
+    return end.column.value - start.column.value;
+  }
+
+  int get height {
+    return end.row.value - start.row.value;
+  }
+
+  List<CellIndex> get selectedCells {
+    List<CellIndex> selectedCells = <CellIndex>[];
+    for (int i = start.row.value; i <= end.row.value; i++) {
+      for (int j = start.column.value; j <= end.column.value; j++) {
+        selectedCells.add(CellIndex(row: RowIndex(i), column: ColumnIndex(j)));
+      }
+    }
+    return selectedCells;
+  }
+
+  @override
+  String stringifyPosition() {
+    return 'M(${super.stringifyPosition()})';
+  }
+  @override
+  List<Object?> get props => <Object?>[start, end];
+}
+
 class CellIndex extends SheetIndex {
   CellIndex({required this.row, required this.column});
 
@@ -68,6 +137,10 @@ class CellIndex extends SheetIndex {
 
   factory CellIndex.fromRowMax(RowIndex rowIndex) {
     return CellIndex(row: rowIndex, column: ColumnIndex.max);
+  }
+
+  CellIndex copyWith({RowIndex? row, ColumnIndex? column}) {
+    return CellIndex(row: row ?? this.row, column: column ?? this.column);
   }
 
   static CellIndex zero = CellIndex(row: RowIndex(0), column: ColumnIndex(0));

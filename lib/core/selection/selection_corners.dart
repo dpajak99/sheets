@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -37,42 +37,39 @@ class SelectionCellCorners with EquatableMixin {
   final CellIndex bottomLeft;
   final CellIndex bottomRight;
 
+  int get width => bottomRight.column.value - topLeft.column.value + 1;
+  int get height => bottomRight.row.value - topLeft.row.value + 1;
+
   SelectionCellCorners includeMergedCells(SheetData data) {
-    int minRow = topLeft.row.value;
-    int maxRow = bottomRight.row.value;
-    int minCol = topLeft.column.value;
-    int maxCol = bottomRight.column.value;
+    ColumnIndex left = topLeft.column;
+    ColumnIndex right = bottomRight.column;
+    RowIndex top = topLeft.row;
+    RowIndex bottom = bottomRight.row;
 
     bool changed;
+
     do {
       changed = false;
+      for (int y = top.value; y <= bottom.value; y++) {
+        for (int x = left.value; x <= right.value; x++) {
+          CellIndex cellIndex = CellIndex(row: RowIndex(y), column: ColumnIndex(x));
+          CellIndex filledCellIndex = data.fillCellIndex(cellIndex) as CellIndex;
 
-      for (int row = minRow; row <= maxRow; row++) {
-        for (int col = minCol; col <= maxCol; col++) {
-          CellIndex currentCell = CellIndex.raw(row, col);
-          CellProperties properties = data.getCellProperties(currentCell);
-          CellMergeStatus mergeStatus = properties.mergeStatus;
-
-          if (mergeStatus is MergedCell) {
-            int mergeStartRow = mergeStatus.start.row.value;
-            int mergeEndRow = mergeStatus.end.row.value;
-            int mergeStartCol = mergeStatus.start.column.value;
-            int mergeEndCol = mergeStatus.end.column.value;
-
-            if (mergeStartRow < minRow) {
-              minRow = mergeStartRow;
+          if (filledCellIndex is MergedCellIndex) {
+            if (filledCellIndex.start.column.value < left.value) {
+              left = filledCellIndex.start.column;
               changed = true;
             }
-            if (mergeEndRow > maxRow) {
-              maxRow = mergeEndRow;
+            if (filledCellIndex.end.column.value > right.value) {
+              right = filledCellIndex.end.column;
               changed = true;
             }
-            if (mergeStartCol < minCol) {
-              minCol = mergeStartCol;
+            if (filledCellIndex.start.row.value < top.value) {
+              top = filledCellIndex.start.row;
               changed = true;
             }
-            if (mergeEndCol > maxCol) {
-              maxCol = mergeEndCol;
+            if (filledCellIndex.end.row.value > bottom.value) {
+              bottom = filledCellIndex.end.row;
               changed = true;
             }
           }
@@ -80,13 +77,14 @@ class SelectionCellCorners with EquatableMixin {
       }
     } while (changed);
 
-    CellIndex newTopLeft = CellIndex.raw( minRow,  minCol);
-    CellIndex newTopRight = CellIndex.raw( minRow, maxCol);
-    CellIndex newBottomLeft = CellIndex.raw( maxRow,  minCol);
-    CellIndex newBottomRight = CellIndex.raw( maxRow,  maxCol);
-
-    return SelectionCellCorners(newTopLeft, newTopRight, newBottomLeft, newBottomRight);
+    return SelectionCellCorners(
+      CellIndex(row: top, column: left),
+      CellIndex(row: top, column: right),
+      CellIndex(row: bottom, column: left),
+      CellIndex(row: bottom, column: right),
+    );
   }
+
 
   Direction getRelativePosition(CellIndex cellIndex) {
     Map<Direction, int> directionSpaces = <Direction, int>{

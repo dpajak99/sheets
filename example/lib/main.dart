@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/sheet.dart';
 import 'package:sheets/widgets/material/toolbar/sheet_toolbar.dart';
 import 'package:sheets/widgets/sections/sheet_footer.dart';

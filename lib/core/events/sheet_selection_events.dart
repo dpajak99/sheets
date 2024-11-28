@@ -1,8 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
-import 'package:sheets/core/selection/selection_corners.dart';
-import 'package:sheets/core/selection/selection_direction.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
@@ -56,7 +54,8 @@ class StartSelectionAction extends SheetAction<StartSelectionEvent> {
       controller.resolve(DisableEditingEvent(save: true));
     }
 
-    SheetIndex? selectedIndex = event.selectionStart.index;
+    SheetIndex? selectedIndex = controller.data.fillCellIndex(event.selectionStart.index);
+
     SheetSelection previousSelection = controller.selection.value;
 
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
@@ -115,6 +114,7 @@ class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
       controller.viewport.firstVisibleRow,
       controller.viewport.firstVisibleColumn,
     );
+    selectedIndex = controller.data.fillCellIndex(selectedIndex);
 
     SheetSelection previousSelection = controller.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
@@ -219,20 +219,11 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
       columnCount: controller.data.columnCount,
       rowCount: controller.data.rowCount,
     );
-
-    int dx = event.dx;
-    int dy = event.dy;
-    CellProperties cellProperties = controller.data.getCellProperties(selectedIndex);
-    if (cellProperties.mergeStatus is MergedCell) {
-      int symbolX = dx > 0 ? 1 : dx < 0 ? -1 : 0;
-      int symbolY = dy > 0 ? 1 : dy < 0 ? -1 : 0;
-
-      MergedCell mergeStatus = cellProperties.mergeStatus as MergedCell;
-      dx += (mergeStatus.end.column.value - mergeStatus.start.column.value) * symbolX;
-      dy += (mergeStatus.end.row.value - mergeStatus.start.row.value) * symbolY;
-    }
-
-    selectedIndex = selectedIndex.move(dx: dx, dy: dy).clamp(maxIndex);
+    print('Index before move: $selectedIndex');
+    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = selectedIndex.move(dx: event.dx, dy: event.dy).clamp(maxIndex);
+    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    print('Index after move: $selectedIndex');
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 
