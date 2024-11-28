@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
@@ -34,6 +35,18 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
   late SheetViewportContentManager _viewportContent;
   final EdgeInsets _padding;
+
+  ViewportCell? getCellAtOffset(Offset offset) {
+    try {
+      List<ViewportCell> visibleCells = _viewportContent.cells;
+      return visibleCells.firstWhere((ViewportCell element) {
+        Rect itemRect = element.rect.expand(borderWidth / 2);
+        return itemRect.within(offset);
+      });
+    } catch (e) {
+      return null;
+    }
+  }
 
   void update(SheetViewportContentManager viewportContent) {
     _viewportContent = viewportContent;

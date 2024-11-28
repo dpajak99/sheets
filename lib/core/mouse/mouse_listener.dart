@@ -13,10 +13,36 @@ import 'package:sheets/utils/silent_value_notifier.dart';
 import 'package:sheets/utils/streamable.dart';
 import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
 
-class SheetCursor extends ValueNotifier<SystemMouseCursor> {
-  SheetCursor._() : super(SystemMouseCursors.basic);
+class SheetCursor {
+  SheetCursor._();
 
   static final SheetCursor instance = SheetCursor._();
+
+ final ValueNotifier<SystemMouseCursor> cursor = ValueNotifier<SystemMouseCursor>(SystemMouseCursors.basic);
+
+  Offset localOffset = Offset.zero;
+
+  Offset? pressOffset;
+  Offset? dragOffset;
+
+
+  void handlePress(Offset offset) {
+    pressOffset = offset;
+    dragOffset = offset;
+  }
+
+  void handleCursorMove(Offset offset) {
+    dragOffset = offset;
+  }
+
+  void handlePressMove(Offset offset) {
+    dragOffset = offset;
+  }
+
+  void handleRelease() {
+    pressOffset = null;
+    dragOffset = null;
+  }
 }
 
 class MouseListener extends Streamable<SheetMouseGesture> {
@@ -61,11 +87,11 @@ class MouseListener extends Streamable<SheetMouseGesture> {
   }
 
   void setCursor(SystemMouseCursor systemMouseCursor) {
-    SheetCursor.instance.value = systemMouseCursor;
+    SheetCursor.instance.cursor.value = systemMouseCursor;
   }
 
   void resetCursor() {
-    SheetCursor.instance.value = SystemMouseCursors.basic;
+    SheetCursor.instance.cursor.value = SystemMouseCursors.basic;
   }
 
   void setGlobalOffset(Offset globalOffset) {

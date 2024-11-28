@@ -91,13 +91,13 @@ abstract class DraggableGestureHandler extends MouseGestureHandler {
   }
 
   void setCursor(SheetController controller, SystemMouseCursor cursor) {
-    if (SheetCursor.instance.value != cursor) {
-      SheetCursor.instance.value = cursor;
+    if (SheetCursor.instance.cursor.value != cursor) {
+      SheetCursor.instance.cursor.value = cursor;
     }
   }
 
   void resetCursor(SheetController controller) {
-    if (SheetCursor.instance.value != SystemMouseCursors.basic) {
+    if (SheetCursor.instance.cursor.value != SystemMouseCursors.basic) {
       controller.mouse.resetCursor();
     }
   }
