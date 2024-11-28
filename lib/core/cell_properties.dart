@@ -21,6 +21,22 @@ class IndexedCellProperties with EquatableMixin {
     );
   }
 
+  CellIndex get startIndex {
+    CellMergeStatus mergeStatus = properties.mergeStatus;
+    if (mergeStatus is MergedCell) {
+      return mergeStatus.start;
+    }
+    return index;
+  }
+
+  CellIndex get endIndex {
+    CellMergeStatus mergeStatus = properties.mergeStatus;
+    if (mergeStatus is MergedCell) {
+      return mergeStatus.end;
+    }
+    return index;
+  }
+
   @override
   List<Object?> get props => <Object?>[index, properties];
 }
@@ -75,6 +91,8 @@ abstract class CellMergeStatus with EquatableMixin {
 
   int get height => 0;
 
+  List<CellIndex> get mergedCells => <CellIndex>[];
+
   bool contains(CellIndex index) {
     return false;
   }
@@ -82,9 +100,10 @@ abstract class CellMergeStatus with EquatableMixin {
 
 class NoCellMerge extends CellMergeStatus {
   @override
-  CellMergeStatus move({required int dx, required int dy}) {
+  NoCellMerge move({required int dx, required int dy}) {
     return this;
   }
+
   @override
   List<Object?> get props => <Object>[];
 }
@@ -99,7 +118,10 @@ class MergedCell extends CellMergeStatus {
   final CellIndex end;
 
   @override
-  int get width => end.column.value - start.column.value;
+  int get width {
+    print('Width: ${end.column} - ${start.column} = ${end.column.value - start.column.value}');
+    return end.column.value - start.column.value;
+  }
 
   @override
   int get height => end.row.value - start.row.value;
@@ -110,9 +132,13 @@ class MergedCell extends CellMergeStatus {
 
   @override
   bool contains(CellIndex index) {
-    return index.row.value >= start.row.value && index.row.value <= end.row.value && index.column.value >= start.column.value && index.column.value <= end.column.value;
+    return index.row.value >= start.row.value &&
+        index.row.value <= end.row.value &&
+        index.column.value >= start.column.value &&
+        index.column.value <= end.column.value;
   }
 
+  @override
   List<CellIndex> get mergedCells {
     List<CellIndex> mergedCells = <CellIndex>[];
     for (int i = start.row.value; i <= end.row.value; i++) {
@@ -124,7 +150,7 @@ class MergedCell extends CellMergeStatus {
   }
 
   @override
-  CellMergeStatus move({required int dx, required int dy}) {
+  MergedCell move({required int dx, required int dy}) {
     return MergedCell(
       start: start.move(dx: dx, dy: dy),
       end: end.move(dx: dx, dy: dy),

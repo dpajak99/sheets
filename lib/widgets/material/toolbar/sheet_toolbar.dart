@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/selection/selection_style.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/border_edges.dart';
@@ -21,6 +23,7 @@ import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_fill_butto
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_font_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_font_family_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_font_size_button.dart';
+import 'package:sheets/widgets/material/toolbar/buttons/toolbar_merge_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_text_align_horizontal_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_text_align_vertical_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_text_overflow_button.dart';
@@ -109,7 +112,8 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarTextButton(
                                     text: NumberFormat.currency().currencySymbol,
                                     onTap: () {
-                                      widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
+                                      widget.sheetController.resolve(FormatSelectionEvent(
+                                          SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
                                     }),
                                 ToolbarIconButton(
                                     icon: SheetIcons.percentage,
@@ -139,7 +143,8 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ),
                                 ToolbarValueFormatButton(
                                   onChanged: (SheetValueFormat? value) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(format: (_) => value)));
+                                    widget.sheetController
+                                        .resolve(FormatSelectionEvent(SetValueFormatIntent(format: (_) => value)));
                                   },
                                 ),
                                 const ToolbarDivider(),
@@ -150,7 +155,8 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarFontFamilyButton(
                                   value: selectionStyle.textStyle.fontFamily,
                                   onChanged: (String fontFamily) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetFontFamilyIntent(fontFamily: fontFamily)));
+                                    widget.sheetController
+                                        .resolve(FormatSelectionEvent(SetFontFamilyIntent(fontFamily: fontFamily)));
                                   },
                                 ),
                                 const ToolbarDivider(),
@@ -199,8 +205,8 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                   icon: SheetIcons.strikethrough,
                                   selected: selectionStyle.decoration == TextDecoration.lineThrough,
                                   onTap: () {
-                                    widget.sheetController
-                                        .resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: TextDecoration.lineThrough)));
+                                    widget.sheetController.resolve(
+                                        FormatSelectionEvent(ToggleTextDecorationIntent(value: TextDecoration.lineThrough)));
                                   },
                                 ),
                                 ToolbarColorFontButton(
@@ -229,10 +235,23 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                     )));
                                   },
                                 ),
-                                ToolbarIconButton.withDropdown(
-                                  icon: SheetIcons.cell_merge,
-                                  onTap: () {
+                                ToolbarMergeButton(
+                                  merged: selectionStyle.cellProperties.mergeStatus is MergedCell,
+                                  canMerge: widget.sheetController.selection.value is SheetRangeSelection,
+                                  canMergeVertically: widget.sheetController.selection.value is SheetRangeSelection,
+                                  canMergeHorizontally: widget.sheetController.selection.value is SheetRangeSelection,
+                                  canSplit: selectionStyle.cellProperties.mergeStatus is MergedCell,
+                                  onMerge: () {
                                     widget.sheetController.resolve(MergeSelectionEvent());
+                                  },
+                                  onMergeHorizontally: () {
+                                    widget.sheetController.resolve(MergeSelectionEvent());
+                                  },
+                                  onMergeVertically: () {
+                                    widget.sheetController.resolve(MergeSelectionEvent());
+                                  },
+                                  onSplit: () {
+                                    widget.sheetController.resolve(UnmergeSelectionEvent());
                                   },
                                 ),
                                 const ToolbarDivider(),

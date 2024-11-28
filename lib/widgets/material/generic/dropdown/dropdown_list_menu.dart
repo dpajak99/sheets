@@ -53,6 +53,7 @@ class DropdownListMenuItem extends StatelessWidget {
     EdgeInsets? padding,
     VoidCallback? onPressed,
     bool? iconPlaceholderVisible,
+    bool? disabled,
     super.key,
   })  : _label = label,
         _labelStyle = labelStyle,
@@ -65,6 +66,7 @@ class DropdownListMenuItem extends StatelessWidget {
         _iconSize = iconSize ?? const Size.square(16),
         _padding = padding ?? const EdgeInsets.symmetric(horizontal: 14),
         _iconPlaceholderVisible = iconPlaceholderVisible ?? true,
+        _disabled = disabled ?? false,
         _onPressed = onPressed;
 
   const DropdownListMenuItem.select({
@@ -80,6 +82,7 @@ class DropdownListMenuItem extends StatelessWidget {
     EdgeInsets? padding,
     VoidCallback? onPressed,
     bool? iconPlaceholderVisible,
+    bool? disabled,
     Key? key,
   }) : this(
           icon: selected ? SheetIcons.check : null,
@@ -94,6 +97,7 @@ class DropdownListMenuItem extends StatelessWidget {
           padding: padding,
           onPressed: onPressed,
           iconPlaceholderVisible: iconPlaceholderVisible,
+          disabled: disabled,
           key: key,
         );
 
@@ -109,11 +113,13 @@ class DropdownListMenuItem extends StatelessWidget {
   final Widget? _trailing;
   final VoidCallback? _onPressed;
   final bool _iconPlaceholderVisible;
+  final bool _disabled;
 
   @override
   Widget build(BuildContext context) {
     return WidgetStateBuilder(
       onTap: _onPressed,
+      disabled: _disabled,
       cursor: SystemMouseCursors.click,
       builder: (Set<WidgetState> states) {
         Color backgroundColor = _resolveBackgroundColor(states);

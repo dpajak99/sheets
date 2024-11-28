@@ -34,15 +34,15 @@ class SheetData {
 
   int columnCount;
   int rowCount;
-  
+
   double _contentWidth = 0;
   double _contentHeight = 0;
-  
+
   void _recalculateContentSize() {
     _recalculateContentWidth();
     _recalculateContentHeight();
   }
-  
+
   void _recalculateContentWidth() {
     double contentWidth = 0;
     for (int i = 0; i < columnCount; i++) {
@@ -52,7 +52,7 @@ class SheetData {
     contentWidth -= borderWidth; // First column left border is not visible
     _contentWidth = contentWidth;
   }
-  
+
   void _recalculateContentHeight() {
     double contentHeight = 0;
     for (int i = 0; i < rowCount; i++) {
@@ -66,7 +66,7 @@ class SheetData {
   CellProperties getCellProperties(CellIndex cellIndex) {
     return _data[cellIndex] ?? CellProperties();
   }
-  
+
   double getColumnWidth(ColumnIndex columnIndex) {
     return getColumnStyle(columnIndex).width;
   }
@@ -74,13 +74,31 @@ class SheetData {
   RowStyle getRowStyle(RowIndex rowIndex) {
     return _customRowStyles[rowIndex] ?? RowStyle.defaults();
   }
-  
+
   double getRowHeight(RowIndex rowIndex) {
     return getRowStyle(rowIndex).height;
   }
 
   ColumnStyle getColumnStyle(ColumnIndex columnIndex) {
     return _customColumnStyles[columnIndex] ?? ColumnStyle.defaults();
+  }
+
+  void unmergeCells(List<CellIndex> cells) {
+    cells.forEach(unmergeCell);
+  }
+
+  void unmergeCell(CellIndex cellIndex) {
+    CellProperties cellProperties = getCellProperties(cellIndex);
+    CellMergeStatus mergeStatus = cellProperties.mergeStatus;
+    if (mergeStatus is MergedCell) {
+      CellProperties mainCellProperties = getCellProperties(mergeStatus.start);
+      for (CellIndex cell in mergeStatus.mergedCells) {
+        _data[cell] = _data[cell]!.copyWith(
+          mergeStatus: NoCellMerge(),
+          style: mainCellProperties.style,
+        );
+      }
+    }
   }
 
   void mergeCells(List<CellIndex> cells) {
@@ -90,6 +108,8 @@ class SheetData {
 
     CellIndex start = cells.first;
     CellIndex end = cells.last;
+
+    cells.forEach(unmergeCell);
 
     for (CellIndex cellIndex in cells) {
       _data[cellIndex] ??= CellProperties();
@@ -127,7 +147,7 @@ class SheetData {
   }
 
   void setCellProperties(CellIndex index, CellProperties properties) {
-      _data[index] = properties;
+    _data[index] = properties;
   }
 
   Size getCellSize(CellIndex cellIndex) {
@@ -150,8 +170,8 @@ class SheetData {
     RowStyle previousRowStyle = getRowStyle(rowIndex);
     RowStyle updatedRowStyle = previousRowStyle.copyWith(height: height, customHeight: keepValue ? height : null);
     _customRowStyles[rowIndex] = updatedRowStyle;
-    
-    if(previousRowStyle.height != updatedRowStyle.height) {
+
+    if (previousRowStyle.height != updatedRowStyle.height) {
       _recalculateContentHeight();
     }
   }
@@ -161,7 +181,7 @@ class SheetData {
     ColumnStyle updatedColumnStyle = previousColumnStyle.copyWith(width: width);
     _customColumnStyles[columnIndex] = updatedColumnStyle;
 
-    if(previousColumnStyle.width != updatedColumnStyle.width) {
+    if (previousColumnStyle.width != updatedColumnStyle.width) {
       _recalculateContentWidth();
     }
   }
@@ -255,11 +275,9 @@ class SheetData {
     return Size(minCellWidth, minCellHeight);
   }
 
-
   double get contentWidth => _contentWidth;
 
   double get contentHeight => _contentHeight;
-
 
   Map<CellIndex, CellProperties> getMultiCellProperties(List<CellIndex> cellIndexes) {
     return Map<CellIndex, CellProperties>.fromEntries(cellIndexes.map((CellIndex cellIndex) {

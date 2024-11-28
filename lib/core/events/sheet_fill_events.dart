@@ -9,7 +9,7 @@ import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -68,6 +68,9 @@ class UpdateFillSelectionAction extends UpdateSelectionAction {
     selectionBuilder.setStrategy(GestureSelectionStrategyFill());
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
+    print('updatedSelection: $updatedSelection');
+
+    ensureMergedCellsVisible(updatedSelection);
 
     controller.selection.update(updatedSelection);
     ensureFullyVisible(selectedIndex);
@@ -96,14 +99,15 @@ class CompleteFillSelectionAction extends CompleteSelectionAction {
 
   @override
   void execute() {
+    if(controller.selection.value is! SheetFillSelection) {
+      return;
+    }
     SheetData data = controller.data;
     SheetFillSelection selection = controller.selection.value as SheetFillSelection;
 
     List<CellIndex> selectedCells = selection.baseSelection.getSelectedCells(data.columnCount, data.rowCount);
     List<CellIndex> fillCells = selection.getSelectedCells(data.columnCount, data.rowCount);
 
-    print('Selection: $selection');
-    print('Selected cells: $selectedCells');
     List<IndexedCellProperties> baseProperties = <IndexedCellProperties>[
       for (CellIndex index in selectedCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
     ];
@@ -112,7 +116,6 @@ class CompleteFillSelectionAction extends CompleteSelectionAction {
     ];
 
     _removeMergedCells(baseProperties);
-    // _removeMergedCells(fillProperties);
 
     AutoFillEngine(data, selection.fillDirection, baseProperties, fillProperties).resolve();
 
