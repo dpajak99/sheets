@@ -132,9 +132,9 @@ class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 
-    // if (updatedSelection is SheetRangeSelection<CellIndex>) {
-    //   updatedSelection = ensureMergedCellsVisible(updatedSelection);
-    // }
+    if (updatedSelection is SheetRangeSelection<CellIndex>) {
+      updatedSelection = ensureMergedCellsVisible(updatedSelection);
+    }
 
     controller.selection.update(updatedSelection);
 

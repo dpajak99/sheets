@@ -96,37 +96,12 @@ abstract class SheetAction<T extends SheetEvent> {
       return selection;
     }
 
-    ColumnIndex newColumnMin = cornersWithMergedCells.topLeft.column;
-    ColumnIndex newColumnMax = cornersWithMergedCells.bottomRight.column;
-    RowIndex newRowMin = cornersWithMergedCells.topLeft.row;
-    RowIndex newRowMax = cornersWithMergedCells.bottomRight.row;
-
-    return switch (selection.direction) {
-      SelectionDirection.bottomRight => SheetRangeSelection<CellIndex>(
-        CellIndex(row: newRowMin, column: newColumnMin),
-        CellIndex(row: newRowMax, column: newColumnMax),
-        completed: selection.isCompleted,
-        customMainCell: selection.mainCell,
-      ),
-      SelectionDirection.bottomLeft => SheetRangeSelection<CellIndex>(
-        CellIndex(row: newRowMin, column: newColumnMax),
-        CellIndex(row: newRowMax, column: newColumnMin),
-        completed: selection.isCompleted,
-        customMainCell: selection.mainCell,
-      ),
-      SelectionDirection.topRight => SheetRangeSelection<CellIndex>(
-        CellIndex(row: newRowMax, column: newColumnMin),
-        CellIndex(row: newRowMin, column: newColumnMax),
-        completed: selection.isCompleted,
-        customMainCell: selection.mainCell,
-      ),
-      SelectionDirection.topLeft => SheetRangeSelection<CellIndex>(
-        CellIndex(row: newRowMax, column: newColumnMax),
-        CellIndex(row: newRowMin, column: newColumnMin),
-        completed: selection.isCompleted,
-        customMainCell: selection.mainCell,
-      ),
-    };
+    return SheetRangeSelection<CellIndex>(
+      cornersWithMergedCells.topLeft,
+      cornersWithMergedCells.bottomRight,
+      completed: selection.isCompleted,
+      customMainCell: selection.mainCell,
+    );
   }
 }
 

@@ -41,8 +41,9 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
   SheetFillSelection expandVertically(int size) {
     switch(fillDirection) {
       case Direction.top:
+        return copyWith(endIndex: end.cell.move(dx: 0, dy: -size));
       case Direction.bottom:
-        return copyWith(endIndex: end.cell.move(dx: 0, dy: size));
+        return copyWith(startIndex: start.cell.move(dx: 0, dy: size));
       case Direction.left:
       case Direction.right:
         return this;
@@ -55,8 +56,9 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
       case Direction.bottom:
         return this;
       case Direction.left:
+        return copyWith(endIndex: end.cell.move(dx: -size, dy: 0));
       case Direction.right:
-        return copyWith(endIndex: end.cell.move(dx: size, dy: 0));
+        return copyWith(startIndex: start.cell.move(dx: size, dy: 0));
     }
   }
 

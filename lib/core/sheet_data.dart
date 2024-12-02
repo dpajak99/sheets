@@ -39,7 +39,7 @@ class SheetData {
   double _contentHeight = 0;
 
   SheetIndex fillCellIndex(SheetIndex sheetIndex) {
-    if(sheetIndex is! CellIndex) {
+    if (sheetIndex is! CellIndex) {
       return sheetIndex;
     }
     CellMergeStatus mergeStatus = getCellProperties(sheetIndex).mergeStatus;
@@ -103,17 +103,11 @@ class SheetData {
     CellProperties cellProperties = getCellProperties(cellIndex);
     CellMergeStatus mergeStatus = cellProperties.mergeStatus;
     if (mergeStatus is MergedCell) {
-      CellProperties mainCellProperties = getCellProperties(mergeStatus.start);
-      for (CellIndex cell in mergeStatus.mergedCells) {
-        _data[cell] = _data[cell]!.copyWith(
-          mergeStatus: NoCellMerge(),
-          style: mainCellProperties.style,
-        );
-      }
+      mergeStatus.mergedCells.forEach(_data.remove);
     }
   }
 
-  void mergeCells(List<CellIndex> cells) {
+  void mergeCells(List<CellIndex> cells, {CellStyle? style}) {
     if (cells.length < 2) {
       return;
     }
@@ -123,9 +117,12 @@ class SheetData {
 
     cells.forEach(unmergeCell);
 
+    CellProperties mainCellProperties = getCellProperties(start);
     for (CellIndex cellIndex in cells) {
-      _data[cellIndex] ??= CellProperties();
-      _data[cellIndex] = _data[cellIndex]!.copyWith(mergeStatus: MergedCell(start: start, end: end));
+      _data[cellIndex] = mainCellProperties.copyWith(
+        mergeStatus: MergedCell(start: start, end: end),
+        style: style ?? mainCellProperties.style,
+      );
     }
   }
 

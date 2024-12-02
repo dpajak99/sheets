@@ -12,8 +12,6 @@ import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/direction.dart';
 
 // Start Fill
 class StartFillSelectionEvent extends StartSelectionEvent {
@@ -109,18 +107,11 @@ class CompleteFillSelectionAction extends CompleteSelectionAction {
     SelectionCellCorners fillCorners = fillSelection.cellCorners.includeMergedCells(data);
     SelectionCellCorners templateCorners = templateSelection.cellCorners!.includeMergedCells(data);
 
-    print('Fill width: ${fillCorners.width}, height: ${fillCorners.height}');
-    print('Template width: ${templateCorners.width}, height: ${templateCorners.height}');
-
-    // TODO(dominik): Hmmm
-    int horizontalDiff = (templateCorners.width % (templateCorners.width + fillCorners.width)) - 1;
-    int verticalDiff = (templateCorners.height % (templateCorners.height + fillCorners.height)) - 1;
-    print('Horizontal diff: $horizontalDiff, vertical diff: $verticalDiff');
+    int horizontalDiff = missingToBeDivisible(templateCorners.width, fillCorners.width);
+    int verticalDiff = missingToBeDivisible(templateCorners.height, fillCorners.height);
     if (fillSelection.fillDirection.isHorizontal && horizontalDiff != 0) {
-      print('Expanding horizontally by $horizontalDiff');
       fillSelection = fillSelection.expandHorizontally(horizontalDiff);
     } else if (fillSelection.fillDirection.isVertical && verticalDiff != 0) {
-      print('Expanding vertically by $verticalDiff');
       fillSelection = fillSelection.expandVertically(verticalDiff);
     }
 
@@ -134,8 +125,6 @@ class CompleteFillSelectionAction extends CompleteSelectionAction {
       for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
     ];
 
-    _removeMergedCells(baseProperties);
-
     AutoFillEngine(data, fillSelection.fillDirection, baseProperties, fillProperties).resolve();
 
     SheetSelection newSelection = controller.selection.value.complete();
@@ -147,14 +136,8 @@ class CompleteFillSelectionAction extends CompleteSelectionAction {
     }
   }
 
-  void _removeMergedCells(List<IndexedCellProperties> cells) {
-    cells.removeWhere((IndexedCellProperties element) {
-      CellMergeStatus mergeStatus = element.properties.mergeStatus;
-      if (mergeStatus is MergedCell) {
-        return !mergeStatus.isMainCell(element.index);
-      } else {
-        return false;
-      }
-    });
+  int missingToBeDivisible(int b, int a) {
+    int remainder = a % b;
+    return remainder == 0 ? 0 : b - remainder;
   }
 }
