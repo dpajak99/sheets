@@ -41,12 +41,20 @@ class SheetSingleSelection extends SheetSelectionBase {
 
   @override
   bool containsRow(RowIndex index) {
-    return _selectedIndex.row == index;
+    if (_selectedIndex is MergedCellIndex) {
+      return _selectedIndex.containsRow(index);
+    } else {
+      return _selectedIndex.row == index;
+    }
   }
 
   @override
   bool containsColumn(ColumnIndex index) {
-    return _selectedIndex.column == index;
+    if (_selectedIndex is MergedCellIndex) {
+      return _selectedIndex.containsColumn(index);
+    } else {
+      return _selectedIndex.column == index;
+    }
   }
 
   @override
@@ -56,12 +64,20 @@ class SheetSingleSelection extends SheetSelectionBase {
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
-    return SelectionStatus(_selectedIndex.row == rowIndex, false);
+    if(_selectedIndex is MergedCellIndex) {
+      return SelectionStatus(_selectedIndex.containsRow(rowIndex), false);
+    } else {
+      return SelectionStatus(_selectedIndex.row == rowIndex, false);
+    }
   }
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    return SelectionStatus(_selectedIndex.column == columnIndex, false);
+    if(_selectedIndex is MergedCellIndex) {
+      return SelectionStatus(_selectedIndex.containsColumn(columnIndex), false);
+    } else {
+      return SelectionStatus(_selectedIndex.column == columnIndex, false);
+    }
   }
 
   @override

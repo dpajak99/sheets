@@ -117,9 +117,10 @@ class MergedCell extends CellMergeStatus {
   final CellIndex start;
   final CellIndex end;
 
+  MergedCellIndex get index => MergedCellIndex(start: start, end: end);
+
   @override
   int get width {
-    print('Width: ${end.column} - ${start.column} = ${end.column.value - start.column.value}');
     return end.column.value - start.column.value;
   }
 

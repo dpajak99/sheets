@@ -37,6 +37,9 @@ class SelectionCellCorners with EquatableMixin {
   final CellIndex bottomLeft;
   final CellIndex bottomRight;
 
+  int get width => bottomRight.column.value - topLeft.column.value + 1;
+  int get height => bottomRight.row.value - topLeft.row.value + 1;
+
   SelectionCellCorners includeMergedCells(SheetData data) {
     int minRow = topLeft.row.value;
     int maxRow = bottomRight.row.value;

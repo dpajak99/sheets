@@ -125,9 +125,22 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
     if (columnSelected) {
       return true;
     }
+    RowIndex topRow;
+    RowIndex bottomRow;
 
-    RowIndex topRow = start.row < end.row ? start.row : end.row;
-    RowIndex bottomRow = start.row < end.row ? end.row : start.row;
+    if(start is MergedCellIndex) {
+      MergedCellIndex mergedStart = start as MergedCellIndex;
+      topRow = mergedStart.start.row < mergedStart.end.row ? mergedStart.start.row : mergedStart.end.row;
+    } else {
+      topRow = start.row < end.row ? start.row : end.row;
+    }
+
+    if(end is MergedCellIndex) {
+      MergedCellIndex mergedEnd = end as MergedCellIndex;
+      bottomRow = mergedEnd.start.row < mergedEnd.end.row ? mergedEnd.end.row : mergedEnd.start.row;
+    } else {
+      bottomRow = start.row < end.row ? end.row : start.row;
+    }
 
     return index.value >= topRow.value && index.value <= bottomRow.value;
   }
@@ -138,8 +151,24 @@ abstract class SheetSelectionBase with EquatableMixin implements SheetSelection 
       return true;
     }
 
-    ColumnIndex leftColumn = start.column < end.column ? start.column : end.column;
-    ColumnIndex rightColumn = start.column < end.column ? end.column : start.column;
+    ColumnIndex leftColumn;
+    ColumnIndex rightColumn;
+
+
+    if(start.cell is MergedCellIndex) {
+
+      MergedCellIndex mergedStart = start.cell as MergedCellIndex;
+      leftColumn = mergedStart.start.column < mergedStart.end.column ? mergedStart.start.column : mergedStart.end.column;
+    } else {
+      leftColumn = start.column < end.column ? start.column : end.column;
+    }
+
+    if(end.cell is MergedCellIndex) {
+      MergedCellIndex mergedEnd = end.cell as MergedCellIndex;
+      rightColumn = mergedEnd.start.column < mergedEnd.end.column ? mergedEnd.end.column : mergedEnd.start.column;
+    } else {
+      rightColumn = start.column < end.column ? end.column : start.column;
+    }
 
     return index.value >= leftColumn.value && index.value <= rightColumn.value;
   }

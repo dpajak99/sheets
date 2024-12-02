@@ -38,6 +38,18 @@ class SheetData {
   double _contentWidth = 0;
   double _contentHeight = 0;
 
+  SheetIndex fillCellIndex(SheetIndex sheetIndex) {
+    if(sheetIndex is! CellIndex) {
+      return sheetIndex;
+    }
+    CellMergeStatus mergeStatus = getCellProperties(sheetIndex).mergeStatus;
+    if (mergeStatus is MergedCell) {
+      return MergedCellIndex(start: mergeStatus.start, end: mergeStatus.end);
+    } else {
+      return sheetIndex;
+    }
+  }
+
   void _recalculateContentSize() {
     _recalculateContentWidth();
     _recalculateContentHeight();

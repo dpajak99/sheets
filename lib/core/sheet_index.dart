@@ -47,6 +47,35 @@ sealed class SheetIndex with EquatableMixin {
   }
 }
 
+class MergedCellIndex extends CellIndex {
+  MergedCellIndex({
+    required this.start,
+    required this.end,
+  }) : super(row: start.row, column: start.column);
+
+  final CellIndex start;
+  final CellIndex end;
+
+  bool containsRow(RowIndex rowIndex) {
+    return rowIndex >= start.row && rowIndex <= end.row;
+  }
+
+  bool containsColumn(ColumnIndex columnIndex) {
+    return columnIndex >= start.column && columnIndex <= end.column;
+  }
+
+  bool containsCell(CellIndex cellIndex) {
+    return containsRow(cellIndex.row) && containsColumn(cellIndex.column);
+  }
+
+  @override
+  String stringifyPosition() {
+    return 'M(${super.stringifyPosition()})';
+  }
+  @override
+  List<Object?> get props => <Object?>[start, end];
+}
+
 class CellIndex extends SheetIndex {
   CellIndex({required this.row, required this.column});
 
@@ -68,6 +97,10 @@ class CellIndex extends SheetIndex {
 
   factory CellIndex.fromRowMax(RowIndex rowIndex) {
     return CellIndex(row: rowIndex, column: ColumnIndex.max);
+  }
+
+  CellIndex copyWith({RowIndex? row, ColumnIndex? column}) {
+    return CellIndex(row: row ?? this.row, column: column ?? this.column);
   }
 
   static CellIndex zero = CellIndex(row: RowIndex(0), column: ColumnIndex(0));

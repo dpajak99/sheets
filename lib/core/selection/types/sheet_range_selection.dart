@@ -38,6 +38,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
 
   @override
   SelectionCellCorners get cellCorners {
+
     return SelectionCellCorners.fromDirection(
       topLeft: start.cell,
       topRight: CellIndex(row: start.row, column: end.column),

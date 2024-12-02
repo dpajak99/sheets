@@ -1,8 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
-import 'package:sheets/core/selection/selection_corners.dart';
-import 'package:sheets/core/selection/selection_direction.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
@@ -56,7 +54,8 @@ class StartSelectionAction extends SheetAction<StartSelectionEvent> {
       controller.resolve(DisableEditingEvent(save: true));
     }
 
-    SheetIndex? selectedIndex = event.selectionStart.index;
+    SheetIndex? selectedIndex = controller.data.fillCellIndex(event.selectionStart.index);
+
     SheetSelection previousSelection = controller.selection.value;
 
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
@@ -115,6 +114,7 @@ class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
       controller.viewport.firstVisibleRow,
       controller.viewport.firstVisibleColumn,
     );
+    selectedIndex = controller.data.fillCellIndex(selectedIndex);
 
     SheetSelection previousSelection = controller.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
@@ -132,9 +132,9 @@ class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 
-    if (updatedSelection is SheetRangeSelection<CellIndex>) {
-      updatedSelection = ensureMergedCellsVisible(updatedSelection);
-    }
+    // if (updatedSelection is SheetRangeSelection<CellIndex>) {
+    //   updatedSelection = ensureMergedCellsVisible(updatedSelection);
+    // }
 
     controller.selection.update(updatedSelection);
 
@@ -214,6 +214,8 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
       selectedIndex = previousSelection.mainCell;
       selectionBuilder.setStrategy(GestureSelectionStrategySingle());
     }
+
+    selectedIndex = controller.data.fillCellIndex(selectedIndex) as CellIndex;
 
     CellIndex maxIndex = CellIndex.max.toRealIndex(
       columnCount: controller.data.columnCount,

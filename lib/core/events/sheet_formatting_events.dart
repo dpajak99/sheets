@@ -164,7 +164,7 @@ class MergeSelectionAction extends SheetFormattingAction<MergeSelectionEvent> {
     SheetSelection selection = controller.selection.value;
     if (selection is SheetRangeSelection) {
       List<CellIndex> selectedCells = selection.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
-      controller.selection.update(SheetSingleSelection(selection.mainCell));
+      controller.selection.update(SheetSingleSelection(MergedCellIndex(start: selectedCells.first, end: selectedCells.last)));
       controller.data.mergeCells(selectedCells);
     } else if (selection is SheetSingleSelection) {
       CellProperties cellProperties = controller.data.getCellProperties(selection.mainCell);
