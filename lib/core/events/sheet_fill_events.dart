@@ -1,6 +1,6 @@
 import 'package:sheets/core/auto_fill_engine.dart';
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
@@ -21,8 +21,8 @@ class StartFillSelectionEvent extends StartSelectionEvent {
   StartFillSelectionAction createAction(SheetController controller) => StartFillSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(rebuildSelection: true);
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(rebuildSelection: true);
   }
 
   @override
@@ -44,8 +44,8 @@ class UpdateFillSelectionEvent extends UpdateSelectionEvent {
   UpdateFillSelectionAction createAction(SheetController controller) => UpdateFillSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(rebuildSelection: true);
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(rebuildSelection: true);
   }
 
   @override
@@ -81,8 +81,8 @@ class CompleteFillSelectionEvent extends CompleteSelectionEvent {
   CompleteFillSelectionAction createAction(SheetController controller) => CompleteFillSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildSelection: true,
       rebuildData: true,
     );

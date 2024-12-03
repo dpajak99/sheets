@@ -83,7 +83,6 @@ class MergedCellIndex extends CellIndex {
 
   @override
   CellIndex move({required int dx, required int dy}) {
-    print('Move MergedCellIndex: $dx, $dy');
     RowIndex row = dy < 0 ? start.row + dy : end.row + dy;
     ColumnIndex column = dx < 0 ? start.column + dx : end.column + dx;
 
@@ -110,7 +109,7 @@ class MergedCellIndex extends CellIndex {
 
   @override
   String stringifyPosition() {
-    return 'M(${super.stringifyPosition()})';
+    return '${start.stringifyPosition()}:${end.stringifyPosition()}';
   }
   @override
   List<Object?> get props => <Object?>[start, end];

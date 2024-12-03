@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
+import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
@@ -35,8 +37,8 @@ class FormatSelectionEvent extends SheetFormattingEvent {
   FormatSelectionAction createAction(SheetController controller) => FormatSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildViewport: true,
       rebuildData: true,
     );
@@ -51,8 +53,7 @@ class FormatSelectionAction extends SheetFormattingAction<FormatSelectionEvent> 
 
   @override
   void execute() {
-    List<CellIndex> selectedCells =
-        controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
+    List<CellIndex> selectedCells = controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
     SelectionStyle selectionStyle = controller.getSelectionStyle();
 
     StyleFormatIntent intent = event.intent;
@@ -84,8 +85,8 @@ class ResizeColumnEvent extends SheetFormattingEvent {
   ResizeColumnAction createAction(SheetController controller) => ResizeColumnAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildViewport: true,
       rebuildHorizontalScroll: true,
       rebuildVerticalScroll: true,
@@ -117,8 +118,8 @@ class ResizeRowEvent extends SheetFormattingEvent {
   ResizeRowAction createAction(SheetController controller) => ResizeRowAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildViewport: true,
       rebuildHorizontalScroll: true,
       rebuildVerticalScroll: true,
@@ -145,8 +146,8 @@ class MergeSelectionEvent extends SheetFormattingEvent {
   MergeSelectionAction createAction(SheetController controller) => MergeSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildSelection: true,
       rebuildData: true,
     );
@@ -184,8 +185,8 @@ class UnmergeSelectionEvent extends SheetFormattingEvent {
   UnmergeSelectionAction createAction(SheetController controller) => UnmergeSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildSelection: true,
       rebuildData: true,
     );
@@ -201,8 +202,14 @@ class UnmergeSelectionAction extends SheetFormattingAction<UnmergeSelectionEvent
   @override
   void execute() {
     SheetSelection selection = controller.selection.value;
+    SelectionCellCorners? corners = selection.cellCorners?.includeMergedCells(controller.data);
+
     List<CellIndex> selectedCells = selection.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
     selectedCells.forEach(controller.data.unmergeCell);
+
+    if(corners != null) {
+      controller.selection.update(SheetSelectionFactory.range(start: corners.topLeft, end: corners.bottomRight, completed: true));
+    }
   }
 }
 
@@ -212,8 +219,8 @@ class ClearSelectionEvent extends SheetFormattingEvent {
   ClearSelectionAction createAction(SheetController controller) => ClearSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildViewport: true,
       rebuildData: true,
     );

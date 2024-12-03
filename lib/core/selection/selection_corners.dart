@@ -1,8 +1,4 @@
-import 'dart:math' as math;
-
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -53,7 +49,7 @@ class SelectionCellCorners with EquatableMixin {
       for (int y = top.value; y <= bottom.value; y++) {
         for (int x = left.value; x <= right.value; x++) {
           CellIndex cellIndex = CellIndex(row: RowIndex(y), column: ColumnIndex(x));
-          CellIndex filledCellIndex = data.fillCellIndex(cellIndex) as CellIndex;
+          CellIndex filledCellIndex = data.fillCellIndex(cellIndex);
 
           if (filledCellIndex is MergedCellIndex) {
             if (filledCellIndex.start.column.value < left.value) {

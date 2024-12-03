@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
@@ -7,7 +5,6 @@ import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
-import 'package:sheets/widgets/widget_state_builder.dart';
 
 class ToolbarMergeButton extends StatefulWidget implements StaticSizeWidget {
   const ToolbarMergeButton({
@@ -51,7 +48,6 @@ class ToolbarMergeButton extends StatefulWidget implements StaticSizeWidget {
     properties.add(ObjectFlagProperty<VoidCallback>.has('onMergeVertically', onMergeVertically));
     properties.add(ObjectFlagProperty<VoidCallback>.has('onMergeHorizontally', onMergeHorizontally));
     properties.add(ObjectFlagProperty<VoidCallback>.has('onSplit', onSplit));
-
   }
 
   @override
@@ -84,7 +80,11 @@ class _ToolbarMergeButtonState extends State<ToolbarMergeButton> {
             _dropdownController.toggle();
           },
           onTap: () {
-            widget.onMerge();
+            if (widget.canSplit) {
+              widget.onSplit();
+            } else {
+              widget.onMerge();
+            }
           },
         );
       },

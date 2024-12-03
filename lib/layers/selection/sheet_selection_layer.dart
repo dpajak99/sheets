@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer_painter.dart';
 
@@ -49,8 +49,8 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
   }
 
   void _handleSheetControllerChanged() {
-    SheetRebuildProperties properties = widget.sheetController.value;
-    if (properties.rebuildSelection) {
+    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    if (rebuildConfig.rebuildSelection) {
       _layerPainter.setSheetSelection(widget.sheetController.selection.value);
       _layerPainter.setViewport(widget.sheetController.viewport);
     }

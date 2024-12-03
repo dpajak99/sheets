@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
@@ -74,8 +74,8 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 
   void _handleSheetControllerChanged() {
-    SheetRebuildProperties properties = widget.sheetController.value;
-    if (properties.rebuildFillHandle) {
+    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    if (rebuildConfig.rebuildFillHandle) {
       _updateFillHandle();
     }
   }

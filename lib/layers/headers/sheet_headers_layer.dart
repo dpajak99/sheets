@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/headers/sheet_headers_painter.dart';
 
@@ -63,11 +63,11 @@ class _SheetHeadersLayerState extends State<SheetHeadersLayer> {
   }
 
   void _handleSheetControllerChanged() {
-    SheetRebuildProperties properties = widget.sheetController.value;
-    if (properties.rebuildHorizontalHeaders) {
+    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    if (rebuildConfig.rebuildHorizontalHeaders) {
       _updateVisibleColumns();
     }
-    if(properties.rebuildVerticalHeaders) {
+    if(rebuildConfig.rebuildVerticalHeaders) {
       _updateVisibleRows();
     }
   }

@@ -1,13 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/selection/selection_style.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
+import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/border_edges.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
@@ -235,25 +237,31 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                     )));
                                   },
                                 ),
-                                ToolbarMergeButton(
-                                  merged: selectionStyle.cellProperties.mergeStatus is MergedCell,
-                                  canMerge: widget.sheetController.selection.value is SheetRangeSelection,
-                                  canMergeVertically: widget.sheetController.selection.value is SheetRangeSelection,
-                                  canMergeHorizontally: widget.sheetController.selection.value is SheetRangeSelection,
-                                  canSplit: selectionStyle.cellProperties.mergeStatus is MergedCell,
-                                  onMerge: () {
-                                    widget.sheetController.resolve(MergeSelectionEvent());
-                                  },
-                                  onMergeHorizontally: () {
-                                    widget.sheetController.resolve(MergeSelectionEvent());
-                                  },
-                                  onMergeVertically: () {
-                                    widget.sheetController.resolve(MergeSelectionEvent());
-                                  },
-                                  onSplit: () {
-                                    widget.sheetController.resolve(UnmergeSelectionEvent());
-                                  },
-                                ),
+                                () {
+                                  SheetSelection selection = widget.sheetController.selection.value;
+                                  bool merged = selection is SheetSingleSelection && selection.mainCell is MergedCellIndex;
+                                  bool canMerge = selection is SheetRangeSelection;
+
+                                  return ToolbarMergeButton(
+                                    merged: merged,
+                                    canMerge: canMerge,
+                                    canMergeVertically: canMerge,
+                                    canMergeHorizontally: canMerge,
+                                    canSplit: merged,
+                                    onMerge: () {
+                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                    },
+                                    onMergeHorizontally: () {
+                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                    },
+                                    onMergeVertically: () {
+                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                    },
+                                    onSplit: () {
+                                      widget.sheetController.resolve(UnmergeSelectionEvent());
+                                    },
+                                  );
+                                }(),
                                 const ToolbarDivider(),
                               ],
                             ),

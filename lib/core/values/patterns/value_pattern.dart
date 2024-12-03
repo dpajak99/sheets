@@ -1,9 +1,6 @@
-import 'package:equatable/equatable.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_data.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
-import 'package:sheets/utils/direction.dart';
 
 abstract class ValuePatternMatcher {
   ValuePattern<dynamic, dynamic>? detect(List<IndexedCellProperties> baseCells);
@@ -21,6 +18,7 @@ abstract class ValuePattern<V, S> {
 
   void updateState(V newValue);
 
+  // TODO(Dominik): Improvement possibility
   void apply(SheetData data, List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
     for (int i = 0; i < fillCells.length; i++) {
       IndexedCellProperties templateProperties = baseCells[i % baseCells.length];

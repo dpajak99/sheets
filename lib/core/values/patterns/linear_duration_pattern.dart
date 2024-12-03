@@ -1,13 +1,11 @@
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
-import 'package:sheets/utils/direction.dart';
 
 class LinearDurationPatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<IndexedCellProperties> values) {
+  DurationSequencePattern? detect(List<IndexedCellProperties> values) {
     try {
       List<Duration> durationValues = _parseDurationValues(values);
       List<Duration> steps = _calculateSteps(durationValues);

@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -60,8 +60,8 @@ class _SheetHorizontalHeadersResizerLayerState extends State<SheetHorizontalHead
   }
 
   void _handleSheetControllerChanged() {
-    SheetRebuildProperties properties = widget.sheetController.value;
-    if (properties.rebuildHorizontalHeaderResizer) {
+    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    if (rebuildConfig.rebuildHorizontalHeaderResizer) {
       _updateVisibleRows();
     }
   }

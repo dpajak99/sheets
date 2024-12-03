@@ -80,7 +80,11 @@ class SheetData {
   }
 
   CellProperties getCellProperties(CellIndex cellIndex) {
-    return _data[cellIndex] ?? CellProperties();
+    CellIndex updatedIndex = cellIndex;
+    if(cellIndex is MergedCellIndex) {
+      updatedIndex = cellIndex.start;
+    }
+    return _data[updatedIndex] ?? CellProperties();
   }
 
   double getColumnWidth(ColumnIndex columnIndex) {

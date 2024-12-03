@@ -1,14 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/sheet_data.dart';
-import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
-import 'package:sheets/utils/direction.dart';
 
 class LinearStringPatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<IndexedCellProperties> baseCells) {
+  LinearStringPattern? detect(List<IndexedCellProperties> baseCells) {
     List<_SegmentedStringCellValue>? segmentedValues = _segmentCellValues(baseCells);
     if (segmentedValues == null || segmentedValues.isEmpty) {
       return null;

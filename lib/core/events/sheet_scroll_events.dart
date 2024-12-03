@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/extensions/offset_extensions.dart';
@@ -23,8 +24,8 @@ class ScrollByEvent extends ScrollEvent {
   SheetAction<SheetEvent> createAction(SheetController controller) => ScrollByAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildHorizontalScroll: true,
       rebuildVerticalScroll: true,
       rebuildViewport: true,
@@ -60,8 +61,8 @@ class ScrollToElementEvent extends ScrollEvent {
   SheetAction<SheetEvent> createAction(SheetController controller) => ScrollToElementAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(
       rebuildHorizontalScroll: true,
       rebuildVerticalScroll: true,
       rebuildViewport: true,

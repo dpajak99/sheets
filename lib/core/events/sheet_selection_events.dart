@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/selection_overflow_index_adapter.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
@@ -37,8 +37,8 @@ class StartSelectionEvent extends SheetEvent {
   }
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(rebuildSelection: true);
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(rebuildSelection: true);
   }
 
   @override
@@ -96,8 +96,8 @@ class UpdateSelectionEvent extends SheetEvent {
   }
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(rebuildSelection: true);
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(rebuildSelection: true);
   }
 
   @override
@@ -156,8 +156,8 @@ class CompleteSelectionEvent extends SheetEvent {
   }
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(rebuildSelection: true);
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(rebuildSelection: true);
   }
 
   @override
@@ -188,8 +188,8 @@ class MoveSelectionEvent extends SheetEvent {
   SheetAction<SheetEvent> createAction(SheetController controller) => MoveSelectionAction(this, controller);
 
   @override
-  SheetRebuildProperties get rebuildProperties {
-    return SheetRebuildProperties(rebuildSelection: true);
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig(rebuildSelection: true);
   }
 
   @override
@@ -219,11 +219,9 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
       columnCount: controller.data.columnCount,
       rowCount: controller.data.rowCount,
     );
-    print('Index before move: $selectedIndex');
     selectedIndex = controller.data.fillCellIndex(selectedIndex);
     selectedIndex = selectedIndex.move(dx: event.dx, dy: event.dy).clamp(maxIndex);
     selectedIndex = controller.data.fillCellIndex(selectedIndex);
-    print('Index after move: $selectedIndex');
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 

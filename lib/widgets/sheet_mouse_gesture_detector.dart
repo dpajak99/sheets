@@ -50,7 +50,7 @@ class SheetMouseGestureDetectorState extends State<SheetMouseGestureDetector> {
 }
 
 class RemoteMouseWidget extends SingleChildRenderObjectWidget {
-  const RemoteMouseWidget({Key? key}) : super(key: key);
+  const RemoteMouseWidget({super.key});
 
   @override
   RenderObject createRenderObject(BuildContext context) {

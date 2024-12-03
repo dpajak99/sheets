@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/cells/sheet_cells_layer_painter.dart';
 
@@ -48,7 +48,7 @@ class _SheetCellsLayerState extends State<SheetCellsLayer> {
   }
 
   void _handleSheetControllerChanged() {
-    SheetRebuildProperties properties = widget.sheetController.value;
+    SheetRebuildConfig properties = widget.sheetController.value;
     if (properties.rebuildCellsLayer) {
       _updateVisibleCells();
     }

@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/mouse/mouse_listener.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
@@ -15,18 +16,18 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/silent_value_notifier.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
 
-class SheetControllerNotifier extends ChangeNotifier {
-  SheetRebuildProperties _value = SheetRebuildProperties();
+class SheetRebuildNotifier extends ChangeNotifier {
+  SheetRebuildConfig _value = SheetRebuildConfig();
 
-  void notify(SheetRebuildProperties value) {
+  void notify(SheetRebuildConfig value) {
     _value = value;
     notifyListeners();
   }
 
-  SheetRebuildProperties get value => _value;
+  SheetRebuildConfig get value => _value;
 }
 
-class SheetController extends SheetControllerNotifier {
+class SheetController extends SheetRebuildNotifier {
   SheetController({
     required this.data,
   }) {
@@ -67,9 +68,9 @@ class SheetController extends SheetControllerNotifier {
     action.execute();
 
     if (mainEvent) {
-      SheetRebuildProperties rebuildProperties = eventsQueue.fold(
-        SheetRebuildProperties(),
-        (SheetRebuildProperties previousValue, SheetEvent element) => previousValue.combine(element.rebuildProperties),
+      SheetRebuildConfig rebuildProperties = eventsQueue.fold(
+        SheetRebuildConfig(),
+        (SheetRebuildConfig previousValue, SheetEvent element) => previousValue.combine(element.rebuildConfig),
       );
 
       if(rebuildProperties.rebuildViewport || rebuildProperties.rebuildCellsLayer) {
@@ -95,7 +96,6 @@ class SheetController extends SheetControllerNotifier {
   List<CellIndex> get selectedCells {
     return selection.value.getSelectedCells(data.columnCount, data.rowCount);
   }
-
 
   bool get isEditingMode => editableCellNotifier.value != null;
 
