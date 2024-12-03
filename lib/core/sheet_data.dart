@@ -295,6 +295,7 @@ class SheetData {
   double get contentWidth => _contentWidth;
 
   double get contentHeight => _contentHeight;
+  Size get contentSize => Size(contentWidth, contentHeight);
 
   Map<CellIndex, CellProperties> getMultiCellProperties(List<CellIndex> cellIndexes) {
     return Map<CellIndex, CellProperties>.fromEntries(cellIndexes.map((CellIndex cellIndex) {

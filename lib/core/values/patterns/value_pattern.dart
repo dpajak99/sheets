@@ -1,5 +1,4 @@
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 abstract class ValuePatternMatcher {
@@ -19,7 +18,9 @@ abstract class ValuePattern<V, S> {
   void updateState(V newValue);
 
   // TODO(Dominik): Improvement possibility
-  void apply(SheetData data, List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
+  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
+    List<IndexedCellProperties> filledCells = <IndexedCellProperties>[];
+
     for (int i = 0; i < fillCells.length; i++) {
       IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
       IndexedCellProperties fillProperties = fillCells[i];
@@ -30,15 +31,17 @@ abstract class ValuePattern<V, S> {
       SheetRichText previousRichText = templateProperties.properties.value;
       SheetRichText updatedRichText = formatValue(previousRichText, newValue);
 
-      data.setCellProperties(
-        fillProperties.index,
-        fillProperties.properties.copyWith(
+      filledCells.add(IndexedCellProperties(
+        index: fillProperties.index,
+        properties: fillProperties.properties.copyWith(
           value: updatedRichText,
           style: templateProperties.properties.style,
         ),
-      );
+      ));
 
       updateState(newValue);
     }
+
+    return filledCells;
   }
 }

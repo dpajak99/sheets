@@ -44,7 +44,7 @@ class SheetController extends SheetRebuildNotifier {
     );
     selection = SelectionState.defaultSelection();
 
-    scroll.setContentSize(data.contentWidth, data.contentHeight);
+    scroll.setContentSize(data.contentSize);
   }
 
   final FocusNode sheetFocusNode = FocusNode()..requestFocus();

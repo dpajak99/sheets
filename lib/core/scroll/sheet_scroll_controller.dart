@@ -34,10 +34,10 @@ class SheetScrollController {
     );
   }
 
-  void setContentSize(double width, double height) {
+  void setContentSize(Size size) {
     metrics = DirectionalValues<SheetScrollMetrics>(
-      horizontal: metrics.horizontal.copyWith(contentSize: width),
-      vertical: metrics.vertical.copyWith(contentSize: height),
+      horizontal: metrics.horizontal.copyWith(contentSize: size.width),
+      vertical: metrics.vertical.copyWith(contentSize: size.height),
     );
   }
 
@@ -50,8 +50,8 @@ class SheetScrollController {
   }
 
   void scrollTo(Offset offset) {
-    position.horizontal.offset = offset.dx;
-    position.vertical.offset = offset.dy;
+    position.horizontal.offset = offset.dx < 0 ? 0 : offset.dx;
+    position.vertical.offset = offset.dy < 0 ? 0 : offset.dy;
   }
 
   void scrollToVertical(double offset) {

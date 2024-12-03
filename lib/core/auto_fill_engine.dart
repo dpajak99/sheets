@@ -8,7 +8,7 @@ import 'package:sheets/core/values/patterns/linear_string_pattern.dart';
 import 'package:sheets/core/values/patterns/repeat_value_pattern.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/utils/direction.dart';
-import 'package:sheets/utils/extensions/cell_index_extensions.dart';
+import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
 
 class AutoFillEngine {
   AutoFillEngine(
@@ -170,7 +170,8 @@ class _PatternApplier {
       String key = fillRangeEntry.key;
       List<IndexedCellProperties> patternCells = templateRanges[key]!.toList();
       ValuePattern<dynamic, dynamic> pattern = _detectPattern(patternCells);
-      pattern.apply(data, patternCells, fillRangeEntry.value);
+      List<IndexedCellProperties> filledCells = pattern.apply( patternCells, fillRangeEntry.value);
+      data.setCellsProperties(filledCells);
     }
   }
 

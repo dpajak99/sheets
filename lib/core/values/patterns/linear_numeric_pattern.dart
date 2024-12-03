@@ -10,20 +10,20 @@ class LinearNumericPatternMatcher implements ValuePatternMatcher {
     try {
       List<num> numericValues = _parseNumericValues(values);
       List<num> steps = _calculateSteps(numericValues);
+
       if (steps.isEmpty) {
         return null;
       }
-
       num lastNumValue = numericValues.last;
 
-      int precision = NumberFormat.decimalPattern(lastNumValue.toString()).decimalDigits ?? 0;
-
+      List<String> numParts = lastNumValue.toString().split('.');
+      bool hasFloat = !numParts[1].split('').every((String char) => char == '0');
+      int precision = hasFloat ? numParts[1].length : 0;
       return LinearNumericPattern(steps: steps, lastNumValue: lastNumValue, precision: precision);
     } catch (e) {
       return null;
     }
   }
-
   List<num> _parseNumericValues(List<IndexedCellProperties> values) {
     return values.map((IndexedCellProperties cell) {
       SheetValueFormat format = cell.properties.visibleValueFormat;
