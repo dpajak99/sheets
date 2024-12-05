@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';

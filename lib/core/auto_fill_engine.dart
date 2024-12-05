@@ -87,13 +87,13 @@ class _PatternApplier {
       IndexedCellProperties targetCell = unprocessedFillCells.removeAt(0);
       CellMergeStatus baseMergeStatus = baseCell.properties.mergeStatus;
 
-      if (baseMergeStatus is! MergedCell) {
-        _handleUnmergedTemplateCell(baseCell, targetCell, templateRanges, fillRanges);
-        templateIndex++;
+      if (completedCells.contains(targetCell.index)) {
         continue;
       }
 
-      if (completedCells.contains(targetCell.index)) {
+      if (baseMergeStatus is! MergedCell) {
+        _handleUnmergedTemplateCell(baseCell, targetCell, templateRanges, fillRanges);
+        templateIndex++;
         continue;
       }
 
@@ -145,10 +145,10 @@ class _PatternApplier {
 
     for (CellIndex index in movedMergeStatus.mergedCells) {
       unprocessedFillCells.removeWhere((IndexedCellProperties cell) => cell.index == index);
+      completedCells.add(index);
     }
 
     data.mergeCells(movedMergeStatus.mergedCells);
-    completedCells.addAll(movedMergeStatus.mergedCells);
 
     String key = movedMergeStatus.id;
     templateRanges.putIfAbsent(key, () => <IndexedCellProperties>{}).add(baseCell);

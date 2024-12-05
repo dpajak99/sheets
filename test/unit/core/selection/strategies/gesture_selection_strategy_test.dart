@@ -8,7 +8,6 @@ import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
-import 'package:sheets/utils/extensions/int_extensions.dart';
 
 void main() {
   group('GestureSelectionStrategySingle.execute()', () {

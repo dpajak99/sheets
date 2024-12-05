@@ -39,7 +39,7 @@ class SheetData {
   double _contentHeight = 0;
 
   List<T> fillCellIndexes<T extends SheetIndex>(List<T> sheetIndexes) {
-    return sheetIndexes.map(fillCellIndex).toList() ;
+    return sheetIndexes.map(fillCellIndex).toList();
   }
 
   T fillCellIndex<T extends SheetIndex>(T sheetIndex) {
@@ -81,7 +81,7 @@ class SheetData {
 
   CellProperties getCellProperties(CellIndex cellIndex) {
     CellIndex updatedIndex = cellIndex;
-    if(cellIndex is MergedCellIndex) {
+    if (cellIndex is MergedCellIndex) {
       updatedIndex = cellIndex.start;
     }
     return _data[updatedIndex] ?? CellProperties();
@@ -111,7 +111,12 @@ class SheetData {
     CellProperties cellProperties = getCellProperties(cellIndex);
     CellMergeStatus mergeStatus = cellProperties.mergeStatus;
     if (mergeStatus is MergedCell) {
-      mergeStatus.mergedCells.forEach(_data.remove);
+      CellProperties mergeCellProperties = getCellProperties(mergeStatus.start);
+      for(CellIndex index in mergeStatus.mergedCells) {
+        _data[index] = mergeCellProperties.copyWith(
+          mergeStatus: NoCellMerge(),
+        );
+      }
     }
   }
 
@@ -295,6 +300,7 @@ class SheetData {
   double get contentWidth => _contentWidth;
 
   double get contentHeight => _contentHeight;
+
   Size get contentSize => Size(contentWidth, contentHeight);
 
   Map<CellIndex, CellProperties> getMultiCellProperties(List<CellIndex> cellIndexes) {
