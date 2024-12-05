@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/renderers/visible_cells_renderer.dart';
@@ -28,10 +28,10 @@ void main() {
       });
 
       VisibleCellsRenderer renderer = VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns);
-      SheetDataManager dataManager = SheetDataManager(data: SheetData(columnCount: 3, rowCount: 3));
+      SheetData data = SheetData(columnCount: 3, rowCount: 3);
 
       // Act
-      List<ViewportCell> visibleCells = renderer.build(dataManager);
+      List<ViewportCell> visibleCells = renderer.build(data);
 
       // Assert
       List<ViewportCell> expectedCells = <ViewportCell>[
@@ -84,10 +84,10 @@ void main() {
         visibleRows: <ViewportRow>[],
         visibleColumns: <ViewportColumn>[],
       );
-      SheetDataManager dataManager = SheetDataManager(data: SheetData(columnCount: 0, rowCount: 0));
+      SheetData data = SheetData(columnCount: 0, rowCount: 0);
 
       // Act
-      List<ViewportCell> visibleCells = renderer.build(dataManager);
+      List<ViewportCell> visibleCells = renderer.build(data);
 
       // Assert
       List<ViewportCell> expectedCells = <ViewportCell>[];

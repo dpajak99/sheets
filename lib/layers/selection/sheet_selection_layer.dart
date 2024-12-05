@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/layers/selection/sheet_selection_layer_painter.dart';
 
@@ -31,14 +32,12 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
       sheetSelection: widget.sheetController.selection.value,
       viewport: widget.sheetController.viewport,
     );
-    widget.sheetController.selection.addListener(_updateSelection);
-    widget.sheetController.viewport.addListener(_updateViewport);
+    widget.sheetController.addListener(_handleSheetControllerChanged);
   }
 
   @override
   void dispose() {
-    widget.sheetController.selection.removeListener(_updateSelection);
-    widget.sheetController.viewport.removeListener(_updateViewport);
+    widget.sheetController.removeListener(_handleSheetControllerChanged);
     super.dispose();
   }
 
@@ -49,11 +48,11 @@ class _SheetSelectionLayerState extends State<SheetSelectionLayer> {
     );
   }
 
-  void _updateSelection() {
-    _layerPainter.setSheetSelection(widget.sheetController.selection.value);
-  }
-
-  void _updateViewport() {
-    _layerPainter.setViewport(widget.sheetController.viewport);
+  void _handleSheetControllerChanged() {
+    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    if (rebuildConfig.rebuildSelection) {
+      _layerPainter.setSheetSelection(widget.sheetController.selection.value);
+      _layerPainter.setViewport(widget.sheetController.viewport);
+    }
   }
 }

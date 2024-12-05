@@ -13,12 +13,12 @@ void main() {
       test('Should [return List<SheetExtension>] with all SheetSelections completed', () {
         // Arrange
         List<SheetSelection> actualSelections = <SheetSelection>[
-          SheetSingleSelection(CellIndex.raw(1, 1), completed: false),
+          SheetSingleSelection(CellIndex.raw(1, 1)),
           SheetRangeSelection<CellIndex>(CellIndex.raw(0, 1), CellIndex.raw(0, 2), completed: false),
           SheetRangeSelection<RowIndex>(RowIndex(1), RowIndex(2), completed: false),
           SheetRangeSelection<ColumnIndex>(ColumnIndex(1), ColumnIndex(2), completed: false),
           SheetMultiSelection(selections: <SheetSelection>[
-            SheetSingleSelection(CellIndex.raw(1, 1), completed: false),
+            SheetSingleSelection(CellIndex.raw(1, 1)),
             SheetRangeSelection<CellIndex>(CellIndex.raw(0, 1), CellIndex.raw(0, 2), completed: false),
             SheetRangeSelection<RowIndex>(RowIndex(1), RowIndex(2), completed: false),
             SheetRangeSelection<ColumnIndex>(ColumnIndex(1), ColumnIndex(2), completed: false),
@@ -30,12 +30,12 @@ void main() {
 
         // Assert
         List<SheetSelection> expectedCompletedSelections = <SheetSelection>[
-          SheetSingleSelection(CellIndex.raw(1, 1), completed: true),
+          SheetSingleSelection(CellIndex.raw(1, 1)),
           SheetRangeSelection<CellIndex>(CellIndex.raw(0, 1), CellIndex.raw(0, 2), completed: true),
           SheetRangeSelection<RowIndex>(RowIndex(1), RowIndex(2), completed: true),
           SheetRangeSelection<ColumnIndex>(ColumnIndex(1), ColumnIndex(2), completed: true),
           SheetMultiSelection(selections: <SheetSelection>[
-            SheetSingleSelection(CellIndex.raw(1, 1), completed: true),
+            SheetSingleSelection(CellIndex.raw(1, 1)),
             SheetRangeSelection<CellIndex>(CellIndex.raw(0, 1), CellIndex.raw(0, 2), completed: true),
             SheetRangeSelection<RowIndex>(RowIndex(1), RowIndex(2), completed: true),
             SheetRangeSelection<ColumnIndex>(ColumnIndex(1), ColumnIndex(2), completed: true),

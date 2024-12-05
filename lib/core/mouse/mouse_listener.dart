@@ -8,16 +8,19 @@ import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/repeat_action_timer.dart';
-import 'package:sheets/utils/silent_value_notifier.dart';
 import 'package:sheets/utils/streamable.dart';
+
+class SheetCursor extends ValueNotifier<SystemMouseCursor> {
+  SheetCursor._() : super(SystemMouseCursors.basic);
+
+  static final SheetCursor instance = SheetCursor._();
+}
 
 class MouseListener extends Streamable<SheetMouseGesture> {
   MouseListener({
     required List<MouseGestureRecognizer> mouseActionRecognizers,
     required SheetController sheetController,
   }) {
-    cursor = SilentValueNotifier<SystemMouseCursor>(SystemMouseCursors.basic);
-
     _repeatDragUpdateTimer = RepeatActionTimer(
       startDuration: const Duration(milliseconds: 200),
       nextHoldDuration: const Duration(milliseconds: 50),
@@ -25,8 +28,6 @@ class MouseListener extends Streamable<SheetMouseGesture> {
     _mouseActionRecognizers = mouseActionRecognizers;
     _sheetController = sheetController;
   }
-
-  late final SilentValueNotifier<SystemMouseCursor> cursor;
 
   late final RepeatActionTimer _repeatDragUpdateTimer;
 
@@ -57,11 +58,11 @@ class MouseListener extends Streamable<SheetMouseGesture> {
   }
 
   void setCursor(SystemMouseCursor systemMouseCursor) {
-    cursor.setValue(systemMouseCursor);
+    SheetCursor.instance.value = systemMouseCursor;
   }
 
   void resetCursor() {
-    cursor.setValue(SystemMouseCursors.basic);
+    SheetCursor.instance.value = SystemMouseCursors.basic;
   }
 
   void setGlobalOffset(Offset globalOffset) {

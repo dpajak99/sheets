@@ -9,7 +9,7 @@ import 'package:sheets/utils/direction.dart';
 class SheetSelectionFactory {
   static SheetSelection single(SheetIndex index, {bool completed = false}) {
     return switch (index) {
-      CellIndex cellIndex => SheetSingleSelection(cellIndex, completed: completed),
+      CellIndex cellIndex => SheetSingleSelection(cellIndex),
       ColumnIndex columnIndex => SheetRangeSelection<ColumnIndex>.single(columnIndex, completed: completed),
       RowIndex rowIndex => SheetRangeSelection<RowIndex>.single(rowIndex, completed: completed),
     };
@@ -21,7 +21,7 @@ class SheetSelectionFactory {
     bool completed = false,
   }) {
     if (start is CellIndex && start == end) {
-      return SheetSingleSelection(start, completed: completed);
+      return SheetSingleSelection(start);
     }
 
     return switch (start) {

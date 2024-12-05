@@ -5,27 +5,24 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearNumericPatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<IndexedCellProperties> values) {
+  LinearNumericPattern? detect(List<IndexedCellProperties> values) {
     try {
       List<num> numericValues = _parseNumericValues(values);
       List<num> steps = _calculateSteps(numericValues);
+
       if (steps.isEmpty) {
         return null;
       }
-
       num lastNumValue = numericValues.last;
 
-      int precision = numericValues.fold(0, (int maxPrecision, num value) {
-        int precision = value.toString().split('.').last.length;
-        return precision > maxPrecision ? precision : maxPrecision;
-      });
-
+      List<String> numParts = lastNumValue.toString().split('.');
+      bool hasFloat = !numParts[1].split('').every((String char) => char == '0');
+      int precision = hasFloat ? numParts[1].length : 0;
       return LinearNumericPattern(steps: steps, lastNumValue: lastNumValue, precision: precision);
     } catch (e) {
       return null;
     }
   }
-
   List<num> _parseNumericValues(List<IndexedCellProperties> values) {
     return values.map((IndexedCellProperties cell) {
       SheetValueFormat format = cell.properties.visibleValueFormat;
@@ -58,43 +55,28 @@ class LinearNumericPatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class LinearNumericPattern extends ValuePattern {
+class LinearNumericPattern extends ValuePattern<num, num> {
   LinearNumericPattern({
-    required this.steps,
-    required this.lastNumValue,
+    required super.steps,
+    required num lastNumValue,
     required this.precision,
-  });
+  }) : super(lastValue: lastNumValue);
 
-  final List<num> steps;
-  final num lastNumValue;
   final int precision;
 
   @override
-  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
-    num lastNumValue = this.lastNumValue;
-
-    for (int i = 0; i < fillCells.length; i++) {
-      IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
-      IndexedCellProperties fillProperties = fillCells[i];
-
-      num step = steps[i % steps.length];
-      num newNumValue = lastNumValue + step;
-      newNumValue = double.parse(newNumValue.toStringAsFixed(precision));
-      lastNumValue = newNumValue;
-
-      SheetRichText previousRichText = templateProperties.properties.value;
-      SheetRichText updatedRichText = previousRichText.withText(newNumValue.toString());
-
-      fillCells[i] = fillProperties.copyWith(
-        properties: fillProperties.properties.copyWith(
-          value: updatedRichText,
-          style: templateProperties.properties.style,
-        ),
-      );
-    }
-    return fillCells;
+  num calculateNewValue(int index, CellProperties templateProperties, num lastValue, num? step) {
+    num newValue = lastValue + step!;
+    return double.parse(newValue.toStringAsFixed(precision));
   }
 
   @override
-  List<Object?> get props => <Object?>[steps, lastNumValue, precision];
+  SheetRichText formatValue(SheetRichText previousRichText, num value) {
+    return previousRichText.withText(value.toStringAsFixed(precision));
+  }
+
+  @override
+  void updateState(num newValue) {
+    lastValue = newValue;
+  }
 }

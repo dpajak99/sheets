@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/renderers/visible_columns_renderer.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/directional_values.dart';
 
 void main() {
   group('Tests of VisibleColumnsRenderer.build()', () {
     test('Should [return list of visible columns] when [viewport and scroll position are set]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 300, 200));
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
-          columnCount: 10,
-          rowCount: 0,
-          customColumnStyles: <ColumnIndex, ColumnStyle>{
-            for (int i = 0; i < 10; i++) ColumnIndex(i): ColumnStyle(width: 60),
-          },
-        ),
-      );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 0.0, // Vertical scroll position
-        SheetScrollPosition()..offset = 0.0, // Horizontal scroll position
+      SheetData data = SheetData(
+        columnCount: 10,
+        rowCount: 0,
+        customColumnStyles: <ColumnIndex, ColumnStyle>{
+          for (int i = 0; i < 10; i++) ColumnIndex(i): ColumnStyle(width: 60),
+        },
       );
 
       VisibleColumnsRenderer renderer = VisibleColumnsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 0,
       );
 
       // Act
@@ -52,24 +44,17 @@ void main() {
     test('Should [handle horizontal scrolling] when [scroll position is not zero]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 300, 200));
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
+      SheetData data = SheetData(
           columnCount: 10,
           rowCount: 0,
           customColumnStyles: <ColumnIndex, ColumnStyle>{
             for (int i = 0; i < 10; i++) ColumnIndex(i): ColumnStyle(width: 50),
           },
-        ),
       );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 0.0, // Vertical scroll position
-        SheetScrollPosition()..offset = 75.0, // Horizontal scroll position
-      );
-
       VisibleColumnsRenderer renderer = VisibleColumnsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 75,
       );
 
       // Act
@@ -91,24 +76,18 @@ void main() {
     test('Should [return list with first column only] when [no columns fit in the viewport]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 50, 200)); // Only row headers width
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
+      SheetData data = SheetData(
           columnCount: 5,
           rowCount: 0,
           customColumnStyles: <ColumnIndex, ColumnStyle>{
             for (int i = 0; i < 5; i++) ColumnIndex(i): ColumnStyle(width: 100),
           },
-        ),
-      );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 0.0,
-        SheetScrollPosition()..offset = 0.0,
       );
 
       VisibleColumnsRenderer renderer = VisibleColumnsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 0,
       );
 
       // Act
@@ -125,24 +104,18 @@ void main() {
     test('Should [return correct columns] when [scrolled to middle of columns]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 300, 200));
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
+      SheetData data =  SheetData(
           columnCount: 10,
           rowCount: 0,
           customColumnStyles: <ColumnIndex, ColumnStyle>{
             for (int i = 0; i < 10; i++) ColumnIndex(i): ColumnStyle(width: 50),
           },
-        ),
-      );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 0.0,
-        SheetScrollPosition()..offset = 200.0, // Scroll to skip first 4 columns (4 * 50.0)
       );
 
       VisibleColumnsRenderer renderer = VisibleColumnsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 200,
       );
 
       // Act

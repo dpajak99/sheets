@@ -3,6 +3,7 @@ import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_physics.dart';
+import 'package:sheets/utils/directional_values.dart';
 
 void main() {
   group('Tests of SheetScrollPhysics', () {
@@ -13,7 +14,7 @@ void main() {
         SmoothScrollPhysics physics = SmoothScrollPhysics();
         physics.applyTo(scrollController);
 
-        scrollController.metrics.update(
+        scrollController.metrics = DirectionalValues<SheetScrollMetrics>(
           horizontal: SheetScrollMetrics(
             axisDirection: SheetAxisDirection.horizontal,
             contentSize: 1000,
@@ -43,7 +44,7 @@ void main() {
         SmoothScrollPhysics physics = SmoothScrollPhysics();
         physics.applyTo(scrollController);
 
-        scrollController.metrics.update(
+        scrollController.metrics = DirectionalValues<SheetScrollMetrics>(
           horizontal: SheetScrollMetrics(
             axisDirection: SheetAxisDirection.horizontal,
             contentSize: 1000,

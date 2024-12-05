@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
@@ -7,8 +8,7 @@ import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/layers/shared_paints.dart';
-import 'package:sheets/utils/edge_visibility.dart';
+import 'package:sheets/utils/extensions/offset_extensions.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
 import 'package:sheets/utils/text_rotation.dart';
@@ -53,22 +53,12 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    List<ViewportCell> borderedCells = <ViewportCell>[];
-
     for (ViewportCell cell in visibleCells) {
       _paintCellBackground(canvas, cell);
       _paintCellText(canvas, cell);
-
-      if (cell.properties.style.border != null) {
-        borderedCells.add(cell);
-      }
     }
 
     _paintMesh(canvas, size);
-
-    for (ViewportCell cell in borderedCells) {
-      _paintCellBorder(canvas, cell);
-    }
   }
 
   @override
@@ -77,39 +67,93 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   }
 
   void _paintMesh(Canvas canvas, Size size) {
+    Set<Line> lines = <Line>{};
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
     List<ViewportColumn> visibleColumns = _viewportContent.columns;
     List<ViewportRow> visibleRows = _viewportContent.rows;
+    List<ViewportCell> visibleCells = _viewportContent.cells;
 
     if (visibleColumns.isEmpty || visibleRows.isEmpty) {
       return;
     }
 
-    ViewportColumn lastColumn = visibleColumns.last;
-    ViewportRow lastRow = visibleRows.last;
 
-    double maxOffsetRight = min(size.width, lastColumn.rect.right);
-    double maxOffsetBottom = min(size.height, lastRow.rect.bottom);
+    for (ViewportCell cell in visibleCells) {
+      Rect cellRect = cell.rect;
+      Border? border = cell.properties.style.border;
 
-    for (ViewportColumn column in visibleColumns) {
-      Rect columnRect = column.rect;
-      _paintMeshLine(canvas, Offset(columnRect.right + borderWidth, 0), Offset(columnRect.right + borderWidth, maxOffsetBottom));
+      lines.add(Line(
+        cellRect.topLeft.moveY(-borderWidth),
+        cellRect.topRight.moveY(-borderWidth).expandEndX(borderWidth),
+        border?.top,
+      ));
+
+      lines.add(Line(
+        cellRect.topRight.moveX(borderWidth).expandEndY(-1),
+        cellRect.bottomRight.moveX(borderWidth),
+        border?.right,
+      ));
+
+      lines.add(Line(
+        cellRect.bottomLeft,
+        cellRect.bottomRight.expandEndX(borderWidth),
+        border?.bottom,
+      ));
+
+      lines.add(Line(
+        cellRect.topLeft.expandEndY(-borderWidth),
+        cellRect.bottomLeft,
+        border?.left,
+      ));
     }
 
-    for (ViewportRow row in visibleRows) {
-      Rect rowRect = row.rect;
-      _paintMeshLine(canvas, Offset(0, rowRect.bottom), Offset(maxOffsetRight, rowRect.bottom));
+    List<Line> mergedLines = mergeOverlappingLines(lines.toList());
+
+    for (Line line in mergedLines) {
+
+      Paint paint = Paint()
+        ..color = line.side.color
+        ..strokeWidth = line.side.width
+        ..isAntiAlias = false
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.square;
+
+      canvas.drawLine(line.start, line.end, paint);
     }
   }
 
-  void _paintMeshLine(Canvas canvas, Offset startOffset, Offset endOffset) {
-    Paint borderPaint = Paint()
-      ..color = const Color(0x1F040404)
-      ..strokeWidth = borderWidth
-      ..isAntiAlias = false
-      ..style = PaintingStyle.stroke;
+  List<Line> mergeOverlappingLines(List<Line> lines) {
+    List<Line> mergedLines = lines;
 
-    canvas.drawLine(startOffset, endOffset, borderPaint);
+    // Merge overlapping lines iteratively
+    bool merged = true;
+    while (merged) {
+      merged = false;
+      for (int i = 0; i < mergedLines.length; i++) {
+        for (int j = i + 1; j < mergedLines.length; j++) {
+          if (mergedLines[i].canReplace(mergedLines[j])) {
+            mergedLines.add(mergedLines[j]);
+            mergedLines.removeAt(j);
+            mergedLines.removeAt(i);
+            merged = true;
+            break;
+          }
+
+          if (mergedLines[i].canMerge(mergedLines[j])) {
+            mergedLines.add(mergedLines[i].merge(mergedLines[j]));
+            mergedLines.removeAt(j);
+            mergedLines.removeAt(i);
+            merged = true;
+            break;
+          }
+        }
+        if (merged) {
+          break;
+        }
+      }
+    }
+
+    return mergedLines;
   }
 
   void _paintCellBackground(Canvas canvas, ViewportCell cell) {
@@ -121,22 +165,6 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(cell.rect.expand(borderWidth), backgroundPaint);
-  }
-
-  void _paintCellBorder(Canvas canvas, ViewportCell cell) {
-    Border border = Border(
-      top: cell.properties.style.border?.top ?? BorderSide.none,
-      right: cell.properties.style.border?.right ?? BorderSide.none,
-      bottom: cell.properties.style.border?.bottom ?? BorderSide.none,
-      left: cell.properties.style.border?.left ?? BorderSide.none,
-    );
-
-    SharedPaints.paintBorder(
-      canvas: canvas,
-      rect: cell.rect,
-      border: border,
-      edgeVisibility: EdgeVisibility.allVisible(),
-    );
   }
 
   void _paintCellText(Canvas canvas, ViewportCell cell) {
@@ -236,5 +264,66 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
     // Restore the canvas state
     canvas.restore();
+  }
+}
+
+class Line with EquatableMixin {
+  Line(this.start, this.end, this._side);
+
+  static BorderSide defaultBorderSide = const BorderSide(color: Color(0x1F040404));
+
+  final Offset start;
+  final Offset end;
+  final BorderSide? _side;
+
+  BorderSide get side => (_side == null || _side == BorderSide.none) ? defaultBorderSide : _side;
+
+  bool canMerge(Line other) {
+    return side == other.side && isOverlapping(other);
+  }
+
+  bool canReplace(Line other) {
+    bool sameEdge = start == other.start && end == other.end;
+    return sameEdge && other.side != defaultBorderSide;
+  }
+
+  bool isOverlapping(Line other) {
+    return (start.dy == end.dy &&
+            other.start.dy == other.end.dy &&
+            start.dy == other.start.dy &&
+            end.dx >= other.start.dx &&
+            start.dx <= other.end.dx) ||
+        (start.dx == end.dx &&
+            other.start.dx == other.end.dx &&
+            start.dx == other.start.dx &&
+            end.dy >= other.start.dy &&
+            start.dy <= other.end.dy);
+  }
+
+  // Merge two overlapping lines into one
+  Line merge(Line other) {
+    if (start.dy == end.dy) {
+      // Horizontal lines
+      return Line(
+        Offset(start.dx < other.start.dx ? start.dx : other.start.dx, start.dy),
+        Offset(end.dx > other.end.dx ? end.dx : other.end.dx, start.dy),
+        _side,
+      );
+    } else {
+      // Vertical lines
+      return Line(
+        Offset(start.dx, start.dy < other.start.dy ? start.dy : other.start.dy),
+        Offset(start.dx, end.dy > other.end.dy ? end.dy : other.end.dy),
+        _side,
+      );
+    }
+  }
+
+  @override
+  List<Object?> get props => <Object?>[start, end, _side];
+
+  @override
+  String toString() {
+    return 'Line{start: $start, end: $end}';
   }
 }

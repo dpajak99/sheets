@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 
@@ -85,7 +85,7 @@ void main() {
     group('Tests of CellIndex.toRealIndex()', () {
       test('Should [return real index] when [CellIndex has max row and column]', () {
         // Arrange
-        SheetDataManager properties = SheetDataManager(data: SheetData(rowCount: 10, columnCount: 15));
+        SheetData data = SheetData(rowCount: 10, columnCount: 15);
 
         CellIndex cellIndex = CellIndex(row: RowIndex.max, column: ColumnIndex.max);
 
@@ -93,8 +93,8 @@ void main() {
         CellIndex realIndex = cellIndex.toRealIndex(columnCount: 15, rowCount: 10);
 
         // Assert
-        expect(realIndex.row.value, equals(properties.rowCount - 1));
-        expect(realIndex.column.value, equals(properties.columnCount - 1));
+        expect(realIndex.row.value, equals(data.rowCount - 1));
+        expect(realIndex.column.value, equals(data.columnCount - 1));
       });
 
       test('Should [return same index] when [CellIndex is within bounds]', () {
@@ -113,12 +113,12 @@ void main() {
     group('Tests of CellIndex.getSheetCoordinates()', () {
       test('Should [return correct Rect] when [calculating sheet coordinates]', () {
         // Arrange
-        SheetDataManager properties = SheetDataManager(data: SheetData(rowCount: 3, columnCount: 3));
+        SheetData data = SheetData(rowCount: 3, columnCount: 3);
 
         CellIndex cellIndex = CellIndex(row: RowIndex(1), column: ColumnIndex(1));
 
         // Act
-        Rect actualRect = cellIndex.getSheetCoordinates(properties);
+        Rect actualRect = cellIndex.getSheetCoordinates(data);
 
         // Assert
         Rect expectedRect = const Rect.fromLTRB(101, 22, 202, 44);
@@ -275,7 +275,7 @@ void main() {
     group('Tests of RowIndex.toRealIndex()', () {
       test('Should [return real index] when [RowIndex is max]', () {
         // Arrange
-        SheetDataManager properties = SheetDataManager(data: SheetData(rowCount: 10, columnCount: 15));
+        SheetData data = SheetData(rowCount: 10, columnCount: 15);
 
         RowIndex rowIndex = RowIndex.max;
 
@@ -283,7 +283,7 @@ void main() {
         RowIndex realIndex = rowIndex.toRealIndex(rowCount: 10);
 
         // Assert
-        expect(realIndex.value, equals(properties.rowCount - 1));
+        expect(realIndex.value, equals(data.rowCount - 1));
       });
 
       test('Should [return same index] when [RowIndex is within bounds]', () {
@@ -301,21 +301,19 @@ void main() {
     group('Tests of RowIndex.getSheetCoordinates()', () {
       test('Should [return correct Rect] when [calculating sheet coordinates]', () {
         // Arrange
-        SheetDataManager properties = SheetDataManager(
-          data: SheetData(
-            rowCount: 3,
-            columnCount: 3,
-            customRowStyles: <RowIndex, RowStyle>{
-              RowIndex(0): RowStyle(height: 20),
-              RowIndex(1): RowStyle(height: 30),
-              RowIndex(2): RowStyle(height: 25),
-            },
-          ),
+        SheetData data = SheetData(
+          rowCount: 3,
+          columnCount: 3,
+          customRowStyles: <RowIndex, RowStyle>{
+            RowIndex(0): RowStyle(height: 20),
+            RowIndex(1): RowStyle(height: 30),
+            RowIndex(2): RowStyle(height: 25),
+          },
         );
         RowIndex rowIndex = RowIndex(1);
 
         // Act
-        Rect actualRect = rowIndex.getSheetCoordinates(properties);
+        Rect actualRect = rowIndex.getSheetCoordinates(data);
 
         // Assert
         Rect expectedRect = const Rect.fromLTRB(0, 21, 101, 52);
@@ -453,7 +451,7 @@ void main() {
     group('Tests of ColumnIndex.toRealIndex()', () {
       test('Should [return real index] when [ColumnIndex is max]', () {
         // Arrange
-        SheetDataManager properties = SheetDataManager(data: SheetData(rowCount: 10, columnCount: 15));
+        SheetData data = SheetData(rowCount: 10, columnCount: 15);
 
         ColumnIndex columnIndex = ColumnIndex.max;
 
@@ -461,7 +459,7 @@ void main() {
         ColumnIndex realIndex = columnIndex.toRealIndex(columnCount: 15);
 
         // Assert
-        expect(realIndex.value, equals(properties.columnCount - 1));
+        expect(realIndex.value, equals(data.columnCount - 1));
       });
 
       test('Should [return same index] when [ColumnIndex is within bounds]', () {
@@ -479,22 +477,20 @@ void main() {
     group('Tests of ColumnIndex.getSheetCoordinates()', () {
       test('Should [return correct Rect] when [calculating sheet coordinates]', () {
         // Arrange
-        SheetDataManager properties = SheetDataManager(
-          data: SheetData(
-            rowCount: 3,
-            columnCount: 3,
-            customColumnStyles: <ColumnIndex, ColumnStyle>{
-              ColumnIndex(0): ColumnStyle(width: 50),
-              ColumnIndex(1): ColumnStyle(width: 60),
-              ColumnIndex(2): ColumnStyle(width: 55),
-            },
-          ),
+        SheetData data = SheetData(
+          rowCount: 3,
+          columnCount: 3,
+          customColumnStyles: <ColumnIndex, ColumnStyle>{
+            ColumnIndex(0): ColumnStyle(width: 50),
+            ColumnIndex(1): ColumnStyle(width: 60),
+            ColumnIndex(2): ColumnStyle(width: 55),
+          },
         );
 
         ColumnIndex columnIndex = ColumnIndex(1);
 
         // Act
-        Rect actualRect = columnIndex.getSheetCoordinates(properties);
+        Rect actualRect = columnIndex.getSheetCoordinates(data);
 
         // Assert
         Rect expectedRect = const Rect.fromLTRB(51, 0, 112, 22);

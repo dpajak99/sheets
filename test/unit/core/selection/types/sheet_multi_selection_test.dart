@@ -550,7 +550,7 @@ void main() {
       SheetMultiSelection expectedSelection = SheetMultiSelection(
         selections: <SheetSelection>[
           SheetRangeSelection<CellIndex>(CellIndex.raw(0, 0), CellIndex.raw(0, 3)),
-          SheetSingleSelection(CellIndex.raw(1, 0), completed: true),
+          SheetSingleSelection(CellIndex.raw(1, 0)),
           SheetRangeSelection<CellIndex>(CellIndex.raw(2, 0), CellIndex.raw(3, 3)),
           SheetRangeSelection<CellIndex>(CellIndex.raw(1, 2), CellIndex.raw(1, 3)),
         ],

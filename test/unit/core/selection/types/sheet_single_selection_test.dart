@@ -9,22 +9,9 @@ import 'package:sheets/core/sheet_index.dart';
 
 void main() {
   group('SheetSingleSelection.isCompleted', () {
-    test('Should [return FALSE] for [INCOMPLETE selection]', () {
+    test('Should [return TRUE] for SheetSingleSelection', () {
       // Arrange
       SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5));
-
-      // Act
-      bool actualIsCompleted = selection.isCompleted;
-
-      // Assert
-      bool expectedIsCompleted = false;
-
-      expect(actualIsCompleted, equals(expectedIsCompleted));
-    });
-
-    test('Should [return TRUE] for [COMPLETED selection]', () {
-      // Arrange
-      SheetSingleSelection selection = SheetSingleSelection(CellIndex.raw(5, 5), completed: true);
 
       // Act
       bool actualIsCompleted = selection.isCompleted;
@@ -448,7 +435,7 @@ void main() {
       SheetSelection actualSelection = selection.complete();
 
       // Assert
-      SheetSingleSelection expectedSelection = SheetSingleSelection(startIndex, completed: true);
+      SheetSingleSelection expectedSelection = SheetSingleSelection(startIndex);
 
       expect(actualSelection, equals(expectedSelection));
     });

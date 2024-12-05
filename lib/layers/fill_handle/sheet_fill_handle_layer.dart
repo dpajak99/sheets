@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
@@ -38,16 +39,12 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
-    widget.sheetController.dataManager.addListener(_updateFillHandle);
-    widget.sheetController.selection.addListener(_updateFillHandle);
-    widget.sheetController.scroll.addListener(_updateFillHandle);
+    widget.sheetController.addListener(_handleSheetControllerChanged);
   }
 
   @override
   void dispose() {
-    widget.sheetController.dataManager.removeListener(_updateFillHandle);
-    widget.sheetController.selection.removeListener(_updateFillHandle);
-    widget.sheetController.scroll.removeListener(_updateFillHandle);
+    widget.sheetController.removeListener(_handleSheetControllerChanged);
     super.dispose();
   }
 
@@ -74,6 +71,13 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
           ),
       ],
     );
+  }
+
+  void _handleSheetControllerChanged() {
+    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    if (rebuildConfig.rebuildFillHandle) {
+      _updateFillHandle();
+    }
   }
 
   void _updateFillHandle() {

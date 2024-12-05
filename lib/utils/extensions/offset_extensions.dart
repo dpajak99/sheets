@@ -18,4 +18,20 @@ extension OffsetExtensions on Offset {
       dy.clamp(y, double.infinity),
     );
   }
+
+  Offset moveX(double x) {
+    return Offset(dx + x, dy);
+  }
+
+  Offset moveY(double y) {
+    return Offset(dx, dy + y);
+  }
+
+  Offset expandEndX(double x) {
+    return Offset(dx + x, dy);
+  }
+
+  Offset expandEndY(double y) {
+    return Offset(dx, dy + y);
+  }
 }

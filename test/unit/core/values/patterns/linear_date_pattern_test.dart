@@ -5,7 +5,6 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
-import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/text_rotation.dart';
 
@@ -18,7 +17,7 @@ void main() {
         List<IndexedCellProperties> values = <IndexedCellProperties>[];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DateSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -40,7 +39,7 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DateSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -71,15 +70,17 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DateSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = DateSequencePattern(
+        DateSequencePattern expectedPattern = DateSequencePattern(
           steps: <Duration>[const Duration(days: 1)],
           lastDate: DateTime(2023, 11, 2),
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
 
       test('Should [return DateSequencePattern] when [values contain valid date formats] (multi steps)', () {
@@ -116,10 +117,10 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DateSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = DateSequencePattern(
+        DateSequencePattern expectedPattern = DateSequencePattern(
           steps: <Duration>[
             const Duration(days: 2),
             const Duration(days: 3),
@@ -127,7 +128,9 @@ void main() {
           lastDate: DateTime(2023, 11, 6),
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
     });
   });

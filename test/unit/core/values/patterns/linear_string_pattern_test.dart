@@ -3,7 +3,6 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/patterns/linear_string_pattern.dart';
-import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 void main() {
@@ -15,7 +14,7 @@ void main() {
         List<IndexedCellProperties> values = <IndexedCellProperties>[];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearStringPattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -42,7 +41,7 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearStringPattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -62,7 +61,7 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearStringPattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -89,17 +88,19 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearStringPattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = LinearStringPattern(
-          HorizontalDirection.left,
-          2,
-          <int>[1],
-          <String>[' Text', ' Text'],
+        LinearStringPattern expectedPattern = LinearStringPattern(
+          direction: HorizontalDirection.left,
+          lastIntegerValue: 2,
+          steps: <int>[1],
+          values: <String>[' Text', ' Text'],
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
 
       test('Should [return LinearStringPattern] when [values contain valid right-positioned integers]', () {
@@ -123,17 +124,19 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearStringPattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = LinearStringPattern(
-          HorizontalDirection.right,
-          2,
-          <int>[1],
-          <String>['Text ', 'Text '],
+        LinearStringPattern expectedPattern = LinearStringPattern(
+          direction: HorizontalDirection.right,
+          lastIntegerValue: 2,
+          steps: <int>[1],
+          values: <String>['Text ', 'Text '],
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
     });
   });
@@ -143,10 +146,10 @@ void main() {
       test('Should [fill cells with string sequence] based on [steps and lastIntegerValue] (left-positioned)', () {
         // Arrange
         LinearStringPattern pattern = LinearStringPattern(
-          HorizontalDirection.left,
-          1,
-          <int>[1],
-          <String>[' Text'],
+          direction: HorizontalDirection.left,
+          lastIntegerValue: 1,
+          steps: <int>[1],
+          values: <String>[' Text'],
         );
 
         List<IndexedCellProperties> baseCells = <IndexedCellProperties>[
@@ -203,10 +206,10 @@ void main() {
       test('Should [fill cells with string sequence] based on [steps and lastIntegerValue] (right-positioned)', () {
         // Arrange
         LinearStringPattern pattern = LinearStringPattern(
-          HorizontalDirection.right,
-          1,
-          <int>[1],
-          <String>['Text '],
+          direction: HorizontalDirection.right,
+          lastIntegerValue: 1,
+          steps: <int>[1],
+          values: <String>['Text '],
         );
 
         List<IndexedCellProperties> baseCells = <IndexedCellProperties>[

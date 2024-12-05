@@ -1,55 +1,14 @@
-import 'package:flutter/material.dart';
+class DirectionalValues<T extends Object> {
+  DirectionalValues({
+    required T vertical,
+    required T horizontal,
+  }) : _vertical = vertical,
+        _horizontal = horizontal;
 
-class DirectionalValues<A extends Object> extends ChangeNotifier {
-  DirectionalValues(this._vertical, this._horizontal) {
-    if (_vertical is Listenable) {
-      (_vertical as Listenable).addListener(notifyListeners);
-      (_horizontal as Listenable).addListener(notifyListeners);
-    }
-  }
+  final T _vertical;
+  final T _horizontal;
 
-  @override
-  void dispose() {
-    if (_vertical is Listenable) {
-      (_vertical as Listenable).removeListener(notifyListeners);
-      (_horizontal as Listenable).removeListener(notifyListeners);
-    }
-    super.dispose();
-  }
+  T get vertical => _vertical;
 
-  A _vertical;
-
-  A get vertical => _vertical;
-
-  set vertical(A vertical) {
-    if (_vertical == vertical) {
-      return;
-    }
-    _vertical = vertical;
-    notifyListeners();
-  }
-
-  A _horizontal;
-
-  A get horizontal {
-    return _horizontal;
-  }
-
-  set horizontal(A horizontal) {
-    if (_horizontal == horizontal) {
-      return;
-    }
-    _horizontal = horizontal;
-
-    notifyListeners();
-  }
-
-  void update({required A horizontal, required A vertical}) {
-    if (_horizontal == horizontal && _vertical == vertical) {
-      return;
-    }
-    _horizontal = horizontal;
-    _vertical = vertical;
-    notifyListeners();
-  }
+  T get horizontal => _horizontal;
 }

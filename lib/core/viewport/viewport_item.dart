@@ -169,9 +169,26 @@ class ViewportCell extends ViewportItem {
     CellProperties? properties,
   }) {
     return ViewportCell._(
-      rect: BorderRect.fromLTWH(column.rect.left, row.rect.top, column.rect.width, row.rect.height),
+      rect: BorderRect.fromLTRB(column.rect.left, row.rect.top, column.rect.right, row.rect.bottom),
       row: row,
       column: column,
+      properties: properties,
+    );
+  }
+
+  factory ViewportCell.merged({
+    required CellIndex index,
+    required ViewportRow rowStart,
+    required ViewportRow rowEnd,
+    required ViewportColumn columnStart,
+    required ViewportColumn columnEnd,
+    CellProperties? properties,
+  }) {
+    return ViewportCell._(
+      index: index,
+      rect: BorderRect.fromLTRB(columnStart.rect.left, rowStart.rect.top, columnEnd.rect.right, rowEnd.rect.bottom),
+      row: rowStart,
+      column: columnStart,
       properties: properties,
     );
   }
@@ -181,7 +198,8 @@ class ViewportCell extends ViewportItem {
     required ViewportRow row,
     required ViewportColumn column,
     CellProperties? properties,
-  })  : _index = CellIndex(row: row.index, column: column.index),
+    CellIndex? index,
+  })  : _index = index ?? CellIndex(row: row.index, column: column.index),
         _row = row,
         _column = column {
     _properties = properties ?? CellProperties();

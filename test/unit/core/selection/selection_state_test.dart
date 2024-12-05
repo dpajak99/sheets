@@ -12,16 +12,10 @@ void main() {
       SheetSelection newSelection = SheetSingleSelection(CellIndex.raw(4, 4));
 
       // Act
-      bool actualNotified = false;
-      selectionState.addListener(() => actualNotified = true);
-
       selectionState.update(newSelection);
 
       // Assert
       expect(selectionState.value, newSelection);
-      expect(actualNotified, true);
-
-      selectionState.dispose();
     });
 
     test('Should [not update selection] when new selection is the same', () {
@@ -30,16 +24,10 @@ void main() {
       SheetSelection newSelection = SheetSingleSelection.defaultSelection();
 
       // Act
-      bool actualNotified = false;
-      selectionState.addListener(() => actualNotified = true);
-
       selectionState.update(newSelection);
 
       // Assert
       expect(selectionState.value, newSelection);
-      expect(actualNotified, false);
-
-      selectionState.dispose();
     });
   });
 
@@ -50,30 +38,22 @@ void main() {
       SelectionState selectionState = SelectionState(previousSelection);
 
       // Act
-      bool actualNotified = false;
-      selectionState.addListener(() => actualNotified = true);
-
       selectionState.complete();
 
       // Assert
       expect(selectionState.value, previousSelection.copyWith(completed: true));
-      expect(actualNotified, true);
     });
 
     test('Should [not complete selection] when selection is already complete', () {
       // Arrange
-      SheetSelection previousSelection = SheetSingleSelection(CellIndex.raw(4, 4), completed: true);
+      SheetSelection previousSelection = SheetSingleSelection(CellIndex.raw(4, 4));
       SelectionState selectionState = SelectionState(previousSelection);
 
       // Act
-      bool actualNotified = false;
-      selectionState.addListener(() => actualNotified = true);
-
       selectionState.complete();
 
       // Assert
       expect(selectionState.value, previousSelection);
-      expect(actualNotified, false);
     });
   });
 

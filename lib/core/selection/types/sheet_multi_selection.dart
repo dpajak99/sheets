@@ -120,6 +120,13 @@ class SheetMultiSelection extends SheetSelectionBase {
   }
 
   @override
+  List<CellIndex> getSelectedCells(int maxColumns, int maxRows) {
+    return selections.fold(<CellIndex>[], (List<CellIndex> acc, SheetSelection selection) {
+      return <CellIndex>[...acc, ...selection.getSelectedCells(maxColumns, maxRows)];
+    });
+  }
+
+  @override
   SheetSelectionRenderer<SheetMultiSelection> createRenderer(SheetViewport viewport) {
     return SheetMultiSelectionRenderer(viewport: viewport, selection: this);
   }

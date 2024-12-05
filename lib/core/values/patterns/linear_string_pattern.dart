@@ -5,7 +5,7 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearStringPatternMatcher implements ValuePatternMatcher {
   @override
-  ValuePattern? detect(List<IndexedCellProperties> baseCells) {
+  LinearStringPattern? detect(List<IndexedCellProperties> baseCells) {
     List<_SegmentedStringCellValue>? segmentedValues = _segmentCellValues(baseCells);
     if (segmentedValues == null || segmentedValues.isEmpty) {
       return null;
@@ -30,10 +30,10 @@ class LinearStringPatternMatcher implements ValuePatternMatcher {
     int lastIntegerValue = int.parse(segmentedValues.last.integer.value);
 
     return LinearStringPattern(
-      expectedPosition,
-      lastIntegerValue,
-      steps,
-      textValues,
+      direction: expectedPosition,
+      lastIntegerValue: lastIntegerValue,
+      steps: steps,
+      values: textValues,
     );
   }
 
@@ -109,49 +109,43 @@ class LinearStringPatternMatcher implements ValuePatternMatcher {
   }
 }
 
-class LinearStringPattern extends ValuePattern {
-  LinearStringPattern(this.direction, this.lastIntegerValue, this.steps, this.values);
+class LinearStringPattern extends ValuePattern<String, int> {
+  LinearStringPattern({
+    required this.direction,
+    required this.lastIntegerValue,
+    required super.steps,
+    required this.values,
+  }) : super(lastValue: '');
 
   final HorizontalDirection direction;
-  final int lastIntegerValue;
-  final List<int> steps;
   final List<String> values;
+  int lastIntegerValue;
 
   @override
-  List<IndexedCellProperties> apply(List<IndexedCellProperties> baseCells, List<IndexedCellProperties> fillCells) {
-    int lastIntegerValue = this.lastIntegerValue;
+  String calculateNewValue(int index, CellProperties templateProperties, String lastValue, int? step) {
+    int newIntegerValue = lastIntegerValue + step!;
+    String textValue = values[index % values.length];
+    String newTextValue;
 
-    for (int i = 0; i < fillCells.length; i++) {
-      IndexedCellProperties templateProperties = baseCells[i % baseCells.length];
-      IndexedCellProperties fillProperties = fillCells[i];
-
-      int step = steps[i % steps.length];
-      String value = values[i % values.length];
-      int newIntegerValue = lastIntegerValue + step;
-      lastIntegerValue = newIntegerValue;
-
-      String newTextValue;
-      if (direction == HorizontalDirection.left) {
-        newTextValue = '${newIntegerValue.abs()}$value';
-      } else {
-        newTextValue = '$value${newIntegerValue.abs()}';
-      }
-
-      SheetRichText previousRichText = templateProperties.properties.value;
-      SheetRichText updatedRichText = previousRichText.withText(newTextValue);
-
-      fillCells[i] = fillProperties.copyWith(
-        properties: fillProperties.properties.copyWith(
-          value: updatedRichText,
-          style: templateProperties.properties.style,
-        ),
-      );
+    if (direction == HorizontalDirection.left) {
+      newTextValue = '${newIntegerValue.abs()}$textValue';
+    } else {
+      newTextValue = '$textValue${newIntegerValue.abs()}';
     }
-    return fillCells;
+
+    lastIntegerValue = newIntegerValue;
+    return newTextValue;
   }
 
   @override
-  List<Object?> get props => <Object?>[direction, lastIntegerValue, steps, values];
+  SheetRichText formatValue(SheetRichText previousRichText, String value) {
+    return previousRichText.withText(value);
+  }
+
+  @override
+  void updateState(String newValue) {
+    // State is updated within calculateNewValue
+  }
 }
 
 class _SegmentedStringCellValue with EquatableMixin {

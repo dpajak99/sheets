@@ -10,11 +10,10 @@ class SheetSingleSelection extends SheetSelectionBase {
   SheetSingleSelection(
     this._selectedIndex, {
     this.fillHandleVisible = true,
-    super.completed = false,
-  }) : super(startIndex: _selectedIndex, endIndex: _selectedIndex);
+  }) : super(startIndex: _selectedIndex, endIndex: _selectedIndex, completed: true);
 
   factory SheetSingleSelection.defaultSelection() {
-    return SheetSingleSelection(CellIndex.zero, completed: true);
+    return SheetSingleSelection(CellIndex.zero);
   }
 
   final CellIndex _selectedIndex;
@@ -28,7 +27,6 @@ class SheetSingleSelection extends SheetSelectionBase {
   }) {
     return SheetSingleSelection(
       selectedIndex ?? _selectedIndex,
-      completed: completed ?? isCompleted,
       fillHandleVisible: fillHandleVisible ?? this.fillHandleVisible,
     );
   }
@@ -43,12 +41,20 @@ class SheetSingleSelection extends SheetSelectionBase {
 
   @override
   bool containsRow(RowIndex index) {
-    return _selectedIndex.row == index;
+    if (_selectedIndex is MergedCellIndex) {
+      return _selectedIndex.containsRow(index);
+    } else {
+      return _selectedIndex.row == index;
+    }
   }
 
   @override
   bool containsColumn(ColumnIndex index) {
-    return _selectedIndex.column == index;
+    if (_selectedIndex is MergedCellIndex) {
+      return _selectedIndex.containsColumn(index);
+    } else {
+      return _selectedIndex.column == index;
+    }
   }
 
   @override
@@ -58,12 +64,20 @@ class SheetSingleSelection extends SheetSelectionBase {
 
   @override
   SelectionStatus isRowSelected(RowIndex rowIndex) {
-    return SelectionStatus(_selectedIndex.row == rowIndex, false);
+    if(_selectedIndex is MergedCellIndex) {
+      return SelectionStatus(_selectedIndex.containsRow(rowIndex), false);
+    } else {
+      return SelectionStatus(_selectedIndex.row == rowIndex, false);
+    }
   }
 
   @override
   SelectionStatus isColumnSelected(ColumnIndex columnIndex) {
-    return SelectionStatus(_selectedIndex.column == columnIndex, false);
+    if(_selectedIndex is MergedCellIndex) {
+      return SelectionStatus(_selectedIndex.containsColumn(columnIndex), false);
+    } else {
+      return SelectionStatus(_selectedIndex.column == columnIndex, false);
+    }
   }
 
   @override
@@ -96,5 +110,5 @@ class SheetSingleSelection extends SheetSelectionBase {
   }
 
   @override
-  List<Object?> get props => <Object?>[_selectedIndex, isCompleted];
+  List<Object?> get props => <Object?>[_selectedIndex, isCompleted, fillHandleVisible];
 }

@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/selection/selection_style.dart';
+import 'package:sheets/core/selection/sheet_selection.dart';
+import 'package:sheets/core/selection/types/sheet_range_selection.dart';
+import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/border_edges.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
@@ -20,6 +25,7 @@ import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_fill_butto
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_font_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_font_family_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_font_size_button.dart';
+import 'package:sheets/widgets/material/toolbar/buttons/toolbar_merge_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_text_align_horizontal_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_text_align_vertical_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_text_overflow_button.dart';
@@ -70,8 +76,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
           child: ListenableBuilder(
             listenable: Listenable.merge(<Listenable?>[
               widget.sheetController.editableCellNotifier,
-              widget.sheetController.dataManager,
-              widget.sheetController.selection,
+              widget.sheetController,
             ]),
             builder: (BuildContext context, _) {
               return ListenableBuilder(
@@ -109,38 +114,39 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarTextButton(
                                     text: NumberFormat.currency().currencySymbol,
                                     onTap: () {
-                                      widget.sheetController
-                                          .formatSelection(SetValueFormatIntent(format: (_) => SheetNumberFormat.currency()));
+                                      widget.sheetController.resolve(FormatSelectionEvent(
+                                          SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
                                     }),
                                 ToolbarIconButton(
                                     icon: SheetIcons.percentage,
                                     onTap: () {
-                                      widget.sheetController.formatSelection(
-                                          SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern()));
+                                      widget.sheetController.resolve(FormatSelectionEvent(
+                                          SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern())));
                                     }),
                                 ToolbarIconButton(
                                   icon: SheetIcons.decimal_decrease,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(SetValueFormatIntent(
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
                                         return previous?.decreaseDecimal() ?? SheetNumberFormat.decimalPattern();
                                       },
-                                    ));
+                                    )));
                                   },
                                 ),
                                 ToolbarIconButton(
                                   icon: SheetIcons.decimal_increase,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(SetValueFormatIntent(
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
                                         return previous?.increaseDecimal() ?? SheetNumberFormat.decimalPattern();
                                       },
-                                    ));
+                                    )));
                                   },
                                 ),
                                 ToolbarValueFormatButton(
                                   onChanged: (SheetValueFormat? value) {
-                                    widget.sheetController.formatSelection(SetValueFormatIntent(format: (_) => value));
+                                    widget.sheetController
+                                        .resolve(FormatSelectionEvent(SetValueFormatIntent(format: (_) => value)));
                                   },
                                 ),
                                 const ToolbarDivider(),
@@ -151,7 +157,8 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarFontFamilyButton(
                                   value: selectionStyle.textStyle.fontFamily,
                                   onChanged: (String fontFamily) {
-                                    widget.sheetController.formatSelection(SetFontFamilyIntent(fontFamily: fontFamily));
+                                    widget.sheetController
+                                        .resolve(FormatSelectionEvent(SetFontFamilyIntent(fontFamily: fontFamily)));
                                   },
                                 ),
                                 const ToolbarDivider(),
@@ -162,19 +169,19 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarIconButton.small(
                                   icon: SheetIcons.remove,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(DecreaseFontSizeIntent());
+                                    widget.sheetController.resolve(FormatSelectionEvent(DecreaseFontSizeIntent()));
                                   },
                                 ),
                                 ToolbarFontSizeButton(
                                   value: selectionStyle.fontSize ?? 0,
                                   onChanged: (double value) {
-                                    widget.sheetController.formatSelection(SetFontSizeIntent(fontSize: value));
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetFontSizeIntent(fontSize: value)));
                                   },
                                 ),
                                 ToolbarIconButton.small(
                                   icon: SheetIcons.add,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(IncreaseFontSizeIntent());
+                                    widget.sheetController.resolve(FormatSelectionEvent(IncreaseFontSizeIntent()));
                                   },
                                 ),
                                 const ToolbarDivider(),
@@ -186,28 +193,28 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                   icon: SheetIcons.format_bold,
                                   selected: selectionStyle.fontWeight == FontWeight.bold,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(ToggleFontWeightIntent());
+                                    widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent()));
                                   },
                                 ),
                                 ToolbarIconButton(
                                   icon: SheetIcons.format_italic,
                                   selected: selectionStyle.fontStyle == FontStyle.italic,
                                   onTap: () {
-                                    widget.sheetController.formatSelection(ToggleFontStyleIntent());
+                                    widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent()));
                                   },
                                 ),
                                 ToolbarIconButton(
                                   icon: SheetIcons.strikethrough,
                                   selected: selectionStyle.decoration == TextDecoration.lineThrough,
                                   onTap: () {
-                                    widget.sheetController
-                                        .formatSelection(ToggleTextDecorationIntent(value: TextDecoration.lineThrough));
+                                    widget.sheetController.resolve(
+                                        FormatSelectionEvent(ToggleTextDecorationIntent(value: TextDecoration.lineThrough)));
                                   },
                                 ),
                                 ToolbarColorFontButton(
                                   value: selectionStyle.color ?? defaultTextStyle.color ?? Colors.black,
                                   onChanged: (Color color) {
-                                    widget.sheetController.formatSelection(SetFontColorIntent(color: color));
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetFontColorIntent(color: color)));
                                   },
                                 ),
                                 const ToolbarDivider(),
@@ -218,19 +225,43 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarColorFillButton(
                                   value: selectionStyle.backgroundColor ?? Colors.white,
                                   onChanged: (Color color) {
-                                    widget.sheetController.formatSelection(SetBackgroundColorIntent(color: color));
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetBackgroundColorIntent(color: color)));
                                   },
                                 ),
                                 ToolbarBorderButton(
                                   onChanged: (BorderEdges edges, Color color, double width) {
-                                    widget.sheetController.formatSelection(SetBorderIntent(
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetBorderIntent(
                                       edges: edges,
                                       borderSide: BorderSide(color: color, width: width),
                                       selectedCells: widget.sheetController.selectedCells,
-                                    ));
+                                    )));
                                   },
                                 ),
-                                ToolbarIconButton.withDropdown(icon: SheetIcons.cell_merge, onTap: () {}),
+                                () {
+                                  SheetSelection selection = widget.sheetController.selection.value;
+                                  bool merged = selection is SheetSingleSelection && selection.mainCell is MergedCellIndex;
+                                  bool canMerge = selection is SheetRangeSelection;
+
+                                  return ToolbarMergeButton(
+                                    merged: merged,
+                                    canMerge: canMerge,
+                                    canMergeVertically: canMerge,
+                                    canMergeHorizontally: canMerge,
+                                    canSplit: merged,
+                                    onMerge: () {
+                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                    },
+                                    onMergeHorizontally: () {
+                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                    },
+                                    onMergeVertically: () {
+                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                    },
+                                    onSplit: () {
+                                      widget.sheetController.resolve(UnmergeSelectionEvent());
+                                    },
+                                  );
+                                }(),
                                 const ToolbarDivider(),
                               ],
                             ),
@@ -239,13 +270,13 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarTextAlignHorizontalButton(
                                   value: selectionStyle.textAlignHorizontal,
                                   onChanged: (TextAlign value) {
-                                    widget.sheetController.formatSelection(SetHorizontalAlignIntent(value));
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetHorizontalAlignIntent(value)));
                                   },
                                 ),
                                 ToolbarTextAlignVerticalButton(
                                   value: selectionStyle.textAlignVertical,
                                   onChanged: (TextVerticalAlign value) {
-                                    widget.sheetController.formatSelection(SetVerticalAlignIntent(value));
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetVerticalAlignIntent(value)));
                                   },
                                 ),
                                 ToolbarTextOverflowButton(
@@ -257,7 +288,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ToolbarTextRotationButton(
                                   value: selectionStyle.cellStyle.rotation,
                                   onChanged: (TextRotation rotation) {
-                                    widget.sheetController.formatSelection(SetRotationIntent(rotation));
+                                    widget.sheetController.resolve(FormatSelectionEvent(SetRotationIntent(rotation)));
                                   },
                                 ),
                                 const ToolbarDivider(),

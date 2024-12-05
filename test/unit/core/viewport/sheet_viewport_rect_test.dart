@@ -67,7 +67,7 @@ void main() {
         SheetViewportRect viewportRect = SheetViewportRect(globalRect);
 
         // Act
-        Rect innerRectLocal = viewportRect.innerRectLocal;
+        Rect innerRectLocal = viewportRect.innerLocal;
 
         // Assert
         Rect expectedRect = const Rect.fromLTRB(0, 0, 554, 376);

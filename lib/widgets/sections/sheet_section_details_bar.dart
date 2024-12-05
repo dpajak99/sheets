@@ -38,7 +38,7 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
         child: Row(
           children: <Widget>[
             ListenableBuilder(
-              listenable: widget.sheetController.selection,
+              listenable: widget.sheetController,
               builder: (BuildContext context, _) {
                 return Container(
                   width: 98,
@@ -69,10 +69,10 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: ListenableBuilder(
-                        listenable: widget.sheetController.selection,
+                        listenable: widget.sheetController,
                         builder: (BuildContext context, _) {
                           return Text(
-                            widget.sheetController.dataManager
+                            widget.sheetController.data
                                 .getCellProperties(widget.sheetController.selection.value.mainCell)
                                 .editableRichText
                                 .toPlainText(),

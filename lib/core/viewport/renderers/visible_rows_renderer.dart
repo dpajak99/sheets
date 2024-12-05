@@ -1,28 +1,26 @@
 import 'package:equatable/equatable.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/directional_values.dart';
 
 class VisibleRowsRenderer {
   VisibleRowsRenderer({
     required this.viewportRect,
-    required this.properties,
-    required this.scrollPosition,
+    required this.data,
+    required this.scrollOffset,
   });
 
   final SheetViewportRect viewportRect;
 
-  final SheetDataManager properties;
+  final SheetData data;
 
-  final DirectionalValues<SheetScrollPosition> scrollPosition;
+  final double scrollOffset;
 
   List<ViewportRow> build() {
-    double firstVisibleCoordinate = scrollPosition.vertical.offset;
+    double firstVisibleCoordinate = scrollOffset;
     _FirstVisibleRowInfo firstVisibleRowInfo = _findRowByY(firstVisibleCoordinate);
 
     double maxContentHeight = viewportRect.height - columnHeadersHeight;
@@ -31,9 +29,9 @@ class VisibleRowsRenderer {
     List<ViewportRow> visibleRows = <ViewportRow>[];
     int index = firstVisibleRowInfo.index.value;
 
-    while (currentContentHeight < maxContentHeight && index < properties.rowCount) {
+    while (currentContentHeight < maxContentHeight && index < data.rowCount) {
       RowIndex rowIndex = RowIndex(index);
-      RowStyle rowStyle = properties.getRowStyle(rowIndex);
+      RowStyle rowStyle = data.getRowStyle(rowIndex);
 
       ViewportRow viewportRow = ViewportRow(
         index: rowIndex,
@@ -57,7 +55,7 @@ class VisibleRowsRenderer {
 
     while (firstVisibleRowInfo == null) {
       RowIndex rowIndex = RowIndex(actualRowIndex);
-      RowStyle rowStyle = properties.getRowStyle(rowIndex);
+      RowStyle rowStyle = data.getRowStyle(rowIndex);
       double rowHeightEnd = currentHeightStart + rowStyle.height + borderWidth;
 
       if (y >= currentHeightStart && y < rowHeightEnd) {

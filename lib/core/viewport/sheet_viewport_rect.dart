@@ -16,7 +16,7 @@ class SheetViewportRect {
 
   Size get size => global.size;
 
-  Rect get innerRectLocal {
+  Rect get innerLocal {
     return Rect.fromLTRB(
       0,
       0,

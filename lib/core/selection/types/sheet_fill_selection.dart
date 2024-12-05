@@ -13,6 +13,7 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
     super.endIndex, {
     required this.baseSelection,
     required this.fillDirection,
+    super.customMainCell,
   })  : assert(baseSelection is! SheetFillSelection, 'Cannot fill a fill selection'),
         super(completed: false);
 
@@ -26,13 +27,39 @@ class SheetFillSelection extends SheetRangeSelection<CellIndex> {
     bool? completed,
     SheetSelection? baseSelection,
     Direction? fillDirection,
+    CellIndex? customMainCell,
   }) {
     return SheetFillSelection(
       startIndex ?? start.index as CellIndex,
       endIndex ?? end.index as CellIndex,
       baseSelection: baseSelection ?? this.baseSelection,
       fillDirection: fillDirection ?? this.fillDirection,
+      customMainCell: customMainCell ?? mainCell,
     );
+  }
+
+  SheetFillSelection expandVertically(int size) {
+    switch(fillDirection) {
+      case Direction.top:
+        return copyWith(endIndex: end.cell.move(dx: 0, dy: -size));
+      case Direction.bottom:
+        return copyWith(startIndex: start.cell.move(dx: 0, dy: size));
+      case Direction.left:
+      case Direction.right:
+        return this;
+    }
+  }
+
+  SheetFillSelection expandHorizontally(int size) {
+    switch(fillDirection) {
+      case Direction.top:
+      case Direction.bottom:
+        return this;
+      case Direction.left:
+        return copyWith(endIndex: end.cell.move(dx: -size, dy: 0));
+      case Direction.right:
+        return copyWith(startIndex: start.cell.move(dx: size, dy: 0));
+    }
   }
 
   @override

@@ -780,9 +780,9 @@ void main() {
       SheetSelection actualSelection = selection.modifyEnd(newRowIndex);
 
       // Assert
-      SheetRangeSelection<RowIndex> expectedSelection = SheetRangeSelection<RowIndex>(
-        rowIndex,
-        newRowIndex,
+      SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(
+        CellIndex.raw(1, 0),
+        CellIndex.raw(4, 0),
         completed: false,
       );
 
@@ -799,9 +799,9 @@ void main() {
       SheetSelection actualSelection = selection.modifyEnd(newColumnIndex);
 
       // Assert
-      SheetRangeSelection<ColumnIndex> expectedSelection = SheetRangeSelection<ColumnIndex>(
-        columnIndex,
-        newColumnIndex,
+      SheetRangeSelection<CellIndex> expectedSelection = SheetRangeSelection<CellIndex>(
+        CellIndex.raw(0, 1),
+        CellIndex.raw(0, 4),
         completed: false,
       );
 
@@ -862,7 +862,7 @@ void main() {
       SheetSelection actualSelection = selection.complete();
 
       // Assert
-      SheetSingleSelection expectedSelection = SheetSingleSelection(cellIndex, completed: true);
+      SheetSingleSelection expectedSelection = SheetSingleSelection(cellIndex);
 
       expect(actualSelection, equals(expectedSelection));
     });

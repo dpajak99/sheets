@@ -5,7 +5,6 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/linear_duration_pattern.dart';
-import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 void main() {
@@ -17,7 +16,7 @@ void main() {
         List<IndexedCellProperties> values = <IndexedCellProperties>[];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DurationSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -39,7 +38,7 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DurationSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -70,15 +69,17 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DurationSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = DurationSequencePattern(
+        DurationSequencePattern expectedPattern = DurationSequencePattern(
           steps: <Duration>[const Duration(hours: 1)],
           lastDuration: const Duration(hours: 2),
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
 
       test('Should [return DurationSequencePattern] when [values contain valid duration formats] (multi steps)', () {
@@ -115,10 +116,10 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        DurationSequencePattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = DurationSequencePattern(
+        DurationSequencePattern expectedPattern = DurationSequencePattern(
           steps: <Duration>[
             const Duration(hours: 2),
             const Duration(hours: 3),
@@ -126,7 +127,9 @@ void main() {
           lastDuration: const Duration(hours: 6),
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
     });
   });

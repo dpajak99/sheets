@@ -1,14 +1,13 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/gestures/sheet_gesture.dart';
 import 'package:sheets/core/mouse/mouse_cursor_details.dart';
 import 'package:sheets/core/sheet_controller.dart';
 
-abstract class SheetMouseGesture extends SheetGesture {
+abstract class SheetMouseGesture with EquatableMixin {
   Offset get startOffset;
 
   Offset get currentOffset;
 
-  @override
   void resolve(SheetController controller) {}
 
   @override

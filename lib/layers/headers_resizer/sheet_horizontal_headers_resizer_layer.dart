@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/events/sheet_formatting_events.dart';
+import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -31,13 +33,13 @@ class _SheetHorizontalHeadersResizerLayerState extends State<SheetHorizontalHead
   @override
   void initState() {
     super.initState();
+    widget.sheetController.addListener(_handleSheetControllerChanged);
     _updateVisibleRows();
-    widget.sheetController.viewport.visibleContent.addListener(_updateVisibleRows);
   }
 
   @override
   void dispose() {
-    widget.sheetController.viewport.visibleContent.removeListener(_updateVisibleRows);
+    widget.sheetController.removeListener(_handleSheetControllerChanged);
     super.dispose();
   }
 
@@ -50,10 +52,18 @@ class _SheetHorizontalHeadersResizerLayerState extends State<SheetHorizontalHead
           sheetController: widget.sheetController,
           width: widget.sheetController.viewport.width,
           row: row,
-          onResize: (Offset delta) => widget.sheetController.resizeRow(row.index, delta.dy),
+          // TODO(Dominik): Duplication?
+          onResize: (Offset delta) => widget.sheetController.resolve(ResizeRowEvent(row.index, delta.dy)),
         );
       }).toList(),
     );
+  }
+
+  void _handleSheetControllerChanged() {
+    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    if (rebuildConfig.rebuildHorizontalHeaderResizer) {
+      _updateVisibleRows();
+    }
   }
 
   void _updateVisibleRows() {

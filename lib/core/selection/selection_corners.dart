@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -31,6 +32,55 @@ class SelectionCellCorners with EquatableMixin {
   final CellIndex topRight;
   final CellIndex bottomLeft;
   final CellIndex bottomRight;
+
+  int get width => bottomRight.column.value - topLeft.column.value + 1;
+  int get height => bottomRight.row.value - topLeft.row.value + 1;
+
+  SelectionCellCorners includeMergedCells(SheetData data) {
+    ColumnIndex left = topLeft.column;
+    ColumnIndex right = bottomRight.column;
+    RowIndex top = topLeft.row;
+    RowIndex bottom = bottomRight.row;
+
+    bool changed;
+
+    do {
+      changed = false;
+      for (int y = top.value; y <= bottom.value; y++) {
+        for (int x = left.value; x <= right.value; x++) {
+          CellIndex cellIndex = CellIndex(row: RowIndex(y), column: ColumnIndex(x));
+          CellIndex filledCellIndex = data.fillCellIndex(cellIndex);
+
+          if (filledCellIndex is MergedCellIndex) {
+            if (filledCellIndex.start.column.value < left.value) {
+              left = filledCellIndex.start.column;
+              changed = true;
+            }
+            if (filledCellIndex.end.column.value > right.value) {
+              right = filledCellIndex.end.column;
+              changed = true;
+            }
+            if (filledCellIndex.start.row.value < top.value) {
+              top = filledCellIndex.start.row;
+              changed = true;
+            }
+            if (filledCellIndex.end.row.value > bottom.value) {
+              bottom = filledCellIndex.end.row;
+              changed = true;
+            }
+          }
+        }
+      }
+    } while (changed);
+
+    return SelectionCellCorners(
+      CellIndex(row: top, column: left),
+      CellIndex(row: top, column: right),
+      CellIndex(row: bottom, column: left),
+      CellIndex(row: bottom, column: right),
+    );
+  }
+
 
   Direction getRelativePosition(CellIndex cellIndex) {
     Map<Direction, int> directionSpaces = <Direction, int>{

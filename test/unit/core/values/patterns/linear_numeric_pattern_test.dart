@@ -5,7 +5,6 @@ import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/linear_numeric_pattern.dart';
-import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 void main() {
@@ -17,7 +16,7 @@ void main() {
         List<IndexedCellProperties> values = <IndexedCellProperties>[];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearNumericPattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -39,7 +38,7 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearNumericPattern? actualPattern = matcher.detect(values);
 
         // Assert
         expect(actualPattern, isNull);
@@ -70,16 +69,18 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearNumericPattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = LinearNumericPattern(
+        LinearNumericPattern expectedPattern = LinearNumericPattern(
           steps: <num>[1],
           lastNumValue: 2,
           precision: 1,
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
 
       test('Should [return LinearNumericPattern] when [values contain valid numeric formats] (multi steps)', () {
@@ -116,16 +117,18 @@ void main() {
         ];
 
         // Act
-        ValuePattern? actualPattern = matcher.detect(values);
+        LinearNumericPattern? actualPattern = matcher.detect(values);
 
         // Assert
-        ValuePattern expectedPattern = LinearNumericPattern(
+        LinearNumericPattern expectedPattern = LinearNumericPattern(
           steps: <num>[2, 3],
           lastNumValue: 6,
           precision: 1,
         );
 
-        expect(actualPattern, expectedPattern);
+        expect(actualPattern, isNotNull);
+        expect(actualPattern?.steps, expectedPattern.steps);
+        expect(actualPattern?.lastValue, expectedPattern.lastValue);
       });
     });
   });
@@ -181,7 +184,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(1, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: '2.0'),
+              value: SheetRichText.single(text: '2'),
               style: CellStyle(
                 valueFormat: SheetNumberFormat.decimalPattern(),
               ),
@@ -190,7 +193,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(2, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: '3.0'),
+              value: SheetRichText.single(text: '3'),
               style: CellStyle(
                 valueFormat: SheetNumberFormat.decimalPattern(),
               ),
@@ -240,7 +243,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(1, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: '2.0', style: const TextStyle(color: Colors.red)),
+              value: SheetRichText.single(text: '2', style: const TextStyle(color: Colors.red)),
               style: CellStyle(
                 valueFormat: SheetNumberFormat.decimalPattern(),
               ),

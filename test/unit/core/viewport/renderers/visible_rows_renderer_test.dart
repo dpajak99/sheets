@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/core/sheet_data_manager.dart';
+import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/renderers/visible_rows_renderer.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/directional_values.dart';
 
 void main() {
   group('Tests of VisibleRowsRenderer.build()', () {
     test('Should [return list of visible rows] when [viewport and scroll position are set]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 300, 400));
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
-          columnCount: 0,
-          rowCount: 10,
-          customRowStyles: <RowIndex, RowStyle>{
-            for (int i = 0; i < 10; i++) RowIndex(i): RowStyle(height: 40), // All rows are 40.0 height
-          },
-        ),
-      );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 0.0, // Vertical scroll position
-        SheetScrollPosition()..offset = 0.0, // Horizontal scroll position
+      SheetData data = SheetData(
+        columnCount: 0,
+        rowCount: 10,
+        customRowStyles: <RowIndex, RowStyle>{
+          for (int i = 0; i < 10; i++) RowIndex(i): RowStyle(height: 40), // All rows are 40.0 height
+        },
       );
 
       VisibleRowsRenderer renderer = VisibleRowsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 0,
       );
 
       // Act
@@ -57,24 +49,19 @@ void main() {
     test('Should [handle vertical scrolling] when [scroll position is not zero]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 300, 400));
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
+      SheetData data = SheetData(
           columnCount: 0,
           rowCount: 10,
           customRowStyles: <RowIndex, RowStyle>{
             for (int i = 0; i < 10; i++) RowIndex(i): RowStyle(height: 50), // All rows are 50.0 height
           },
-        ),
       );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 75.0, // Vertical scroll position
-        SheetScrollPosition()..offset = 0.0, // Horizontal scroll position
-      );
+
 
       VisibleRowsRenderer renderer = VisibleRowsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 75,
       );
 
       // Act
@@ -98,24 +85,18 @@ void main() {
     test('Should [return list with first row only] when [no rows fit in the viewport]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 300, 90));
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
+      SheetData data = SheetData(
           columnCount: 0,
           rowCount: 5,
           customRowStyles: <RowIndex, RowStyle>{
             for (int i = 0; i < 5; i++) RowIndex(i): RowStyle(height: 100),
           },
-        ),
-      );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 0.0,
-        SheetScrollPosition()..offset = 0.0,
       );
 
       VisibleRowsRenderer renderer = VisibleRowsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 0,
       );
 
       // Act
@@ -132,24 +113,18 @@ void main() {
     test('Should [return correct rows] when [scrolled to middle of rows]', () {
       // Arrange
       SheetViewportRect viewportRect = SheetViewportRect(const Rect.fromLTWH(0, 0, 300, 400));
-      SheetDataManager properties = SheetDataManager(
-        data: SheetData(
+      SheetData data = SheetData(
           columnCount: 0,
           rowCount: 10,
           customRowStyles: <RowIndex, RowStyle>{
             for (int i = 0; i < 10; i++) RowIndex(i): RowStyle(height: 50),
           },
-        ),
-      );
-      DirectionalValues<SheetScrollPosition> scrollPosition = DirectionalValues<SheetScrollPosition>(
-        SheetScrollPosition()..offset = 200.0, // Scroll to skip first 4 rows (4 * 50.0)
-        SheetScrollPosition()..offset = 0.0,
       );
 
       VisibleRowsRenderer renderer = VisibleRowsRenderer(
         viewportRect: viewportRect,
-        properties: properties,
-        scrollPosition: scrollPosition,
+        data: data,
+        scrollOffset: 200,
       );
 
       // Act
