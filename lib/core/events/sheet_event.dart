@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
@@ -25,7 +27,7 @@ abstract class SheetAction<T extends SheetEvent> {
   final T event;
   final SheetController controller;
 
-  void execute();
+  FutureOr<void> execute();
 
   void ensureFullyVisible(SheetIndex index) {
     if(!controller.isFullyVisible(index)) {

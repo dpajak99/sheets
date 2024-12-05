@@ -8,14 +8,19 @@ import 'package:sheets/utils/text_vertical_align.dart';
 
 class CellStyle with EquatableMixin {
   CellStyle({
-    this.horizontalAlign,
-    this.textOverflow = TextOverflowBehavior.clip,
-    this.verticalAlign = TextVerticalAlign.bottom,
-    this.rotation = TextRotation.none,
-    this.backgroundColor = Colors.white,
+    TextAlign? horizontalAlign,
+    TextOverflowBehavior? textOverflow,
+    TextVerticalAlign? verticalAlign,
+    TextRotation? rotation,
+    Color? backgroundColor,
     this.valueFormat,
     this.border,
-  }) : borderZIndex = border != null ? globalBorderZIndex++ : null;
+  })  : horizontalAlign = horizontalAlign ?? TextAlign.left,
+        textOverflow = textOverflow ?? TextOverflowBehavior.clip,
+        verticalAlign = verticalAlign ?? TextVerticalAlign.bottom,
+        rotation = rotation ?? TextRotation.none,
+        backgroundColor = (backgroundColor != null && backgroundColor.alpha == 1) ? backgroundColor : Colors.white,
+        borderZIndex = border != null ? globalBorderZIndex++ : null;
 
   static int globalBorderZIndex = 0;
 
@@ -24,7 +29,6 @@ class CellStyle with EquatableMixin {
     TextOverflowBehavior? textOverflow,
     TextRotation? rotation,
     TextVerticalAlign? verticalAlign,
-    double? rotationAngleDegrees,
     Color? backgroundColor,
     SheetValueFormat? valueFormat,
     bool valueFormatNull = false,

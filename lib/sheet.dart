@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/events/sheet_clipboard_events.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
@@ -58,8 +59,12 @@ class _SheetState extends State<Sheet> {
           widget.sheetController.resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: decoration))),
       onUndo: () {},
       onRedo: () {},
-      onPaste: () {},
-      onCopy: () {},
+      onPaste: () {
+        widget.sheetController.resolve(PasteSelectionEvent());
+      },
+      onCopy: () {
+        widget.sheetController.resolve(CopySelectionEvent());
+      },
       onCut: () {},
       child: SizedBox.expand(
         child: DecoratedBox(

@@ -13,6 +13,7 @@ import 'package:sheets/utils/extensions/rect_extensions.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
 import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
+import 'package:sheets/widgets/material/material_sheet_theme.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
   @override
@@ -270,13 +271,11 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 class Line with EquatableMixin {
   Line(this.start, this.end, this._side);
 
-  static BorderSide defaultBorderSide = const BorderSide(color: Color(0x1F040404));
-
   final Offset start;
   final Offset end;
   final BorderSide? _side;
 
-  BorderSide get side => (_side == null || _side == BorderSide.none) ? defaultBorderSide : _side;
+  BorderSide get side => (_side == null || _side == BorderSide.none) ? MaterialSheetTheme.defaultBorderSide : _side;
 
   bool canMerge(Line other) {
     return side == other.side && isOverlapping(other);
@@ -284,7 +283,7 @@ class Line with EquatableMixin {
 
   bool canReplace(Line other) {
     bool sameEdge = start == other.start && end == other.end;
-    return sameEdge && other.side != defaultBorderSide;
+    return sameEdge && other.side != MaterialSheetTheme.defaultBorderSide;
   }
 
   bool isOverlapping(Line other) {

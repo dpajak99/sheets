@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
@@ -65,12 +67,16 @@ class SheetController extends SheetRebuildNotifier {
       return;
     }
     eventsQueue.add(event);
-    action.execute();
+    unawaited(_executeAction(mainEvent, action));
+  }
 
-    if (mainEvent) {
+  Future<void> _executeAction(bool mainAction, SheetAction<SheetEvent> action) async {
+    await action.execute();
+
+    if (mainAction) {
       SheetRebuildConfig rebuildProperties = eventsQueue.fold(
         SheetRebuildConfig(),
-        (SheetRebuildConfig previousValue, SheetEvent element) => previousValue.combine(element.rebuildConfig),
+            (SheetRebuildConfig previousValue, SheetEvent element) => previousValue.combine(element.rebuildConfig),
       );
 
       if(rebuildProperties.rebuildViewport || rebuildProperties.rebuildCellsLayer) {
