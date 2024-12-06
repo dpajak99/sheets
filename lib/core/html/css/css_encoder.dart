@@ -66,15 +66,4 @@ class CssEncoder {
   static String _colorToHex(Color color) => '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
 
   static String _colorToRgba(Color color) => 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha / 255})';
-
-  static Color? colorFromHex(String hex) {
-    String parsedHex = hex.replaceAll('#', '');
-    if (hex.length == 6) {
-      return Color(int.parse('FF$parsedHex', radix: 16));
-    } else if (hex.length == 8) {
-      return Color(int.parse(parsedHex, radix: 16));
-    }
-    return null;
-
-  }
 }

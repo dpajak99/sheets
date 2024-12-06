@@ -1,4 +1,6 @@
-abstract class HtmlElement {
+import 'package:equatable/equatable.dart';
+
+abstract class HtmlElement with EquatableMixin {
   HtmlElement({required this.tagName});
 
   final String tagName;
@@ -23,18 +25,54 @@ abstract class HtmlElement {
 abstract class StyledHtmlElement extends HtmlElement {
   StyledHtmlElement({required super.tagName});
 
-  Map<String, String> get styles => <String, String>{};
+  CssStyle get styles => CssStyle.empty();
 
   @override
   String toHtml() {
-    String styleStr = styles.isNotEmpty ? ' style="${_styleToString()}"' : '';
+    String styleStr = styles.isNotEmpty ? ' style="${styles.oneline}"' : '';
     String attrStr = attributes.isEmpty ? '' : ' ${_attributesToStringWithoutTag()}';
     return '<$tagName$styleStr$attrStr>$content</$tagName>';
   }
 
-  String _styleToString() => styles.entries.map((MapEntry<String, String> e) => '${e.key}:${e.value}').join(';');
-
   String _attributesToStringWithoutTag() {
     return attributes.entries.map((MapEntry<String, String> e) => '${e.key}="${e.value}"').join(' ');
   }
+}
+
+class CssStyle with EquatableMixin {
+  CssStyle.css(this.styles) {
+    _cleanup();
+  }
+
+  CssStyle.empty() : styles = <String, String>{};
+
+  final Map<String, String> styles;
+
+  void add(String key, String value) {
+    if (supportedStyles.contains(key) && value.isNotEmpty) {
+      styles[key] = value;
+    }
+  }
+
+  String get oneline {
+    return styles.entries.map((MapEntry<String, Object> e) => '${e.key}:${e.value}').join(';');
+  }
+
+  bool get isEmpty => styles.isEmpty;
+
+  bool get isNotEmpty => styles.isNotEmpty;
+
+  void addOther(CssStyle other) {
+    other.styles.forEach(add);
+  }
+
+  List<String> get supportedStyles => styles.keys.toList();
+
+  void _cleanup() {
+    styles.removeWhere((String key, String value) => value.isEmpty);
+    styles.removeWhere((String key, String value) => !supportedStyles.contains(key));
+  }
+
+  @override
+  List<Object?> get props => <Object>[styles];
 }

@@ -8,4 +8,7 @@ class HtmlGoogleSheetsHtmlOrigin extends HtmlElement {
 
   @override
   String get content => table.toHtml();
+
+  @override
+  List<Object?> get props => <Object?>[table];
 }

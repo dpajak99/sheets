@@ -54,6 +54,17 @@ class SheetData {
     }
   }
 
+  void applyMergeStatus(CellMergeStatus mergeStatus) {
+    for (CellIndex cellIndex in mergeStatus.mergedCells) {
+      CellProperties cellProperties = getCellProperties(cellIndex);
+      CellMergeStatus currentMergeStatus = cellProperties.mergeStatus;
+      if (currentMergeStatus is MergedCell) {
+        unmergeCell(cellIndex);
+      }
+      _data[cellIndex] = cellProperties.copyWith(mergeStatus: mergeStatus);
+    }
+  }
+
   void _recalculateContentSize() {
     _recalculateContentWidth();
     _recalculateContentHeight();
@@ -112,7 +123,7 @@ class SheetData {
     CellMergeStatus mergeStatus = cellProperties.mergeStatus;
     if (mergeStatus is MergedCell) {
       CellProperties mergeCellProperties = getCellProperties(mergeStatus.start);
-      for(CellIndex index in mergeStatus.mergedCells) {
+      for (CellIndex index in mergeStatus.mergedCells) {
         _data[index] = mergeCellProperties.copyWith(
           mergeStatus: NoCellMerge(),
         );

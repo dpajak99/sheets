@@ -1,8 +1,8 @@
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/html/elements/html_google_sheets_html_origin.dart';
-import 'package:sheets/core/html/html_encoder.dart';
+import 'package:sheets/core/html/clipboard_data/html_encoder/html_clipboard_data_decoder.dart';
+import 'package:sheets/core/html/clipboard_data/html_encoder/html_clipboard_data_encoder.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -36,7 +36,7 @@ class CopySelectionAction extends SheetClipboardAction<CopySelectionEvent> {
   @override
   Future<void> execute() async {
     List<CellIndex> selectedCells =
-    controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
+        controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
 
     List<IndexedCellProperties> cellsProperties = selectedCells.map((CellIndex index) {
       return IndexedCellProperties(
@@ -45,14 +45,13 @@ class CopySelectionAction extends SheetClipboardAction<CopySelectionEvent> {
       );
     }).toList();
 
-    HtmlGoogleSheetsHtmlOrigin htmlDocument = HtmlGoogleSheetsHtmlOrigin(
-      table: IndexedCellPropertiesParser(controller.data, controller.selection.value.mainCell).buildHtmlTable(cellsProperties),
-    );
+    HtmlClipboardDataEncoder encoder = HtmlClipboardDataEncoder(controller.data);
+    String htmlString = encoder.encode(cellsProperties);
 
-    String htmlString = htmlDocument.toHtml();
     SystemClipboard? clipboard = SystemClipboard.instance;
     DataWriterItem item = DataWriterItem();
     item.add(Formats.htmlText.lazy(() => htmlString));
+
     await clipboard?.write(<DataWriterItem>[item]);
   }
 }
@@ -64,8 +63,7 @@ class PasteSelectionEvent extends SheetClipboardEvent {
   PasteSelectionAction createAction(SheetController controller) => PasteSelectionAction(this, controller);
 
   @override
-  SheetRebuildConfig get rebuildConfig =>
-      SheetRebuildConfig(
+  SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
         rebuildData: true,
         rebuildViewport: true,
       );
@@ -88,11 +86,15 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
     }
 
     // Decode HTML into a structured document.
-    HtmlGoogleSheetsHtmlOrigin parsedDocument = HtmlParser.parseDocument(htmlData);
+    CellIndex selectionAnchor = controller.selection.value.mainCell;
+    HtmlClipboardDataDecoder decoder = HtmlClipboardDataDecoder(controller.data, selectionAnchor);
+    List<IndexedCellProperties> pastedCells = decoder.decode(htmlData);
 
-    // Convert parsed HTML back into cell properties and apply to the sheet.
-    List<CellIndex> pastedCells = IndexedCellPropertiesParser(controller.data, controller.selection.value.mainCell).applyHtmlDocumentToSheet(parsedDocument);
-
-    controller.selection.update(SheetSelectionFactory.range(start: pastedCells.first, end: pastedCells.last, completed: true));
+    controller.data.setCellsProperties(pastedCells);
+    controller.selection.update(SheetSelectionFactory.range(
+      start: pastedCells.first.index,
+      end: pastedCells.last.index,
+      completed: true,
+    ));
   }
 }

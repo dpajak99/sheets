@@ -11,6 +11,7 @@ import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/border_edges.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
@@ -173,9 +174,10 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                   },
                                 ),
                                 ToolbarFontSizeButton(
-                                  value: selectionStyle.fontSize ?? 0,
+                                  value: selectionStyle.fontSize.pt,
                                   onChanged: (double value) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetFontSizeIntent(fontSize: value)));
+                                    widget.sheetController
+                                        .resolve(FormatSelectionEvent(SetFontSizeIntent(fontSize: FontSize.fromPoints(value))));
                                   },
                                 ),
                                 ToolbarIconButton.small(
