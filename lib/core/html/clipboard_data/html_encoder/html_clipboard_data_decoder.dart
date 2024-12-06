@@ -104,6 +104,7 @@ class HtmlClipboardDataDecoder {
       ]),
       style: CellStyle(
         horizontalAlign: cell.style?.textAlign,
+        verticalAlign: cell.style?.textVerticalAlign,
         border: cell.style?.border,
         backgroundColor: cell.style?.backgroundColor,
       ),

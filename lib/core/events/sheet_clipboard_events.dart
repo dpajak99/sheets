@@ -6,6 +6,7 @@ import 'package:sheets/core/html/clipboard_data/html_encoder/html_clipboard_data
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
 abstract class SheetClipboardEvent extends SheetEvent {
@@ -48,9 +49,21 @@ class CopySelectionAction extends SheetClipboardAction<CopySelectionEvent> {
     HtmlClipboardDataEncoder encoder = HtmlClipboardDataEncoder(controller.data);
     String htmlString = encoder.encode(cellsProperties);
 
+    StringBuffer plainTextBuffer = StringBuffer();
+    Map<RowIndex, List<IndexedCellProperties>> rowsMap = cellsProperties.groupByRows();
+    for (MapEntry<RowIndex, List<IndexedCellProperties>> entry in rowsMap.entries) {
+      List<IndexedCellProperties> rowCellsProperties = entry.value;
+      for (IndexedCellProperties cellProperties in rowCellsProperties) {
+        plainTextBuffer.write(cellProperties.properties.value.toPlainText());
+        plainTextBuffer.write('\t');
+      }
+      plainTextBuffer.write('\n');
+    }
+
     SystemClipboard? clipboard = SystemClipboard.instance;
     DataWriterItem item = DataWriterItem();
     item.add(Formats.htmlText.lazy(() => htmlString));
+    item.add(Formats.plainText.lazy(() => plainTextBuffer.toString()));
 
     await clipboard?.write(<DataWriterItem>[item]);
   }
@@ -91,6 +104,12 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
     List<IndexedCellProperties> pastedCells = decoder.decode(htmlData);
 
     controller.data.setCellsProperties(pastedCells);
+    Set<RowIndex> rows = pastedCells.map((IndexedCellProperties cell) => cell.index.row).toSet();
+    for(RowIndex row in rows) {
+      double minRowHeight = controller.data.getMinRowHeight(row);
+      controller.data.setRowHeight(row, minRowHeight);
+    }
+
     controller.selection.update(SheetSelectionFactory.range(
       start: pastedCells.first.index,
       end: pastedCells.last.index,

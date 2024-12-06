@@ -235,6 +235,9 @@ class SheetData {
 
   double getMinRowHeight(RowIndex rowIndex) {
     List<CellIndex> cellIndexes = _data.keys.where((CellIndex cellIndex) => cellIndex.row == rowIndex).toList();
+    if(cellIndexes.isEmpty) {
+      cellIndexes.add(CellIndex(row: rowIndex, column: ColumnIndex(0)));
+    }
 
     double? staticHeight = getRowStyle(rowIndex).customHeight;
     double minRowHeight = cellIndexes.map(getMinCellSize).map((Size size) => size.height).reduce(max);
@@ -250,7 +253,7 @@ class SheetData {
     CellProperties cellProperties = getCellProperties(cellIndex);
 
     // TODO(Dominik): Magic padding. No idea where it comes from. Should be analyzed and removed.
-    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 3.5);
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 3, vertical: 2);
 
     if (cellProperties.value.isEmpty) {
       double height = getRowStyle(cellIndex.row).height;
@@ -305,7 +308,10 @@ class SheetData {
       minCellHeight = textHeight + padding.vertical;
     }
 
-    return Size(minCellWidth, minCellHeight);
+    return Size(
+      minCellWidth.clamp(defaultColumnWidth, double.infinity),
+      minCellHeight.clamp(defaultRowHeight, double.infinity),
+    );
   }
 
   double get contentWidth => _contentWidth;

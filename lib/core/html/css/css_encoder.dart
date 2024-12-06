@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 
 class CssEncoder {
   static String encodeColor(Color color) {
@@ -14,6 +15,14 @@ class CssEncoder {
   static String encodeFontWeight(FontWeight fontWeight) => fontWeight.value.toString();
 
   static String encodeFontStyle(FontStyle fontStyle) => fontStyle == FontStyle.italic ? 'italic' : 'normal';
+
+  static String encodeTextAlignVertical(TextVerticalAlign textAlignVertical) {
+    return switch (textAlignVertical) {
+      TextVerticalAlign.bottom => 'bottom',
+      TextVerticalAlign.center => 'middle',
+      TextVerticalAlign.top => 'top',
+    };
+  }
 
   static String encodeTextDecoration(TextDecoration textDecoration, [TextDecorationStyle? style]) {
     List<String> decorations = <String>[];

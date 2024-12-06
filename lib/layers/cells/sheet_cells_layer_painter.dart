@@ -31,7 +31,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
     required SheetViewportContentManager viewportContent,
     EdgeInsets? padding,
   })  : _viewportContent = viewportContent,
-        _padding = padding ?? const EdgeInsets.all(3);
+        _padding = padding ?? const EdgeInsets.symmetric(horizontal: 3, vertical: 2);
 
   late SheetViewportContentManager _viewportContent;
   final EdgeInsets _padding;

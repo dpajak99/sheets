@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/material_sheet_theme.dart';
 
 class CssDecoder {
@@ -18,6 +19,18 @@ class CssDecoder {
       }
     }
     return attributes;
+  }
+
+  static TextVerticalAlign decodeTextVerticalAlign(String? value) {
+    if (value == null) {
+      return TextVerticalAlign.top;
+    }
+    return switch (value) {
+      'top' => TextVerticalAlign.top,
+      'middle' => TextVerticalAlign.center,
+      'bottom' => TextVerticalAlign.bottom,
+      (_) => TextVerticalAlign.top,
+    };
   }
 
   static Color? decodeColor(String? value) {

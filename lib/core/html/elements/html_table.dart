@@ -3,6 +3,7 @@ import 'package:sheets/core/html/css/css_decoder.dart';
 import 'package:sheets/core/html/css/css_encoder.dart';
 import 'package:sheets/core/html/elements/html_element.dart';
 import 'package:sheets/core/html/elements/html_span.dart';
+import 'package:sheets/utils/text_vertical_align.dart';
 
 class HtmlTable extends HtmlElement {
   HtmlTable({required this.rows}) : super(tagName: 'table');
@@ -88,10 +89,12 @@ class HtmlTableCell extends StyledHtmlElement {
 class HtmlTableStyle extends CssStyle {
   HtmlTableStyle({
     TextAlign? textAlign,
+    TextVerticalAlign? textVerticalAlign,
     Border? border,
     Color? backgroundColor,
   }) : super.css(<String, String>{
           if (textAlign != null) 'text-align': CssEncoder.encodeTextAlign(textAlign),
+          if(textVerticalAlign != null) 'vertical-align': CssEncoder.encodeTextAlignVertical(textVerticalAlign),
           if (backgroundColor != null) 'background-color': CssEncoder.encodeColor(backgroundColor),
           if (border != null) ...CssEncoder.encodeBorder(border),
         });
@@ -106,11 +109,16 @@ class HtmlTableStyle extends CssStyle {
     'border-bottom',
     'border-left',
     'background-color',
+    'vertical-align',
     ...HtmlSpanStyle.kSupportedStyles
   ];
 
   TextAlign? get textAlign {
     return CssDecoder.decodeTextAlign(styles['text-align']);
+  }
+
+  TextVerticalAlign? get textVerticalAlign {
+    return CssDecoder.decodeTextVerticalAlign(styles['vertical-align']);
   }
 
   Border? get border {
