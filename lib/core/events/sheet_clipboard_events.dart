@@ -1,8 +1,10 @@
 import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/clipboard/encoders/html/html_clipboard_decoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/html_clipboard_encoder.dart';
+import 'package:sheets/core/clipboard/encoders/plaintext/plaintext_clipboard_encoder.dart';
+import 'package:sheets/core/clipboard/sheet_clipboard.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/html/clipboard_data/html_encoder/html_clipboard_data_decoder.dart';
-import 'package:sheets/core/html/clipboard_data/html_encoder/html_clipboard_data_encoder.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -46,26 +48,7 @@ class CopySelectionAction extends SheetClipboardAction<CopySelectionEvent> {
       );
     }).toList();
 
-    HtmlClipboardDataEncoder encoder = HtmlClipboardDataEncoder(controller.data);
-    String htmlString = encoder.encode(cellsProperties);
-
-    StringBuffer plainTextBuffer = StringBuffer();
-    Map<RowIndex, List<IndexedCellProperties>> rowsMap = cellsProperties.groupByRows();
-    for (MapEntry<RowIndex, List<IndexedCellProperties>> entry in rowsMap.entries) {
-      List<IndexedCellProperties> rowCellsProperties = entry.value;
-      for (IndexedCellProperties cellProperties in rowCellsProperties) {
-        plainTextBuffer.write(cellProperties.properties.value.toPlainText());
-        plainTextBuffer.write('\t');
-      }
-      plainTextBuffer.write('\n');
-    }
-
-    SystemClipboard? clipboard = SystemClipboard.instance;
-    DataWriterItem item = DataWriterItem();
-    item.add(Formats.htmlText.lazy(() => htmlString));
-    item.add(Formats.plainText.lazy(() => plainTextBuffer.toString()));
-
-    await clipboard?.write(<DataWriterItem>[item]);
+    await SheetClipboard.write(cellsProperties);
   }
 }
 
@@ -90,29 +73,32 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
 
   @override
   Future<void> execute() async {
-    String? htmlData = await SystemClipboard.instance?.read().then((ClipboardReader reader) async {
-      return reader.readValue(Formats.htmlText);
-    });
+    CellIndex selectionAnchor = controller.selection.value.mainCell;
 
-    if (htmlData == null) {
-      return;
+    List<PastedCellProperties> pastedCells = await SheetClipboard.read();
+    List<IndexedCellProperties> cellsProperties = pastedCells.map((PastedCellProperties cell) {
+      return cell.position(selectionAnchor);
+    }).toList();
+
+    List<MergedCell> mergedCells = cellsProperties.map((IndexedCellProperties cell) {
+      return cell.properties.mergeStatus;
+    }).whereType<MergedCell>().toList();
+
+    for(MergedCell mergedCell in mergedCells) {
+      controller.data.mergeCells(mergedCell.mergedCells);
     }
 
-    // Decode HTML into a structured document.
-    CellIndex selectionAnchor = controller.selection.value.mainCell;
-    HtmlClipboardDataDecoder decoder = HtmlClipboardDataDecoder(controller.data, selectionAnchor);
-    List<IndexedCellProperties> pastedCells = decoder.decode(htmlData);
+    controller.data.setCellsProperties(cellsProperties);
 
-    controller.data.setCellsProperties(pastedCells);
-    Set<RowIndex> rows = pastedCells.map((IndexedCellProperties cell) => cell.index.row).toSet();
+    List<RowIndex> rows = cellsProperties.map((IndexedCellProperties cell) => cell.index.row).toSet().toList();
     for(RowIndex row in rows) {
       double minRowHeight = controller.data.getMinRowHeight(row);
       controller.data.setRowHeight(row, minRowHeight);
     }
 
     controller.selection.update(SheetSelectionFactory.range(
-      start: pastedCells.first.index,
-      end: pastedCells.last.index,
+      start: cellsProperties.first.index,
+      end: cellsProperties.last.index,
       completed: true,
     ));
   }

@@ -1,36 +1,28 @@
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
-import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/html/css/css_decoder.dart';
-import 'package:sheets/core/html/elements/html_google_sheets_html_origin.dart';
-import 'package:sheets/core/html/elements/html_span.dart';
-import 'package:sheets/core/html/elements/html_table.dart';
-import 'package:sheets/core/sheet_data.dart';
-import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_decoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/elements/html_google_sheets_html_origin.dart';
+import 'package:sheets/core/clipboard/encoders/html/elements/html_span.dart';
+import 'package:sheets/core/clipboard/encoders/html/elements/html_table.dart';
+import 'package:sheets/core/clipboard/sheet_clipboard.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/extensions/map_extensions.dart';
 
-class HtmlClipboardDataDecoder {
-  HtmlClipboardDataDecoder(this.data, this.selectionAnchor);
-
-  final SheetData data;
-  final CellIndex selectionAnchor;
-
-  List<IndexedCellProperties> decode(String htmlData) {
+class HtmlClipboardDecoder {
+  static List<PastedCellProperties> decode(String htmlData) {
     HtmlGoogleSheetsHtmlOrigin parsedDocument = _parseDocument(htmlData);
 
     // Convert parsed HTML back into cell properties and apply to the sheet.
-    List<IndexedCellProperties> pastedCells = _applyHtmlDocumentToSheet(parsedDocument);
+    List<PastedCellProperties> pastedCells = _applyHtmlDocumentToSheet(parsedDocument);
     return pastedCells;
   }
 
   /// Apply parsed HTML document content back into the sheet's data model.
-  List<IndexedCellProperties> _applyHtmlDocumentToSheet(HtmlGoogleSheetsHtmlOrigin document) {
+  static List<PastedCellProperties> _applyHtmlDocumentToSheet(HtmlGoogleSheetsHtmlOrigin document) {
     HtmlTable table = document.table;
-    CellIndex startCell = selectionAnchor;
 
-    List<IndexedCellProperties> pastedCells = <IndexedCellProperties>[];
+    List<PastedCellProperties> pastedCells = <PastedCellProperties>[];
     int currentRowOffset = 0;
     Map<int, List<int>> rowMergedColumns = <int, List<int>>{};
     for (HtmlTableRow row in table.rows) {
@@ -41,16 +33,9 @@ class HtmlClipboardDataDecoder {
           rowOffset++;
         }
 
-        CellIndex targetIndex = CellIndex(
-          row: startCell.row + rowOffset,
-          column: startCell.column + currentColOffset,
-        );
-        pastedCells.add(
-          IndexedCellProperties(
-            index: targetIndex,
-            properties: _extractCellPropertiesFromHtmlCell(targetIndex, cell),
-          ),
-        );
+        PastedCellProperties pastedCellProperties = _extractCellPropertiesFromHtmlCell(rowOffset, currentColOffset, cell);
+        pastedCells.add(pastedCellProperties);
+
         int colSpan = cell.colSpan ?? 1;
         int rowSpan = cell.rowSpan ?? 1;
         if (rowSpan > 1) {
@@ -69,51 +54,38 @@ class HtmlClipboardDataDecoder {
   }
 
   /// Extract cell properties from an HtmlTableCell when pasting.
-  CellProperties _extractCellPropertiesFromHtmlCell(CellIndex targetIndex, HtmlTableCell cell) {
-    // Here we do the inverse of _buildHtmlTableCell, extracting styles and text.
-    // For simplicity, we assume a single span per cell.
-    HtmlSpan firstSpan = cell.spans.isNotEmpty ? cell.spans.first : HtmlSpan(text: '');
-
-    CellMergeStatus mergeStatus = NoCellMerge();
-    int colSpan = cell.colSpan ?? 1;
-    int rowSpan = cell.rowSpan ?? 1;
-    if (colSpan > 1 || rowSpan > 1) {
-      mergeStatus = MergedCell(
-        start: targetIndex,
-        end: CellIndex(
-          row: targetIndex.row + rowSpan - 1,
-          column: targetIndex.column + colSpan - 1,
-        ),
-      );
-      data.applyMergeStatus(mergeStatus);
-    }
-
-    return CellProperties(
-      value: SheetRichText(spans: <SheetTextSpan>[
-        SheetTextSpan(
-          text: firstSpan.text,
-          style: SheetTextSpanStyle(
-            color: firstSpan.style?.color,
-            fontWeight: firstSpan.style?.fontWeight,
-            fontSize: firstSpan.style?.fontSize,
-            fontFamily: firstSpan.style?.fontFamily,
-            fontStyle: firstSpan.style?.fontStyle,
-            decoration: firstSpan.style?.textDecoration,
-          ),
-        ),
-      ]),
+  static PastedCellProperties _extractCellPropertiesFromHtmlCell(int rowOffset, int colOffset, HtmlTableCell cell) {
+    return PastedCellProperties(
+      rowOffset: rowOffset,
+      colOffset: colOffset,
+      rowSpan: cell.rowSpan,
+      colSpan: cell.colSpan,
+      text: SheetRichText(
+        spans: cell.spans.map((HtmlSpan span) {
+          return SheetTextSpan(
+            text: span.text,
+            style: SheetTextSpanStyle(
+              color: span.style?.color,
+              fontWeight: span.style?.fontWeight,
+              fontSize: span.style?.fontSize,
+              fontFamily: span.style?.fontFamily,
+              fontStyle: span.style?.fontStyle,
+              decoration: span.style?.textDecoration,
+            ),
+          );
+        }).toList(),
+      ),
       style: CellStyle(
         horizontalAlign: cell.style?.textAlign,
         verticalAlign: cell.style?.textVerticalAlign,
         border: cell.style?.border,
         backgroundColor: cell.style?.backgroundColor,
       ),
-      mergeStatus: mergeStatus,
     );
   }
 
   /// Parse a full HTML document containing `<google-sheets-html-origin>` and `<table>` into a [HtmlGoogleSheetsHtmlOrigin].
-  HtmlGoogleSheetsHtmlOrigin _parseDocument(String html) {
+  static HtmlGoogleSheetsHtmlOrigin _parseDocument(String html) {
     // Parse the entire HTML into a DOM.
     dom.Document document = html_parser.parse(html);
 
@@ -136,7 +108,7 @@ class HtmlClipboardDataDecoder {
     );
   }
 
-  List<HtmlTableRow> _parseRows(dom.Element tableElement) {
+  static List<HtmlTableRow> _parseRows(dom.Element tableElement) {
     List<dom.Element> rowElements = tableElement.querySelectorAll('tr');
     return rowElements.map((dom.Element rowElement) {
       Map<String, String> attributes = CssDecoder.decodeAttributes(rowElement.attributes['style']);
@@ -147,7 +119,7 @@ class HtmlClipboardDataDecoder {
     }).toList();
   }
 
-  List<HtmlTableCell> _parseCells(dom.Element rowElement, Map<String, String> parentAttributes) {
+  static List<HtmlTableCell> _parseCells(dom.Element rowElement, Map<String, String> parentAttributes) {
     List<dom.Element> cellElements = rowElement.querySelectorAll('td, th');
     return cellElements.map((dom.Element cellElement) {
       Map<String, String> attributes = CssDecoder.decodeAttributes(cellElement.attributes['style']);
@@ -165,7 +137,7 @@ class HtmlClipboardDataDecoder {
     }).toList();
   }
 
-  List<HtmlSpan> _parseSpans(dom.Element cellElement, Map<String, String> parentAttributes) {
+  static List<HtmlSpan> _parseSpans(dom.Element cellElement, Map<String, String> parentAttributes) {
     List<dom.Element> spanElements = cellElement.querySelectorAll('span');
     if (spanElements.isEmpty) {
       String text = cellElement.text.trim();

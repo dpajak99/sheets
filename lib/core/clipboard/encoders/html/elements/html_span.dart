@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/html/css/css_decoder.dart';
-import 'package:sheets/core/html/css/css_encoder.dart';
-import 'package:sheets/core/html/elements/html_element.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_decoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_encoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/elements/html_element.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class HtmlSpan extends StyledHtmlElement {

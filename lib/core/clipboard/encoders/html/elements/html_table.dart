@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/html/css/css_decoder.dart';
-import 'package:sheets/core/html/css/css_encoder.dart';
-import 'package:sheets/core/html/elements/html_element.dart';
-import 'package:sheets/core/html/elements/html_span.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_decoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_encoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/elements/html_element.dart';
+import 'package:sheets/core/clipboard/encoders/html/elements/html_span.dart';
 import 'package:sheets/utils/text_vertical_align.dart';
 
 class HtmlTable extends HtmlElement {
@@ -46,9 +46,11 @@ class HtmlTableCell extends StyledHtmlElement {
   HtmlTableCell({
     required this.spans,
     this.style,
-    this.colSpan,
-    this.rowSpan,
-  }) : super(tagName: 'td');
+    int? colSpan,
+    int? rowSpan,
+  })  : colSpan = colSpan ?? 1,
+        rowSpan = rowSpan ?? 1,
+        super(tagName: 'td');
 
   final List<HtmlSpan> spans;
   final HtmlTableStyle? style;
@@ -94,7 +96,7 @@ class HtmlTableStyle extends CssStyle {
     Color? backgroundColor,
   }) : super.css(<String, String>{
           if (textAlign != null) 'text-align': CssEncoder.encodeTextAlign(textAlign),
-          if(textVerticalAlign != null) 'vertical-align': CssEncoder.encodeTextAlignVertical(textVerticalAlign),
+          if (textVerticalAlign != null) 'vertical-align': CssEncoder.encodeTextAlignVertical(textVerticalAlign),
           if (backgroundColor != null) 'background-color': CssEncoder.encodeColor(backgroundColor),
           if (border != null) ...CssEncoder.encodeBorder(border),
         });
