@@ -271,12 +271,7 @@ class SheetData {
       text: textSpan,
       textDirection: TextDirection.ltr,
       textAlign: cellProperties.visibleTextAlign,
-    );
-
-    // Set a reasonable maxWidth for the text layout
-    // You can use a default column width or a predefined maximum width
-    double maxTextWidth = getColumnStyle(cellIndex.column).width - padding.horizontal;
-    painter.layout(maxWidth: maxTextWidth);
+    )..layout();
 
     double textWidth = painter.width;
     double textHeight = painter.height;

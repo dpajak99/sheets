@@ -564,28 +564,28 @@ class _SheetTextFieldState extends State<SheetTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return _SheetKeyboardGestureDetector(
-      focusNode: widget.focusNode,
-      onCursorMove: _moveCursor,
-      onExpandSelection: (CursorMoveDirection direction) => _moveCursor(direction, expandSelection: true),
+    return _SheetMouseGestureDetector(
+      controller: widget.controller,
+      onSelectIndex: _selectIndexByOffset,
+      onSelectWord: _selectWordByOffset,
       onSelectAll: _selectAll,
-      onRemoveText: _remove,
-      onInsertText: _insertText,
-      onCompleted: (bool shouldSave) => _complete(shouldSave, true),
-      onCopy: _copy,
-      onCut: _cut,
-      onPaste: _paste,
-      onUndo: _undo,
-      onRedo: _redo,
-      onFontWeightUpdate: _updateFontWeight,
-      onFontStyleUpdate: _updateFontStyle,
-      onTextDecorationUpdate: _formatDecoration,
-      child: _SheetMouseGestureDetector(
-        controller: widget.controller,
-        onSelectIndex: _selectIndexByOffset,
-        onSelectWord: _selectWordByOffset,
+      onExtendSelection: _expandSelectionByOffset,
+      child: _SheetKeyboardGestureDetector(
+        focusNode: widget.focusNode,
+        onCursorMove: _moveCursor,
+        onExpandSelection: (CursorMoveDirection direction) => _moveCursor(direction, expandSelection: true),
         onSelectAll: _selectAll,
-        onExtendSelection: _expandSelectionByOffset,
+        onRemoveText: _remove,
+        onInsertText: _insertText,
+        onCompleted: (bool shouldSave) => _complete(shouldSave, true),
+        onCopy: _copy,
+        onCut: _cut,
+        onPaste: _paste,
+        onUndo: _undo,
+        onRedo: _redo,
+        onFontWeightUpdate: _updateFontWeight,
+        onFontStyleUpdate: _updateFontStyle,
+        onTextDecorationUpdate: _formatDecoration,
         child: Stack(
           children: <Widget>[
             ValueListenableBuilder<Size>(
@@ -875,14 +875,11 @@ class _SheetMouseGestureDetectorState extends State<_SheetMouseGestureDetector> 
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.text,
-      child: Listener(
-        behavior: HitTestBehavior.translucent,
-        onPointerDown: _handlePointerDown,
-        onPointerMove: _handlePointerMove,
-        child: widget.child,
-      ),
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: _handlePointerDown,
+      onPointerMove: _handlePointerMove,
+      child: widget.child,
     );
   }
 

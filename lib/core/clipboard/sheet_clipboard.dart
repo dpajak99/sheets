@@ -9,19 +9,22 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
 class SheetClipboard {
-  static Future<List<PastedCellProperties>> read() async {
+  static Future<List<PastedCellProperties>> read({
+    bool html = true,
+    bool plaintext = true,
+  }) async {
     ClipboardReader? reader = await SystemClipboard.instance?.read();
     if (reader == null) {
       return <PastedCellProperties>[];
     }
 
     String? htmlData = await reader.readValue(Formats.htmlText);
-    if( htmlData != null ) {
+    if (htmlData != null && html) {
       return HtmlClipboardDecoder.decode(htmlData);
     }
 
     String? plainText = await reader.readValue(Formats.plainText);
-    if( plainText != null ) {
+    if (plainText != null && plaintext) {
       return PlaintextClipboardDecoder.decode(plainText);
     }
 
@@ -66,7 +69,7 @@ class PastedCellProperties {
     );
 
     CellMergeStatus mergeStatus = NoCellMerge();
-    if( rowSpan > 1 || colSpan > 1 ) {
+    if (rowSpan > 1 || colSpan > 1) {
       mergeStatus = MergedCell(
         start: index,
         end: CellIndex(row: index.row + rowSpan - 1, column: index.column + colSpan - 1),

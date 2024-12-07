@@ -53,6 +53,9 @@ class SheetRichText with EquatableMixin {
     if (currentSpan != null) {
       newSpans.add(currentSpan);
     }
+    if(newSpans.isEmpty) {
+      newSpans.add(SheetTextSpan(text: ''));
+    }
     return SheetRichText._(newSpans);
   }
 

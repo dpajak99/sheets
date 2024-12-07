@@ -140,12 +140,12 @@ class HtmlClipboardDecoder {
   static List<HtmlSpan> _parseSpans(dom.Element cellElement, Map<String, String> parentAttributes) {
     List<dom.Element> spanElements = cellElement.querySelectorAll('span');
     if (spanElements.isEmpty) {
-      String text = cellElement.text.trim();
+      String text = cellElement.text;
       return <HtmlSpan>[HtmlSpan(text: text, style: HtmlSpanStyle.css(parentAttributes))];
     }
 
     return spanElements.map((dom.Element spanElement) {
-      String text = spanElement.text.trim();
+      String text = spanElement.text;
       Map<String, String> attributes = CssDecoder.decodeAttributes(spanElement.attributes['style']);
 
       return HtmlSpan(

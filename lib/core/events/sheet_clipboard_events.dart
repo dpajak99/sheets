@@ -1,15 +1,11 @@
 import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/clipboard/encoders/html/html_clipboard_decoder.dart';
-import 'package:sheets/core/clipboard/encoders/html/html_clipboard_encoder.dart';
-import 'package:sheets/core/clipboard/encoders/plaintext/plaintext_clipboard_encoder.dart';
 import 'package:sheets/core/clipboard/sheet_clipboard.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
-import 'package:super_clipboard/super_clipboard.dart';
 
 abstract class SheetClipboardEvent extends SheetEvent {
   @override
@@ -53,7 +49,11 @@ class CopySelectionAction extends SheetClipboardAction<CopySelectionEvent> {
 }
 
 class PasteSelectionEvent extends SheetClipboardEvent {
-  PasteSelectionEvent();
+  PasteSelectionEvent({
+    this.valuesOnly = false,
+  });
+
+  final bool valuesOnly;
 
   @override
   PasteSelectionAction createAction(SheetController controller) => PasteSelectionAction(this, controller);
@@ -61,7 +61,6 @@ class PasteSelectionEvent extends SheetClipboardEvent {
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
         rebuildData: true,
-        rebuildViewport: true,
       );
 
   @override
@@ -75,23 +74,26 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
   Future<void> execute() async {
     CellIndex selectionAnchor = controller.selection.value.mainCell;
 
-    List<PastedCellProperties> pastedCells = await SheetClipboard.read();
+    List<PastedCellProperties> pastedCells = await SheetClipboard.read(html: !event.valuesOnly);
     List<IndexedCellProperties> cellsProperties = pastedCells.map((PastedCellProperties cell) {
       return cell.position(selectionAnchor);
     }).toList();
 
-    List<MergedCell> mergedCells = cellsProperties.map((IndexedCellProperties cell) {
-      return cell.properties.mergeStatus;
-    }).whereType<MergedCell>().toList();
+    List<MergedCell> mergedCells = cellsProperties
+        .map((IndexedCellProperties cell) {
+          return cell.properties.mergeStatus;
+        })
+        .whereType<MergedCell>()
+        .toList();
 
-    for(MergedCell mergedCell in mergedCells) {
+    for (MergedCell mergedCell in mergedCells) {
       controller.data.mergeCells(mergedCell.mergedCells);
     }
 
     controller.data.setCellsProperties(cellsProperties);
 
     List<RowIndex> rows = cellsProperties.map((IndexedCellProperties cell) => cell.index.row).toSet().toList();
-    for(RowIndex row in rows) {
+    for (RowIndex row in rows) {
       double minRowHeight = controller.data.getMinRowHeight(row);
       controller.data.setRowHeight(row, minRowHeight);
     }
@@ -101,5 +103,30 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
       end: cellsProperties.last.index,
       completed: true,
     ));
+  }
+}
+
+class CutSelectionEvent extends SheetClipboardEvent {
+  CutSelectionEvent();
+
+  @override
+  CutSelectionAction createAction(SheetController controller) => CutSelectionAction(this, controller);
+
+  @override
+  SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
+    rebuildData: true,
+  );
+
+  @override
+  List<Object?> get props => <Object?>[];
+}
+
+class CutSelectionAction extends SheetClipboardAction<CutSelectionEvent> {
+  CutSelectionAction(super.event, super.controller);
+
+  @override
+  Future<void> execute() async {
+    controller.resolve(CopySelectionEvent());
+    controller.resolve(ClearSelectionEvent());
   }
 }
