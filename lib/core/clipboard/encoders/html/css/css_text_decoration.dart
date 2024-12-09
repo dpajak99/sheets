@@ -35,7 +35,7 @@ class CssTextDecorationValue extends CssValue<TextDecoration> {
   static CssTextDecorationValue fromCss(String value) {
     List<String> values = value.split(' ');
     List<CssTextDecorationValue> cssValues = values
-        .map((String v) => switch (value) {
+        .map((String v) => switch (v) {
               'none' => CssTextDecorationValue.none,
               'underline' => CssTextDecorationValue.underline,
               'overline' => CssTextDecorationValue.overline,
@@ -52,7 +52,14 @@ class CssTextDecorationValue extends CssValue<TextDecoration> {
       TextDecoration.underline => CssTextDecorationValue.underline,
       TextDecoration.overline => CssTextDecorationValue.overline,
       TextDecoration.lineThrough => CssTextDecorationValue.lineThrough,
-      (_) => throw Exception('Unknown value: $value'),
+      (_) => () {
+          List<TextDecoration> values = <TextDecoration>[
+            if (value.contains(TextDecoration.underline)) TextDecoration.underline,
+            if (value.contains(TextDecoration.overline)) TextDecoration.overline,
+            if (value.contains(TextDecoration.lineThrough)) TextDecoration.lineThrough,
+          ];
+          return CssTextDecorationValue.fromDartValues(values);
+        }(),
     };
   }
 
@@ -64,7 +71,7 @@ class CssTextDecorationValue extends CssValue<TextDecoration> {
         cssValues.map((CssTextDecorationValue v) => v.toCss()).join(' '),
       );
     } catch (e) {
-      throw Exception('Unknown value: $values');
+      throw Exception('fromDartValues: Unknown value: $values');
     }
   }
 

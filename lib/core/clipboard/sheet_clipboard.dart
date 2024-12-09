@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/clipboard/encoders/html/html_clipboard_decoder.dart';
 import 'package:sheets/core/clipboard/encoders/html/html_clipboard_encoder.dart';
@@ -44,15 +45,16 @@ class SheetClipboard {
   }
 }
 
-class PastedCellProperties {
+class PastedCellProperties with EquatableMixin {
   PastedCellProperties({
     required this.text,
-    required this.style,
     required this.colOffset,
     required this.rowOffset,
+    CellStyle? style,
     int? rowSpan,
     int? colSpan,
-  })  : rowSpan = rowSpan ?? 1,
+  })  : style = style ?? CellStyle(),
+        rowSpan = rowSpan ?? 1,
         colSpan = colSpan ?? 1;
 
   final SheetRichText text;
@@ -88,4 +90,7 @@ class PastedCellProperties {
       ),
     );
   }
+
+  @override
+  List<Object?> get props => <Object?>[text, colOffset, rowOffset, style, rowSpan, colSpan];
 }

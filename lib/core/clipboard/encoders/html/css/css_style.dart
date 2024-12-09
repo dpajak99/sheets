@@ -26,7 +26,7 @@ abstract class CssStyle with EquatableMixin {
   Map<String, String> get propertiesMap {
     Map<String, String> map = <String, String>{};
     for (CssProperty? property in properties) {
-      if(property == null) {
+      if (property == null) {
         continue;
       }
       map.addAll(property.toCssMap());

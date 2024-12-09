@@ -25,7 +25,11 @@ void main() {
         SheetRichText richText = SheetRichText(spans: spans);
 
         // Assert
-        expect(richText.spans, spans);
+        List<SheetTextSpan> expectedSpans = <SheetTextSpan>[
+          SheetTextSpan(text: 'HelloWorld', style: SheetTextSpanStyle()),
+        ];
+
+        expect(richText.spans, expectedSpans);
       });
 
       test('Should [initialize with single span] when [using .single constructor]', () {
@@ -195,7 +199,19 @@ void main() {
 
         // Assert
         expect(textSpan.text, 'Hello');
-        expect(textSpan.style, SheetTextSpanStyle(color: Colors.red));
+        expect(
+          textSpan.style.toString(),
+          const TextStyle(
+            color: Colors.red,
+            fontFamily: 'Arial',
+            package: 'sheets',
+            fontSize: 13.3,
+            fontWeight: FontWeight.normal,
+            fontStyle: FontStyle.normal,
+            letterSpacing: 0,
+            decoration: TextDecoration.none,
+          ).toString(),
+        );
       });
     });
   });

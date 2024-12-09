@@ -25,31 +25,41 @@ class HtmlClipboardDecoder {
     List<PastedCellProperties> pastedCells = <PastedCellProperties>[];
     int currentRowOffset = 0;
     Map<int, List<int>> rowMergedColumns = <int, List<int>>{};
+
     for (HtmlTableRow row in table.rows) {
       int currentColOffset = 0;
       for (HtmlTableCell cell in row.cells) {
-        int rowOffset = currentRowOffset;
-        while (rowMergedColumns.containsKey(rowOffset) && rowMergedColumns[rowOffset]!.contains(currentColOffset)) {
-          rowOffset++;
+        while (rowMergedColumns.containsKey(currentRowOffset) &&
+            rowMergedColumns[currentRowOffset]!.contains(currentColOffset)) {
+          currentColOffset++;
         }
 
-        PastedCellProperties pastedCellProperties = _extractCellPropertiesFromHtmlCell(rowOffset, currentColOffset, cell);
+        PastedCellProperties pastedCellProperties = _extractCellPropertiesFromHtmlCell(
+            currentRowOffset,
+            currentColOffset,
+            cell
+        );
         pastedCells.add(pastedCellProperties);
 
         int colSpan = cell.colSpan ?? 1;
         int rowSpan = cell.rowSpan ?? 1;
+
         if (rowSpan > 1) {
-          for (int i = currentRowOffset; i < currentRowOffset + rowSpan; i++) {
+          for (int i = currentRowOffset + 1; i < currentRowOffset + rowSpan; i++) {
             rowMergedColumns.putIfAbsent(i, () => <int>[]);
             for (int j = currentColOffset; j < currentColOffset + colSpan; j++) {
-              rowMergedColumns[i]?.add(j);
+              if (!rowMergedColumns[i]!.contains(j)) {
+                rowMergedColumns[i]!.add(j);
+              }
             }
           }
         }
+
         currentColOffset += colSpan;
       }
       currentRowOffset++;
     }
+
     return pastedCells;
   }
 

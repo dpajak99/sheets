@@ -77,7 +77,6 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       return;
     }
 
-
     for (ViewportCell cell in visibleCells) {
       Rect cellRect = cell.rect;
       Border? border = cell.properties.style.border;
@@ -110,7 +109,6 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
     List<Line> mergedLines = mergeOverlappingLines(lines.toList());
 
     for (Line line in mergedLines) {
-
       Paint paint = Paint()
         ..color = line.side.color
         ..strokeWidth = line.side.width

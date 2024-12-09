@@ -98,7 +98,7 @@ void main() {
         SheetTextSpanStyle updatedStyle = action.format(initialStyle);
 
         // Assert
-        expect(updatedStyle.fontSize, 13);
+        expect(updatedStyle.fontSize, const FontSize.fromPoints(9.5));
       });
     });
 
@@ -113,7 +113,7 @@ void main() {
         SheetTextSpanStyle updatedStyle = action.format(initialStyle);
 
         // Assert
-        expect(updatedStyle.fontSize, 15);
+        expect(updatedStyle.fontSize, const FontSize.fromPoints(11.5));
       });
     });
 
@@ -128,7 +128,7 @@ void main() {
         SheetTextSpanStyle updatedStyle = action.format(initialStyle);
 
         // Assert
-        expect(updatedStyle.fontSize, 18);
+        expect(updatedStyle.fontSize, const FontSize.fromPixels(18));
       });
     });
 

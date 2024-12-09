@@ -30,7 +30,7 @@ abstract class SheetAction<T extends SheetEvent> {
   FutureOr<void> execute();
 
   void ensureFullyVisible(SheetIndex index) {
-    if(!controller.isFullyVisible(index)) {
+    if (!controller.isFullyVisible(index)) {
       controller.resolve(ScrollToElementEvent(index));
     }
   }

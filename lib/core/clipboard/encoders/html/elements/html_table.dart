@@ -36,9 +36,7 @@ class HtmlTableRow extends HtmlElement {
 
   @override
   Map<String, String> get attributes {
-    return <String, String>{
-      if (height != null) 'height': '${height}px',
-    };
+    return <String, String>{};
   }
 
   @override
