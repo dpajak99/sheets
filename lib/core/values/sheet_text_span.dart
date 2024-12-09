@@ -20,6 +20,9 @@ class SheetRichText with EquatableMixin {
   }
 
   factory SheetRichText.fromTextSpan(TextSpan textSpan) {
+    if(textSpan.children?.isEmpty ?? true) {
+      return SheetRichText.fromTextSpans(<TextSpan>[textSpan]);
+    }
     return SheetRichText.fromTextSpans(textSpan.children!.cast());
   }
 
@@ -53,7 +56,7 @@ class SheetRichText with EquatableMixin {
     if (currentSpan != null) {
       newSpans.add(currentSpan);
     }
-    if(newSpans.isEmpty) {
+    if (newSpans.isEmpty) {
       newSpans.add(SheetTextSpan(text: ''));
     }
     return SheetRichText._(newSpans);
@@ -248,7 +251,7 @@ enum FontSizeUnit {
   px,
 }
 
-class FontSize {
+class FontSize with EquatableMixin {
   const FontSize.fromPixels(this.value) : unit = FontSizeUnit.px;
 
   const FontSize.fromPoints(this.value) : unit = FontSizeUnit.pt;
@@ -304,4 +307,7 @@ class FontSize {
   double ptToPx(double pt) {
     return pt / 72 * 96;
   }
+
+  @override
+  List<Object?> get props => <Object?>[value, unit];
 }

@@ -235,7 +235,7 @@ class SheetData {
 
   double getMinRowHeight(RowIndex rowIndex) {
     List<CellIndex> cellIndexes = _data.keys.where((CellIndex cellIndex) => cellIndex.row == rowIndex).toList();
-    if(cellIndexes.isEmpty) {
+    if (cellIndexes.isEmpty) {
       cellIndexes.add(CellIndex(row: rowIndex, column: ColumnIndex(0)));
     }
 

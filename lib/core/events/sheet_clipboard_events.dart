@@ -61,7 +61,7 @@ class PasteSelectionEvent extends SheetClipboardEvent {
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
         rebuildData: true,
-    rebuildSelection: true,
+        rebuildSelection: true,
       );
 
   @override
@@ -115,8 +115,8 @@ class CutSelectionEvent extends SheetClipboardEvent {
 
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
-    rebuildData: true,
-  );
+        rebuildData: true,
+      );
 
   @override
   List<Object?> get props => <Object?>[];
