@@ -4,7 +4,6 @@ import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 
 void main() {
   group('Tests of CellStyleFormatActions', () {
@@ -27,15 +26,15 @@ void main() {
     group('Tests of SetVerticalAlignAction', () {
       test('Should [set vertical alignment] on CellStyle', () {
         // Arrange
-        CellStyle initialStyle = CellStyle(verticalAlign: TextVerticalAlign.top);
-        SetVerticalAlignIntent intent = SetVerticalAlignIntent(TextVerticalAlign.center);
+        CellStyle initialStyle = CellStyle(verticalAlign: TextAlignVertical.top);
+        SetVerticalAlignIntent intent = SetVerticalAlignIntent(TextAlignVertical.center);
         SetVerticalAlignAction action = intent.createAction(cellStyle: initialStyle);
 
         // Act
         CellStyle updatedStyle = action.format(initialStyle);
 
         // Assert
-        CellStyle expectedStyle =  CellStyle(verticalAlign: TextVerticalAlign.center);
+        CellStyle expectedStyle =  CellStyle(verticalAlign: TextAlignVertical.center);
         expect(updatedStyle, expectedStyle);
       });
     });

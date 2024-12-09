@@ -48,7 +48,7 @@ class HtmlClipboardEncoder {
 
     return HtmlTableCell(
       spans: spans,
-      style: HtmlTableStyle(
+      style: HtmlTableStyle.fromDart(
         textAlign: textAlign,
         border: border,
         backgroundColor: backgroundColor,
@@ -63,7 +63,7 @@ class HtmlClipboardEncoder {
     return props.value.spans.map((SheetTextSpan span) {
       return HtmlSpan(
         text: span.text,
-        style: HtmlSpanStyle(
+        style: HtmlSpanStyle.fromDart(
           color: span.style.color,
           fontWeight: span.style.fontWeight,
           fontSize: span.style.fontSize,

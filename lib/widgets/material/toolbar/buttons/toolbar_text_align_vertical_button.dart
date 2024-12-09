@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
@@ -14,8 +13,8 @@ class ToolbarTextAlignVerticalButton extends StatefulWidget implements StaticSiz
     super.key,
   });
 
-  final TextVerticalAlign value;
-  final ValueChanged<TextVerticalAlign> onChanged;
+  final TextAlignVertical value;
+  final ValueChanged<TextAlignVertical> onChanged;
 
   @override
   Size get size => const Size(39, 30);
@@ -26,8 +25,8 @@ class ToolbarTextAlignVerticalButton extends StatefulWidget implements StaticSiz
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(EnumProperty<TextVerticalAlign>('value', value));
-    properties.add(ObjectFlagProperty<ValueChanged<TextVerticalAlign>>.has('onChanged', onChanged));
+    properties.add(DiagnosticsProperty<TextAlignVertical>('value', value));
+    properties.add(ObjectFlagProperty<ValueChanged<TextAlignVertical>>.has('onChanged', onChanged));
   }
 
   @override
@@ -54,7 +53,11 @@ class _ToolbarTextAlignVerticalButtonState extends State<ToolbarTextAlignVertica
       popupBuilder: (BuildContext context) {
         return DropdownGridMenu(
           gap: 1,
-          children: TextVerticalAlign.values.map((TextVerticalAlign textAlign) {
+          children: <TextAlignVertical>[
+            TextAlignVertical.top,
+            TextAlignVertical.center,
+            TextAlignVertical.bottom,
+          ].map((TextAlignVertical textAlign) {
             AssetIconData icon = _resolveIcon(textAlign);
             return _TextAlignOption(
                 selected: widget.value == textAlign,
@@ -69,11 +72,12 @@ class _ToolbarTextAlignVerticalButtonState extends State<ToolbarTextAlignVertica
     );
   }
 
-  AssetIconData _resolveIcon(TextVerticalAlign textAlign) {
+  AssetIconData _resolveIcon(TextAlignVertical textAlign) {
     return switch (textAlign) {
-      TextVerticalAlign.top => SheetIcons.vertical_align_top,
-      TextVerticalAlign.center => SheetIcons.vertical_align_center,
-      TextVerticalAlign.bottom => SheetIcons.vertical_align_bottom,
+      TextAlignVertical.top => SheetIcons.vertical_align_top,
+      TextAlignVertical.center => SheetIcons.vertical_align_center,
+      TextAlignVertical.bottom => SheetIcons.vertical_align_bottom,
+      (_) => throw Exception('Unknown value: $textAlign'),
     };
   }
 }

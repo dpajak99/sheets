@@ -61,6 +61,7 @@ class PasteSelectionEvent extends SheetClipboardEvent {
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
         rebuildData: true,
+    rebuildSelection: true,
       );
 
   @override

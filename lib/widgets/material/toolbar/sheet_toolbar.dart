@@ -18,7 +18,6 @@ import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_border_button.dart';
@@ -277,7 +276,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ),
                                 ToolbarTextAlignVerticalButton(
                                   value: selectionStyle.textAlignVertical,
-                                  onChanged: (TextVerticalAlign value) {
+                                  onChanged: (TextAlignVertical value) {
                                     widget.sheetController.resolve(FormatSelectionEvent(SetVerticalAlignIntent(value)));
                                   },
                                 ),

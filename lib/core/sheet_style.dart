@@ -4,20 +4,19 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 
 class CellStyle with EquatableMixin {
   CellStyle({
     TextAlign? horizontalAlign,
     TextOverflowBehavior? textOverflow,
-    TextVerticalAlign? verticalAlign,
+    TextAlignVertical? verticalAlign,
     TextRotation? rotation,
     Color? backgroundColor,
     this.valueFormat,
     this.border,
   })  : horizontalAlign = horizontalAlign ?? TextAlign.left,
         textOverflow = textOverflow ?? TextOverflowBehavior.clip,
-        verticalAlign = verticalAlign ?? TextVerticalAlign.bottom,
+        verticalAlign = verticalAlign ?? TextAlignVertical.bottom,
         rotation = rotation ?? TextRotation.none,
         backgroundColor = (backgroundColor != null && backgroundColor.opacity == 1) ? backgroundColor : Colors.white,
         borderZIndex = border != null ? globalBorderZIndex++ : null;
@@ -28,7 +27,7 @@ class CellStyle with EquatableMixin {
     TextAlign? horizontalAlign,
     TextOverflowBehavior? textOverflow,
     TextRotation? rotation,
-    TextVerticalAlign? verticalAlign,
+    TextAlignVertical? verticalAlign,
     Color? backgroundColor,
     SheetValueFormat? valueFormat,
     bool valueFormatNull = false,
@@ -50,7 +49,7 @@ class CellStyle with EquatableMixin {
   final TextAlign? horizontalAlign;
   final TextRotation rotation;
   final TextOverflowBehavior textOverflow;
-  final TextVerticalAlign verticalAlign;
+  final TextAlignVertical verticalAlign;
   final Border? border;
   final int? borderZIndex;
 

@@ -1,6 +1,6 @@
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
-import 'package:sheets/core/clipboard/encoders/html/css/css_decoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_style.dart';
 import 'package:sheets/core/clipboard/encoders/html/elements/html_google_sheets_html_origin.dart';
 import 'package:sheets/core/clipboard/encoders/html/elements/html_span.dart';
 import 'package:sheets/core/clipboard/encoders/html/elements/html_table.dart';
@@ -62,24 +62,25 @@ class HtmlClipboardDecoder {
       colSpan: cell.colSpan,
       text: SheetRichText(
         spans: cell.spans.map((HtmlSpan span) {
+          HtmlSpanStyle? style = span.style;
           return SheetTextSpan(
             text: span.text,
             style: SheetTextSpanStyle(
-              color: span.style?.color,
-              fontWeight: span.style?.fontWeight,
-              fontSize: span.style?.fontSize,
-              fontFamily: span.style?.fontFamily,
-              fontStyle: span.style?.fontStyle,
-              decoration: span.style?.textDecoration,
+              color: style?.color?.toDart(),
+              fontWeight: style?.fontWeight?.toDart(),
+              fontSize: style?.fontSize?.toDart() != null ? FontSize.fromPoints(style!.fontSize!.toDart()) : null,
+              fontFamily: style?.fontFamily?.toDart(),
+              fontStyle: style?.fontStyle?.toDart(),
+              decoration: style?.textDecoration?.toDart(),
             ),
           );
         }).toList(),
       ),
       style: CellStyle(
-        horizontalAlign: cell.style?.textAlign,
-        verticalAlign: cell.style?.textVerticalAlign,
-        border: cell.style?.border,
-        backgroundColor: cell.style?.backgroundColor,
+        horizontalAlign: cell.style?.textAlign?.toDart(),
+        verticalAlign: cell.style?.verticalAlign?.toDart(),
+        border: cell.style?.border?.toDart(),
+        backgroundColor: cell.style?.backgroundColor?.toDart(),
       ),
     );
   }
@@ -111,26 +112,24 @@ class HtmlClipboardDecoder {
   static List<HtmlTableRow> _parseRows(dom.Element tableElement) {
     List<dom.Element> rowElements = tableElement.querySelectorAll('tr');
     return rowElements.map((dom.Element rowElement) {
-      Map<String, String> attributes = CssDecoder.decodeAttributes(rowElement.attributes['style']);
+      Map<String, String> attributes = CssStyle.decodeProperties(rowElement.attributes['style']);
       List<HtmlTableCell> cells = _parseCells(rowElement, attributes);
-      String? height = attributes['height'];
-      double? rowHeight = CssDecoder.decodeDouble(height);
-      return HtmlTableRow(cells: cells, height: rowHeight);
+      return HtmlTableRow(cells: cells);
     }).toList();
   }
 
   static List<HtmlTableCell> _parseCells(dom.Element rowElement, Map<String, String> parentAttributes) {
     List<dom.Element> cellElements = rowElement.querySelectorAll('td, th');
     return cellElements.map((dom.Element cellElement) {
-      Map<String, String> attributes = CssDecoder.decodeAttributes(cellElement.attributes['style']);
+      Map<String, String> attributes = CssStyle.decodeProperties(cellElement.attributes['style']);
       List<HtmlSpan> spans = _parseSpans(cellElement, parentAttributes.merge(attributes));
 
-      int? colSpan = CssDecoder.decodeInteger(cellElement.attributes['colspan']);
-      int? rowSpan = CssDecoder.decodeInteger(cellElement.attributes['rowspan']);
+      int? colSpan = int.tryParse(cellElement.attributes['colspan'] ?? '1');
+      int? rowSpan = int.tryParse(cellElement.attributes['rowspan'] ?? '1');
 
       return HtmlTableCell(
         spans: spans,
-        style: HtmlTableStyle.css(attributes),
+        style: HtmlTableStyle.fromCssMap(attributes),
         colSpan: colSpan,
         rowSpan: rowSpan,
       );
@@ -141,16 +140,17 @@ class HtmlClipboardDecoder {
     List<dom.Element> spanElements = cellElement.querySelectorAll('span');
     if (spanElements.isEmpty) {
       String text = cellElement.text;
-      return <HtmlSpan>[HtmlSpan(text: text, style: HtmlSpanStyle.css(parentAttributes))];
+      return <HtmlSpan>[HtmlSpan(text: text, style: HtmlSpanStyle.fromCssMap(parentAttributes))];
     }
 
     return spanElements.map((dom.Element spanElement) {
       String text = spanElement.text;
-      Map<String, String> attributes = CssDecoder.decodeAttributes(spanElement.attributes['style']);
+      Map<String, String> attributes = CssStyle.decodeProperties(spanElement.attributes['style']);
+      attributes = parentAttributes.merge(attributes);
 
       return HtmlSpan(
         text: text,
-        style: HtmlSpanStyle.css(parentAttributes.merge(attributes)),
+        style: HtmlSpanStyle.fromCssMap(attributes),
       );
     }).toList();
   }

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/clipboard/encoders/html/css/css_decoder.dart';
-import 'package:sheets/core/clipboard/encoders/html/css/css_encoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_color.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_double.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_font_style.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_font_weignt.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_property.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_string.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_style.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_text_decoration.dart';
 import 'package:sheets/core/clipboard/encoders/html/elements/html_element.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
@@ -17,64 +23,57 @@ class HtmlSpan extends StyledHtmlElement {
   String get content => text;
 
   @override
-  HtmlSpanStyle get styles => style ?? HtmlSpanStyle();
+  HtmlSpanStyle get styles => style ?? HtmlSpanStyle.empty();
 
   @override
   List<Object?> get props => <Object?>[text, style];
 }
 
 class HtmlSpanStyle extends CssStyle {
-  HtmlSpanStyle({
+  HtmlSpanStyle.empty()
+      : color = null,
+        fontWeight = null,
+        fontSize = null,
+        fontFamily = null,
+        fontStyle = null,
+        textDecoration = null;
+
+  HtmlSpanStyle.fromDart({
     Color? color,
     FontWeight? fontWeight,
     FontSize? fontSize,
     String? fontFamily,
     FontStyle? fontStyle,
     TextDecoration? textDecoration,
-  }) : super.css(<String, String>{
-          if (color != null) 'color': CssEncoder.encodeColor(color),
-          if (fontWeight != null) 'font-weight': CssEncoder.encodeFontWeight(fontWeight),
-          if (fontSize != null) 'font-size': fontSize.asString(FontSizeUnit.pt),
-          if (fontFamily != null) 'font-family': fontFamily,
-          if (fontStyle != null) 'font-style': CssEncoder.encodeFontStyle(fontStyle),
-          if (textDecoration != null) 'text-decoration': CssEncoder.encodeTextDecoration(textDecoration),
-        });
+  })  : color = CssColor.fromDart(color),
+        fontWeight = CssFontWeight.fromDart(fontWeight),
+        fontSize = CssFontSize.fromDart(fontSize),
+        fontFamily = CssFontFamily.fromDart(fontFamily),
+        fontStyle = CssFontStyle.fromDart(fontStyle),
+        textDecoration = CssTextDecoration.fromDart(textDecoration);
 
-  HtmlSpanStyle.css(super.styles) : super.css();
+  HtmlSpanStyle.fromCssMap(Map<String, String> map)
+      : color = CssColor.fromCssMap(map),
+        fontWeight = CssFontWeight.fromCssMap(map),
+        fontSize = CssFontSize.fromCssMap(map),
+        fontFamily = CssFontFamily.fromCssMap(map),
+        fontStyle = CssFontStyle.fromCssMap(map),
+        textDecoration = CssTextDecoration.fromCssMap(map);
 
-  static const List<String> kSupportedStyles = <String>[
-    'color',
-    'font-weight',
-    'font-size',
-    'font-family',
-    'font-style',
-    'text-decoration',
-  ];
-
-  Color? get color {
-    return CssDecoder.decodeColor(styles['color']);
-  }
-
-  FontWeight? get fontWeight {
-    return CssDecoder.decodeFontWeight(styles['font-weight']);
-  }
-
-  FontSize? get fontSize {
-    return CssDecoder.decodeFontSize(styles['font-size']);
-  }
-
-  String? get fontFamily {
-    return styles['font-family'];
-  }
-
-  FontStyle? get fontStyle {
-    return CssDecoder.decodeFontStyle(styles['font-style']);
-  }
+  final CssColor? color;
+  final CssFontWeight? fontWeight;
+  final CssFontSize? fontSize;
+  final CssFontFamily? fontFamily;
+  final CssFontStyle? fontStyle;
+  final CssTextDecoration? textDecoration;
 
   @override
-  List<String> get supportedStyles => kSupportedStyles;
-
-  TextDecoration? get textDecoration {
-    return CssDecoder.decodeTextDecoration(styles['text-decoration']).decoration;
-  }
+  List<CssProperty> get properties => <CssProperty>[
+        if (color != null) color!,
+        if (fontWeight != null) fontWeight!,
+        if (fontSize != null) fontSize!,
+        if (fontFamily != null) fontFamily!,
+        if (fontStyle != null) fontStyle!,
+        if (textDecoration != null) textDecoration!,
+      ];
 }

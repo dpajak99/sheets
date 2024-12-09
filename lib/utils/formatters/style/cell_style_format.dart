@@ -3,7 +3,6 @@ import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 
 abstract class CellStyleFormatIntent extends StyleFormatIntent {
   CellStyleFormatIntent();
@@ -44,7 +43,7 @@ class SetHorizontalAlignAction extends CellStyleFormatAction<SetHorizontalAlignI
 class SetVerticalAlignIntent extends CellStyleFormatIntent {
   SetVerticalAlignIntent(this.align);
 
-  final TextVerticalAlign align;
+  final TextAlignVertical align;
 
   @override
   SetVerticalAlignAction createAction({CellStyle? cellStyle}) {

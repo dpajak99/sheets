@@ -12,7 +12,6 @@ import 'package:sheets/utils/extensions/offset_extensions.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/material_sheet_theme.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
@@ -220,12 +219,12 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
     // Vertical Alignment
     double yOffset;
-    TextVerticalAlign verticalAlign = cellStyle.verticalAlign;
-    if (verticalAlign == TextVerticalAlign.top) {
+    TextAlignVertical verticalAlign = cellStyle.verticalAlign;
+    if (verticalAlign == TextAlignVertical.top) {
       yOffset = _padding.top;
-    } else if (verticalAlign == TextVerticalAlign.center) {
+    } else if (verticalAlign == TextAlignVertical.center) {
       yOffset = _padding.top + (cellHeight - rotatedHeight) / 2;
-    } else if (verticalAlign == TextVerticalAlign.bottom) {
+    } else if (verticalAlign == TextAlignVertical.bottom) {
       yOffset = _padding.top + (cellHeight - rotatedHeight);
     } else {
       yOffset = _padding.top;

@@ -35,7 +35,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
       strokeAlign: BorderSide.strokeAlignOutside,
     );
     Border innerBorder = Border.all(color: const Color(0xff3056C6), width: 2);
-    EdgeInsets contentPadding = const EdgeInsets.only(left: 2, right: 2, top: 2, bottom: 1);
+    EdgeInsets contentPadding = const EdgeInsets.only(left: 3, right: 3);
 
     double horizontalBorderWidth = innerBorder.left.width + innerBorder.right.width;
     double horizontalPadding = horizontalBorderWidth + contentPadding.horizontal;
@@ -82,7 +82,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
                     textAlign: activeCell.cell.properties.visibleTextAlign,
                     backgroundColor: activeCell.cell.properties.style.backgroundColor,
                     onCompleted: (bool shouldSaveValue, bool shouldMove) {
-                        widget.sheetController.resolve(DisableEditingEvent(save: shouldSaveValue, move: shouldMove));
+                      widget.sheetController.resolve(DisableEditingEvent(save: shouldSaveValue, move: shouldMove));
                     },
                     editableViewportCell: activeCell,
                   ),
@@ -188,17 +188,20 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
         alignment: Alignment.topLeft,
         decoration: BoxDecoration(border: widget.innerBorder),
         padding: widget.contentPadding,
-        child: SheetTextField(
-          controller: widget.editableViewportCell.controller,
-          focusNode: widget.editableViewportCell.focusNode,
-          backgroundColor: widget.backgroundColor,
-          onSizeChanged: (Size size) {
-            Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
-            _recognizer.setDraggableArea(textfieldRect);
-          },
-          onCompleted: (bool shouldSaveValue, bool shouldMove) {
-            widget.onCompleted(shouldSaveValue, shouldMove);
-          },
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: SheetTextField(
+            controller: widget.editableViewportCell.controller,
+            focusNode: widget.editableViewportCell.focusNode,
+            backgroundColor: widget.backgroundColor,
+            onSizeChanged: (Size size) {
+              Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
+              _recognizer.setDraggableArea(textfieldRect);
+            },
+            onCompleted: (bool shouldSaveValue, bool shouldMove) {
+              widget.onCompleted(shouldSaveValue, shouldMove);
+            },
+          ),
         ),
       ),
     );

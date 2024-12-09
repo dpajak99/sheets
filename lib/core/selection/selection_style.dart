@@ -4,7 +4,6 @@ import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 
 abstract class SelectionStyle with EquatableMixin {
   SelectionStyle({
@@ -17,7 +16,7 @@ abstract class SelectionStyle with EquatableMixin {
 
   TextAlign get textAlignHorizontal => cellProperties.visibleTextAlign;
 
-  TextVerticalAlign get textAlignVertical {
+  TextAlignVertical get textAlignVertical {
     return cellProperties.style.verticalAlign;
   }
 

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/clipboard/encoders/html/css/css_decoder.dart';
-import 'package:sheets/core/clipboard/encoders/html/css/css_encoder.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_border.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_color.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_property.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_style.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_text_align.dart';
+import 'package:sheets/core/clipboard/encoders/html/css/css_vertical_align.dart';
 import 'package:sheets/core/clipboard/encoders/html/elements/html_element.dart';
 import 'package:sheets/core/clipboard/encoders/html/elements/html_span.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 
 class HtmlTable extends HtmlElement {
   HtmlTable({required this.rows}) : super(tagName: 'table');
@@ -68,10 +71,10 @@ class HtmlTableCell extends StyledHtmlElement {
   }
 
   @override
-  HtmlTableStyle get styles {
-    HtmlTableStyle cellStyle = style ?? HtmlTableStyle();
+  CssStyle get styles {
+    HtmlTableStyle cellStyle = style ?? HtmlTableStyle.empty();
     if (spans.length == 1) {
-      cellStyle.addOther(spans.first.styles);
+      return CombinedCssStyle(styles: <CssStyle>[cellStyle, spans.first.styles]);
     }
     return cellStyle;
   }
@@ -85,75 +88,42 @@ class HtmlTableCell extends StyledHtmlElement {
   }
 
   @override
-  List<Object?> get props => <Object?>[spans];
+  List<Object?> get props => <Object?>[spans, style, colSpan, rowSpan];
 }
 
 class HtmlTableStyle extends CssStyle {
-  HtmlTableStyle({
+  HtmlTableStyle.empty()
+      : textAlign = null,
+        verticalAlign = null,
+        border = null,
+        backgroundColor = null;
+
+  HtmlTableStyle.fromDart({
     TextAlign? textAlign,
-    TextVerticalAlign? textVerticalAlign,
+    TextAlignVertical? textAlignVertical,
     Border? border,
     Color? backgroundColor,
-  }) : super.css(<String, String>{
-          if (textAlign != null) 'text-align': CssEncoder.encodeTextAlign(textAlign),
-          if (textVerticalAlign != null) 'vertical-align': CssEncoder.encodeTextAlignVertical(textVerticalAlign),
-          if (backgroundColor != null) 'background-color': CssEncoder.encodeColor(backgroundColor),
-          if (border != null) ...CssEncoder.encodeBorder(border),
-        });
+  })  : textAlign = CssTextAlign.fromDart(textAlign),
+        verticalAlign = CssVerticalAlign.fromDart(textAlignVertical),
+        border = CssBorder.fromDart(border),
+        backgroundColor = CssBackgroundColor.fromDart(backgroundColor);
 
-  HtmlTableStyle.css(super.styles) : super.css();
+  HtmlTableStyle.fromCssMap(Map<String, String> styles)
+      : textAlign = CssTextAlign.fromCssMap(styles),
+        verticalAlign = CssVerticalAlign.fromCssMap(styles),
+        border = CssBorder.fromCssMap(styles),
+        backgroundColor = CssBackgroundColor.fromCssMap(styles);
 
-  static const List<String> kSupportedStyles = <String>[
-    'text-align',
-    'border',
-    'border-top',
-    'border-right',
-    'border-bottom',
-    'border-left',
-    'background-color',
-    'vertical-align',
-    ...HtmlSpanStyle.kSupportedStyles
-  ];
-
-  TextAlign? get textAlign {
-    return CssDecoder.decodeTextAlign(styles['text-align']);
-  }
-
-  TextVerticalAlign? get textVerticalAlign {
-    return CssDecoder.decodeTextVerticalAlign(styles['vertical-align']);
-  }
-
-  Border? get border {
-    String? borderValue = styles['border'];
-    if (borderValue != null) {
-      return CssDecoder.decodeBorder(borderValue);
-    }
-
-    // Otherwise, check 'border-top', 'border-right', 'border-bottom', 'border-left'
-    BorderSide? top = CssDecoder.decodeBorderSide(styles['border-top']);
-    BorderSide? right = CssDecoder.decodeBorderSide(styles['border-right']);
-    BorderSide? bottom = CssDecoder.decodeBorderSide(styles['border-bottom']);
-    BorderSide? left = CssDecoder.decodeBorderSide(styles['border-left']);
-
-    if (top == null && right == null && bottom == null && left == null) {
-      return null;
-    }
-
-    return Border(
-      top: top ?? BorderSide.none,
-      right: right ?? BorderSide.none,
-      bottom: bottom ?? BorderSide.none,
-      left: left ?? BorderSide.none,
-    );
-  }
-
-  Color? get backgroundColor {
-    return CssDecoder.decodeColor(styles['background-color']);
-  }
+  final CssTextAlign? textAlign;
+  final CssVerticalAlign? verticalAlign;
+  final CssBorder? border;
+  final CssBackgroundColor? backgroundColor;
 
   @override
-  List<String> get supportedStyles => kSupportedStyles;
-
-  @override
-  List<Object?> get props => <Object?>[textAlign, border, backgroundColor];
+  List<CssProperty> get properties => <CssProperty>[
+        if (textAlign != null) textAlign!,
+        if (verticalAlign != null) verticalAlign!,
+        if (border != null) border!,
+        if (backgroundColor != null) backgroundColor!,
+      ];
 }
