@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 
 abstract class SelectionStyle with EquatableMixin {
   SelectionStyle({
@@ -12,11 +12,11 @@ abstract class SelectionStyle with EquatableMixin {
   });
 
   final CellProperties cellProperties;
-  final TextStyle textStyle;
+  final SheetTextSpanStyle textStyle;
 
   TextAlign get textAlignHorizontal => cellProperties.visibleTextAlign;
 
-  TextVerticalAlign get textAlignVertical {
+  TextAlignVertical get textAlignVertical {
     return cellProperties.style.verticalAlign;
   }
 
@@ -32,7 +32,7 @@ abstract class SelectionStyle with EquatableMixin {
 
   Color? get backgroundColor => cellProperties.style.backgroundColor;
 
-  double? get fontSize => textStyle.fontSize;
+  FontSize get fontSize => textStyle.fontSize;
 
   SheetValueFormat get valueFormat => cellProperties.visibleValueFormat;
 }
@@ -66,7 +66,7 @@ class CursorRangeSelectionStyle extends SelectionStyle {
           textStyle: cellProperties.value.getSharedStyle(),
         );
 
-  final List<TextStyle> textStyles;
+  final List<SheetTextSpanStyle> textStyles;
 
   @override
   List<Object?> get props => <Object?>[cellProperties, textStyles];

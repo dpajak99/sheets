@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/utils/extensions/text_style_extensions.dart';
 import 'package:sheets/widgets/material/material_sheet_theme.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
@@ -154,7 +153,7 @@ class DropdownListMenuItem extends StatelessWidget {
                 child: Text(
                   _label,
                   textAlign: _labelAlign,
-                  style: defaultLabelStyle.join(_labelStyle),
+                  style: defaultLabelStyle.merge(_labelStyle),
                 ),
               ),
               if (_trailing != null) ...<Widget>[
@@ -243,7 +242,7 @@ class DropdownListMenuSubtitle extends StatelessWidget {
 
     Widget child = Text(
       _label,
-      style: defaultLabelStyle.join(_labelStyle),
+      style: defaultLabelStyle.merge(_labelStyle),
     );
 
     if (_icon != null) {

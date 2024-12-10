@@ -17,6 +17,7 @@ dependencies:
   intl: ^0.20.0
   visibility_detector: ^0.4.0+2
   html: ^0.15.5
+  super_clipboard: ^0.8.24
 
 dev_dependencies:
   flutter_lints: ^5.0.0

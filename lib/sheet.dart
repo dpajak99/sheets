@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/events/sheet_clipboard_events.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
@@ -58,9 +59,18 @@ class _SheetState extends State<Sheet> {
           widget.sheetController.resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: decoration))),
       onUndo: () {},
       onRedo: () {},
-      onPaste: () {},
-      onCopy: () {},
-      onCut: () {},
+      onPaste: () {
+        widget.sheetController.resolve(PasteSelectionEvent());
+      },
+      onPasteValues: () {
+        widget.sheetController.resolve(PasteSelectionEvent(valuesOnly: true));
+      },
+      onCopy: () {
+        widget.sheetController.resolve(CopySelectionEvent());
+      },
+      onCut: () {
+        widget.sheetController.resolve(CutSelectionEvent());
+      },
       child: SizedBox.expand(
         child: DecoratedBox(
           decoration: const BoxDecoration(
@@ -230,6 +240,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
     required this.onUndo,
     required this.onRedo,
     required this.onPaste,
+    required this.onPasteValues,
     required this.onCopy,
     required this.onCut,
   }) {
@@ -262,6 +273,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
       const SingleActivator(LogicalKeyboardKey.keyZ, control: true): onUndo,
       const SingleActivator(LogicalKeyboardKey.keyZ, control: true, shift: true): onRedo,
       const SingleActivator(LogicalKeyboardKey.keyV, control: true): onPaste,
+      const SingleActivator(LogicalKeyboardKey.keyV, control: true, shift: true): onPasteValues,
       const SingleActivator(LogicalKeyboardKey.keyC, control: true): onCopy,
       const SingleActivator(LogicalKeyboardKey.keyX, control: true): onCut,
     };
@@ -278,6 +290,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
   final VoidCallback onUndo;
   final VoidCallback onRedo;
   final VoidCallback onPaste;
+  final VoidCallback onPasteValues;
   final VoidCallback onCopy;
   final VoidCallback onCut;
 
@@ -302,6 +315,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
     properties.add(ObjectFlagProperty<VoidCallback>.has('onPaste', onPaste));
     properties.add(ObjectFlagProperty<VoidCallback>.has('onCopy', onCopy));
     properties.add(ObjectFlagProperty<VoidCallback>.has('onCut', onCut));
+    properties.add(ObjectFlagProperty<VoidCallback>.has('onPasteValues', onPasteValues));
   }
 
   @override

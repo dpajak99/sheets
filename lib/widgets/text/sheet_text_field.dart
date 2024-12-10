@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart' as constants;
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/extensions/double_extensions.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/silent_value_notifier.dart';
@@ -13,20 +14,23 @@ import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 /// Represents a single character with an associated [TextStyle].
 class TextSpanLetter with EquatableMixin {
-  TextSpanLetter({required this.letter, required this.style})
-      : assert(
+  TextSpanLetter({
+    required this.letter,
+    SheetTextSpanStyle? style,
+  })  : style = style ?? SheetTextSpanStyle(),
+        assert(
           letter.isEmpty || letter.length == 1,
           'Letter must be empty or have a length of 1',
         );
 
   TextSpanLetter.empty({required this.style}) : letter = '';
 
-  final TextStyle style;
+  final SheetTextSpanStyle style;
   final String letter;
 
   TextSpanLetter copyWith({
     String? letter,
-    TextStyle? style,
+    SheetTextSpanStyle? style,
   }) {
     return TextSpanLetter(
       letter: letter ?? this.letter,
@@ -51,7 +55,7 @@ class EditableTextSpan with EquatableMixin {
       if (span is TextSpan) {
         List<String> text = span.text?.split('') ?? <String>[];
         for (String letter in text) {
-          letters.add(TextSpanLetter(letter: letter, style: span.style!));
+          letters.add(TextSpanLetter(letter: letter, style: SheetTextSpanStyle.fromTextStyle(span.style)));
         }
       }
       return true;
@@ -60,7 +64,7 @@ class EditableTextSpan with EquatableMixin {
     if (letters.isEmpty) {
       List<TextSpan> childrenSpans = textSpan.children!.cast<TextSpan>();
       TextStyle existingStyle = childrenSpans.first.style!;
-      letters.add(TextSpanLetter(letter: '', style: existingStyle));
+      letters.add(TextSpanLetter(letter: '', style: SheetTextSpanStyle.fromTextStyle(existingStyle)));
     }
 
     EditableTextSpan editableTextSpan = EditableTextSpan(letters: letters);
@@ -77,24 +81,24 @@ class EditableTextSpan with EquatableMixin {
   }
 
   EditableTextSpan clear({bool keepStyle = false}) {
-    TextStyle style = keepStyle ? letters.first.style : constants.defaultTextStyle;
+    SheetTextSpanStyle style = keepStyle ? letters.first.style : SheetTextSpanStyle();
     return copyWith(letters: <TextSpanLetter>[TextSpanLetter(letter: '', style: style)]);
   }
 
   EditableTextSpan format({required int start, required int end, required TextStyleFormatIntent intent}) {
     List<TextSpanLetter> updatedLetters = List<TextSpanLetter>.from(letters);
-    List<TextStyle> styles = updatedLetters.sublist(start, end).map((TextSpanLetter letter) => letter.style).toList();
+    List<SheetTextSpanStyle> styles = updatedLetters.sublist(start, end).map((TextSpanLetter letter) => letter.style).toList();
     if (styles.isEmpty) {
       return this;
     }
-    TextStyle mergedStyle = styles.length > 1
-        ? styles.reduce((TextStyle a, TextStyle b) => a.merge(b)) //
+    SheetTextSpanStyle mergedStyle = styles.length > 1
+        ? styles.reduce((SheetTextSpanStyle a, SheetTextSpanStyle b) => a.merge(b)) //
         : styles.first;
 
     TextStyleFormatAction<TextStyleFormatIntent> formatter = intent.createAction(baseTextStyle: mergedStyle);
 
     for (int i = start; i < end; i++) {
-      TextStyle newStyle = formatter.format(letters[i].style);
+      SheetTextSpanStyle newStyle = formatter.format(letters[i].style);
       updatedLetters[i] = updatedLetters[i].copyWith(style: newStyle);
     }
 
@@ -103,7 +107,7 @@ class EditableTextSpan with EquatableMixin {
 
   EditableTextSpan insert(int index, String text) {
     List<TextSpanLetter> updatedLetters = List<TextSpanLetter>.from(letters);
-    TextStyle previousStyle = getPreviousStyle(index);
+    SheetTextSpanStyle previousStyle = getPreviousStyle(index);
     List<TextSpanLetter> newLetters = text.characters.map((String letter) {
       return TextSpanLetter(letter: letter, style: previousStyle);
     }).toList();
@@ -140,7 +144,7 @@ class EditableTextSpan with EquatableMixin {
     if (styleModifier != null) {
       for (int i = styleModifier.start; i < styleModifier.end; i++) {
         if (i >= 0 && i < modifiedLetters.length) {
-          TextStyle modifiedStyle = styleModifier.modifier(modifiedLetters[i].style);
+          SheetTextSpanStyle modifiedStyle = styleModifier.modifier(modifiedLetters[i].style);
           modifiedLetters[i] = modifiedLetters[i].copyWith(style: modifiedStyle);
         }
       }
@@ -148,31 +152,31 @@ class EditableTextSpan with EquatableMixin {
 
     List<TextSpan> spans = <TextSpan>[];
     if (modifiedLetters.isEmpty) {
-      return TextSpan(text: '', children: spans, style: letters.first.style);
+      return TextSpan(text: '', children: spans, style: letters.first.style.toTextStyle());
     }
 
-    TextStyle currentStyle = modifiedLetters.first.style;
+    SheetTextSpanStyle currentStyle = modifiedLetters.first.style;
     StringBuffer buffer = StringBuffer();
 
     for (TextSpanLetter letter in modifiedLetters) {
       if (letter.style == currentStyle) {
         buffer.write(letter.letter);
       } else {
-        spans.add(TextSpan(text: buffer.toString(), style: currentStyle));
+        spans.add(TextSpan(text: buffer.toString(), style: currentStyle.toTextStyle()));
         currentStyle = letter.style;
         buffer = StringBuffer(letter.letter);
       }
     }
 
     if (buffer.isNotEmpty) {
-      spans.add(TextSpan(text: buffer.toString(), style: currentStyle));
+      spans.add(TextSpan(text: buffer.toString(), style: currentStyle.toTextStyle()));
     }
 
-    return TextSpan(text: '', children: spans, style: letters.first.style);
+    return TextSpan(text: '', children: spans, style: letters.first.style.toTextStyle());
   }
 
-  TextStyle getPreviousStyle(int index) {
-    late TextStyle previousStyle;
+  SheetTextSpanStyle getPreviousStyle(int index) {
+    late SheetTextSpanStyle previousStyle;
     if (index > 0 && index <= letters.length) {
       previousStyle = letters[index - 1].style;
     } else {
@@ -196,7 +200,7 @@ class TextRangeStyleModifier with EquatableMixin {
 
   final int start;
   final int end;
-  final TextStyle Function(TextStyle style) modifier;
+  final SheetTextSpanStyle Function(SheetTextSpanStyle style) modifier;
 
   @override
   List<Object?> get props => <Object?>[start, end, modifier];
@@ -214,7 +218,7 @@ class SheetTextEditingValue with EquatableMixin {
   final TextSpan span;
 
   static SheetTextEditingValue empty = SheetTextEditingValue(
-    text: EditableTextSpan(letters: <TextSpanLetter>[TextSpanLetter(letter: '', style: constants.defaultTextStyle)]),
+    text: EditableTextSpan(letters: <TextSpanLetter>[TextSpanLetter(letter: '')]),
     selection: const TextSelection.collapsed(offset: 0),
   );
 
@@ -386,13 +390,13 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   }
 
   /// Returns the style of the character preceding the cursor.
-  TextStyle get previousStyle {
+  SheetTextSpanStyle get previousStyle {
     int index = value.selection.start;
     return value.text.getPreviousStyle(index);
   }
 
-  List<TextStyle> get selectionStyles {
-    List<TextStyle> styles = <TextStyle>[];
+  List<SheetTextSpanStyle> get selectionStyles {
+    List<SheetTextSpanStyle> styles = <SheetTextSpanStyle>[];
     for (int i = selection.start; i < selection.end; i++) {
       styles.add(value.text.letters[i].style);
     }
@@ -450,7 +454,7 @@ class SheetTextEditingController extends ValueNotifier<SheetTextEditingValue> {
   double _calculateTextfieldHeight(double previousHeight, double width) {
     TextSpan span = value.span;
     if (span.toPlainText().isEmpty) {
-      span = TextSpan(text: ' ', style: previousStyle);
+      span = TextSpan(text: ' ', style: previousStyle.toTextStyle());
     }
 
     TextPainter painter = buildTextPainter(span, customWidth: width, useMinWidth: false);
@@ -560,28 +564,28 @@ class _SheetTextFieldState extends State<SheetTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return _SheetKeyboardGestureDetector(
-      focusNode: widget.focusNode,
-      onCursorMove: _moveCursor,
-      onExpandSelection: (CursorMoveDirection direction) => _moveCursor(direction, expandSelection: true),
+    return _SheetMouseGestureDetector(
+      controller: widget.controller,
+      onSelectIndex: _selectIndexByOffset,
+      onSelectWord: _selectWordByOffset,
       onSelectAll: _selectAll,
-      onRemoveText: _remove,
-      onInsertText: _insertText,
-      onCompleted: (bool shouldSave) => _complete(shouldSave, true),
-      onCopy: _copy,
-      onCut: _cut,
-      onPaste: _paste,
-      onUndo: _undo,
-      onRedo: _redo,
-      onFontWeightUpdate: _updateFontWeight,
-      onFontStyleUpdate: _updateFontStyle,
-      onTextDecorationUpdate: _formatDecoration,
-      child: _SheetMouseGestureDetector(
-        controller: widget.controller,
-        onSelectIndex: _selectIndexByOffset,
-        onSelectWord: _selectWordByOffset,
+      onExtendSelection: _expandSelectionByOffset,
+      child: _SheetKeyboardGestureDetector(
+        focusNode: widget.focusNode,
+        onCursorMove: _moveCursor,
+        onExpandSelection: (CursorMoveDirection direction) => _moveCursor(direction, expandSelection: true),
         onSelectAll: _selectAll,
-        onExtendSelection: _expandSelectionByOffset,
+        onRemoveText: _remove,
+        onInsertText: _insertText,
+        onCompleted: (bool shouldSave) => _complete(shouldSave, true),
+        onCopy: _copy,
+        onCut: _cut,
+        onPaste: _paste,
+        onUndo: _undo,
+        onRedo: _redo,
+        onFontWeightUpdate: _updateFontWeight,
+        onFontStyleUpdate: _updateFontStyle,
+        onTextDecorationUpdate: _formatDecoration,
         child: Stack(
           children: <Widget>[
             ValueListenableBuilder<Size>(
@@ -871,14 +875,11 @@ class _SheetMouseGestureDetectorState extends State<_SheetMouseGestureDetector> 
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.text,
-      child: Listener(
-        behavior: HitTestBehavior.translucent,
-        onPointerDown: _handlePointerDown,
-        onPointerMove: _handlePointerMove,
-        child: widget.child,
-      ),
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: _handlePointerDown,
+      onPointerMove: _handlePointerMove,
+      child: widget.child,
     );
   }
 
@@ -1068,7 +1069,7 @@ class _CursorPainter extends ChangeNotifier implements CustomPainter {
   /// Returns the position of the cursor as an [Offset].
   Rect? get _cursorRect {
     SheetTextfieldState state = _controller.state;
-    TextStyle previousStyle = _controller.previousStyle;
+    SheetTextSpanStyle previousStyle = _controller.previousStyle;
 
     late int currentLine;
     late double offsetX;
@@ -1076,7 +1077,7 @@ class _CursorPainter extends ChangeNotifier implements CustomPainter {
 
     bool emptyText = _controller.value.span.toPlainText().isEmpty;
     if (emptyText) {
-      TextPainter painter = _controller.buildTextPainter(TextSpan(text: 'I', style: previousStyle));
+      TextPainter painter = _controller.buildTextPainter(TextSpan(text: 'I', style: previousStyle.toTextStyle()));
 
       currentLine = 0;
       offsetX = switch (_controller.textAlign) {
@@ -1108,7 +1109,7 @@ class _CursorPainter extends ChangeNotifier implements CustomPainter {
 
     double? lineHeight = lines.elementAtOrNull(currentLine)?.height ?? 14;
 
-    double fontSize = previousStyle.fontSize ?? 0;
+    double fontSize = previousStyle.fontSize.px;
     double cursorShift = (lineHeight - fontSize) / 2;
 
     return Rect.fromLTWH(offsetX, offsetY + cursorShift, 1, fontSize);
@@ -1142,7 +1143,7 @@ class _LettersPainter extends ChangeNotifier implements CustomPainter {
     TextRangeStyleModifier selectionStyleModifier = TextRangeStyleModifier(
       start: _controller.selection.start,
       end: _controller.selection.end,
-      modifier: (TextStyle style) {
+      modifier: (SheetTextSpanStyle style) {
         return style.copyWith(color: Colors.white);
       },
     );

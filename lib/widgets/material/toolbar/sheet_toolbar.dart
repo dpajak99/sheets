@@ -11,13 +11,13 @@ import 'package:sheets/core/selection/types/sheet_single_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/border_edges.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_border_button.dart';
@@ -173,9 +173,10 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                   },
                                 ),
                                 ToolbarFontSizeButton(
-                                  value: selectionStyle.fontSize ?? 0,
+                                  value: selectionStyle.fontSize.pt,
                                   onChanged: (double value) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetFontSizeIntent(fontSize: value)));
+                                    widget.sheetController
+                                        .resolve(FormatSelectionEvent(SetFontSizeIntent(fontSize: FontSize.fromPoints(value))));
                                   },
                                 ),
                                 ToolbarIconButton.small(
@@ -275,7 +276,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                 ),
                                 ToolbarTextAlignVerticalButton(
                                   value: selectionStyle.textAlignVertical,
-                                  onChanged: (TextVerticalAlign value) {
+                                  onChanged: (TextAlignVertical value) {
                                     widget.sheetController.resolve(FormatSelectionEvent(SetVerticalAlignIntent(value)));
                                   },
                                 ),

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
 
 abstract class TextStyleFormatIntent extends StyleFormatIntent {
   TextStyleFormatIntent();
 
-  TextStyleFormatAction<TextStyleFormatIntent> createAction({TextStyle? baseTextStyle});
+  TextStyleFormatAction<TextStyleFormatIntent> createAction({SheetTextSpanStyle? baseTextStyle});
 }
 
 abstract class TextStyleFormatAction<I extends TextStyleFormatIntent> extends StyleFormatAction<I> {
   TextStyleFormatAction({required super.intent, this.baseTextStyle});
 
-  final TextStyle? baseTextStyle;
+  final SheetTextSpanStyle? baseTextStyle;
 
-  TextStyle format(TextStyle currentStyle);
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle);
 }
 
 // FontWeight
@@ -26,7 +27,7 @@ class ToggleFontWeightIntent extends TextStyleFormatIntent {
   final FontWeight value;
 
   @override
-  ToggleFontWeightAction createAction({TextStyle? baseTextStyle}) {
+  ToggleFontWeightAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return ToggleFontWeightAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -35,8 +36,8 @@ class ToggleFontWeightAction extends TextStyleFormatAction<ToggleFontWeightInten
   ToggleFontWeightAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
-    TextStyle baseStyle = baseTextStyle ?? currentStyle;
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
+    SheetTextSpanStyle baseStyle = baseTextStyle ?? currentStyle;
     if (baseStyle.fontWeight == intent.value) {
       return currentStyle.copyWith(fontWeight: intent.defaultValue);
     } else {
@@ -56,7 +57,7 @@ class ToggleFontStyleIntent extends TextStyleFormatIntent {
   final FontStyle value;
 
   @override
-  ToggleFontStyleAction createAction({TextStyle? baseTextStyle}) {
+  ToggleFontStyleAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return ToggleFontStyleAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -65,8 +66,8 @@ class ToggleFontStyleAction extends TextStyleFormatAction<ToggleFontStyleIntent>
   ToggleFontStyleAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
-    TextStyle baseStyle = baseTextStyle ?? currentStyle;
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
+    SheetTextSpanStyle baseStyle = baseTextStyle ?? currentStyle;
     if (baseStyle.fontStyle == intent.value) {
       return currentStyle.copyWith(fontStyle: intent.defaultValue);
     } else {
@@ -84,7 +85,7 @@ class ToggleTextDecorationIntent extends TextStyleFormatIntent {
   final TextDecoration value;
 
   @override
-  ToggleTextDecorationAction createAction({TextStyle? baseTextStyle}) {
+  ToggleTextDecorationAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return ToggleTextDecorationAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -93,13 +94,11 @@ class ToggleTextDecorationAction extends TextStyleFormatAction<ToggleTextDecorat
   ToggleTextDecorationAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
-    TextStyle baseStyle = baseTextStyle ?? currentStyle;
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
+    SheetTextSpanStyle baseStyle = baseTextStyle ?? currentStyle;
     TextDecoration? baseDecoration = baseStyle.decoration;
 
-    if (baseDecoration == null) {
-      return currentStyle.copyWith(decoration: intent.value);
-    } else if (baseDecoration.contains(intent.value)) {
+    if (baseDecoration.contains(intent.value)) {
       List<TextDecoration> availableDecorations = <TextDecoration>[
         if (baseDecoration.contains(TextDecoration.underline)) TextDecoration.underline,
         if (baseDecoration.contains(TextDecoration.overline)) TextDecoration.overline,
@@ -108,7 +107,7 @@ class ToggleTextDecorationAction extends TextStyleFormatAction<ToggleTextDecorat
 
       return currentStyle.copyWith(decoration: TextDecoration.combine(availableDecorations));
     } else {
-      return currentStyle.copyWith(decoration: TextDecoration.combine(<TextDecoration>[currentStyle.decoration!, intent.value]));
+      return currentStyle.copyWith(decoration: TextDecoration.combine(<TextDecoration>[currentStyle.decoration, intent.value]));
     }
   }
 }
@@ -122,7 +121,7 @@ class SetFontColorIntent extends TextStyleFormatIntent {
   final Color color;
 
   @override
-  SetFontColorAction createAction({TextStyle? baseTextStyle}) {
+  SetFontColorAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return SetFontColorAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -131,7 +130,7 @@ class SetFontColorAction extends TextStyleFormatAction<SetFontColorIntent> {
   SetFontColorAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
     return currentStyle.copyWith(color: intent.color);
   }
 }
@@ -141,7 +140,7 @@ class DecreaseFontSizeIntent extends TextStyleFormatIntent {
   DecreaseFontSizeIntent();
 
   @override
-  DecreaseFontSizeAction createAction({TextStyle? baseTextStyle}) {
+  DecreaseFontSizeAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return DecreaseFontSizeAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -150,12 +149,8 @@ class DecreaseFontSizeAction extends TextStyleFormatAction<DecreaseFontSizeInten
   DecreaseFontSizeAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
-    if (currentStyle.fontSize == null) {
-      return currentStyle;
-    } else {
-      return currentStyle.copyWith(fontSize: currentStyle.fontSize! - 1);
-    }
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
+    return currentStyle.copyWith(fontSize: currentStyle.fontSize.decreasePoints(1));
   }
 }
 
@@ -164,7 +159,7 @@ class IncreaseFontSizeIntent extends TextStyleFormatIntent {
   IncreaseFontSizeIntent();
 
   @override
-  IncreaseFontSizeAction createAction({TextStyle? baseTextStyle}) {
+  IncreaseFontSizeAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return IncreaseFontSizeAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -173,12 +168,8 @@ class IncreaseFontSizeAction extends TextStyleFormatAction<IncreaseFontSizeInten
   IncreaseFontSizeAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
-    if (currentStyle.fontSize == null) {
-      return currentStyle;
-    } else {
-      return currentStyle.copyWith(fontSize: currentStyle.fontSize! + 1);
-    }
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
+    return currentStyle.copyWith(fontSize: currentStyle.fontSize.increasePoints(1));
   }
 }
 
@@ -188,10 +179,10 @@ class SetFontSizeIntent extends TextStyleFormatIntent {
     required this.fontSize,
   });
 
-  final double fontSize;
+  final FontSize fontSize;
 
   @override
-  SetFontSizeAction createAction({TextStyle? baseTextStyle}) {
+  SetFontSizeAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return SetFontSizeAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -200,7 +191,7 @@ class SetFontSizeAction extends TextStyleFormatAction<SetFontSizeIntent> {
   SetFontSizeAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
     return currentStyle.copyWith(fontSize: intent.fontSize);
   }
 }
@@ -214,7 +205,7 @@ class SetFontFamilyIntent extends TextStyleFormatIntent {
   final String fontFamily;
 
   @override
-  SetFontFamilyAction createAction({TextStyle? baseTextStyle}) {
+  SetFontFamilyAction createAction({SheetTextSpanStyle? baseTextStyle}) {
     return SetFontFamilyAction(intent: this, baseTextStyle: baseTextStyle);
   }
 }
@@ -223,7 +214,7 @@ class SetFontFamilyAction extends TextStyleFormatAction<SetFontFamilyIntent> {
   SetFontFamilyAction({required super.intent, super.baseTextStyle});
 
   @override
-  TextStyle format(TextStyle currentStyle) {
+  SheetTextSpanStyle format(SheetTextSpanStyle currentStyle) {
     return currentStyle.copyWith(fontFamily: intent.fontFamily);
   }
 }

@@ -17,15 +17,19 @@ void main() {
       test('Should [initialize with provided spans]', () {
         // Arrange
         List<SheetTextSpan> spans = <SheetTextSpan>[
-          SheetTextSpan(text: 'Hello', style: const TextStyle()),
-          SheetTextSpan(text: 'World', style: const TextStyle()),
+          SheetTextSpan(text: 'Hello', style: SheetTextSpanStyle()),
+          SheetTextSpan(text: 'World', style: SheetTextSpanStyle()),
         ];
 
         // Act
         SheetRichText richText = SheetRichText(spans: spans);
 
         // Assert
-        expect(richText.spans, spans);
+        List<SheetTextSpan> expectedSpans = <SheetTextSpan>[
+          SheetTextSpan(text: 'HelloWorld', style: SheetTextSpanStyle()),
+        ];
+
+        expect(richText.spans, expectedSpans);
       });
 
       test('Should [initialize with single span] when [using .single constructor]', () {
@@ -43,8 +47,8 @@ void main() {
         // Arrange
         SheetRichText richText = SheetRichText(
           spans: <SheetTextSpan>[
-            SheetTextSpan(text: '', style: const TextStyle()),
-            SheetTextSpan(text: '', style: const TextStyle()),
+            SheetTextSpan(text: '', style: SheetTextSpanStyle()),
+            SheetTextSpan(text: '', style: SheetTextSpanStyle()),
           ],
         );
 
@@ -59,8 +63,8 @@ void main() {
         // Arrange
         SheetRichText richText = SheetRichText(
           spans: <SheetTextSpan>[
-            SheetTextSpan(text: 'Hello', style: const TextStyle()),
-            SheetTextSpan(text: '', style: const TextStyle()),
+            SheetTextSpan(text: 'Hello', style: SheetTextSpanStyle()),
+            SheetTextSpan(text: '', style: SheetTextSpanStyle()),
           ],
         );
 
@@ -77,8 +81,8 @@ void main() {
         // Arrange
         SheetRichText richText = SheetRichText(
           spans: <SheetTextSpan>[
-            SheetTextSpan(text: 'Hello', style: const TextStyle()),
-            SheetTextSpan(text: ' World', style: const TextStyle()),
+            SheetTextSpan(text: 'Hello', style: SheetTextSpanStyle()),
+            SheetTextSpan(text: ' World', style: SheetTextSpanStyle()),
           ],
         );
 
@@ -107,7 +111,7 @@ void main() {
         // Arrange
         SheetRichText richText = SheetRichText.single(
           text: 'Hello',
-          style: const TextStyle(color: Colors.red),
+          style: SheetTextSpanStyle(color: Colors.red),
         );
 
         // Act
@@ -139,7 +143,7 @@ void main() {
       test('Should [initialize text and style]', () {
         // Arrange
         const String text = 'Hello';
-        const TextStyle style = TextStyle(color: Colors.red);
+        SheetTextSpanStyle style = SheetTextSpanStyle(color: Colors.red);
 
         // Act
         SheetTextSpan span = SheetTextSpan(text: text, style: style);
@@ -155,7 +159,7 @@ void main() {
         // Arrange
         SheetTextSpan span = SheetTextSpan(
           text: 'Hello',
-          style: const TextStyle(color: Colors.red),
+          style: SheetTextSpanStyle(color: Colors.red),
         );
 
         // Act
@@ -163,22 +167,22 @@ void main() {
 
         // Assert
         expect(updatedSpan.text, 'Updated');
-        expect(updatedSpan.style, const TextStyle(color: Colors.red));
+        expect(updatedSpan.style, SheetTextSpanStyle(color: Colors.red));
       });
 
       test('Should [return new instance] with updated style', () {
         // Arrange
         SheetTextSpan span = SheetTextSpan(
           text: 'Hello',
-          style: const TextStyle(color: Colors.red),
+          style: SheetTextSpanStyle(color: Colors.red),
         );
 
         // Act
-        SheetTextSpan updatedSpan = span.copyWith(style: const TextStyle(color: Colors.blue));
+        SheetTextSpan updatedSpan = span.copyWith(style: SheetTextSpanStyle(color: Colors.blue));
 
         // Assert
         expect(updatedSpan.text, 'Hello');
-        expect(updatedSpan.style, const TextStyle(color: Colors.blue));
+        expect(updatedSpan.style, SheetTextSpanStyle(color: Colors.blue));
       });
     });
 
@@ -187,7 +191,7 @@ void main() {
         // Arrange
         SheetTextSpan span = SheetTextSpan(
           text: 'Hello',
-          style: const TextStyle(color: Colors.red),
+          style: SheetTextSpanStyle(color: Colors.red),
         );
 
         // Act
@@ -195,7 +199,19 @@ void main() {
 
         // Assert
         expect(textSpan.text, 'Hello');
-        expect(textSpan.style, const TextStyle(color: Colors.red));
+        expect(
+          textSpan.style.toString(),
+          const TextStyle(
+            color: Colors.red,
+            fontFamily: 'Arial',
+            package: 'sheets',
+            fontSize: 13.3,
+            fontWeight: FontWeight.normal,
+            fontStyle: FontStyle.normal,
+            letterSpacing: 0,
+            decoration: TextDecoration.none,
+          ).toString(),
+        );
       });
     });
   });

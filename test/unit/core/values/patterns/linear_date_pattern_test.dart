@@ -213,7 +213,7 @@ void main() {
         );
 
         CellProperties baseProperties = CellProperties(
-          value: SheetRichText.single(text: '2023-11-01', style: const TextStyle(color: Colors.red)),
+          value: SheetRichText.single(text: '2023-11-01', style: SheetTextSpanStyle(color: Colors.red)),
           style: CellStyle(
             valueFormat: SheetDateFormat('yyyy-MM-dd'),
             rotation: TextRotation.angleDown,
@@ -228,7 +228,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(1, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: '', style: const TextStyle(color: Colors.red)),
+              value: SheetRichText.single(text: '', style: SheetTextSpanStyle(color: Colors.red)),
               style: CellStyle(
                 valueFormat: SheetDateFormat('yyyy-MM-dd'),
                 rotation: TextRotation.angleDown,
@@ -245,7 +245,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(1, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-02 00:00:00.000', style: const TextStyle(color: Colors.red)),
+              value: SheetRichText.single(text: '2023-11-02 00:00:00.000', style: SheetTextSpanStyle(color: Colors.red)),
               style: CellStyle(
                 valueFormat: SheetDateFormat('yyyy-MM-dd'),
                 rotation: TextRotation.angleDown,

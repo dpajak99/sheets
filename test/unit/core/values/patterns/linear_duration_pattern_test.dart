@@ -212,7 +212,7 @@ void main() {
         );
 
         CellProperties baseProperties = CellProperties(
-          value: SheetRichText.single(text: '01:00:00', style: const TextStyle(color: Colors.red)),
+          value: SheetRichText.single(text: '01:00:00', style: SheetTextSpanStyle(color: Colors.red)),
           style: CellStyle(
             valueFormat: SheetDurationFormat.withoutMilliseconds(),
           ),
@@ -242,7 +242,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(1, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: '2:00:00.000000', style: const TextStyle(color: Colors.red)),
+              value: SheetRichText.single(text: '2:00:00.000000', style: SheetTextSpanStyle(color: Colors.red)),
               style: CellStyle(
                 valueFormat: SheetDurationFormat.withoutMilliseconds(),
               ),

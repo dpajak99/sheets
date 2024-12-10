@@ -12,7 +12,7 @@ import 'package:sheets/utils/extensions/offset_extensions.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/utils/text_vertical_align.dart';
+import 'package:sheets/widgets/material/material_sheet_theme.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
   @override
@@ -30,7 +30,7 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
     required SheetViewportContentManager viewportContent,
     EdgeInsets? padding,
   })  : _viewportContent = viewportContent,
-        _padding = padding ?? const EdgeInsets.all(3);
+        _padding = padding ?? const EdgeInsets.symmetric(horizontal: 3, vertical: 2);
 
   late SheetViewportContentManager _viewportContent;
   final EdgeInsets _padding;
@@ -77,7 +77,6 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       return;
     }
 
-
     for (ViewportCell cell in visibleCells) {
       Rect cellRect = cell.rect;
       Border? border = cell.properties.style.border;
@@ -110,7 +109,6 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
     List<Line> mergedLines = mergeOverlappingLines(lines.toList());
 
     for (Line line in mergedLines) {
-
       Paint paint = Paint()
         ..color = line.side.color
         ..strokeWidth = line.side.width
@@ -219,12 +217,12 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
     // Vertical Alignment
     double yOffset;
-    TextVerticalAlign verticalAlign = cellStyle.verticalAlign;
-    if (verticalAlign == TextVerticalAlign.top) {
+    TextAlignVertical verticalAlign = cellStyle.verticalAlign;
+    if (verticalAlign == TextAlignVertical.top) {
       yOffset = _padding.top;
-    } else if (verticalAlign == TextVerticalAlign.center) {
+    } else if (verticalAlign == TextAlignVertical.center) {
       yOffset = _padding.top + (cellHeight - rotatedHeight) / 2;
-    } else if (verticalAlign == TextVerticalAlign.bottom) {
+    } else if (verticalAlign == TextAlignVertical.bottom) {
       yOffset = _padding.top + (cellHeight - rotatedHeight);
     } else {
       yOffset = _padding.top;
@@ -270,13 +268,11 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 class Line with EquatableMixin {
   Line(this.start, this.end, this._side);
 
-  static BorderSide defaultBorderSide = const BorderSide(color: Color(0x1F040404));
-
   final Offset start;
   final Offset end;
   final BorderSide? _side;
 
-  BorderSide get side => (_side == null || _side == BorderSide.none) ? defaultBorderSide : _side;
+  BorderSide get side => (_side == null || _side == BorderSide.none) ? MaterialSheetTheme.defaultBorderSide : _side;
 
   bool canMerge(Line other) {
     return side == other.side && isOverlapping(other);
@@ -284,7 +280,7 @@ class Line with EquatableMixin {
 
   bool canReplace(Line other) {
     bool sameEdge = start == other.start && end == other.end;
-    return sameEdge && other.side != defaultBorderSide;
+    return sameEdge && other.side != MaterialSheetTheme.defaultBorderSide;
   }
 
   bool isOverlapping(Line other) {

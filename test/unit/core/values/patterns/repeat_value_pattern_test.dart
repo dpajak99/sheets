@@ -98,7 +98,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(0, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: 'Base 1', style: const TextStyle(color: Colors.red)),
+              value: SheetRichText.single(text: 'Base 1', style: SheetTextSpanStyle(color: Colors.red)),
               style: baseStyle,
             ),
           ),
@@ -122,7 +122,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(1, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: 'Base 1', style: const TextStyle(color: Colors.red)),
+              value: SheetRichText.single(text: 'Base 1', style: SheetTextSpanStyle(color: Colors.red)),
               style: baseStyle,
             ),
           ),

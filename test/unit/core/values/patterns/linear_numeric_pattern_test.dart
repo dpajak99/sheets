@@ -213,7 +213,7 @@ void main() {
         );
 
         CellProperties baseProperties = CellProperties(
-          value: SheetRichText.single(text: '1', style: const TextStyle(color: Colors.red)),
+          value: SheetRichText.single(text: '1', style: SheetTextSpanStyle(color: Colors.red)),
           style: CellStyle(
             valueFormat: SheetNumberFormat.decimalPattern(),
           ),
@@ -243,7 +243,7 @@ void main() {
           IndexedCellProperties(
             index: CellIndex.raw(1, 0),
             properties: CellProperties(
-              value: SheetRichText.single(text: '2', style: const TextStyle(color: Colors.red)),
+              value: SheetRichText.single(text: '2', style: SheetTextSpanStyle(color: Colors.red)),
               style: CellStyle(
                 valueFormat: SheetNumberFormat.decimalPattern(),
               ),
