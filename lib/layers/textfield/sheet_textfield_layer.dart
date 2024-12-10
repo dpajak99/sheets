@@ -33,7 +33,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
       strokeAlign: BorderSide.strokeAlignOutside,
     );
     Border innerBorder = Border.all(color: const Color(0xff3056C6), width: 2);
-    EdgeInsets contentPadding = const EdgeInsets.only(left: 3, right: 3);
+    EdgeInsets contentPadding = const EdgeInsets.only(left: 3, right: 3, top: 1);
 
     double horizontalBorderWidth = innerBorder.left.width + innerBorder.right.width;
     double horizontalPadding = horizontalBorderWidth + contentPadding.horizontal;
