@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:sheets/core/events/sheet_fill_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/widgets/sheet_draggable.dart';
+import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
+import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class SheetFillHandleLayer extends StatefulWidget {
   const SheetFillHandleLayer({
@@ -60,10 +62,11 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
               return Positioned(
                 left: draggableAreaRect.left,
                 top: draggableAreaRect.top,
-                child: SheetDraggable(
-                  handler: MouseFillGestureHandler(),
-                  draggableAreaRect: draggableAreaRect,
-                  mouseListener: widget.sheetController.mouse,
+                child: SheetMouseRegion(
+                  cursor: SystemMouseCursors.precise,
+                  onDragStart: _handleFillStart,
+                  onDragUpdate: _handleFillUpdate,
+                  onDragEnd: _handleFillEnd,
                   child: const _FillHandle(size: _size),
                 ),
               );
@@ -72,6 +75,28 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
       ],
     );
   }
+
+  void _handleFillStart(PointerDownEvent event) {
+    Offset sheetPosition = widget.sheetController.viewport.globalOffsetToLocal(event.position);
+    ViewportItem? viewportItem = _visibleContent.findAnyByOffset(sheetPosition);
+    if (viewportItem != null) {
+      widget.sheetController.resolve(StartFillSelectionEvent(viewportItem));
+    }
+  }
+
+  void _handleFillUpdate(PointerMoveEvent event) {
+    Offset sheetPosition = widget.sheetController.viewport.globalOffsetToLocal(event.position);
+    ViewportItem? viewportItem = _visibleContent.findAnyByOffset(sheetPosition);
+    if (viewportItem != null) {
+      widget.sheetController.resolve(UpdateFillSelectionEvent(viewportItem));
+    }
+  }
+
+  void _handleFillEnd() {
+    widget.sheetController.resolve(CompleteFillSelectionEvent());
+  }
+
+  SheetViewportContentManager get _visibleContent => widget.sheetController.viewport.visibleContent;
 
   void _handleSheetControllerChanged() {
     SheetRebuildConfig rebuildConfig = widget.sheetController.value;
@@ -92,26 +117,22 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
 }
 
 class _FillHandle extends StatelessWidget {
-  const _FillHandle({required this.size});
+  const _FillHandle({
+    required double size,
+  }) : _size = size;
 
-  final double size;
+  final double _size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
+      width: _size,
+      height: _size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: const Color(0xff3572e3),
         border: Border.all(color: const Color(0xffffffff)),
       ),
     );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DoubleProperty('size', size));
   }
 }

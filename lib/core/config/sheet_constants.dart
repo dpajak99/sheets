@@ -10,6 +10,9 @@ int rowHeadersCount = 1;
 double columnHeadersHeight = 24;
 double rowHeadersWidth = 46;
 
+double minRowHeight = 15;
+double minColumnWidth = 20;
+
 double defaultColumnWidth = 100;
 double defaultRowHeight = 21;
 

@@ -81,9 +81,8 @@ class StartSelectionAction extends SheetAction<StartSelectionEvent> {
 
 // Update Selection
 class UpdateSelectionEvent extends SheetEvent {
-  UpdateSelectionEvent(this.selectionStart, this.selectionEnd);
+  UpdateSelectionEvent(this.selectionEnd);
 
-  final ViewportItem selectionStart;
   final ViewportItem selectionEnd;
 
   @override
@@ -101,7 +100,7 @@ class UpdateSelectionEvent extends SheetEvent {
   }
 
   @override
-  List<Object?> get props => <Object?>[selectionStart, selectionEnd];
+  List<Object?> get props => <Object?>[selectionEnd];
 }
 
 class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {

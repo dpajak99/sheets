@@ -79,23 +79,15 @@ abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPaint
 }
 
 class SheetHorizontalHeadersPainter extends SheetHeadersPainter {
-  SheetHorizontalHeadersPainter({
-    required List<ViewportColumn> visibleColumns,
-    required SheetSelection selection,
-  })  : _visibleColumns = visibleColumns,
-        _selection = selection;
-
   late List<ViewportColumn> _visibleColumns;
-
-  set visibleColumns(List<ViewportColumn> value) {
-    _visibleColumns = value;
-    notifyListeners();
-  }
-
   late SheetSelection _selection;
 
-  set selection(SheetSelection value) {
-    _selection = value;
+  void rebuild({
+    required List<ViewportColumn> visibleColumns,
+    required SheetSelection selection,
+  }) {
+    _visibleColumns = visibleColumns;
+    _selection = selection;
     notifyListeners();
   }
 
@@ -119,23 +111,15 @@ class SheetHorizontalHeadersPainter extends SheetHeadersPainter {
 }
 
 class SheetVerticalHeadersPainter extends SheetHeadersPainter {
-  SheetVerticalHeadersPainter({
-    required List<ViewportRow> visibleRows,
-    required SheetSelection selection,
-  })  : _visibleRows = visibleRows,
-        _selection = selection;
-
   late List<ViewportRow> _visibleRows;
-
-  set visibleRows(List<ViewportRow> value) {
-    _visibleRows = value;
-    notifyListeners();
-  }
-
   late SheetSelection _selection;
 
-  set selection(SheetSelection value) {
-    _selection = value;
+  void rebuild({
+    required List<ViewportRow> visibleRows,
+    required SheetSelection selection,
+  }) {
+    _visibleRows = visibleRows;
+    _selection = selection;
     notifyListeners();
   }
 

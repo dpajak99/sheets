@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/widgets/sheet_draggable.dart';
+import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class SheetHorizontalHeadersResizerLayer extends StatefulWidget {
   const SheetHorizontalHeadersResizerLayer({
@@ -98,62 +98,88 @@ class _HorizontalHeaderResizer extends StatefulWidget {
 }
 
 class _HorizontalHeaderResizerState extends State<_HorizontalHeaderResizer> {
-  late final MouseRowResizeGestureHandler _handler = MouseRowResizeGestureHandler(widget.row);
+  bool _hovered = false;
+  bool _dragged = false;
+  double _resizeValue = 0;
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: _handler,
-      builder: (BuildContext context, _) {
-        Rect rowRect = widget.row.rect;
-        double marginLeft = rowRect.left + (rowRect.width - resizerLength) / 2;
-        double dividerHeight = resizerGapSize + resizerWeight * 2;
+    Rect rowRect = widget.row.rect;
+    double marginLeft = rowRect.left + (rowRect.width - resizerLength) / 2;
 
-        double rowBottomY = _handler.newHeight != null ? widget.row.rect.top + _handler.newHeight! : widget.row.rect.bottom;
+    double dividerHeight = resizerGapSize + resizerWeight * 2;
+    double rowBottomY = widget.row.rect.bottom;
 
-        Rect draggableAreaRect = Rect.fromLTWH(
-          widget.row.rect.left,
-          rowBottomY - (resizerGapSize / 2) - resizerWeight,
-          rowRect.width,
-          resizerLength,
-        );
+    Rect draggableAreaRect = Rect.fromLTWH(
+      widget.row.rect.left,
+      rowBottomY - (resizerGapSize / 2) - resizerWeight,
+      rowRect.width,
+      resizerLength,
+    );
 
-        return Positioned(
-          left: draggableAreaRect.left,
-          top: draggableAreaRect.top,
-          right: 0,
-          height: dividerHeight,
-          child: SheetDraggable(
-            draggableAreaRect: draggableAreaRect,
-            mouseListener: widget.sheetController.mouse,
-            handler: _handler,
-            child: SizedBox.expand(
-                child: _handler.isHovered
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                              height: resizerWeight,
-                              width: resizerLength,
-                              margin: EdgeInsets.only(left: marginLeft),
-                              color: Colors.black),
-                          if (_handler.isActive) ...<Widget>[
-                            Container(height: resizerGapSize, width: widget.width, color: const Color(0xffc4c7c5)),
-                          ] else ...<Widget>[
-                            SizedBox(height: resizerGapSize),
-                          ],
-                          Container(
-                              height: resizerWeight,
-                              width: resizerLength,
-                              margin: EdgeInsets.only(left: marginLeft),
-                              color: Colors.black),
-                        ],
-                      )
-                    : null),
-          ),
-        );
-      },
+    return Positioned(
+      left: 0,
+      top: draggableAreaRect.top + _resizeValue,
+      height: dividerHeight,
+      child: SheetMouseRegion(
+        onEnter: (PointerEnterEvent event) {
+          setState(() => _hovered = true);
+        },
+        onExit: (PointerExitEvent event) {
+          setState(() => _hovered = false);
+        },
+        onDragStart: (PointerDownEvent event) {
+          setState(() => _dragged = true);
+        },
+        onDragUpdate: (PointerMoveEvent event) {
+          double deltaY = event.delta.dy;
+          double newHeight = rowRect.height + _resizeValue + deltaY;
+          _resizeValue += deltaY;
+          if (newHeight > minRowHeight) {
+            setState(() {});
+          }
+        },
+        onDragEnd: () {
+          double newHeight = rowRect.height + _resizeValue;
+          newHeight = newHeight > minRowHeight ? newHeight : minRowHeight;
+          widget.onResize(Offset(0, newHeight));
+          setState(() {
+            _dragged = false;
+            _resizeValue = 0;
+          });
+        },
+        cursor: SystemMouseCursors.resizeRow,
+        child: _hovered
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                      height: resizerWeight,
+                      width: resizerLength,
+                      margin: EdgeInsets.only(left: marginLeft),
+                      color: Colors.black),
+                  if (_dragged) ...<Widget>[
+                    Container(
+                      height: resizerGapSize,
+                      width: widget.width,
+                      color: const Color(0xffc4c7c5),
+                    ),
+                  ] else ...<Widget>[
+                    SizedBox(height: resizerGapSize, width: rowRect.width),
+                  ],
+                  Container(
+                      height: resizerWeight,
+                      width: resizerLength,
+                      margin: EdgeInsets.only(left: marginLeft),
+                      color: Colors.black),
+                ],
+              )
+            : SizedBox(
+                height: resizerWeight,
+                width: rowRect.width,
+              ),
+      ),
     );
   }
 }

@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/widgets/sheet_draggable.dart';
+import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class SheetVerticalHeadersResizerLayer extends StatefulWidget {
   const SheetVerticalHeadersResizerLayer({
@@ -52,7 +52,6 @@ class _SheetVerticalHeadersResizerLayersState extends State<SheetVerticalHeaders
           sheetController: widget.sheetController,
           height: widget.sheetController.viewport.height,
           column: column,
-          // TODO(Dominik): Duplication?
           onResize: (Offset delta) => widget.sheetController.resolve(ResizeColumnEvent(column.index, delta.dx)),
         );
       }).toList(),
@@ -98,64 +97,89 @@ class _VerticalHeaderResizer extends StatefulWidget {
 }
 
 class _VerticalHeaderResizerState extends State<_VerticalHeaderResizer> {
-  late final MouseColumnResizeGestureHandler _handler = MouseColumnResizeGestureHandler(widget.column);
+  bool _hovered = false;
+  bool _dragged = false;
+  double _resizeValue = 0;
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: _handler,
-      builder: (BuildContext context, _) {
-        Rect columnRect = widget.column.rect;
-        double marginTop = columnRect.top + (columnRect.height - resizerLength) / 2;
-        double dividerWidth = resizerGapSize + resizerWeight * 2;
+    Rect columnRect = widget.column.rect;
+    double marginTop = columnRect.top + (columnRect.height - resizerLength) / 2;
 
-        double columnRightX = _handler.newWidth != null ? widget.column.rect.left + _handler.newWidth! : widget.column.rect.right;
+    double dividerWidth = resizerGapSize + resizerWeight * 2;
+    double columnRightX = columnRect.right;
 
-        Rect draggableAreaRect = Rect.fromLTWH(
-          columnRightX - (resizerGapSize / 2) - resizerWeight,
-          widget.column.rect.top,
-          resizerLength,
-          columnRect.height,
-        );
+    Rect draggableAreaRect = Rect.fromLTWH(
+      columnRightX - (resizerGapSize / 2) - resizerWeight,
+      columnRect.top,
+      resizerLength,
+      columnRect.height,
+    );
 
-        return Positioned(
-          top: draggableAreaRect.top,
-          left: draggableAreaRect.left,
-          bottom: 0,
-          width: dividerWidth,
-          child: SheetDraggable(
-            draggableAreaRect: draggableAreaRect,
-            mouseListener: widget.sheetController.mouse,
-            handler: _handler,
-            child: SizedBox.expand(
-              child: _handler.isHovered
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: resizerWeight,
-                          height: resizerLength,
-                          margin: EdgeInsets.only(top: marginTop),
-                          color: Colors.black,
-                        ),
-                        if (_handler.isActive) ...<Widget>[
-                          Container(width: resizerGapSize, height: widget.height, color: const Color(0xffc4c7c5)),
-                        ] else ...<Widget>[
-                          SizedBox(width: resizerGapSize),
-                        ],
-                        Container(
-                          width: resizerWeight,
-                          height: resizerLength,
-                          margin: EdgeInsets.only(top: marginTop),
-                          color: Colors.black,
-                        ),
-                      ],
-                    )
-                  : null,
-            ),
-          ),
-        );
-      },
+    return Positioned(
+      left: draggableAreaRect.left + _resizeValue,
+      top: 0,
+      width: dividerWidth,
+      child: SheetMouseRegion(
+        onEnter: (PointerEnterEvent event) {
+          setState(() => _hovered = true);
+        },
+        onExit: (PointerExitEvent event) {
+          setState(() => _hovered = false);
+        },
+        onDragStart: (PointerDownEvent event) {
+          setState(() => _dragged = true);
+        },
+        onDragUpdate: (PointerMoveEvent event) {
+          double deltaX = event.delta.dx;
+          double newWidth = columnRect.width + _resizeValue + deltaX;
+          _resizeValue += deltaX;
+          if (newWidth > minColumnWidth) {
+            setState(() {});
+          }
+        },
+        onDragEnd: () {
+          double newWidth = columnRect.width + _resizeValue;
+          newWidth = newWidth > minColumnWidth ? newWidth : minColumnWidth;
+          widget.onResize(Offset(newWidth, 0));
+          setState(() {
+            _dragged = false;
+            _resizeValue = 0;
+          });
+        },
+        cursor: SystemMouseCursors.resizeColumn,
+        child: _hovered
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: resizerWeight,
+                    height: resizerLength,
+                    margin: EdgeInsets.only(top: marginTop),
+                    color: Colors.black,
+                  ),
+                  if (_dragged) ...<Widget>[
+                    Container(
+                      width: resizerGapSize,
+                      height: widget.height,
+                      color: const Color(0xffc4c7c5),
+                    ),
+                  ] else ...<Widget>[
+                    SizedBox(width: resizerGapSize, height: columnRect.height),
+                  ],
+                  Container(
+                    width: resizerWeight,
+                    height: resizerLength,
+                    margin: EdgeInsets.only(top: marginTop),
+                    color: Colors.black,
+                  ),
+                ],
+              )
+            : SizedBox(
+                width: resizerWeight,
+                height: columnRect.height,
+              ),
+      ),
     );
   }
 }
