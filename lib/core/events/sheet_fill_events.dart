@@ -38,7 +38,7 @@ class StartFillSelectionAction extends StartSelectionAction {
 
 // Update fill
 class UpdateFillSelectionEvent extends UpdateSelectionEvent {
-  UpdateFillSelectionEvent(super.selectionStart, super.selectionEnd);
+  UpdateFillSelectionEvent(super.selectionEnd);
 
   @override
   UpdateFillSelectionAction createAction(SheetController controller) => UpdateFillSelectionAction(this, controller);
@@ -49,7 +49,7 @@ class UpdateFillSelectionEvent extends UpdateSelectionEvent {
   }
 
   @override
-  List<Object?> get props => <Object?>[selectionStart, selectionEnd];
+  List<Object?> get props => <Object?>[selectionEnd];
 }
 
 class UpdateFillSelectionAction extends UpdateSelectionAction {

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:sheets/core/mouse/mouse_listener.dart';
+import 'package:sheets/sheet.dart';
 
 class SheetMouseGestureDetector extends StatefulWidget {
   const SheetMouseGestureDetector({
-    required this.mouseListener,
     required this.child,
     super.key,
   });
 
-  final MouseListener mouseListener;
   final Widget child;
 
   static SheetMouseGestureDetectorState of(BuildContext context) {
@@ -19,12 +17,6 @@ class SheetMouseGestureDetector extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => SheetMouseGestureDetectorState();
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<MouseListener>('mouseListener', mouseListener));
-  }
 }
 
 class SheetMouseGestureDetectorState extends State<SheetMouseGestureDetector> {
@@ -34,14 +26,9 @@ class SheetMouseGestureDetectorState extends State<SheetMouseGestureDetector> {
       fit: StackFit.expand,
       children: <Widget>[
         Positioned.fill(child: widget.child),
-        Positioned.fill(
-          child: Listener(
-            behavior: HitTestBehavior.translucent,
-            onPointerHover: widget.mouseListener.notifyMouseHovered,
-            onPointerDown: widget.mouseListener.notifyDragStarted,
-            onPointerMove: widget.mouseListener.notifyDragUpdated,
-            onPointerUp: widget.mouseListener.notifyDragEnd,
-            child: const SizedBox.expand(child: RemoteMouseWidget()),
+        const Positioned.fill(
+          child: SizedBox.expand(
+            child: RemoteMouseWidget(),
           ),
         ),
       ],
@@ -63,32 +50,39 @@ class RemoteMouseRenderBox extends RenderBox implements MouseTrackerAnnotation {
     SheetCursor.instance.addListener(_onCursorChanged);
   }
 
+  SystemMouseCursor _cursor = SystemMouseCursors.basic;
+
   void _onCursorChanged() {
+    _cursor = SheetCursor.instance.value;
     markNeedsPaint();
   }
 
   @override
-  PointerEnterEventListener? get onEnter => _handlePointerEnter;
+  PointerEnterEventListener? get onEnter => null;
 
   @override
-  PointerExitEventListener? get onExit => _handlePointerExit;
+  PointerExitEventListener? get onExit => null;
 
   @override
-  MouseCursor get cursor => SheetCursor.instance.value;
+  MouseCursor get cursor => _cursor;
 
   @override
   bool get validForMouseTracker => attached;
 
-  void _handlePointerEnter(PointerEnterEvent event) {}
-
-  void _handlePointerExit(PointerExitEvent event) {}
-
   @override
-  bool hitTestSelf(Offset position) => true;
+  bool hitTestSelf(Offset position) {
+    return true;
+  }
 
   @override
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     return true;
+  }
+
+  @override
+  bool hitTest(BoxHitTestResult result, {required Offset position}) {
+    result.add(BoxHitTestEntry(this, position));
+    return false;
   }
 
   @override

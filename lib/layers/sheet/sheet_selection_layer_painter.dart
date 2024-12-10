@@ -6,23 +6,15 @@ import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 
 class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter {
-  SheetSelectionLayerPainter({
-    required SheetSelection sheetSelection,
-    required SheetViewport viewport,
-  })  : _sheetSelection = sheetSelection,
-        _viewport = viewport;
-
-  late SheetSelection _sheetSelection;
-
-  void setSheetSelection(SheetSelection value) {
-    _sheetSelection = value;
-    notifyListeners();
-  }
-
+  late SheetSelection _selection;
   late SheetViewport _viewport;
-
-  void setViewport(SheetViewport value) {
-    _viewport = value;
+  
+  void rebuild({
+    required SheetSelection selection,
+    required SheetViewport viewport,
+}) {
+    _selection = selection;
+    _viewport = viewport;
     notifyListeners();
   }
 
@@ -30,7 +22,7 @@ class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth - borderWidth, columnHeadersHeight - borderWidth, size.width, size.height));
 
-    SheetSelectionRenderer<SheetSelection> selectionRenderer = _sheetSelection.createRenderer(_viewport);
+    SheetSelectionRenderer<SheetSelection> selectionRenderer = _selection.createRenderer(_viewport);
 
     SheetSelectionPaint selectionPaint = selectionRenderer.getPaint();
     selectionPaint.paint(_viewport, canvas, size);
@@ -38,7 +30,7 @@ class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter
 
   @override
   bool shouldRepaint(covariant SheetSelectionLayerPainter oldDelegate) {
-    return _sheetSelection != oldDelegate._sheetSelection || _viewport != oldDelegate._viewport;
+    return _selection != oldDelegate._selection || _viewport != oldDelegate._viewport;
   }
 
   @override

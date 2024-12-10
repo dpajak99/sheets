@@ -8,15 +8,22 @@ import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/layers/cells/sheet_cells_layer.dart';
+import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/fill_handle/sheet_fill_handle_layer.dart';
-import 'package:sheets/layers/headers/sheet_headers_layer.dart';
 import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
-import 'package:sheets/layers/selection/sheet_selection_layer.dart';
+import 'package:sheets/layers/sheet/sheet_layer.dart';
 import 'package:sheets/layers/textfield/sheet_textfield_layer.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
 import 'package:sheets/widgets/sheet_scrollable.dart';
+
+class SheetCursor extends ValueNotifier<SystemMouseCursor> {
+  SheetCursor._() : super(SystemMouseCursors.basic);
+
+  bool isPressed = false;
+
+  static final SheetCursor instance = SheetCursor._();
+}
 
 class Sheet extends StatefulWidget {
   const Sheet({
@@ -46,40 +53,39 @@ class _SheetState extends State<Sheet> {
 
   @override
   Widget build(BuildContext context) {
-    return _SheetKeyboardGestureDetector(
-      focusNode: sheetController.sheetFocusNode,
-      onSelectAll: () => sheetController.selection.update(SheetSelectionFactory.all()),
-      onStartEditing: ([String? initialValue]) => sheetController.resolve(EnableEditingEvent(initialValue: initialValue)),
-      onMove: (CellMoveDirection direction) => sheetController.resolve(MoveSelectionEvent.fromOffset(direction.toOffset())),
-      onRemove: () => sheetController.resolve(ClearSelectionEvent()),
-      onFontWeightUpdate: (FontWeight fontWeight) =>
-          widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent())),
-      onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent())),
-      onTextDecorationUpdate: (TextDecoration decoration) =>
-          widget.sheetController.resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: decoration))),
-      onUndo: () {},
-      onRedo: () {},
-      onPaste: () {
-        widget.sheetController.resolve(PasteSelectionEvent());
-      },
-      onPasteValues: () {
-        widget.sheetController.resolve(PasteSelectionEvent(valuesOnly: true));
-      },
-      onCopy: () {
-        widget.sheetController.resolve(CopySelectionEvent());
-      },
-      onCut: () {
-        widget.sheetController.resolve(CutSelectionEvent());
-      },
-      child: SizedBox.expand(
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: Color(0xfff8faf8),
-          ),
-          child: SheetScrollable(
-            sheetController: sheetController,
-            child: SheetMouseGestureDetector(
-              mouseListener: sheetController.mouse,
+    return SheetMouseGestureDetector(
+      child: _SheetKeyboardGestureDetector(
+        focusNode: sheetController.sheetFocusNode,
+        onSelectAll: () => sheetController.selection.update(SheetSelectionFactory.all()),
+        onStartEditing: ([String? initialValue]) => sheetController.resolve(EnableEditingEvent(initialValue: initialValue)),
+        onMove: (CellMoveDirection direction) => sheetController.resolve(MoveSelectionEvent.fromOffset(direction.toOffset())),
+        onRemove: () => sheetController.resolve(ClearSelectionEvent()),
+        onFontWeightUpdate: (FontWeight fontWeight) =>
+            widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent())),
+        onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent())),
+        onTextDecorationUpdate: (TextDecoration decoration) =>
+            widget.sheetController.resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: decoration))),
+        onUndo: () {},
+        onRedo: () {},
+        onPaste: () {
+          widget.sheetController.resolve(PasteSelectionEvent());
+        },
+        onPasteValues: () {
+          widget.sheetController.resolve(PasteSelectionEvent(valuesOnly: true));
+        },
+        onCopy: () {
+          widget.sheetController.resolve(CopySelectionEvent());
+        },
+        onCut: () {
+          widget.sheetController.resolve(CutSelectionEvent());
+        },
+        child: SizedBox.expand(
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              color: Color(0xfff8faf8),
+            ),
+            child: SheetScrollable(
+              sheetController: sheetController,
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   return SheetContent(sheetController: sheetController);
@@ -178,10 +184,18 @@ class SheetGrid extends StatelessWidget {
             ],
           ),
         ),
-        Positioned.fill(child: SheetCellsLayer(sheetController: sheetController)),
-        Positioned.fill(child: SheetHeadersLayer(sheetController: sheetController)),
+        Positioned.fill(
+          child: SheetLayer(
+            sheetController: sheetController,
+            onDragStart: (ViewportItem viewportItem) => sheetController.resolve(StartSelectionEvent(viewportItem)),
+            onDragUpdate: (ViewportItem viewportItem) => sheetController.resolve(UpdateSelectionEvent(viewportItem)),
+            onDragEnd: () => sheetController.resolve(CompleteSelectionEvent()),
+            onSecondaryPointerTap: (ViewportItem viewportItem) => print('Secondary tap'),
+            onDoubleTap: (ViewportItem viewportItem) =>
+                sheetController.resolve(EnableEditingEvent(cell: viewportItem.index.toCellIndex())),
+          ),
+        ),
         Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
-        Positioned.fill(child: SheetSelectionLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
         Positioned.fill(child: SheetTextfieldLayer(sheetController: sheetController)),
         Positioned(
@@ -325,10 +339,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
       child: Focus(
         focusNode: focusNode,
         onKeyEvent: _handleKeyEvent,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.text,
-          child: child,
-        ),
+        child: child,
       ),
     );
   }
