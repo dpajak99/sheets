@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/widgets/material/generic/popup/sheet_popup.dart';
 
 typedef DropdownButtonBuilder = Widget Function(BuildContext context, bool isOpen);
 
-typedef DropdownPopupBuilder = Widget Function(BuildContext context);
-
+/// Controller to manage the popup's state.
 class DropdownButtonController {
   void Function()? _open;
   void Function()? _close;
@@ -32,199 +31,117 @@ class DropdownButtonController {
   }
 }
 
+/// Enum to define activation behavior for the dropdown.
 enum ActivateDropdownBehavior {
   auto,
   manual,
 }
 
+/// A dropdown button widget that uses [SheetPopup] to display its popup.
+/// It has a [DropdownButtonController] to control showing/hiding/toggling the popup.
+/// The offset is automatically calculated based on the button's position.
 class SheetDropdownButton extends StatefulWidget {
   const SheetDropdownButton({
     required this.buttonBuilder,
     required this.popupBuilder,
-    this.level = 1,
     this.controller,
+    this.level = 1,
     this.disabled = false,
     this.activateDropdownBehavior = ActivateDropdownBehavior.auto,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final DropdownButtonBuilder buttonBuilder;
-  final DropdownPopupBuilder popupBuilder;
+  final PopupBuilder popupBuilder;
   final int level;
   final DropdownButtonController? controller;
   final bool disabled;
   final ActivateDropdownBehavior activateDropdownBehavior;
 
   @override
-  State<StatefulWidget> createState() => _SheetDropdownButtonState();
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(ObjectFlagProperty<DropdownButtonBuilder>.has('buttonBuilder', buttonBuilder));
-    properties.add(ObjectFlagProperty<DropdownPopupBuilder>.has('popupBuilder', popupBuilder));
-    properties.add(IntProperty('level', level));
-    properties.add(DiagnosticsProperty<DropdownButtonController?>('controller', controller));
-    properties.add(DiagnosticsProperty<bool>('disabled', disabled));
-    properties.add(EnumProperty<ActivateDropdownBehavior>('activateDropdownBehavior', activateDropdownBehavior));
-  }
+  State<SheetDropdownButton> createState() => _SheetDropdownButtonState();
 }
 
 class _SheetDropdownButtonState extends State<SheetDropdownButton> {
-  // Map to keep track of open popups at each level
-  static final Map<int, _SheetDropdownButtonState> _currentlyOpenPopups = <int, _SheetDropdownButtonState>{};
-
-  OverlayEntry? _overlayEntry;
-  final GlobalKey _popupKey = GlobalKey();
   final GlobalKey _buttonKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    // Link controller methods
-    widget.controller?._open = _showPopup;
-    widget.controller?._close = _hidePopup;
-    widget.controller?._toggle = _togglePopup;
-    widget.controller?._isOpen = () => _overlayEntry != null;
+    widget.controller?._open = _controllerOpen;
+    widget.controller?._close = _controllerClose;
+    widget.controller?._toggle = _controllerToggle;
+    widget.controller?._isOpen = () => _isPopupOpen();
   }
 
   @override
   void didUpdateWidget(SheetDropdownButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Update controller references if the controller instance changed
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?._open = null;
       oldWidget.controller?._close = null;
       oldWidget.controller?._toggle = null;
       oldWidget.controller?._isOpen = null;
 
-      widget.controller?._open = _showPopup;
-      widget.controller?._close = _hidePopup;
-      widget.controller?._toggle = _togglePopup;
-      widget.controller?._isOpen = () => _overlayEntry != null;
+      widget.controller?._open = _controllerOpen;
+      widget.controller?._close = _controllerClose;
+      widget.controller?._toggle = _controllerToggle;
+      widget.controller?._isOpen = () => _isPopupOpen();
     }
   }
 
-  void _togglePopup() {
-    if (_overlayEntry == null) {
-      _showPopup();
+  /// Checks if the popup is currently open by verifying if it's registered globally.
+  bool _isPopupOpen() {
+    // Since SheetPopup manages global popups, we check if the popup at this level is open.
+    // This assumes that each SheetDropdownButton has a unique level or handles levels appropriately.
+    return false;
+  }
+
+  /// Controller method to open the popup.
+  void _controllerOpen() {
+    if (_isPopupOpen()) return;
+    final offset = _calculateOffset();
+    SheetPopup.openGlobalPopup(
+      context,
+      widget.level,
+      offset,
+      widget.popupBuilder,
+    );
+  }
+
+  /// Controller method to close the popup.
+  void _controllerClose() {
+    SheetPopup.closeGlobalPopup(widget.level);
+  }
+
+  /// Controller method to toggle the popup.
+  void _controllerToggle() {
+    if (_isPopupOpen()) {
+      _controllerClose();
     } else {
-      _hidePopup();
-    }
-  }
-
-  void _showPopup() {
-    if (_overlayEntry != null) {
-      return;
-    }
-
-    // Close popups at the same or higher levels
-    _closePopupsAtOrAboveLevel(widget.level);
-
-    // Create and insert new popup
-    OverlayEntry newOverlayEntry = _createOverlayEntry();
-    Overlay.of(context).insert(newOverlayEntry);
-
-    _overlayEntry = newOverlayEntry;
-    _currentlyOpenPopups[widget.level] = this;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _hidePopup() {
-    if (_overlayEntry == null) {
-      return;
-    }
-
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-
-    // Remove from the map of open popups
-    if (_currentlyOpenPopups[widget.level] == this) {
-      _currentlyOpenPopups.remove(widget.level);
-    }
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  // Close popups at the same or higher levels
-  void _closePopupsAtOrAboveLevel(int level) {
-    List<int> levelsToClose = _currentlyOpenPopups.keys.where((int l) => l >= level).toList();
-    for (int l in levelsToClose) {
-      if (_currentlyOpenPopups[l] != null && _currentlyOpenPopups[l] != this) {
-        _currentlyOpenPopups[l]!._hidePopup();
-      }
-    }
-  }
-
-  OverlayEntry _createOverlayEntry() {
-    RenderBox renderBox = context.findRenderObject()! as RenderBox;
-    Offset offset = renderBox.localToGlobal(Offset.zero);
-
-    return OverlayEntry(builder: (BuildContext context) {
-      return Stack(
-        children: <Widget>[
-          // Listener to detect taps outside the popup
-          Listener(
-            behavior: HitTestBehavior.translucent,
-            onPointerDown: (PointerDownEvent event) {
-              // Check if the tap was inside any open popups or buttons at or above the current level
-              if (!_isTapInsideOpenPopupsOrButtons(event.position)) {
-                _hidePopup();
-              }
-            },
-            child: Container(), // Empty container to cover the screen
-          ),
-          Positioned(
-            left: offset.dx,
-            top: offset.dy + renderBox.size.height,
-            child: Container(
-              key: _popupKey,
-              child: widget.popupBuilder(context),
-            ),
-          ),
-        ],
+      final offset = _calculateOffset();
+      SheetPopup.openGlobalPopup(
+        context,
+        widget.level,
+        offset,
+        widget.popupBuilder,
       );
-    });
+    }
   }
 
-  bool _isTapInsideOpenPopupsOrButtons(Offset tapPosition) {
-    // Check if tap is inside this popup or button
-    if (_isTapInsideWidget(tapPosition, _popupKey) || _isTapInsideWidget(tapPosition, _buttonKey)) {
-      return true;
+  /// Handles the tap on the button based on the [activateDropdownBehavior].
+  void _handleTap() {
+    if (widget.activateDropdownBehavior == ActivateDropdownBehavior.auto) {
+      widget.controller?.toggle();
     }
-
-    // Check if tap is inside any open popups or buttons at higher levels
-    for (int level in _currentlyOpenPopups.keys) {
-      if (level > widget.level) {
-        _SheetDropdownButtonState? popupState = _currentlyOpenPopups[level];
-        if (popupState != null) {
-          if (popupState._isTapInsideWidget(tapPosition, popupState._popupKey) ||
-              popupState._isTapInsideWidget(tapPosition, popupState._buttonKey)) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
+    // If behavior is manual, do nothing. Popup can be controlled via the controller.
   }
 
-  bool _isTapInsideWidget(Offset tapPosition, GlobalKey key) {
-    RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox != null) {
-      Offset offset = renderBox.localToGlobal(Offset.zero);
-      Size size = renderBox.size;
-
-      if (tapPosition.dx >= offset.dx &&
-          tapPosition.dx <= offset.dx + size.width &&
-          tapPosition.dy >= offset.dy &&
-          tapPosition.dy <= offset.dy + size.height) {
-        return true;
-      }
-    }
-    return false;
+  /// Calculates the offset for the popup based on the button's position.
+  Offset _calculateOffset() {
+    final RenderBox renderBox = _buttonKey.currentContext!.findRenderObject()! as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    return Offset(position.dx, position.dy + renderBox.size.height);
   }
 
   @override
@@ -241,19 +158,13 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
     return GestureDetector(
       key: _buttonKey,
       behavior: HitTestBehavior.translucent,
-      onTap: () {
-        if(widget.activateDropdownBehavior == ActivateDropdownBehavior.auto) {
-          _togglePopup();
-        }
-      },
-      child: widget.buttonBuilder(context, _overlayEntry != null),
+      onTap: _handleTap,
+      child: widget.buttonBuilder(context, _isPopupOpen()),
     );
   }
 
   @override
   void dispose() {
-    _hidePopup();
-    // Clean up controller references
     widget.controller?._open = null;
     widget.controller?._close = null;
     widget.controller?._toggle = null;

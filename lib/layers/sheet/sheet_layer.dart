@@ -125,12 +125,17 @@ class _SheetLayerState extends State<SheetLayer> {
       return;
     }
 
+    bool isSecondaryButton = event.buttons == kSecondaryMouseButton;
+    if (isSecondaryButton) {
+      widget.onSecondaryPointerTap(viewportItem);
+    }
+
     DateTime currentTime = DateTime.now();
     Duration? difference = _lastTapTime != null ? currentTime.difference(_lastTapTime!) : null;
     bool isDoubleTap = difference != null && difference < const Duration(milliseconds: 300);
     bool isSameItem = _lastHoveredItem == viewportItem;
 
-    if (isDoubleTap && isSameItem) {
+    if (isDoubleTap && isSameItem && !isSecondaryButton) {
       widget.onDoubleTap(viewportItem);
       _lastTapTime = null;
       return;
@@ -139,12 +144,7 @@ class _SheetLayerState extends State<SheetLayer> {
     _lastHoveredItem = viewportItem;
     _lastTapTime = DateTime.now();
 
-    if (event.buttons == kPrimaryMouseButton) {
-      widget.onDragStart(viewportItem);
-    }
-    if (event.buttons == kSecondaryMouseButton) {
-      widget.onSecondaryPointerTap(viewportItem);
-    }
+    widget.onDragStart(viewportItem);
   }
 
   void _handlePointerMove(PointerMoveEvent event) {

@@ -3,6 +3,15 @@ part of 'asset_icon.dart';
 // ignore_for_file: constant_identifier_names
 class SheetIcons {
   static const AssetIconData add_circle = AssetIconData('assets/icons/add_circle.svg');
+  static const AssetIconData delete = AssetIconData('assets/icons/delete.svg');
+  static const AssetIconData close = AssetIconData('assets/icons/close.svg');
+  static const AssetIconData sort_az = AssetIconData('assets/icons/sort_az.svg');
+  static const AssetIconData sort_za = AssetIconData('assets/icons/sort_za.svg');
+  static const AssetIconData aspect_ratio = AssetIconData('assets/icons/aspect_ratio.svg');
+  static const AssetIconData visibility_off = AssetIconData('assets/icons/visibility_off.svg');
+  static const AssetIconData content_cut = AssetIconData('assets/icons/content_cut.svg');
+  static const AssetIconData content_paste = AssetIconData('assets/icons/content_paste.svg');
+  static const AssetIconData content_copy = AssetIconData('assets/icons/content_copy.svg');
   static const AssetIconData colorize = AssetIconData('assets/icons/colorize.svg');
   static const AssetIconData check = AssetIconData('assets/icons/check.svg');
   static const AssetIconData edit = AssetIconData('assets/icons/edit.svg');

@@ -72,6 +72,9 @@ class _CustomCursorWrapperRenderBox extends RenderBox implements MouseTrackerAnn
 
   @override
   bool hitTest(BoxHitTestResult result, {required Offset position}) {
+    Offset globalPosition = localToGlobal(position);
+    SheetCursor.instance.position = globalPosition;
+
     result.add(BoxHitTestEntry(this, position));
     return false;
   }

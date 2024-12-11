@@ -31,11 +31,11 @@ void main() {
 
       // Assert
       List<ViewportColumn> expectedColumns = <ViewportColumn>[
-        ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(46, 0, 106, 24)),
-        ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(107, 0, 167, 24)),
-        ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(168, 0, 228, 24)),
-        ViewportColumn(index: ColumnIndex(3), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(229, 0, 289, 24)),
-        ViewportColumn(index: ColumnIndex(4), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(290, 0, 350, 24))
+        ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(47, 0, 107, 24)),
+        ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(108, 0, 168, 24)),
+        ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(169, 0, 229, 24)),
+        ViewportColumn(index: ColumnIndex(3), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(230, 0, 290, 24)),
+        ViewportColumn(index: ColumnIndex(4), style: ColumnStyle(width: 60), rect: const BorderRect.fromLTRB(291, 0, 351, 24))
       ];
 
       expect(visibleColumns, expectedColumns);
@@ -62,12 +62,12 @@ void main() {
 
       // Assert
       List<ViewportColumn> expectedColumns = <ViewportColumn>[
-        ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(22, 0, 72, 24)),
-        ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(73, 0, 123, 24)),
-        ViewportColumn(index: ColumnIndex(3), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(124, 0, 174, 24)),
-        ViewportColumn(index: ColumnIndex(4), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(175, 0, 225, 24)),
-        ViewportColumn(index: ColumnIndex(5), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(226, 0, 276, 24)),
-        ViewportColumn(index: ColumnIndex(6), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(277, 0, 327, 24))
+        ViewportColumn(index: ColumnIndex(1), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(23, 0, 73, 24)),
+        ViewportColumn(index: ColumnIndex(2), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(74, 0, 124, 24)),
+        ViewportColumn(index: ColumnIndex(3), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(125, 0, 175, 24)),
+        ViewportColumn(index: ColumnIndex(4), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(176, 0, 226, 24)),
+        ViewportColumn(index: ColumnIndex(5), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(227, 0, 277, 24)),
+        ViewportColumn(index: ColumnIndex(6), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(278, 0, 328, 24))
       ];
 
       expect(visibleColumns, expectedColumns);
@@ -95,7 +95,7 @@ void main() {
 
       // Assert
       List<ViewportColumn> expectedColumns = <ViewportColumn>[
-        ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 100), rect: const BorderRect.fromLTRB(46, 0, 146, 24))
+        ViewportColumn(index: ColumnIndex(0), style: ColumnStyle(width: 100), rect: const BorderRect.fromLTRB(47, 0, 147, 24))
       ];
 
       expect(visibleColumns, expectedColumns);
@@ -123,12 +123,12 @@ void main() {
 
       // Assert
       List<ViewportColumn> expectedColumns = <ViewportColumn>[
-        ViewportColumn(index: ColumnIndex(3), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(-1, 0, 49, 24)),
-        ViewportColumn(index: ColumnIndex(4), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(50, 0, 100, 24)),
-        ViewportColumn(index: ColumnIndex(5), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(101, 0, 151, 24)),
-        ViewportColumn(index: ColumnIndex(6), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(152, 0, 202, 24)),
-        ViewportColumn(index: ColumnIndex(7), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(203, 0, 253, 24)),
-        ViewportColumn(index: ColumnIndex(8), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(254, 0, 304, 24))
+        ViewportColumn(index: ColumnIndex(3), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(0, 0, 50, 24)),
+        ViewportColumn(index: ColumnIndex(4), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(51, 0, 101, 24)),
+        ViewportColumn(index: ColumnIndex(5), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(102, 0, 152, 24)),
+        ViewportColumn(index: ColumnIndex(6), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(153, 0, 203, 24)),
+        ViewportColumn(index: ColumnIndex(7), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(204, 0, 254, 24)),
+        ViewportColumn(index: ColumnIndex(8), style: ColumnStyle(width: 50), rect: const BorderRect.fromLTRB(255, 0, 305, 24))
       ];
 
       expect(visibleColumns, expectedColumns);

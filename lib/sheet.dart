@@ -14,6 +14,10 @@ import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/sheet/sheet_layer.dart';
 import 'package:sheets/layers/textfield/sheet_textfield_layer.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
+import 'package:sheets/widgets/material/generic/popup/sheet_popup.dart';
+import 'package:sheets/widgets/material/menu/cell_context_menu.dart';
+import 'package:sheets/widgets/material/menu/column_context_menu.dart';
+import 'package:sheets/widgets/material/menu/row_context_menu.dart';
 import 'package:sheets/widgets/sheet_cursor_wrapper.dart';
 import 'package:sheets/widgets/sheet_scrollable.dart';
 
@@ -24,6 +28,8 @@ class SheetCursor extends ChangeNotifier {
 
   SystemMouseCursor? _value;
   Key? _pressedKey;
+
+  Offset position = Offset.zero;
 
   void set(SystemMouseCursor cursor) {
     _value = cursor;
@@ -213,7 +219,7 @@ class SheetGrid extends StatelessWidget {
             onDragStart: (ViewportItem viewportItem) => sheetController.resolve(StartSelectionEvent(viewportItem)),
             onDragUpdate: (ViewportItem viewportItem) => sheetController.resolve(UpdateSelectionEvent(viewportItem)),
             onDragEnd: () => sheetController.resolve(CompleteSelectionEvent()),
-            onSecondaryPointerTap: (ViewportItem viewportItem) => print('Secondary tap'),
+            onSecondaryPointerTap: (ViewportItem item) => _openContextMenuFor(context, item),
             onDoubleTap: (ViewportItem viewportItem) =>
                 sheetController.resolve(EnableEditingEvent(cell: viewportItem.index.toCellIndex())),
           ),
@@ -244,6 +250,26 @@ class SheetGrid extends StatelessWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+  }
+
+  void _openContextMenuFor(BuildContext context, ViewportItem viewportItem) {
+    Widget? popupWidget = switch (viewportItem) {
+      ViewportCell _ => const CellContextMenu(),
+      ViewportColumn _ => const ColumnContextMenu(),
+      ViewportRow _ => const RowContextMenu(),
+      (_) => null,
+    };
+
+    if (popupWidget == null) {
+      return;
+    }
+
+    SheetPopup.openGlobalPopup(
+      context,
+      0,
+      SheetCursor.instance.position,
+      (_) => popupWidget,
+    );
   }
 }
 

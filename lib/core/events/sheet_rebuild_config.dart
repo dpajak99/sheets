@@ -7,7 +7,11 @@ class SheetRebuildConfig with EquatableMixin {
     bool rebuildSelection = false,
     bool rebuildVerticalScroll = false,
     bool rebuildHorizontalScroll = false,
-  }) : _rebuildHorizontalScroll = rebuildHorizontalScroll, _rebuildVerticalScroll = rebuildVerticalScroll, _rebuildSelection = rebuildSelection, _rebuildData = rebuildData, _rebuildViewport = rebuildViewport;
+  })  : _rebuildHorizontalScroll = rebuildHorizontalScroll,
+        _rebuildVerticalScroll = rebuildVerticalScroll,
+        _rebuildSelection = rebuildSelection,
+        _rebuildData = rebuildData,
+        _rebuildViewport = rebuildViewport;
 
   SheetRebuildConfig.all()
       : _rebuildViewport = true,
@@ -47,5 +51,11 @@ class SheetRebuildConfig with EquatableMixin {
   bool get rebuildVerticalHeaders => _rebuildVerticalScroll || _rebuildSelection;
 
   @override
-  List<Object?> get props => <Object?>[_rebuildViewport, _rebuildData, _rebuildSelection, _rebuildVerticalScroll, _rebuildHorizontalScroll];
+  List<Object?> get props => <Object?>[
+        _rebuildViewport,
+        _rebuildData,
+        _rebuildSelection,
+        _rebuildVerticalScroll,
+        _rebuildHorizontalScroll,
+      ];
 }

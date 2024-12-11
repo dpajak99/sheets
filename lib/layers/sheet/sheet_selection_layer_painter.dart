@@ -8,11 +8,11 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter {
   late SheetSelection _selection;
   late SheetViewport _viewport;
-  
+
   void rebuild({
     required SheetSelection selection,
     required SheetViewport viewport,
-}) {
+  }) {
     _selection = selection;
     _viewport = viewport;
     notifyListeners();
