@@ -16,10 +16,6 @@ double minColumnWidth = 20;
 double defaultColumnWidth = 100;
 double defaultRowHeight = 21;
 
-double resizerGapSize = 5;
-double resizerWeight = 3;
-double resizerLength = 16;
-
 const TextStyle defaultTextStyle = TextStyle(
   fontFamily: 'Arial',
   fontSize: 12,

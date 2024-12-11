@@ -3,32 +3,23 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/sheet.dart';
 
-class SheetMouseGestureDetector extends StatefulWidget {
-  const SheetMouseGestureDetector({
-    required this.child,
+class SheetCursorWrapper extends StatelessWidget {
+  const SheetCursorWrapper({
+    required Widget child,
     super.key,
-  });
+  }) : _child = child;
 
-  final Widget child;
+  final Widget _child;
 
-  static SheetMouseGestureDetectorState of(BuildContext context) {
-    return context.findAncestorStateOfType<SheetMouseGestureDetectorState>()!;
-  }
-
-  @override
-  State<StatefulWidget> createState() => SheetMouseGestureDetectorState();
-}
-
-class SheetMouseGestureDetectorState extends State<SheetMouseGestureDetector> {
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        Positioned.fill(child: widget.child),
+        Positioned.fill(child: _child),
         const Positioned.fill(
           child: SizedBox.expand(
-            child: RemoteMouseWidget(),
+            child: _CustomCursorWrapper(),
           ),
         ),
       ],
@@ -36,17 +27,17 @@ class SheetMouseGestureDetectorState extends State<SheetMouseGestureDetector> {
   }
 }
 
-class RemoteMouseWidget extends SingleChildRenderObjectWidget {
-  const RemoteMouseWidget({super.key});
+class _CustomCursorWrapper extends SingleChildRenderObjectWidget {
+  const _CustomCursorWrapper();
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RemoteMouseRenderBox();
+    return _CustomCursorWrapperRenderBox();
   }
 }
 
-class RemoteMouseRenderBox extends RenderBox implements MouseTrackerAnnotation {
-  RemoteMouseRenderBox() {
+class _CustomCursorWrapperRenderBox extends RenderBox implements MouseTrackerAnnotation {
+  _CustomCursorWrapperRenderBox() {
     SheetCursor.instance.addListener(_onCursorChanged);
   }
 

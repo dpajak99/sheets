@@ -46,10 +46,6 @@ class SheetRebuildConfig with EquatableMixin {
 
   bool get rebuildVerticalHeaders => _rebuildVerticalScroll || _rebuildSelection;
 
-  bool get rebuildHorizontalHeaderResizer => _rebuildHorizontalScroll;
-
-  bool get rebuildVerticalHeaderResizer => _rebuildVerticalScroll;
-
   @override
   List<Object?> get props => <Object?>[_rebuildViewport, _rebuildData, _rebuildSelection, _rebuildVerticalScroll, _rebuildHorizontalScroll];
 }

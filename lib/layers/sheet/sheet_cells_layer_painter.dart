@@ -42,6 +42,8 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth + borderWidth, columnHeadersHeight + borderWidth, size.width, size.height));
+
     List<ViewportCell> visibleCells = _visibleContent.cells;
 
     visibleCells.sort((ViewportCell a, ViewportCell b) {

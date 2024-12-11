@@ -186,9 +186,10 @@ class _SheetScrollbarState extends State<SheetScrollbar> {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: SheetMouseRegion(
+        key: UniqueKey(),
         cursor: SystemMouseCursors.basic,
-        onEnter: (_) => _onHover(),
-        onExit: (_) => _onExit(),
+        onEnter: _onHover,
+        onExit: _onExit,
         onDragUpdate: _onScroll,
         child: CustomPaint(painter: widget.painter),
       ),

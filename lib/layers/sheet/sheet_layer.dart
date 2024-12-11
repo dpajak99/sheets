@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
@@ -11,6 +12,7 @@ import 'package:sheets/layers/sheet/sheet_cells_layer_painter.dart';
 import 'package:sheets/layers/sheet/sheet_headers_painter.dart';
 import 'package:sheets/layers/sheet/sheet_selection_layer_painter.dart';
 import 'package:sheets/utils/repeat_action_timer.dart';
+import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class SheetLayer extends StatefulWidget {
   const SheetLayer({
@@ -47,8 +49,8 @@ class SheetLayer extends StatefulWidget {
 
 class _SheetLayerState extends State<SheetLayer> {
   late final SheetCellsLayerPainter _cellsPainter;
-  late final SheetHorizontalHeadersPainter _columnHeadersPainter;
-  late final SheetVerticalHeadersPainter _rowHeadersPainter;
+  late final SheetColumnHeadersPainter _columnHeadersPainter;
+  late final SheetRowHeadersPainter _rowHeadersPainter;
   late final SheetSelectionLayerPainter _selectionPainter;
   late final RepeatActionTimer _repeatDragUpdateTimer;
   ViewportItem? _lastHoveredItem;
@@ -58,8 +60,8 @@ class _SheetLayerState extends State<SheetLayer> {
   void initState() {
     super.initState();
     _cellsPainter = SheetCellsLayerPainter();
-    _columnHeadersPainter = SheetHorizontalHeadersPainter();
-    _rowHeadersPainter = SheetVerticalHeadersPainter();
+    _columnHeadersPainter = SheetColumnHeadersPainter();
+    _rowHeadersPainter = SheetRowHeadersPainter();
     _selectionPainter = SheetSelectionLayerPainter();
 
     _repeatDragUpdateTimer = RepeatActionTimer(
@@ -83,28 +85,35 @@ class _SheetLayerState extends State<SheetLayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      onPointerDown: _handlePointerDown,
-      onPointerMove: _handlePointerMove,
-      onPointerUp: _handlePointerUp,
+    return SheetMouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onDragStart: _handlePointerDown,
+      onDragUpdate: _handlePointerMove,
+      onDragEnd: _handlePointerUp,
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-              child: RepaintBoundary(
-            child: CustomPaint(painter: _cellsPainter),
-          )),
+            child: RepaintBoundary(
+              child: CustomPaint(painter: _cellsPainter),
+            ),
+          ),
+          RepaintBoundary(
+            child: CustomPaint(
+              size: Size(double.infinity, columnHeadersHeight + borderWidth),
+              painter: _columnHeadersPainter,
+            ),
+          ),
+          RepaintBoundary(
+            child: CustomPaint(
+              size: Size(rowHeadersWidth + borderWidth, double.infinity),
+              painter: _rowHeadersPainter,
+            ),
+          ),
           Positioned.fill(
-              child: RepaintBoundary(
-            child: CustomPaint(painter: _columnHeadersPainter),
-          )),
-          Positioned.fill(
-              child: RepaintBoundary(
-            child: CustomPaint(painter: _rowHeadersPainter),
-          )),
-          Positioned.fill(
-              child: RepaintBoundary(
-            child: CustomPaint(painter: _selectionPainter),
-          )),
+            child: RepaintBoundary(
+              child: CustomPaint(painter: _selectionPainter),
+            ),
+          ),
         ],
       ),
     );
@@ -153,7 +162,7 @@ class _SheetLayerState extends State<SheetLayer> {
     }
   }
 
-  void _handlePointerUp(PointerUpEvent event) {
+  void _handlePointerUp() {
     _repeatDragUpdateTimer.reset();
     widget.onDragEnd();
   }

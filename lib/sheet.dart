@@ -14,15 +14,38 @@ import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/sheet/sheet_layer.dart';
 import 'package:sheets/layers/textfield/sheet_textfield_layer.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
-import 'package:sheets/widgets/sheet_mouse_gesture_detector.dart';
+import 'package:sheets/widgets/sheet_cursor_wrapper.dart';
 import 'package:sheets/widgets/sheet_scrollable.dart';
 
-class SheetCursor extends ValueNotifier<SystemMouseCursor> {
-  SheetCursor._() : super(SystemMouseCursors.basic);
-
-  bool isPressed = false;
+class SheetCursor extends ChangeNotifier {
+  SheetCursor._();
 
   static final SheetCursor instance = SheetCursor._();
+
+  SystemMouseCursor? _value;
+  Key? _pressedKey;
+
+  void set(SystemMouseCursor cursor) {
+    _value = cursor;
+    notifyListeners();
+  }
+
+  void reset() {
+    _value = null;
+    notifyListeners();
+  }
+
+  void notifyKeyPressed(Key key) {
+    _pressedKey = key;
+  }
+
+  void notifyKeyReleased() {
+    _pressedKey = null;
+  }
+
+  bool get isPressed => _pressedKey != null;
+
+  SystemMouseCursor get value => _value ?? SystemMouseCursors.basic;
 }
 
 class Sheet extends StatefulWidget {
@@ -53,7 +76,7 @@ class _SheetState extends State<Sheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SheetMouseGestureDetector(
+    return SheetCursorWrapper(
       child: _SheetKeyboardGestureDetector(
         focusNode: sheetController.sheetFocusNode,
         onSelectAll: () => sheetController.selection.update(SheetSelectionFactory.all()),
@@ -195,24 +218,24 @@ class SheetGrid extends StatelessWidget {
                 sheetController.resolve(EnableEditingEvent(cell: viewportItem.index.toCellIndex())),
           ),
         ),
-        Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
-        Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
-        Positioned.fill(child: SheetTextfieldLayer(sheetController: sheetController)),
         Positioned(
           top: 0,
           left: 0,
           child: Container(
-            width: rowHeadersWidth + 1,
-            height: columnHeadersHeight + 1,
+            width: rowHeadersWidth + borderWidth,
+            height: columnHeadersHeight + borderWidth,
             decoration: const BoxDecoration(
               color: Color(0xfff8f9fa),
               border: Border(
-                right: BorderSide(color: Color(0xffc7c7c7), width: 4),
-                bottom: BorderSide(color: Color(0xffc7c7c7), width: 4),
+                right: BorderSide(color: Color(0xffc7c7c7), width: 5),
+                bottom: BorderSide(color: Color(0xffc7c7c7), width: 5),
               ),
             ),
           ),
         ),
+        Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
+        Positioned.fill(child: SheetTextfieldLayer(sheetController: sheetController)),
       ],
     );
   }

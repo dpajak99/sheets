@@ -10,6 +10,7 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/extensions/double_extensions.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/silent_value_notifier.dart';
+import 'package:sheets/widgets/sheet_mouse_region.dart';
 import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 /// Represents a single character with an associated [TextStyle].
@@ -875,10 +876,10 @@ class _SheetMouseGestureDetectorState extends State<_SheetMouseGestureDetector> 
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      behavior: HitTestBehavior.translucent,
-      onPointerDown: _handlePointerDown,
-      onPointerMove: _handlePointerMove,
+    return SheetMouseRegion(
+      cursor: SystemMouseCursors.text,
+      onDragStart: _handlePointerDown,
+      onDragUpdate: _handlePointerMove,
       child: widget.child,
     );
   }

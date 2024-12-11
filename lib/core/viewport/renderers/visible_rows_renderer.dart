@@ -36,7 +36,7 @@ class VisibleRowsRenderer {
       ViewportRow viewportRow = ViewportRow(
         index: rowIndex,
         style: rowStyle,
-        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight, rowHeadersWidth, rowStyle.height),
+        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight + borderWidth, rowHeadersWidth, rowStyle.height),
       );
       visibleRows.add(viewportRow);
       currentContentHeight += viewportRow.style.height + borderWidth;
