@@ -10,6 +10,7 @@ class SheetIcons {
   static const AssetIconData cloud_no_sync = AssetIconData('assets/icons/cloud_no_sync.svg');
   static const AssetIconData move = AssetIconData('assets/icons/move.svg');
   static const AssetIconData star = AssetIconData('assets/icons/star.svg');
+  static const AssetIconData lock = AssetIconData('assets/icons/lock.svg');
   static const AssetIconData delete = AssetIconData('assets/icons/delete.svg');
   static const AssetIconData close = AssetIconData('assets/icons/close.svg');
   static const AssetIconData sort_az = AssetIconData('assets/icons/sort_az.svg');

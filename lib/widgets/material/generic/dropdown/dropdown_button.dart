@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/widgets/material/generic/popup/sheet_popup.dart';
 
@@ -48,8 +49,8 @@ class SheetDropdownButton extends StatefulWidget {
     this.level = 1,
     this.disabled = false,
     this.activateDropdownBehavior = ActivateDropdownBehavior.auto,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final DropdownButtonBuilder buttonBuilder;
   final PopupBuilder popupBuilder;
@@ -60,6 +61,17 @@ class SheetDropdownButton extends StatefulWidget {
 
   @override
   State<SheetDropdownButton> createState() => _SheetDropdownButtonState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<DropdownButtonBuilder>.has('buttonBuilder', buttonBuilder));
+    properties.add(ObjectFlagProperty<PopupBuilder>.has('popupBuilder', popupBuilder));
+    properties.add(IntProperty('level', level));
+    properties.add(DiagnosticsProperty<DropdownButtonController?>('controller', controller));
+    properties.add(DiagnosticsProperty<bool>('disabled', disabled));
+    properties.add(EnumProperty<ActivateDropdownBehavior>('activateDropdownBehavior', activateDropdownBehavior));
+  }
 }
 
 class _SheetDropdownButtonState extends State<SheetDropdownButton> {

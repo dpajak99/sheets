@@ -1,5 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
+import 'package:sheets/widgets/material/generic/popup/sheet_popup.dart';
+import 'package:sheets/widgets/material/menu/app_bar_file_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_data_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_edit_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_extensions_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_format_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_help_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_insert_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_tools_context_menu.dart';
+import 'package:sheets/widgets/material/menu/app_view_context_menu.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
 class SheetAppBar extends StatefulWidget {
@@ -26,42 +38,45 @@ class _SheetAppBarState extends State<SheetAppBar> {
         children: <Widget>[
           const AssetIcon(SheetIcons.logo, width: 26, height: 35),
           const SizedBox(width: 9),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  IntrinsicWidth(
-                    child: AppBarTextField(
-                      focusNode: _focusNode,
-                      controller: _controller,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    IntrinsicWidth(
+                      child: AppBarTextField(
+                        focusNode: _focusNode,
+                        controller: _controller,
+                      ),
                     ),
-                  ),
-                  AppBarIconButton(icon: SheetIcons.star, onPressed: () {}),
-                  AppBarIconButton(icon: SheetIcons.move, onPressed: () {}),
-                  AppBarIconButton(icon: SheetIcons.cloud_no_sync, onPressed: () {}),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  AppBarButton(label: 'Plik', onPressed: () {}),
-                  AppBarButton(label: 'Edytuj', onPressed: () {}),
-                  AppBarButton(label: 'Widok', onPressed: () {}),
-                  AppBarButton(label: 'Wstaw', onPressed: () {}),
-                  AppBarButton(label: 'Formatuj', onPressed: () {}),
-                  AppBarButton(label: 'Dane', onPressed: () {}),
-                  AppBarButton(label: 'Narzędzia', onPressed: () {}),
-                  AppBarButton(label: 'Rozszerzenia', onPressed: () {}),
-                  AppBarButton(label: 'Pomoc', onPressed: () {}),
-                ],
-              ),
-            ],
+                    AppBarIconButton.small(icon: SheetIcons.star, onPressed: () {}),
+                    AppBarIconButton.small(icon: SheetIcons.move, onPressed: () {}),
+                    AppBarIconButton.small(icon: SheetIcons.cloud_no_sync, onPressed: () {}),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    AppBarButton(label: 'Plik', popupBuilder: (_) => const AppBarFileContextMenu()),
+                    AppBarButton(label: 'Edytuj', popupBuilder: (_) => const AppBarEditContextMenu()),
+                    AppBarButton(label: 'Widok', popupBuilder: (_) => const AppBarViewContextMenu()),
+                    AppBarButton(label: 'Wstaw', popupBuilder: (_) => const AppBarInsertContextMenu()),
+                    AppBarButton(label: 'Formatuj', popupBuilder: (_) => const AppBarFormatContextMenu()),
+                    AppBarButton(label: 'Dane', popupBuilder: (_) => const AppBarDataContextMenu()),
+                    AppBarButton(label: 'Narzędzia', popupBuilder: (_) => const AppBarToolsContextMenu()),
+                    AppBarButton(label: 'Rozszerzenia', popupBuilder: (_) => const AppBarExtensionsContextMenu()),
+                    AppBarButton(label: 'Pomoc', popupBuilder: (_) => const AppBarHelpContextMenu()),
+                  ],
+                ),
+              ],
+            ),
           ),
-          const Spacer(),
-          const AssetIcon(SheetIcons.history, color: Color(0xff444746)),
-          const AssetIcon(SheetIcons.camera, color: Color(0xff444746)),
-          const AssetIcon(SheetIcons.comment, color: Color(0xff444746)),
+          AppBarIconButton.large(icon: SheetIcons.history, onPressed: () {}),
+          AppBarIconButton.large(icon: SheetIcons.comment, onPressed: () {}),
+          AppBarIconButton.large(icon: SheetIcons.camera, onPressed: () {}, hasDropdown: true),
+          const AppBarShareButton(),
+          const SizedBox(width: 12),
           Image.asset(
             'assets/avatar.png',
             package: 'sheets',
@@ -125,48 +140,69 @@ class AppBarTextField extends StatelessWidget {
   }
 }
 
-class AppBarButton extends StatelessWidget {
+class AppBarButton extends StatefulWidget {
   const AppBarButton({
-    required String label,
-    required void Function() onPressed,
+    required this.label,
+    required this.popupBuilder,
     super.key,
-  })  : _onPressed = onPressed,
-        _label = label;
+  });
 
-  final String _label;
-  final VoidCallback _onPressed;
+  final String label;
+  final PopupBuilder popupBuilder;
+
+  @override
+  State<StatefulWidget> createState() => _AppBarButtonState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('label', label));
+    properties.add(ObjectFlagProperty<PopupBuilder>.has('popupBuilder', popupBuilder));
+  }
+}
+
+class _AppBarButtonState extends State<AppBarButton> {
+  final DropdownButtonController _controller = DropdownButtonController();
 
   @override
   Widget build(BuildContext context) {
-    return WidgetStateBuilder(
-      onTap: _onPressed,
-      cursor: SystemMouseCursors.click,
-      builder: (Set<WidgetState> states) {
-        Set<WidgetState> updatedStates = <WidgetState>{
-          ...states,
-        };
-        Color? backgroundColor = _resolveBackgroundColor(updatedStates);
-        Color? foregroundColor = _resolveForegroundColor(updatedStates);
+    return SheetDropdownButton(
+      controller: _controller,
+      popupBuilder: widget.popupBuilder,
+      activateDropdownBehavior: ActivateDropdownBehavior.manual,
+      buttonBuilder: (BuildContext context, bool isOpen) {
+        return WidgetStateBuilder(
+          onTap: _controller.toggle,
+          cursor: SystemMouseCursors.click,
+          builder: (Set<WidgetState> states) {
+            Set<WidgetState> updatedStates = <WidgetState>{
+              if (isOpen) WidgetState.pressed,
+              ...states,
+            };
+            Color? backgroundColor = _resolveBackgroundColor(updatedStates);
+            Color? foregroundColor = _resolveForegroundColor(updatedStates);
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: Center(
-            child: Text(
-              _label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'GoogleSans',
-                package: 'sheets',
-                fontSize: 14,
-                height: 1.3,
-                color: foregroundColor,
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(3),
               ),
-            ),
-          ),
+              child: Center(
+                child: Text(
+                  widget.label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'GoogleSans',
+                    package: 'sheets',
+                    fontSize: 14,
+                    height: 1.3,
+                    color: foregroundColor,
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -188,15 +224,39 @@ class AppBarButton extends StatelessWidget {
 }
 
 class AppBarIconButton extends StatelessWidget {
-  const AppBarIconButton({
+  const AppBarIconButton.small({
     required AssetIconData icon,
     required void Function() onPressed,
+    bool? hasDropdown,
     super.key,
   })  : _onPressed = onPressed,
-        _icon = icon;
+        _icon = icon,
+        _height = 24,
+        _width = 24,
+        _iconSize = 16,
+        _margin = 2,
+        _hasDropdown = hasDropdown ?? false;
+
+  const AppBarIconButton.large({
+    required AssetIconData icon,
+    required void Function() onPressed,
+    bool? hasDropdown,
+    super.key,
+  })  : _onPressed = onPressed,
+        _icon = icon,
+        _height = 42,
+        _width = (hasDropdown ?? false) ? 68 : 42,
+        _iconSize = 20,
+        _margin = 4,
+        _hasDropdown = hasDropdown ?? false;
 
   final AssetIconData _icon;
   final VoidCallback _onPressed;
+  final double _height;
+  final double _width;
+  final double _iconSize;
+  final double _margin;
+  final bool _hasDropdown;
 
   @override
   Widget build(BuildContext context) {
@@ -211,19 +271,33 @@ class AppBarIconButton extends StatelessWidget {
         Color? foregroundColor = _resolveForegroundColor(updatedStates);
 
         return Container(
-          width: 24,
-          height: 24,
-          margin: const EdgeInsets.symmetric(horizontal: 2),
+          height: _height,
+          width: _width,
+          margin: EdgeInsets.symmetric(horizontal: _margin),
           decoration: BoxDecoration(
             color: backgroundColor,
-            shape: BoxShape.circle,
+            shape: _hasDropdown ? BoxShape.rectangle : BoxShape.circle,
+            borderRadius: _hasDropdown ? BorderRadius.circular(45) : null,
           ),
-          child: Center(
-            child: AssetIcon(
-              _icon,
-              size: 16,
-              color: foregroundColor,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              AssetIcon(
+                _icon,
+                size: _iconSize,
+                color: foregroundColor,
+              ),
+              if (_hasDropdown) ...<Widget>[
+                const SizedBox(width: 10),
+                AssetIcon(
+                  SheetIcons.dropdown,
+                  width: 8,
+                  height: 4,
+                  color: foregroundColor,
+                ),
+              ],
+            ],
           ),
         );
       },
@@ -242,5 +316,103 @@ class AppBarIconButton extends StatelessWidget {
 
   Color _resolveForegroundColor(Set<WidgetState> states) {
     return const Color(0xFF444746);
+  }
+}
+
+class AppBarShareButton extends StatelessWidget {
+  const AppBarShareButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(45),
+      child: SizedBox(
+        width: 159,
+        height: 40,
+        child: Row(
+          children: [
+            WidgetStateBuilder(
+              onTap: () {},
+              cursor: SystemMouseCursors.click,
+              builder: (Set<WidgetState> states) {
+                Set<WidgetState> updatedStates = <WidgetState>{
+                  ...states,
+                };
+                Color? backgroundColor = _resolveBackgroundColor(updatedStates);
+                Color? foregroundColor = _resolveForegroundColor(updatedStates);
+
+                return Container(
+                  color: backgroundColor,
+                  width: 125,
+                  height: double.infinity,
+                  padding: const EdgeInsets.only(left: 16, right: 9),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      AssetIcon(
+                        SheetIcons.lock,
+                        size: 16,
+                        color: foregroundColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Udostępnij',
+                        style: TextStyle(
+                          fontFamily: 'Google Sans',
+                          package: 'sheets',
+                          fontSize: 14,
+                          height: 1.3,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.w600,
+                          color: foregroundColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 1, height: double.infinity),
+            WidgetStateBuilder(
+              onTap: () {},
+              cursor: SystemMouseCursors.click,
+              builder: (Set<WidgetState> states) {
+                Set<WidgetState> updatedStates = <WidgetState>{
+                  ...states,
+                };
+                Color? backgroundColor = _resolveBackgroundColor(updatedStates);
+                Color? foregroundColor = _resolveForegroundColor(updatedStates);
+
+                return Container(
+                  width: 33,
+                  height: double.infinity,
+                  color: backgroundColor,
+                  child: Center(
+                    child: AssetIcon(
+                      SheetIcons.dropdown,
+                      width: 8,
+                      height: 4,
+                      color: foregroundColor,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _resolveBackgroundColor(Set<WidgetState> states) {
+    if (states.contains(WidgetState.hovered)) {
+      return const Color(0xffbed5eb);
+    } else {
+      return const Color(0xffc9e6fd);
+    }
+  }
+
+  Color _resolveForegroundColor(Set<WidgetState> states) {
+    return const Color(0xff071c34);
   }
 }

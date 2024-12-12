@@ -70,7 +70,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xffeef2f9),
+            color: const Color(0xfff1f4f9),
             borderRadius: BorderRadius.circular(45),
           ),
           child: ListenableBuilder(
