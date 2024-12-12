@@ -61,7 +61,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
   Widget build(BuildContext context) {
     return SheetTheme(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        padding: const EdgeInsets.only(bottom: 8, left: 10, right: 10, top: 1),
         decoration: const BoxDecoration(
           color: Color(0xfff9fbfd),
         ),

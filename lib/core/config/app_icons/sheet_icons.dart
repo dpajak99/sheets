@@ -2,7 +2,14 @@ part of 'asset_icon.dart';
 
 // ignore_for_file: constant_identifier_names
 class SheetIcons {
+  static const AssetIconData logo = AssetIconData('assets/icons/logo.svg');
   static const AssetIconData add_circle = AssetIconData('assets/icons/add_circle.svg');
+  static const AssetIconData history = AssetIconData('assets/icons/history.svg');
+  static const AssetIconData camera = AssetIconData('assets/icons/camera.svg');
+  static const AssetIconData comment = AssetIconData('assets/icons/comment.svg');
+  static const AssetIconData cloud_no_sync = AssetIconData('assets/icons/cloud_no_sync.svg');
+  static const AssetIconData move = AssetIconData('assets/icons/move.svg');
+  static const AssetIconData star = AssetIconData('assets/icons/star.svg');
   static const AssetIconData delete = AssetIconData('assets/icons/delete.svg');
   static const AssetIconData close = AssetIconData('assets/icons/close.svg');
   static const AssetIconData sort_az = AssetIconData('assets/icons/sort_az.svg');

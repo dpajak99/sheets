@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/sheet.dart';
+import 'package:sheets/widgets/material/app_bar/sheet_app_bar.dart';
 import 'package:sheets/widgets/material/toolbar/sheet_toolbar.dart';
 import 'package:sheets/widgets/sections/sheet_footer.dart';
 import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
@@ -45,6 +46,7 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
         body: SafeArea(
           child: Column(
             children: <Widget>[
+              SheetAppBar(),
               SheetToolbar(sheetController: sheetController),
               SheetSectionDetailsBar(sheetController: sheetController),
               Expanded(
