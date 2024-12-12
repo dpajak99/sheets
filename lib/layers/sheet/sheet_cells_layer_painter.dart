@@ -27,22 +27,24 @@ abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements Cust
 
 class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   SheetCellsLayerPainter({
-    required SheetViewportContentManager viewportContent,
     EdgeInsets? padding,
-  })  : _viewportContent = viewportContent,
-        _padding = padding ?? const EdgeInsets.symmetric(horizontal: 3, vertical: 2);
+  }) : _padding = padding ?? const EdgeInsets.symmetric(horizontal: 3, vertical: 2);
 
-  late SheetViewportContentManager _viewportContent;
   final EdgeInsets _padding;
+  late SheetViewportContentManager _visibleContent;
 
-  void update(SheetViewportContentManager viewportContent) {
-    _viewportContent = viewportContent;
+  void rebuild({
+    required SheetViewportContentManager visibleContent,
+  }) {
+    _visibleContent = visibleContent;
     notifyListeners();
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    List<ViewportCell> visibleCells = _viewportContent.cells;
+    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth + borderWidth, columnHeadersHeight + borderWidth, size.width, size.height));
+
+    List<ViewportCell> visibleCells = _visibleContent.cells;
 
     visibleCells.sort((ViewportCell a, ViewportCell b) {
       int aZIndex = a.properties.style.borderZIndex ?? 0;
@@ -63,15 +65,15 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
   @override
   bool shouldRepaint(covariant SheetCellsLayerPainter oldDelegate) {
-    return oldDelegate._viewportContent != _viewportContent || oldDelegate._padding != _padding;
+    return oldDelegate._visibleContent != _visibleContent || oldDelegate._padding != _padding;
   }
 
   void _paintMesh(Canvas canvas, Size size) {
     Set<Line> lines = <Line>{};
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    List<ViewportColumn> visibleColumns = _viewportContent.columns;
-    List<ViewportRow> visibleRows = _viewportContent.rows;
-    List<ViewportCell> visibleCells = _viewportContent.cells;
+    List<ViewportColumn> visibleColumns = _visibleContent.columns;
+    List<ViewportRow> visibleRows = _visibleContent.rows;
+    List<ViewportCell> visibleCells = _visibleContent.cells;
 
     if (visibleColumns.isEmpty || visibleRows.isEmpty) {
       return;

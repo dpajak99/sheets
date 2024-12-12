@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
-import 'package:sheets/core/mouse/mouse_listener.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/selection/selection_state.dart';
 import 'package:sheets/core/selection/selection_style.dart';
@@ -37,13 +35,6 @@ class SheetController extends SheetRebuildNotifier {
 
     scroll = SheetScrollController();
     viewport = SheetViewport(data);
-    mouse = MouseListener(
-      mouseActionRecognizers: <MouseGestureRecognizer>[
-        MouseDoubleTapRecognizer(),
-        MouseSelectionGestureRecognizer(),
-      ],
-      sheetController: this,
-    );
     selection = SelectionState.defaultSelection();
 
     scroll.setContentSize(data.contentSize);
@@ -53,7 +44,6 @@ class SheetController extends SheetRebuildNotifier {
   final SheetData data;
   late final SheetViewport viewport;
   late final SheetScrollController scroll;
-  late final MouseListener mouse;
   late final SilentValueNotifier<EditableViewportCell?> editableCellNotifier;
 
   late SelectionState selection;
@@ -63,7 +53,7 @@ class SheetController extends SheetRebuildNotifier {
   void resolve(SheetEvent event) {
     bool mainEvent = eventsQueue.isEmpty;
     SheetAction<SheetEvent>? action = event.createAction(this);
-    if(action == null) {
+    if (action == null) {
       return;
     }
     eventsQueue.add(event);
@@ -76,10 +66,10 @@ class SheetController extends SheetRebuildNotifier {
     if (mainAction) {
       SheetRebuildConfig rebuildProperties = eventsQueue.fold(
         SheetRebuildConfig(),
-            (SheetRebuildConfig previousValue, SheetEvent element) => previousValue.combine(element.rebuildConfig),
+        (SheetRebuildConfig previousValue, SheetEvent element) => previousValue.combine(element.rebuildConfig),
       );
 
-      if(rebuildProperties.rebuildViewport || rebuildProperties.rebuildCellsLayer) {
+      if (rebuildProperties.rebuildViewport || rebuildProperties.rebuildCellsLayer) {
         viewport.rebuild(scroll.offset);
       }
 
@@ -87,7 +77,7 @@ class SheetController extends SheetRebuildNotifier {
       eventsQueue.clear();
     }
   }
-  
+
   bool isFullyVisible(SheetIndex index) {
     Offset scrollOffset = scroll.offset;
     Rect cellSheetCoords = index.getSheetCoordinates(data);

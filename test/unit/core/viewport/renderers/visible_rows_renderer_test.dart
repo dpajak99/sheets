@@ -31,16 +31,16 @@ void main() {
 
       // Assert
       List<ViewportRow> expectedRows = <ViewportRow>[
-        ViewportRow(index: RowIndex(0), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 24, 46, 64)),
-        ViewportRow(index: RowIndex(1), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 65, 46, 105)),
-        ViewportRow(index: RowIndex(2), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 106, 46, 146)),
-        ViewportRow(index: RowIndex(3), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 147, 46, 187)),
-        ViewportRow(index: RowIndex(4), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 188, 46, 228)),
-        ViewportRow(index: RowIndex(5), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 229, 46, 269)),
-        ViewportRow(index: RowIndex(6), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 270, 46, 310)),
-        ViewportRow(index: RowIndex(7), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 311, 46, 351)),
-        ViewportRow(index: RowIndex(8), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 352, 46, 392)),
-        ViewportRow(index: RowIndex(9), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 393, 46, 433))
+        ViewportRow(index: RowIndex(0), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 25, 46, 65)),
+        ViewportRow(index: RowIndex(1), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 66, 46, 106)),
+        ViewportRow(index: RowIndex(2), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 107, 46, 147)),
+        ViewportRow(index: RowIndex(3), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 148, 46, 188)),
+        ViewportRow(index: RowIndex(4), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 189, 46, 229)),
+        ViewportRow(index: RowIndex(5), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 230, 46, 270)),
+        ViewportRow(index: RowIndex(6), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 271, 46, 311)),
+        ViewportRow(index: RowIndex(7), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 312, 46, 352)),
+        ViewportRow(index: RowIndex(8), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 353, 46, 393)),
+        ViewportRow(index: RowIndex(9), style: RowStyle(height: 40), rect: const BorderRect.fromLTRB(0, 394, 46, 434))
       ];
 
       expect(visibleRows, expectedRows);
@@ -69,14 +69,14 @@ void main() {
 
       // Assert
       List<ViewportRow> expectedRows = <ViewportRow>[
-        ViewportRow(index: RowIndex(1), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 0, 46, 50)),
-        ViewportRow(index: RowIndex(2), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 51, 46, 101)),
-        ViewportRow(index: RowIndex(3), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 102, 46, 152)),
-        ViewportRow(index: RowIndex(4), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 153, 46, 203)),
-        ViewportRow(index: RowIndex(5), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 204, 46, 254)),
-        ViewportRow(index: RowIndex(6), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 255, 46, 305)),
-        ViewportRow(index: RowIndex(7), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 306, 46, 356)),
-        ViewportRow(index: RowIndex(8), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 357, 46, 407)),
+        ViewportRow(index: RowIndex(1), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 1, 46, 51)),
+        ViewportRow(index: RowIndex(2), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 52, 46, 102)),
+        ViewportRow(index: RowIndex(3), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 103, 46, 153)),
+        ViewportRow(index: RowIndex(4), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 154, 46, 204)),
+        ViewportRow(index: RowIndex(5), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 205, 46, 255)),
+        ViewportRow(index: RowIndex(6), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 256, 46, 306)),
+        ViewportRow(index: RowIndex(7), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 307, 46, 357)),
+        ViewportRow(index: RowIndex(8), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 358, 46, 408)),
       ];
 
       expect(visibleRows, expectedRows);
@@ -104,7 +104,7 @@ void main() {
 
       // Assert
       List<ViewportRow> expectedRows = <ViewportRow>[
-        ViewportRow(index: RowIndex(0), style: RowStyle(height: 100), rect: const BorderRect.fromLTRB(0, 24, 46, 124)),
+        ViewportRow(index: RowIndex(0), style: RowStyle(height: 100), rect: const BorderRect.fromLTRB(0, 25, 46, 125)),
       ];
 
       expect(visibleRows, expectedRows);
@@ -132,13 +132,13 @@ void main() {
 
       // Assert
       List<ViewportRow> expectedRows = <ViewportRow>[
-        ViewportRow(index: RowIndex(3), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, -23, 46, 27)),
-        ViewportRow(index: RowIndex(4), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 28, 46, 78)),
-        ViewportRow(index: RowIndex(5), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 79, 46, 129)),
-        ViewportRow(index: RowIndex(6), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 130, 46, 180)),
-        ViewportRow(index: RowIndex(7), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 181, 46, 231)),
-        ViewportRow(index: RowIndex(8), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 232, 46, 282)),
-        ViewportRow(index: RowIndex(9), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 283, 46, 333))
+        ViewportRow(index: RowIndex(3), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, -22, 46, 28)),
+        ViewportRow(index: RowIndex(4), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 29, 46, 79)),
+        ViewportRow(index: RowIndex(5), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 80, 46, 130)),
+        ViewportRow(index: RowIndex(6), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 131, 46, 181)),
+        ViewportRow(index: RowIndex(7), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 182, 46, 232)),
+        ViewportRow(index: RowIndex(8), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 233, 46, 283)),
+        ViewportRow(index: RowIndex(9), style: RowStyle(height: 50), rect: const BorderRect.fromLTRB(0, 284, 46, 334))
       ];
 
       expect(visibleRows, expectedRows);

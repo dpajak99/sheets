@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/events/sheet_event.dart';
-import 'package:sheets/core/mouse/mouse_gesture_handler.dart';
-import 'package:sheets/core/mouse/mouse_gesture_recognizer.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/text/sheet_text_field.dart';
@@ -35,7 +33,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
       strokeAlign: BorderSide.strokeAlignOutside,
     );
     Border innerBorder = Border.all(color: const Color(0xff3056C6), width: 2);
-    EdgeInsets contentPadding = const EdgeInsets.only(left: 3, right: 3);
+    EdgeInsets contentPadding = const EdgeInsets.only(left: 3, right: 3, top: 1);
 
     double horizontalBorderWidth = innerBorder.left.width + innerBorder.right.width;
     double horizontalPadding = horizontalBorderWidth + contentPadding.horizontal;
@@ -158,24 +156,6 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
   ViewportCell get viewportCell => widget.editableViewportCell.cell;
   bool controlPressed = false;
 
-  late final TextfieldHoveredGestureRecognizer _recognizer;
-
-  @override
-  void initState() {
-    super.initState();
-    TextfieldHoverGestureHandler handler = TextfieldHoverGestureHandler();
-    _recognizer = TextfieldHoveredGestureRecognizer(handler);
-    widget.sheetController.mouse.insertRecognizer(_recognizer);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await widget.sheetController.mouse.removeRecognizer(_recognizer);
-    });
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -194,10 +174,7 @@ class _SheetTextfieldLayoutState extends State<SheetTextfieldLayout> {
             controller: widget.editableViewportCell.controller,
             focusNode: widget.editableViewportCell.focusNode,
             backgroundColor: widget.backgroundColor,
-            onSizeChanged: (Size size) {
-              Rect textfieldRect = Rect.fromLTWH(viewportCell.rect.left, viewportCell.rect.top, size.width, size.height);
-              _recognizer.setDraggableArea(textfieldRect);
-            },
+            onSizeChanged: (Size size) {},
             onCompleted: (bool shouldSaveValue, bool shouldMove) {
               widget.onCompleted(shouldSaveValue, shouldMove);
             },

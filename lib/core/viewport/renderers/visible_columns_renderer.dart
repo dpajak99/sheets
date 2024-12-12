@@ -34,7 +34,7 @@ class VisibleColumnsRenderer {
       ViewportColumn viewportColumn = ViewportColumn(
         index: columnIndex,
         style: columnStyle,
-        rect: BorderRect.fromLTWH(currentContentWidth + rowHeadersWidth, 0, columnStyle.width, columnHeadersHeight),
+        rect: BorderRect.fromLTWH(currentContentWidth + rowHeadersWidth + borderWidth, 0, columnStyle.width, columnHeadersHeight),
       );
       visibleColumns.add(viewportColumn);
       currentContentWidth += viewportColumn.style.width + borderWidth;

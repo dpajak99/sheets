@@ -9,6 +9,7 @@ import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
 import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/widgets/sheet_mouse_region.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
 class SheetScrollable extends StatefulWidget {
@@ -61,6 +62,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
           Expanded(
             child: SheetScrollbar(
               painter: verticalScrollbarPainter,
+              deltaModifier: (Offset offset) => offset.dy,
               onScroll: (double offset) {
                 widget.sheetController.resolve(ScrollByEvent(Offset(0, offset)));
               },
@@ -91,6 +93,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
           Expanded(
             child: SheetScrollbar(
               painter: horizontalScrollbarPainter,
+              deltaModifier: (Offset offset) => offset.dx,
               onScroll: (double offset) {
                 widget.sheetController.resolve(ScrollByEvent(Offset(offset, 0)));
               },
@@ -158,11 +161,13 @@ class SheetScrollbar extends StatefulWidget {
   const SheetScrollbar({
     required this.painter,
     required this.onScroll,
+    required this.deltaModifier,
     super.key,
   });
 
   final SheetScrollbarPainter painter;
   final ValueChanged<double> onScroll;
+  final double Function(Offset offset) deltaModifier;
 
   @override
   State<StatefulWidget> createState() => _SheetScrollbarState();
@@ -172,6 +177,7 @@ class SheetScrollbar extends StatefulWidget {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<SheetScrollbarPainter>('painter', painter));
     properties.add(ObjectFlagProperty<ValueChanged<double>>.has('onScroll', onScroll));
+    properties.add(ObjectFlagProperty<double Function(Offset offset)>.has('deltaModifier', deltaModifier));
   }
 }
 
@@ -179,21 +185,19 @@ class _SheetScrollbarState extends State<SheetScrollbar> {
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onHorizontalDragUpdate: _onScroll,
-        onVerticalDragUpdate: _onScroll,
-        child: MouseRegion(
-          onEnter: (_) => _onHover(),
-          onExit: (_) => _onExit(),
-          child: CustomPaint(painter: widget.painter),
-        ),
+      child: SheetMouseRegion(
+        key: UniqueKey(),
+        cursor: SystemMouseCursors.basic,
+        onEnter: _onHover,
+        onExit: _onExit,
+        onDragUpdate: _onScroll,
+        child: CustomPaint(painter: widget.painter),
       ),
     );
   }
 
-  void _onScroll(DragUpdateDetails details) {
-    double delta = details.primaryDelta ?? 0;
+  void _onScroll(PointerMoveEvent event) {
+    double delta = widget.deltaModifier(event.delta);
     double updatedDelta = widget.painter.parseDeltaToRealScroll(delta);
     widget.onScroll(updatedDelta);
   }
