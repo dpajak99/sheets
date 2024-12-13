@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/widgets/material/generic/goog_icon_theme.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
@@ -35,16 +36,16 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
     bool? disabled,
     Key? key,
   }) : this(
-    hasDropdown: false,
-    icon: icon,
-    onTap: onTap,
-    size: size ?? const Size(24, 24),
-    margin: margin,
-    opened: opened,
-    selected: selected,
-    disabled: disabled,
-    key: key,
-  );
+          hasDropdown: false,
+          icon: icon,
+          onTap: onTap,
+          size: size ?? const Size(24, 24),
+          margin: margin,
+          opened: opened,
+          selected: selected,
+          disabled: disabled,
+          key: key,
+        );
 
   const ToolbarIconButton.withDropdown({
     required AssetIconData icon,
@@ -57,17 +58,17 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
     bool? disabled,
     Key? key,
   }) : this(
-    hasDropdown: true,
-    icon: icon,
-    onTap: onTap,
-    onDropdownTap: onDropdownTap,
-    size: size ?? const Size(39, 30),
-    margin: margin,
-    opened: opened,
-    selected: selected,
-    disabled: disabled,
-    key: key,
-  );
+          hasDropdown: true,
+          icon: icon,
+          onTap: onTap,
+          onDropdownTap: onDropdownTap,
+          size: size ?? const Size(39, 30),
+          margin: margin,
+          opened: opened,
+          selected: selected,
+          disabled: disabled,
+          key: key,
+        );
 
   final AssetIconData _icon;
   final VoidCallback? _onTap;
@@ -114,7 +115,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
               children: <Widget>[
                 Expanded(
                   child: Center(
-                    child: AssetIcon(_icon, size: 19, color: foregroundColor),
+                    child: AssetIcon(_icon, color: foregroundColor, size: 14),
                   ),
                 ),
                 _DropdownButton(
@@ -145,13 +146,13 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
               color: backgroundColor,
               borderRadius: _hasDropdown
                   ? const BorderRadius.only(
-                topLeft: Radius.circular(3),
-                bottomLeft: Radius.circular(3),
-              )
+                      topLeft: Radius.circular(3),
+                      bottomLeft: Radius.circular(3),
+                    )
                   : BorderRadius.circular(3),
             ),
             child: Center(
-              child: AssetIcon(_icon, size: 19, color: foregroundColor),
+              child: AssetIcon(_icon, size: 14, color: foregroundColor),
             ),
           );
         },
@@ -216,7 +217,7 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
     if (states.contains(WidgetState.selected)) {
       return const Color(0xFF041E49);
     } else {
-      return const Color(0xFF444746);
+      return const Color(0xFF333333);
     }
   }
 
@@ -232,6 +233,41 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
 
   Color _resolveDropdownForegroundColor(Set<WidgetState> states) {
     return const Color(0xFF444746);
+  }
+}
+
+class GoogToolbarButton extends StatelessWidget {
+  const GoogToolbarButton({
+    required this.child,
+    double? width,
+    double? height,
+    super.key,
+  })  : width = width ?? 24,
+        height = height ?? 24;
+
+  final double width;
+  final double height;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return GoogIconTheme(
+      data: _iconThemeData,
+      child: child,
+    );
+  }
+
+  GoogIconThemeData get _iconThemeData {
+    return GoogIconThemeData(
+      size: WidgetStateProperty.all(width),
+      color: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.selected)) {
+          return const Color(0xFF041E49);
+        } else {
+          return const Color(0xFF333333);
+        }
+      }),
+    );
   }
 }
 
@@ -261,7 +297,7 @@ class _DropdownButton extends StatelessWidget {
         children: <Widget>[
           const SizedBox(width: 1),
           AssetIcon(
-            SheetIcons.dropdown,
+            SheetIcons.docs_icon_arrow_dropdown,
             width: 8,
             height: 4,
             color: _foregroundColor,

@@ -73,12 +73,13 @@ class _ToolbarTextAlignHorizontalButtonState extends State<ToolbarTextAlignHoriz
 
   AssetIconData _resolveIcon(TextAlign textAlign) {
     return switch (textAlign) {
-      TextAlign.start => SheetIcons.format_align_left,
-      TextAlign.left => SheetIcons.format_align_left,
-      TextAlign.center => SheetIcons.format_align_center,
-      TextAlign.right => SheetIcons.format_align_right,
-      TextAlign.end => SheetIcons.format_align_right,
-      TextAlign.justify => SheetIcons.format_align_justify,
+      TextAlign.start => SheetIcons.docs_icon_align_left_20,
+      TextAlign.left => SheetIcons.docs_icon_align_left_20,
+      // TODO(Dominik): Missing icon
+      TextAlign.center => SheetIcons.docs_icon_align_center,
+      TextAlign.right => SheetIcons.docs_icon_align_right_20,
+      TextAlign.end => SheetIcons.docs_icon_align_right_20,
+      TextAlign.justify => SheetIcons.docs_icon_align_justify_20,
     };
   }
 }

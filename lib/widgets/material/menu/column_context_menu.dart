@@ -12,7 +12,7 @@ class ColumnContextMenu extends StatelessWidget {
       children: [
         DropdownListMenuItem(
           label: 'Wytnij',
-          icon: SheetIcons.content_cut,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+X',
             style: TextStyle(
@@ -28,7 +28,7 @@ class ColumnContextMenu extends StatelessWidget {
         ),
         DropdownListMenuItem(
           label: 'Kopiuj',
-          icon: SheetIcons.content_copy,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+C',
             style: TextStyle(
@@ -44,7 +44,7 @@ class ColumnContextMenu extends StatelessWidget {
         ),
         DropdownListMenuItem(
           label: 'Wklej',
-          icon: SheetIcons.content_paste,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+V',
             style: TextStyle(
@@ -58,19 +58,19 @@ class ColumnContextMenu extends StatelessWidget {
           ),
           disabled: true,
         ),
-        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Wstaw kolumnę po lewej', icon: SheetIcons.add, disabled: true),
-        DropdownListMenuItem(label: 'Wstaw kolumnę po prawej', icon: SheetIcons.add, disabled: true),
-        DropdownListMenuItem(label: 'Usuń kolumnę', icon: SheetIcons.delete, disabled: true),
-        DropdownListMenuItem(label: 'Wyczyść kolumnę', icon: SheetIcons.close, disabled: true),
-        DropdownListMenuItem(label: 'Ukryj kolumnę', icon: SheetIcons.visibility_off, disabled: true),
-        DropdownListMenuItem(label: 'Zmień rozmiar kolumny', icon: SheetIcons.aspect_ratio, disabled: true),
+        DropdownListMenuItem(label: 'Wstaw kolumnę po lewej', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wstaw kolumnę po prawej', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Usuń kolumnę', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wyczyść kolumnę', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Ukryj kolumnę', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Zmień rozmiar kolumny', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Utwórz filtr', icon: SheetIcons.filter_alt, disabled: true),
+        DropdownListMenuItem(label: 'Utwórz filtr', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Sortuj arkusz Od A do Z', icon: SheetIcons.sort_az, disabled: true),
-        DropdownListMenuItem(label: 'Sortuj arkusz Od Z do A', icon: SheetIcons.sort_za, disabled: true),
+        DropdownListMenuItem(label: 'Sortuj arkusz Od A do Z', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Sortuj arkusz Od Z do A', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
       ],
     );
   }

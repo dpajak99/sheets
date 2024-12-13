@@ -19,13 +19,13 @@ class SheetFooter extends StatelessWidget {
             const SizedBox(width: 45),
             SheetFooterActionButton(
               onPressed: () {},
-              icon: SheetIcons.footer_add,
+              icon: SheetIcons.docs_icon_add_20,
               iconSize: 10,
             ),
             const SizedBox(width: 6),
             SheetFooterActionButton(
               onPressed: () {},
-              icon: SheetIcons.footer_menu,
+              icon: SheetIcons.docs_icon_menu_20,
               iconSize: 13,
             ),
             const SizedBox(width: 16),

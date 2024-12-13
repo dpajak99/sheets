@@ -10,9 +10,9 @@ class AppBarExtensionsContextMenu extends StatelessWidget {
     return const DropdownListMenu(
       width: 401,
       children: <Widget>[
-        DropdownListMenuItem(label: 'Dodatki', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Makra', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Apps Script', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Dodatki', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Makra', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Apps Script', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
       ],
     );
   }

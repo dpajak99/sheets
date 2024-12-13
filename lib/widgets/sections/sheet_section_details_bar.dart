@@ -60,35 +60,49 @@ class _SheetSectionDetailsBarState extends State<SheetSectionDetailsBar> {
               },
             ),
             const VerticalDivider(color: Color(0xffc7c7c7), width: 1, thickness: 1),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 11),
-                child: Row(
-                  children: <Widget>[
-                    const AssetIcon(SheetIcons.function, size: 16, color: Color(0xff989a99)),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: ListenableBuilder(
-                        listenable: widget.sheetController,
-                        builder: (BuildContext context, _) {
-                          return Text(
-                            widget.sheetController.data
-                                .getCellProperties(widget.sheetController.selection.value.mainCell)
-                                .editableRichText
-                                .toPlainText(),
-                            overflow: TextOverflow.clip,
-                            maxLines: 1,
-                            style: const TextStyle(color: Colors.black, fontSize: 14, height: 1),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            Expanded(child: _FormulaBar(sheetController: widget.sheetController)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _FormulaBar extends StatelessWidget {
+  const _FormulaBar({
+    required SheetController sheetController,
+  }) : _sheetController = sheetController;
+
+  final SheetController _sheetController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11),
+      child: Row(
+        children: <Widget>[
+          // Formula bar label
+          const AssetIcon(SheetIcons.docs_icon_function_20, size: 16, color: Color(0xff989a99)),
+          // Formula bar seperator
+          const SizedBox(width: 8),
+          // Formula bar input
+          Expanded(
+            child: ListenableBuilder(
+              listenable: _sheetController,
+              builder: (BuildContext context, _) {
+                return Text(
+                  _sheetController.data
+                      .getCellProperties(_sheetController.selection.value.mainCell)
+                      .editableRichText
+                      .toPlainText(),
+                  overflow: TextOverflow.clip,
+                  maxLines: 1,
+                  style: const TextStyle(color: Colors.black, fontSize: 14, height: 1),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

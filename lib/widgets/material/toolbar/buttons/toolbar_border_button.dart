@@ -47,7 +47,7 @@ class _ToolbarBorderButtonState extends State<ToolbarBorderButton> {
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
         return ToolbarIconButton.withDropdown(
-          icon: SheetIcons.border_all,
+          icon: SheetIcons.docs_icon_border_all_20,
           size: widget.size,
           margin: widget.margin,
         );
@@ -103,16 +103,16 @@ class _BorderOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AssetIconData icon = switch (_value) {
-      BorderEdges.all => SheetIcons.border_all,
-      BorderEdges.inner => SheetIcons.border_inner,
-      BorderEdges.horizontal => SheetIcons.border_horizontal,
-      BorderEdges.vertical => SheetIcons.border_vertical,
-      BorderEdges.outer => SheetIcons.border_outer,
-      BorderEdges.left => SheetIcons.border_left,
-      BorderEdges.top => SheetIcons.border_top,
-      BorderEdges.right => SheetIcons.border_right,
-      BorderEdges.bottom => SheetIcons.border_bottom,
-      BorderEdges.clear => SheetIcons.border_clear,
+      BorderEdges.all => SheetIcons.docs_icon_border_all_20,
+      BorderEdges.inner => SheetIcons.docs_icon_border_inside_20,
+      BorderEdges.horizontal => SheetIcons.docs_icon_border_horizontal_20,
+      BorderEdges.vertical => SheetIcons.docs_icon_border_vertical_20,
+      BorderEdges.outer => SheetIcons.docs_icon_border_outside_20,
+      BorderEdges.left => SheetIcons.docs_icon_border_left_20,
+      BorderEdges.top => SheetIcons.docs_icon_border_top_20,
+      BorderEdges.right => SheetIcons.docs_icon_border_right_20,
+      BorderEdges.bottom => SheetIcons.docs_icon_border_bottom_20,
+      BorderEdges.clear => SheetIcons.docs_icon_border_none_20,
     };
 
     return DropdownGridMenuItem(selected: false, icon: icon, onPressed: () => _onPressed(_value));

@@ -19,7 +19,7 @@ class ToolbarColorPickerButton extends StatelessWidget {
         _margin = margin ?? const EdgeInsets.symmetric(horizontal: 1),
         _selectedColor = selectedColor,
         _icon = icon,
-        _iconSize = iconSize ?? 19,
+        _iconSize = iconSize ?? 14,
         _colorBoxDy = colorBoxDy ?? 20,
         _colorBoxPadding = colorBoxPadding ?? 4.5,
         _colorBoxHeight = colorBoxHeight ?? 4,
@@ -104,7 +104,7 @@ class ToolbarColorPickerButton extends StatelessWidget {
               child,
               const SizedBox(width: 4),
               AssetIcon(
-                SheetIcons.dropdown,
+                SheetIcons.docs_icon_arrow_dropdown,
                 width: 8,
                 height: 4,
                 color: foregroundColor,

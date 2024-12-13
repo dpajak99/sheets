@@ -84,7 +84,7 @@ class ToolbarTextFieldButton extends StatelessWidget implements StaticSizeWidget
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: AssetIcon(
-                          SheetIcons.dropdown,
+                          SheetIcons.docs_icon_arrow_dropdown,
                           width: 8,
                           height: 4,
                           color: foregroundColor,

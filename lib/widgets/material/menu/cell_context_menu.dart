@@ -12,7 +12,7 @@ class CellContextMenu extends StatelessWidget {
       children: [
         DropdownListMenuItem(
           label: 'Wytnij',
-          icon: SheetIcons.content_cut,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+X',
             style: TextStyle(
@@ -28,7 +28,7 @@ class CellContextMenu extends StatelessWidget {
         ),
         DropdownListMenuItem(
           label: 'Kopiuj',
-          icon: SheetIcons.content_copy,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+C',
             style: TextStyle(
@@ -44,7 +44,7 @@ class CellContextMenu extends StatelessWidget {
         ),
         DropdownListMenuItem(
           label: 'Wklej',
-          icon: SheetIcons.content_paste,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+V',
             style: TextStyle(
@@ -58,15 +58,15 @@ class CellContextMenu extends StatelessWidget {
           ),
           disabled: true,
         ),
-        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Wstaw wiersz powyzej', icon: SheetIcons.add, disabled: true),
-        DropdownListMenuItem(label: 'Wstaw wiersz ponizej', icon: SheetIcons.add, disabled: true),
-        DropdownListMenuItem(label: 'Wstaw komórki', icon: SheetIcons.add, disabled: true),
+        DropdownListMenuItem(label: 'Wstaw wiersz powyzej', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wstaw wiersz ponizej', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wstaw komórki', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Usuń wiersz', icon: SheetIcons.delete, disabled: true),
-        DropdownListMenuItem(label: 'Usuń kolumnę', icon: SheetIcons.delete, disabled: true),
-        DropdownListMenuItem(label: 'Usuń komórki', icon: SheetIcons.delete, disabled: true),
+        DropdownListMenuItem(label: 'Usuń wiersz', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Usuń kolumnę', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Usuń komórki', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
       ],
     );
   }

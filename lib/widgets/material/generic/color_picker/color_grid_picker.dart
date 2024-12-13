@@ -26,7 +26,7 @@ class ColorGridPicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         DropdownListMenuItem(
-          icon: SheetIcons.format_color_reset,
+          icon: SheetIcons.docs_icon_no_color,
           label: 'Resetuj',
           onPressed: () => _onChanged(_defaultColor),
         ),
@@ -40,7 +40,7 @@ class ColorGridPicker extends StatelessWidget {
         const SizedBox(height: 2),
         const DropdownListMenuSubtitle(
           label: 'STANDARDOWY',
-          icon: SheetIcons.edit,
+          icon: SheetIcons.docs_icon_line_color,
           padding: EdgeInsets.only(bottom: 4, left: 6, right: 6),
         ),
         const SizedBox(height: 2),
@@ -97,11 +97,11 @@ class _CustomColorSectionState extends State<_CustomColorSection> {
       colors: _customColors.map((Color color) => color.value).toList(),
       customWidgets: <Widget>[
         _ColorGridIconButton(
-          icon: SheetIcons.add_circle,
+          icon: SheetIcons.docs_icon_add_item,
           onPressed: _requestCustomColor,
         ),
         _ColorGridIconButton(
-          icon: SheetIcons.colorize,
+          icon: SheetIcons.docs_icon_colorize,
           onPressed: () {
             // TODO(dominik): Missing implementation
           },

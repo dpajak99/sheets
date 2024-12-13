@@ -6,6 +6,7 @@ import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
+// TODO(Dominik): Rename to Text wrap
 class ToolbarTextOverflowButton extends StatelessWidget implements StaticSizeWidget {
   const ToolbarTextOverflowButton({
     required TextOverflowBehavior value,
@@ -42,9 +43,9 @@ class ToolbarTextOverflowButton extends StatelessWidget implements StaticSizeWid
 
   AssetIconData _resolveIcon(TextOverflowBehavior textOverflow) {
     return switch (textOverflow) {
-      TextOverflowBehavior.overflow => SheetIcons.format_text_overflow,
-      TextOverflowBehavior.wrap => SheetIcons.format_text_wrap,
-      TextOverflowBehavior.clip => SheetIcons.format_text_clip,
+      TextOverflowBehavior.overflow => SheetIcons.docs_icon_format_text_overflow_20,
+      TextOverflowBehavior.wrap => SheetIcons.docs_icon_format_text_wrap_20,
+      TextOverflowBehavior.clip => SheetIcons.docs_icon_format_text_clip_20,
     };
   }
 

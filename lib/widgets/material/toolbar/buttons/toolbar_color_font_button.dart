@@ -50,7 +50,7 @@ class _ToolbarColorFontButtonState extends State<ToolbarColorFontButton> {
           margin: widget.margin,
           opened: isOpen,
           selectedColor: widget.value,
-          icon: SheetIcons.format_color_text,
+          icon: SheetIcons.docs_icon_text_color_20,
         );
       },
       popupBuilder: (BuildContext context) {

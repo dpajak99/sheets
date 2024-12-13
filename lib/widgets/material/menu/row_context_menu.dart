@@ -12,7 +12,7 @@ class RowContextMenu extends StatelessWidget {
       children: [
         DropdownListMenuItem(
           label: 'Wytnij',
-          icon: SheetIcons.content_cut,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+X',
             style: TextStyle(
@@ -28,7 +28,7 @@ class RowContextMenu extends StatelessWidget {
         ),
         DropdownListMenuItem(
           label: 'Kopiuj',
-          icon: SheetIcons.content_copy,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+C',
             style: TextStyle(
@@ -44,7 +44,7 @@ class RowContextMenu extends StatelessWidget {
         ),
         DropdownListMenuItem(
           label: 'Wklej',
-          icon: SheetIcons.content_paste,
+          icon: SheetIcons.docs_icon_arrow_dropdown,
           trailing: Text(
             'Ctrl+V',
             style: TextStyle(
@@ -58,16 +58,16 @@ class RowContextMenu extends StatelessWidget {
           ),
           disabled: true,
         ),
-        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Wstaw wiersz powyżej', icon: SheetIcons.add, disabled: true),
-        DropdownListMenuItem(label: 'Wstaw wiersz poniżej', icon: SheetIcons.add, disabled: true),
-        DropdownListMenuItem(label: 'Usuń wiersz', icon: SheetIcons.delete, disabled: true),
-        DropdownListMenuItem(label: 'Wyczyść wiersz', icon: SheetIcons.close, disabled: true),
-        DropdownListMenuItem(label: 'Ukryj wiersz', icon: SheetIcons.visibility_off, disabled: true),
-        DropdownListMenuItem(label: 'Zmień rozmiar wiersza', icon: SheetIcons.aspect_ratio, disabled: true),
+        DropdownListMenuItem(label: 'Wstaw wiersz powyżej', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wstaw wiersz poniżej', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Usuń wiersz', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wyczyść wiersz', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Ukryj wiersz', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Zmień rozmiar wiersza', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Utwórz filtr', icon: SheetIcons.filter_alt, disabled: true),
+        DropdownListMenuItem(label: 'Utwórz filtr', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
       ],
     );
   }

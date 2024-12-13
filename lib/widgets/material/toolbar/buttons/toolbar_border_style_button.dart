@@ -51,7 +51,7 @@ class _ToolbarBorderStyleButtonState extends State<ToolbarBorderStyleButton> {
         return _BorderStyleButton(
           size: widget.size,
           margin: widget.margin,
-          icon: SheetIcons.line_style,
+          icon: SheetIcons.docs_icon_line_style_20,
           opened: isOpen,
         );
       },
@@ -193,7 +193,7 @@ class _BorderStyleButton extends StatelessWidget {
                 ),
               ),
               AssetIcon(
-                SheetIcons.dropdown,
+                SheetIcons.docs_icon_arrow_dropdown,
                 width: 8,
                 height: 4,
                 color: foregroundColor,

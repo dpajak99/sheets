@@ -10,13 +10,13 @@ class AppBarToolsContextMenu extends StatelessWidget {
     return const DropdownListMenu(
       width: 401,
       children: <Widget>[
-        DropdownListMenuItem(label: 'Utwórz nowy formularz', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Utwórz nowy formularz', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Pisownia', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Opcje sugestii', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Pisownia', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Opcje sugestii', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Ustawienia powiadomień', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Ułatwienia dostępu', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Ustawienia powiadomień', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Ułatwienia dostępu', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
       ],
     );
   }

@@ -101,10 +101,11 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.undo, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.redo, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.print, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.paint, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_undo_20, onTap: () {}),
+                                // TODO(Dominik): Missing icon
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_undo_20, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_print_20, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_paint_format_20, onTap: () {}),
                                 ToolbarZoomButton(value: 100, onChanged: (_) {}),
                                 const ToolbarDivider(),
                               ],
@@ -118,13 +119,15 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                           SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
                                     }),
                                 ToolbarIconButton(
-                                    icon: SheetIcons.percentage,
+                                  // TODO(Dominik): Missing icon
+                                    icon: SheetIcons.docs_cloud_off_20,
                                     onTap: () {
                                       widget.sheetController.resolve(FormatSelectionEvent(
                                           SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern())));
                                     }),
                                 ToolbarIconButton(
-                                  icon: SheetIcons.decimal_decrease,
+                                  // TODO(Dominik): Missing icon
+                                  icon: SheetIcons.docs_cloud_off_20,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
@@ -134,7 +137,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                   },
                                 ),
                                 ToolbarIconButton(
-                                  icon: SheetIcons.decimal_increase,
+                                  icon: SheetIcons.docs_icon_decimal_increase_20,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
@@ -167,7 +170,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
                                 ToolbarIconButton.small(
-                                  icon: SheetIcons.remove,
+                                  icon: SheetIcons.docs_icon_remove_20,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(DecreaseFontSizeIntent()));
                                   },
@@ -180,7 +183,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                   },
                                 ),
                                 ToolbarIconButton.small(
-                                  icon: SheetIcons.add,
+                                  icon: SheetIcons.docs_icon_add_20,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(IncreaseFontSizeIntent()));
                                   },
@@ -191,21 +194,21 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
                                 ToolbarIconButton(
-                                  icon: SheetIcons.format_bold,
+                                  icon: SheetIcons.docs_icon_bold_20,
                                   selected: selectionStyle.fontWeight == FontWeight.bold,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent()));
                                   },
                                 ),
                                 ToolbarIconButton(
-                                  icon: SheetIcons.format_italic,
+                                  icon: SheetIcons.docs_icon_italic_20,
                                   selected: selectionStyle.fontStyle == FontStyle.italic,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent()));
                                   },
                                 ),
                                 ToolbarIconButton(
-                                  icon: SheetIcons.strikethrough,
+                                  icon: SheetIcons.docs_icon_strikethrough_20,
                                   selected: selectionStyle.decoration == TextDecoration.lineThrough,
                                   onTap: () {
                                     widget.sheetController.resolve(
@@ -297,18 +300,19 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.link, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.add_comment, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.insert_chart, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.filter_alt, onTap: () {}),
-                                ToolbarIconButton.withDropdown(disabled: true, icon: SheetIcons.table_view, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.functions, onTap: () {}),
+                                // TODO(Dominik): Missing icon
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_link_24, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_add_comment_20, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_insert_chart_20, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_filter_alt_20, onTap: () {}),
+                                ToolbarIconButton.withDropdown(disabled: true, icon: SheetIcons.docs_icon_table_view_20x20, onTap: () {}),
+                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_insert_function_20, onTap: () {}),
                               ],
                             ),
                           ],
                         ),
                       ),
-                      ToolbarIconButton(disabled: true, icon: SheetIcons.arrow_up, onTap: () {}),
+                      ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_expand_less_20, onTap: () {}),
                     ],
                   );
                 },

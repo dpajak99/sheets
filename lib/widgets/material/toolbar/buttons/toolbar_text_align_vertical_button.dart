@@ -74,9 +74,9 @@ class _ToolbarTextAlignVerticalButtonState extends State<ToolbarTextAlignVertica
 
   AssetIconData _resolveIcon(TextAlignVertical textAlign) {
     return switch (textAlign) {
-      TextAlignVertical.top => SheetIcons.vertical_align_top,
-      TextAlignVertical.center => SheetIcons.vertical_align_center,
-      TextAlignVertical.bottom => SheetIcons.vertical_align_bottom,
+      TextAlignVertical.top => SheetIcons.docs_icon_valign_top_20,
+      TextAlignVertical.center => SheetIcons.docs_icon_valign_middle_20,
+      TextAlignVertical.bottom => SheetIcons.docs_icon_valign_bottom_20,
       (_) => throw Exception('Unknown value: $textAlign'),
     };
   }

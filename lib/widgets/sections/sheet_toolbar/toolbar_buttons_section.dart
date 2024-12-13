@@ -27,7 +27,7 @@ class _ToolbarButtonsSectionWrapperState extends State<ToolbarButtonsSectionWrap
             ...visibleSections,
             if (visibleSections.length != widget.sections.length)
               ToolbarIconButton(
-                icon: SheetIcons.more_vert,
+                icon: SheetIcons.docs_icon_expand_less_20,
                 onTap: () {},
               ),
           ],

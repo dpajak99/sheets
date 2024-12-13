@@ -75,7 +75,7 @@ class _ToolbarMergeButtonState extends State<ToolbarMergeButton> {
           margin: widget.margin,
           selected: widget.merged,
           opened: isOpen,
-          icon: SheetIcons.cell_merge,
+          icon: SheetIcons.docs_icon_cell_merge_20,
           onDropdownTap: () {
             _dropdownController.toggle();
           },

@@ -86,13 +86,13 @@ class _ToolbarTextRotationButtonState extends State<ToolbarTextRotationButton> {
 
   AssetIconData _resolveIcon(TextRotation textRotation) {
     return switch (textRotation) {
-      TextRotation.none => SheetIcons.text_rotation_none,
-      TextRotation.angleUp => SheetIcons.text_rotation_angleup,
-      TextRotation.angleDown => SheetIcons.text_rotation_angledown,
-      TextRotation.vertical => SheetIcons.text_rotation_vertical,
-      TextRotation.up => SheetIcons.text_rotation_up,
-      TextRotation.down => SheetIcons.text_rotation_down,
-      (_) => SheetIcons.right_angle,
+      TextRotation.none => SheetIcons.docs_icon_text_rotation_none_20,
+      TextRotation.angleUp => SheetIcons.docs_icon_text_rotation_angleup_20,
+      TextRotation.angleDown => SheetIcons.docs_icon_text_rotation_angledown_20,
+      TextRotation.vertical => SheetIcons.docs_icon_text_rotation_vertical_20,
+      TextRotation.up => SheetIcons.docs_icon_text_rotation_up_20,
+      TextRotation.down => SheetIcons.docs_icon_text_rotation_down_20,
+      (_) => SheetIcons.docs_icon_editors_ia_right_angle,
     };
   }
 }

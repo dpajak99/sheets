@@ -46,7 +46,7 @@ class ToolbarColorBorderButton extends StatelessWidget implements StaticSizeWidg
           margin: margin,
           opened: isOpen,
           selectedColor: _value,
-          icon: SheetIcons.border_color,
+          icon: SheetIcons.docs_icon_border_color_20,
           hasDropdown: true,
           colorBoxDy: 16,
           colorBoxPadding: 1,

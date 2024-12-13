@@ -65,7 +65,7 @@ class _ExpandedSearchbox extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          AssetIcon(SheetIcons.search, size: 19, color: foregroundColor),
+          AssetIcon(SheetIcons.docs_icon_search_20_nv50, size: 19, color: foregroundColor),
           const SizedBox(width: 7),
           Text(
             'Menu',
@@ -110,7 +110,7 @@ class _CollapsedSearchbox extends StatelessWidget {
             borderRadius: BorderRadius.circular(3),
           ),
           child: Center(
-            child: AssetIcon(SheetIcons.search, size: 19, color: foregroundColor),
+            child: AssetIcon(SheetIcons.docs_icon_search_20_nv50, size: 19, color: foregroundColor),
           ),
         );
       },

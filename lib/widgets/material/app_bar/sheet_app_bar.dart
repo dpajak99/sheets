@@ -36,7 +36,8 @@ class _SheetAppBarState extends State<SheetAppBar> {
       ),
       child: Row(
         children: <Widget>[
-          const AssetIcon(SheetIcons.logo, width: 26, height: 35),
+          // TODO(Dominik): Missing icon
+          const AssetIcon(SheetIcons.docs_icon_align_center, width: 26, height: 35),
           const SizedBox(width: 9),
           Expanded(
             child: Column(
@@ -51,9 +52,10 @@ class _SheetAppBarState extends State<SheetAppBar> {
                         controller: _controller,
                       ),
                     ),
-                    AppBarIconButton.small(icon: SheetIcons.star, onPressed: () {}),
-                    AppBarIconButton.small(icon: SheetIcons.move, onPressed: () {}),
-                    AppBarIconButton.small(icon: SheetIcons.cloud_no_sync, onPressed: () {}),
+                    AppBarIconButton.small(icon: SheetIcons.docs_icon_star_border_20, onPressed: () {}),
+                    // TODO(Dominik): Missing icon
+                    AppBarIconButton.small(icon: SheetIcons.docs_icon_folder_move, onPressed: () {}),
+                    AppBarIconButton.small(icon: SheetIcons.docs_icon_cloud_check_20, onPressed: () {}),
                   ],
                 ),
                 Row(
@@ -72,9 +74,9 @@ class _SheetAppBarState extends State<SheetAppBar> {
               ],
             ),
           ),
-          AppBarIconButton.large(icon: SheetIcons.history, onPressed: () {}),
-          AppBarIconButton.large(icon: SheetIcons.comment, onPressed: () {}),
-          AppBarIconButton.large(icon: SheetIcons.camera, onPressed: () {}, hasDropdown: true),
+          AppBarIconButton.large(icon: SheetIcons.docs_history_24, onPressed: () {}),
+          AppBarIconButton.large(icon: SheetIcons.docs_icon_comment_topbar_24, onPressed: () {}),
+          AppBarIconButton.large(icon: SheetIcons.docs_icon_meet_24, onPressed: () {}, hasDropdown: true),
           const AppBarShareButton(),
           const SizedBox(width: 12),
           Image.asset(
@@ -291,7 +293,7 @@ class AppBarIconButton extends StatelessWidget {
               if (_hasDropdown) ...<Widget>[
                 const SizedBox(width: 10),
                 AssetIcon(
-                  SheetIcons.dropdown,
+                  SheetIcons.docs_icon_arrow_dropdown,
                   width: 8,
                   height: 4,
                   color: foregroundColor,
@@ -350,7 +352,8 @@ class AppBarShareButton extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       AssetIcon(
-                        SheetIcons.lock,
+                        // TODO(Domini): Missing icon
+                        SheetIcons.docs_icon_align_justify_20,
                         size: 16,
                         color: foregroundColor,
                       ),
@@ -389,7 +392,7 @@ class AppBarShareButton extends StatelessWidget {
                   color: backgroundColor,
                   child: Center(
                     child: AssetIcon(
-                      SheetIcons.dropdown,
+                      SheetIcons.docs_icon_arrow_dropdown,
                       width: 8,
                       height: 4,
                       color: foregroundColor,

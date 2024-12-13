@@ -10,18 +10,18 @@ class AppBarEditContextMenu extends StatelessWidget {
     return const DropdownListMenu(
       width: 401,
       children: <Widget>[
-        DropdownListMenuItem(label: 'Cofnij', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Ponów', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Cofnij', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Ponów', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Wytnij', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Kopiuj', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Wklej', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Wytnij', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Kopiuj', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wklej', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Wklej specjalne', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Przenieś', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Usuń', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Przenieś', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Usuń', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Znajdź i zamień', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Znajdź i zamień', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
       ],
     );
   }

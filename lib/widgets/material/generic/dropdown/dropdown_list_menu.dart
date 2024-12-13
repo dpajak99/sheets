@@ -84,7 +84,7 @@ class DropdownListMenuItem extends StatelessWidget {
     bool? disabled,
     Key? key,
   }) : this(
-          icon: selected ? SheetIcons.check : null,
+          icon: selected ? SheetIcons.docs_icon_check : null,
           label: label,
           labelStyle: labelStyle,
           labelAlign: labelAlign,

@@ -65,7 +65,7 @@ class _ToolbarFontFamilyButtonState extends State<ToolbarFontFamilyButton> {
           width: 215,
           children: <Widget>[
             const DropdownListMenuItem(
-              icon: SheetIcons.add_fonts,
+              icon: SheetIcons.docs_icon_add_fonts,
               iconSize: Size(16, 13),
               label: 'Więcej czcionek',
             ),
@@ -171,7 +171,7 @@ class _FontFamilyDropdownButton extends StatelessWidget {
                 transform: _opened ? Matrix4.rotationX(math.pi) : Matrix4.identity(),
                 alignment: Alignment.center,
                 child: AssetIcon(
-                  SheetIcons.dropdown,
+                  SheetIcons.docs_icon_arrow_dropdown,
                   width: 8,
                   height: 4,
                   color: foregroundColor,

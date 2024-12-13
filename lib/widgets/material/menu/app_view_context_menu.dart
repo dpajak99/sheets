@@ -10,15 +10,15 @@ class AppBarViewContextMenu extends StatelessWidget {
     return const DropdownListMenu(
       width: 401,
       children: <Widget>[
-        DropdownListMenuItem(label: 'Pokaż', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Zablokuj', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Grupuj', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Komentarze', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Pokaż', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Zablokuj', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Grupuj', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Komentarze', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Ukryte arkusze', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Ukryte arkusze', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
         DropdownListMenuDivider(),
-        DropdownListMenuItem(label: 'Zoom', icon: SheetIcons.content_paste, disabled: true),
-        DropdownListMenuItem(label: 'Pełny ekran', icon: SheetIcons.content_paste, disabled: true),
+        DropdownListMenuItem(label: 'Zoom', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
+        DropdownListMenuItem(label: 'Pełny ekran', icon: SheetIcons.docs_icon_arrow_dropdown, disabled: true),
       ],
     );
   }

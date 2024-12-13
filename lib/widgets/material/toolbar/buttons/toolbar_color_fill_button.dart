@@ -48,7 +48,8 @@ class _ToolbarColorFillButtonState extends State<ToolbarColorFillButton> {
           margin: widget.margin,
           opened: isOpen,
           selectedColor: widget.value,
-          icon: SheetIcons.format_color_fill,
+          // TODO(Dominik): Missing icon 20
+          icon: SheetIcons.docs_icon_fill_color,
         );
       },
       popupBuilder: (BuildContext context) {
