@@ -68,9 +68,9 @@ class _SheetToolbarState extends State<SheetToolbar> {
         child: Container(
           height: 40,
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 9),
           decoration: BoxDecoration(
-            color: const Color(0xfff1f4f9),
+            color: const Color(0xfff0f4f9),
             borderRadius: BorderRadius.circular(45),
           ),
           child: ListenableBuilder(
@@ -193,27 +193,27 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarIconButton(
-                                  icon: SheetIcons.docs_icon_bold_20,
+                                GoogToolbarButton(
                                   selected: selectionStyle.fontWeight == FontWeight.bold,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent()));
                                   },
+                                  child: const GoogIcon(SheetIcons.docs_icon_bold_20),
                                 ),
-                                ToolbarIconButton(
-                                  icon: SheetIcons.docs_icon_italic_20,
+                                GoogToolbarButton(
                                   selected: selectionStyle.fontStyle == FontStyle.italic,
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent()));
                                   },
+                                  child: const GoogIcon(SheetIcons.docs_icon_italic_20),
                                 ),
-                                ToolbarIconButton(
-                                  icon: SheetIcons.docs_icon_strikethrough_20,
+                                GoogToolbarButton(
                                   selected: selectionStyle.decoration == TextDecoration.lineThrough,
                                   onTap: () {
                                     widget.sheetController.resolve(
                                         FormatSelectionEvent(ToggleTextDecorationIntent(value: TextDecoration.lineThrough)));
                                   },
+                                  child: const GoogIcon(SheetIcons.docs_icon_strikethrough_20),
                                 ),
                                 ToolbarColorFontButton(
                                   value: selectionStyle.color ?? defaultTextStyle.color ?? Colors.black,

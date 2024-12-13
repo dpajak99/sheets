@@ -56,7 +56,7 @@ class _WidgetStateBuilder extends State<WidgetStateBuilder> {
   @override
   void didUpdateWidget(covariant WidgetStateBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // _setInitialStates();
+    _setInitialStates();
   }
 
   @override

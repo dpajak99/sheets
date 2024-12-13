@@ -236,37 +236,202 @@ class ToolbarIconButton extends StatelessWidget implements StaticSizeWidget {
   }
 }
 
-class GoogToolbarButton extends StatelessWidget {
-  const GoogToolbarButton({
-    required this.child,
+class GoogIcon extends StatelessWidget {
+  const GoogIcon(
+    this._icon, {
     double? width,
     double? height,
+    Color? color,
     super.key,
-  })  : width = width ?? 24,
-        height = height ?? 24;
+  })  : _color = color,
+        _width = width,
+        _height = height;
 
-  final double width;
-  final double height;
-  final Widget child;
+  final AssetIconData _icon;
+  final double? _width;
+  final double? _height;
+  final Color? _color;
 
   @override
   Widget build(BuildContext context) {
-    return GoogIconTheme(
-      data: _iconThemeData,
-      child: child,
+    GoogIconThemeData? iconTheme = GoogIconTheme.of(context);
+
+    return AssetIcon(
+      _icon,
+      color: _color ?? iconTheme?.color,
+      width: _width ?? iconTheme?.width,
+      height: _height ?? iconTheme?.height,
+    );
+  }
+}
+
+class GoogToolbarButtonStyle {
+  const GoogToolbarButtonStyle({
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.iconHeight,
+    required this.opacity,
+  });
+
+  factory GoogToolbarButtonStyle.defaultStyle() {
+    WidgetStateProperty<Color> backgroundColor = WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        return const Color(0xffd3e3fd);
+      } else if (states.contains(WidgetState.pressed)) {
+        return const Color(0xffdbdfe4);
+      } else if (states.contains(WidgetState.hovered)) {
+        return const Color(0xffe2e7ea);
+      } else {
+        return Colors.transparent;
+      }
+    });
+
+    WidgetStateProperty<Color> foregroundColor = WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        return const Color(0xFF041e49);
+      } else if (states.contains(WidgetState.pressed)) {
+        return const Color(0xFF444746);
+      } else if (states.contains(WidgetState.hovered)) {
+        return const Color(0xFF444746);
+      } else {
+        return const Color(0xFF444746);
+      }
+    });
+
+    WidgetStateProperty<double> opacity = WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return 0.3;
+      } else {
+        return 1;
+      }
+    });
+
+    return GoogToolbarButtonStyle(
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+      iconHeight: 12,
+      opacity: opacity,
     );
   }
 
-  GoogIconThemeData get _iconThemeData {
-    return GoogIconThemeData(
-      size: WidgetStateProperty.all(width),
-      color: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-        if (states.contains(WidgetState.selected)) {
-          return const Color(0xFF041E49);
-        } else {
-          return const Color(0xFF333333);
-        }
-      }),
+  GoogToolbarButtonStyle copyWith({
+    WidgetStateProperty<Color>? backgroundColor,
+    WidgetStateProperty<Color>? foregroundColor,
+    double? iconHeight,
+    WidgetStateProperty<double>? opacity,
+  }) {
+    return GoogToolbarButtonStyle(
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      foregroundColor: foregroundColor ?? this.foregroundColor,
+      iconHeight: iconHeight ?? this.iconHeight,
+      opacity: opacity ?? this.opacity,
+    );
+  }
+
+  final WidgetStateProperty<Color> backgroundColor;
+  final WidgetStateProperty<Color> foregroundColor;
+  final double iconHeight;
+  final WidgetStateProperty<double> opacity;
+}
+
+class GoogToolbarButton extends StatelessWidget implements StaticSizeWidget {
+  GoogToolbarButton({
+    required Widget child,
+    VoidCallback? onTap,
+    bool? selected,
+    double? width,
+    double? height,
+    GoogToolbarButtonStyle? style,
+    EdgeInsets? margin,
+    EdgeInsets? padding,
+    super.key,
+  })  : _child = child,
+        _onTap = onTap,
+        _selected = selected ?? false,
+        _width = width ?? 30,
+        _height = height ?? 30,
+        _style = style ?? GoogToolbarButtonStyle.defaultStyle(),
+        _margin = margin ?? const EdgeInsets.all(1),
+        _padding = padding ?? const EdgeInsets.all(4);
+
+  final bool _selected;
+  final double _width;
+  final double _height;
+  final GoogToolbarButtonStyle _style;
+  final Widget _child;
+  final VoidCallback? _onTap;
+  final EdgeInsets _margin;
+  final EdgeInsets _padding;
+
+  @override
+  EdgeInsets get margin => _margin;
+
+  @override
+  Size get size => Size(_width, _height);
+
+  @override
+  Widget build(BuildContext context) {
+    return WidgetStateBuilder(
+      onTap: _onTap,
+      selected: _selected,
+      cursor: SystemMouseCursors.click,
+      builder: (Set<WidgetState> states) {
+        Color backgroundColor = _style.backgroundColor.resolve(states);
+        Color foregroundColor = _style.foregroundColor.resolve(states);
+        double iconHeight = _style.iconHeight;
+
+        return Container(
+          width: _width,
+          height: _height,
+          margin: _margin,
+          padding: _padding,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(3),
+          ),
+          child: Align(
+            child: GoogIconTheme(
+              height: iconHeight,
+              color: foregroundColor,
+              child: _child,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class GoogColorMenuIndicator extends StatelessWidget {
+  const GoogColorMenuIndicator({
+    required Color color,
+    required StaticSizeWidget child,
+    super.key,
+  })  : _child = child,
+        _color = color;
+
+  final Color _color;
+  final StaticSizeWidget _child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        _child,
+         Positioned(
+            bottom: 6,
+            left: 6,
+            right: 5,
+            child: MouseRegion(
+              opaque: false,
+              cursor: SystemMouseCursors.click,
+              child:Container(
+              height: 4,
+              decoration: BoxDecoration(color: _color),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

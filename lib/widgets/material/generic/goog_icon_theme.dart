@@ -4,48 +4,51 @@ import 'package:flutter/material.dart';
 class GoogIconTheme extends StatefulWidget {
   const GoogIconTheme({
     required this.child,
-    required this.data,
+    this.color,
+    this.height,
+    this.width,
     super.key,
   });
 
   final Widget child;
-  final GoogIconThemeData data;
+  final double? height;
+  final double? width;
+  final Color? color;
 
-  GooglIconThemeState? of(BuildContext context) {
-    return context.findAncestorStateOfType<GooglIconThemeState>();
+  static GoogIconThemeData? of(BuildContext context) {
+    return context.findAncestorStateOfType<GoogIconThemeData>();
   }
 
   @override
-  State<StatefulWidget> createState() => GooglIconThemeState();
+  State<StatefulWidget> createState() => GoogIconThemeData();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<GoogIconThemeData>('data', data));
+    properties.add(DoubleProperty('height', height));
+    properties.add(DoubleProperty('width', width));
+    properties.add(ColorProperty('color', color));
+
   }
 }
 
-class GooglIconThemeState extends State<GoogIconTheme> {
+class GoogIconThemeData extends State<GoogIconTheme> {
   @override
   Widget build(BuildContext context) {
     return widget.child;
   }
 
-  GoogIconThemeData get data => widget.data;
+  double? get width => widget.width;
+
+  double? get height => widget.height;
+
+  Color? get color => widget.color;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<GoogIconThemeData>('data', data));
+    properties.add(DoubleProperty('width', width));
+    properties.add(DoubleProperty('height', height));
+    properties.add(ColorProperty('color', color));
   }
-}
-
-class GoogIconThemeData {
-  const GoogIconThemeData({
-    required WidgetStateProperty<double> size,
-    required WidgetStateProperty<Color> color,
-  }) : _color = color, _size = size;
-
-  final WidgetStateProperty<double> _size;
-  final WidgetStateProperty<Color> _color;
 }

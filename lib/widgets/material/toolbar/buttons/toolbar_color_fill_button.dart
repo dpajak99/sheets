@@ -5,8 +5,10 @@ import 'package:sheets/widgets/material/generic/color_picker/color_grid_picker.d
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_color_picker_button.dart';
+import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
+// TODO(Dominik): Rename GoogCellColorButton
 class ToolbarColorFillButton extends StatefulWidget implements StaticSizeWidget {
   const ToolbarColorFillButton({
     required this.value,
@@ -43,13 +45,16 @@ class _ToolbarColorFillButtonState extends State<ToolbarColorFillButton> {
     return SheetDropdownButton(
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return ToolbarColorPickerButton(
-          size: widget.size,
-          margin: widget.margin,
-          opened: isOpen,
-          selectedColor: widget.value,
-          // TODO(Dominik): Missing icon 20
-          icon: SheetIcons.docs_icon_fill_color,
+        return GoogColorMenuIndicator(
+          color: widget.value,
+          child: GoogToolbarButton(
+            // opened: isOpen,
+            width: widget.size.width,
+            height: widget.size.height,
+            style: GoogToolbarButtonStyle.defaultStyle().copyWith(iconHeight: 13),
+            padding: const EdgeInsets.only(bottom: 7),
+            child: const GoogIcon(SheetIcons.docs_icon_fill_color_20),
+          ),
         );
       },
       popupBuilder: (BuildContext context) {

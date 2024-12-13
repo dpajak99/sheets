@@ -83,7 +83,7 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
     widget.controller?._open = _controllerOpen;
     widget.controller?._close = _controllerClose;
     widget.controller?._toggle = _controllerToggle;
-    widget.controller?._isOpen = () => _isPopupOpen();
+    widget.controller?._isOpen = _isPopupOpen;
   }
 
   @override
@@ -98,7 +98,7 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
       widget.controller?._open = _controllerOpen;
       widget.controller?._close = _controllerClose;
       widget.controller?._toggle = _controllerToggle;
-      widget.controller?._isOpen = () => _isPopupOpen();
+      widget.controller?._isOpen = _isPopupOpen;
     }
   }
 
@@ -111,8 +111,10 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
 
   /// Controller method to open the popup.
   void _controllerOpen() {
-    if (_isPopupOpen()) return;
-    final offset = _calculateOffset();
+    if (_isPopupOpen()) {
+      return;
+    }
+    Offset offset = _calculateOffset();
     SheetPopup.openGlobalPopup(
       context,
       widget.level,
@@ -131,7 +133,7 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
     if (_isPopupOpen()) {
       _controllerClose();
     } else {
-      final offset = _calculateOffset();
+      Offset offset = _calculateOffset();
       SheetPopup.openGlobalPopup(
         context,
         widget.level,
@@ -151,8 +153,8 @@ class _SheetDropdownButtonState extends State<SheetDropdownButton> {
 
   /// Calculates the offset for the popup based on the button's position.
   Offset _calculateOffset() {
-    final RenderBox renderBox = _buttonKey.currentContext!.findRenderObject()! as RenderBox;
-    final position = renderBox.localToGlobal(Offset.zero);
+    RenderBox renderBox = _buttonKey.currentContext!.findRenderObject()! as RenderBox;
+    Offset position = renderBox.localToGlobal(Offset.zero);
     return Offset(position.dx, position.dy + renderBox.size.height);
   }
 
