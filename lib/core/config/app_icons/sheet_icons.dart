@@ -1,6 +1,7 @@
 part of 'asset_icon.dart';
 
 // ignore_for_file: constant_identifier_names
+
 class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_accessibility_person = AssetIconData('assets/icons/docs-icon-editors-ia-accessibility-person.svg');
   static const AssetIconData docs_icon_editors_ia_add_box = AssetIconData('assets/icons/docs-icon-editors-ia-add-box.svg');
@@ -25,6 +26,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_looker_studio_18 = AssetIconData('assets/icons/docs-icon-editors-ia-looker-studio-18.svg');
   static const AssetIconData docs_icon_editors_ia_align_vertical_bottom = AssetIconData('assets/icons/docs-icon-editors-ia-align-vertical-bottom.svg');
   static const AssetIconData docs_icon_editors_ia_align_vertical_center = AssetIconData('assets/icons/docs-icon-editors-ia-align-vertical-center.svg');
+  static const AssetIconData docs_icon_editors_ia_align_vertical_top = AssetIconData('assets/icons/docs-icon-editors-ia-align-vertical-top.svg');
   static const AssetIconData docs_icon_editors_ia_alphabetical_sort = AssetIconData('assets/icons/docs-icon-editors-ia-alphabetical-sort.svg');
   static const AssetIconData docs_icon_editors_ia_alphabetical_sort_reverse = AssetIconData('assets/icons/docs-icon-editors-ia-alphabetical-sort-reverse.svg');
   static const AssetIconData docs_icon_editors_ia_animation = AssetIconData('assets/icons/docs-icon-editors-ia-animation.svg');
@@ -38,16 +40,19 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_article_document_filled = AssetIconData('assets/icons/docs-icon-editors-ia-article-document-filled.svg');
   static const AssetIconData docs_icon_article_document_encrypted_20x20 = AssetIconData('assets/icons/docs-icon-article-document-encrypted-20x20.svg');
   static const AssetIconData docs_icon_article_document_encrypted_18x18 = AssetIconData('assets/icons/docs-icon-article-document-encrypted-18x18.svg');
+  static const AssetIconData docs_icon_editors_ia_auto_complete_draw = AssetIconData('assets/icons/docs-icon-editors-ia-auto-complete-draw.svg');
   static const AssetIconData docs_icon_editors_ia_auto_fix_wand = AssetIconData('assets/icons/docs-icon-editors-ia-auto-fix-wand.svg');
   static const AssetIconData docs_icon_editors_ia_bigquery = AssetIconData('assets/icons/docs-icon-editors-ia-bigquery.svg');
   static const AssetIconData docs_icon_editors_ia_bold = AssetIconData('assets/icons/docs-icon-editors-ia-bold.svg');
   static const AssetIconData docs_icon_editors_ia_bookmark = AssetIconData('assets/icons/docs-icon-editors-ia-bookmark.svg');
   static const AssetIconData docs_icon_editors_ia_calendar_event = AssetIconData('assets/icons/docs-icon-editors-ia-calendar-event.svg');
+  static const AssetIconData docs_icon_editors_ia_camera = AssetIconData('assets/icons/docs-icon-editors-ia-camera.svg');
   static const AssetIconData docs_icon_editors_ia_chart = AssetIconData('assets/icons/docs-icon-editors-ia-chart.svg');
   static const AssetIconData docs_icon_editors_ia_chart_horizontal = AssetIconData('assets/icons/docs-icon-editors-ia-chart-horizontal.svg');
   static const AssetIconData docs_icon_editors_ia_change_connector = AssetIconData('assets/icons/docs-icon-editors-ia-change-connector.svg');
   static const AssetIconData docs_icon_editors_ia_checkbox = AssetIconData('assets/icons/docs-icon-editors-ia-checkbox.svg');
   static const AssetIconData docs_icon_editors_ia_chips_people = AssetIconData('assets/icons/docs-icon-editors-ia-chips-people.svg');
+  static const AssetIconData docs_icon_editors_ia_clear_format = AssetIconData('assets/icons/docs-icon-editors-ia-clear-format.svg');
   static const AssetIconData docs_icon_editors_ia_close = AssetIconData('assets/icons/docs-icon-editors-ia-close.svg');
   static const AssetIconData docs_icon_editors_ia_columns = AssetIconData('assets/icons/docs-icon-editors-ia-columns.svg');
   static const AssetIconData docs_icon_editors_ia_colors_fill = AssetIconData('assets/icons/docs-icon-editors-ia-colors-fill.svg');
@@ -55,12 +60,15 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_comment_edit_green700 = AssetIconData('assets/icons/docs-icon-editors-ia-comment-edit-green700.svg');
   static const AssetIconData docs_icon_editors_ia_comment_feedback_warning = AssetIconData('assets/icons/docs-icon-editors-ia-comment-feedback-warning.svg');
   static const AssetIconData docs_icon_editors_ia_comment_lines = AssetIconData('assets/icons/docs-icon-editors-ia-comment-lines.svg');
+  static const AssetIconData docs_icon_editors_ia_compare_arrows = AssetIconData('assets/icons/docs-icon-editors-ia-compare-arrows.svg');
   static const AssetIconData docs_icon_editors_ia_content_copy = AssetIconData('assets/icons/docs-icon-editors-ia-content-copy.svg');
   static const AssetIconData docs_icon_editors_ia_control_point_duplicate = AssetIconData('assets/icons/docs-icon-editors-ia-control-point-duplicate.svg');
   static const AssetIconData docs_icon_editors_ia_crop = AssetIconData('assets/icons/docs-icon-editors-ia-crop.svg');
   static const AssetIconData docs_icon_editors_ia_cut = AssetIconData('assets/icons/docs-icon-editors-ia-cut.svg');
   static const AssetIconData docs_icon_editors_ia_database = AssetIconData('assets/icons/docs-icon-editors-ia-database.svg');
   static const AssetIconData docs_icon_editors_ia_delete_trash = AssetIconData('assets/icons/docs-icon-editors-ia-delete-trash.svg');
+  static const AssetIconData docs_icon_editors_ia_device_hub_connector = AssetIconData('assets/icons/docs-icon-editors-ia-device-hub-connector.svg');
+  static const AssetIconData docs_icon_editors_ia_dictionary = AssetIconData('assets/icons/docs-icon-editors-ia-dictionary.svg');
   static const AssetIconData docs_icon_dictionary_blue = AssetIconData('assets/icons/docs-icon-dictionary-blue.svg');
   static const AssetIconData docs_icon_editors_ia_distribute_shapes_horizontal = AssetIconData('assets/icons/docs-icon-editors-ia-distribute-shapes-horizontal.svg');
   static const AssetIconData docs_icon_editors_ia_distribute_shapes_vertical = AssetIconData('assets/icons/docs-icon-editors-ia-distribute-shapes-vertical.svg');
@@ -89,6 +97,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_filter_funnel = AssetIconData('assets/icons/docs-icon-editors-ia-filter-funnel.svg');
   static const AssetIconData docs_icon_editors_ia_filter_funnel_solid = AssetIconData('assets/icons/docs-icon-editors-ia-filter-funnel-solid.svg');
   static const AssetIconData docs_icon_editors_ia_filter_table_view = AssetIconData('assets/icons/docs-icon-editors-ia-filter-table-view.svg');
+  static const AssetIconData docs_icon_editors_ia_find_in_page = AssetIconData('assets/icons/docs-icon-editors-ia-find-in-page.svg');
   static const AssetIconData docs_icon_editors_ia_find_replace = AssetIconData('assets/icons/docs-icon-editors-ia-find-replace.svg');
   static const AssetIconData docs_icon_editors_ia_flip_to_front = AssetIconData('assets/icons/docs-icon-editors-ia-flip-to-front.svg');
   static const AssetIconData docs_icon_editors_ia_focus_center = AssetIconData('assets/icons/docs-icon-editors-ia-focus-center.svg');
@@ -99,6 +108,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_format_ungroup = AssetIconData('assets/icons/docs-icon-editors-ia-format-ungroup.svg');
   static const AssetIconData docs_icon_editors_ia_font_text_size = AssetIconData('assets/icons/docs-icon-editors-ia-font-text-size.svg');
   static const AssetIconData docs_icon_editors_ia_freeze_row_column = AssetIconData('assets/icons/docs-icon-editors-ia-freeze-row-column.svg');
+  static const AssetIconData docs_icon_editors_ia_fullscreen = AssetIconData('assets/icons/docs-icon-editors-ia-fullscreen.svg');
   static const AssetIconData docs_icon_editors_ia_fullscreen_exit = AssetIconData('assets/icons/docs-icon-editors-ia-fullscreen-exit.svg');
   static const AssetIconData docs_icon_editors_ia_globe = AssetIconData('assets/icons/docs-icon-editors-ia-globe.svg');
   static const AssetIconData docs_icon_editors_ia_grid_goldenratio = AssetIconData('assets/icons/docs-icon-editors-ia-grid-goldenratio.svg');
@@ -131,10 +141,12 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_link = AssetIconData('assets/icons/docs-icon-editors-ia-link.svg');
   static const AssetIconData docs_icon_editors_ia_link_box = AssetIconData('assets/icons/docs-icon-editors-ia-link-box.svg');
   static const AssetIconData docs_icon_editors_ia_link_off = AssetIconData('assets/icons/docs-icon-editors-ia-link-off.svg');
+  static const AssetIconData docs_icon_editors_ia_list_bulleted = AssetIconData('assets/icons/docs-icon-editors-ia-list-bulleted.svg');
   static const AssetIconData docs_icon_editors_ia_list_bulleted_rtl = AssetIconData('assets/icons/docs-icon-editors-ia-list-bulleted-rtl.svg');
   static const AssetIconData docs_icon_editors_ia_list_numbered = AssetIconData('assets/icons/docs-icon-editors-ia-list-numbered.svg');
   static const AssetIconData docs_icon_editors_ia_lock_close = AssetIconData('assets/icons/docs-icon-editors-ia-lock-close.svg');
   static const AssetIconData docs_icon_editors_ia_lock_open = AssetIconData('assets/icons/docs-icon-editors-ia-lock-open.svg');
+  static const AssetIconData docs_icon_editors_ia_logo_forms = AssetIconData('assets/icons/docs-icon-editors-ia-logo-forms.svg');
   static const AssetIconData docs_icon_editors_ia_looker = AssetIconData('assets/icons/docs-icon-editors-ia-looker.svg');
   static const AssetIconData docs_icon_editors_ia_merge = AssetIconData('assets/icons/docs-icon-editors-ia-merge.svg');
   static const AssetIconData docs_icon_editors_ia_microphone = AssetIconData('assets/icons/docs-icon-editors-ia-microphone.svg');
@@ -155,11 +167,13 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_page_break = AssetIconData('assets/icons/docs-icon-editors-ia-page-break.svg');
   static const AssetIconData docs_icon_editors_ia_page_description = AssetIconData('assets/icons/docs-icon-editors-ia-page-description.svg');
   static const AssetIconData docs_icon_editors_ia_page_orientation = AssetIconData('assets/icons/docs-icon-editors-ia-page-orientation.svg');
+  static const AssetIconData docs_icon_editors_ia_paint_palette_theme = AssetIconData('assets/icons/docs-icon-editors-ia-paint-palette-theme.svg');
   static const AssetIconData docs_icon_editors_ia_paintbrush = AssetIconData('assets/icons/docs-icon-editors-ia-paintbrush.svg');
   static const AssetIconData docs_icon_editors_ia_paintbrush_box = AssetIconData('assets/icons/docs-icon-editors-ia-paintbrush-box.svg');
   static const AssetIconData docs_icon_editors_ia_paragraph_right_to_left = AssetIconData('assets/icons/docs-icon-editors-ia-paragraph-right-to-left.svg');
   static const AssetIconData docs_icon_editors_ia_paste = AssetIconData('assets/icons/docs-icon-editors-ia-paste.svg');
   static const AssetIconData docs_icon_editors_ia_paste_no_format = AssetIconData('assets/icons/docs-icon-editors-ia-paste-no-format.svg');
+  static const AssetIconData docs_icon_editors_ia_people_group = AssetIconData('assets/icons/docs-icon-editors-ia-people-group.svg');
   static const AssetIconData docs_icon_editors_ia_performance_meter = AssetIconData('assets/icons/docs-icon-editors-ia-performance-meter.svg');
   static const AssetIconData docs_icon_editors_ia_person = AssetIconData('assets/icons/docs-icon-editors-ia-person.svg');
   static const AssetIconData docs_icon_editors_ia_person_check = AssetIconData('assets/icons/docs-icon-editors-ia-person-check.svg');
@@ -182,11 +196,13 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_question_answer = AssetIconData('assets/icons/docs-icon-editors-ia-question-answer.svg');
   static const AssetIconData docs_icon_editors_ia_quotes = AssetIconData('assets/icons/docs-icon-editors-ia-quotes.svg');
   static const AssetIconData docs_icon_editors_ia_undo_rtl = AssetIconData('assets/icons/docs-icon-editors-ia-undo-rtl.svg');
+  static const AssetIconData docs_icon_editors_ia_redo = AssetIconData('assets/icons/docs-icon-editors-ia-redo.svg');
   static const AssetIconData docs_icon_editors_ia_refresh = AssetIconData('assets/icons/docs-icon-editors-ia-refresh.svg');
   static const AssetIconData docs_icon_editors_ia_rename = AssetIconData('assets/icons/docs-icon-editors-ia-rename.svg');
   static const AssetIconData docs_icon_editors_ia_reset_image = AssetIconData('assets/icons/docs-icon-editors-ia-reset-image.svg');
   static const AssetIconData docs_icon_editors_ia_resize_box = AssetIconData('assets/icons/docs-icon-editors-ia-resize-box.svg');
   static const AssetIconData docs_icon_editors_ia_right_angle = AssetIconData('assets/icons/docs-icon-editors-ia-right-angle.svg');
+  static const AssetIconData docs_icon_editors_ia_rotate_right_clockwise = AssetIconData('assets/icons/docs-icon-editors-ia-rotate-right-clockwise.svg');
   static const AssetIconData docs_icon_editors_ia_save = AssetIconData('assets/icons/docs-icon-editors-ia-save.svg');
   static const AssetIconData docs_icon_editors_ia_school_graduation = AssetIconData('assets/icons/docs-icon-editors-ia-school-graduation.svg');
   static const AssetIconData docs_icon_editors_ia_select_all = AssetIconData('assets/icons/docs-icon-editors-ia-select-all.svg');
@@ -204,6 +220,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_split = AssetIconData('assets/icons/docs-icon-editors-ia-split.svg');
   static const AssetIconData docs_icon_editors_ia_split_columns = AssetIconData('assets/icons/docs-icon-editors-ia-split-columns.svg');
   static const AssetIconData docs_icon_editors_ia_spreadsheet_black = AssetIconData('assets/icons/docs-icon-editors-ia-spreadsheet-black.svg');
+  static const AssetIconData docs_icon_editors_ia_spreadsheet_green = AssetIconData('assets/icons/docs-icon-editors-ia-spreadsheet-green.svg');
   static const AssetIconData docs_icon_editors_ia_square_box_selection = AssetIconData('assets/icons/docs-icon-editors-ia-square-box-selection.svg');
   static const AssetIconData docs_icon_editors_ia_square_grid_view = AssetIconData('assets/icons/docs-icon-editors-ia-square-grid-view.svg');
   static const AssetIconData docs_icon_editors_ia_square_rounded = AssetIconData('assets/icons/docs-icon-editors-ia-square-rounded.svg');
@@ -211,6 +228,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_swap_vertical = AssetIconData('assets/icons/docs-icon-editors-ia-swap-vertical.svg');
   static const AssetIconData docs_icon_editors_ia_sync = AssetIconData('assets/icons/docs-icon-editors-ia-sync.svg');
   static const AssetIconData docs_icon_editors_ia_sync_problem = AssetIconData('assets/icons/docs-icon-editors-ia-sync-problem.svg');
+  static const AssetIconData docs_icon_editors_ia_table_chart = AssetIconData('assets/icons/docs-icon-editors-ia-table-chart.svg');
   static const AssetIconData docs_icon_editors_ia_table_check = AssetIconData('assets/icons/docs-icon-editors-ia-table-check.svg');
   static const AssetIconData docs_icon_editors_ia_table_tab = AssetIconData('assets/icons/docs-icon-editors-ia-table-tab.svg');
   static const AssetIconData docs_icon_editors_ia_text_fields = AssetIconData('assets/icons/docs-icon-editors-ia-text-fields.svg');
@@ -229,6 +247,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_editors_ia_trending_up_arrow = AssetIconData('assets/icons/docs-icon-editors-ia-trending-up-arrow.svg');
   static const AssetIconData docs_icon_editors_ia_triangle_problem_warning = AssetIconData('assets/icons/docs-icon-editors-ia-triangle-problem-warning.svg');
   static const AssetIconData docs_icon_editors_ia_underline = AssetIconData('assets/icons/docs-icon-editors-ia-underline.svg');
+  static const AssetIconData docs_icon_editors_ia_redo_rtl = AssetIconData('assets/icons/docs-icon-editors-ia-redo-rtl.svg');
   static const AssetIconData docs_icon_editors_ia_undo = AssetIconData('assets/icons/docs-icon-editors-ia-undo.svg');
   static const AssetIconData docs_icon_editors_ia_update_clock = AssetIconData('assets/icons/docs-icon-editors-ia-update-clock.svg');
   static const AssetIconData docs_icon_editors_ia_upload = AssetIconData('assets/icons/docs-icon-editors-ia-upload.svg');
@@ -249,8 +268,13 @@ class SheetIcons {
   static const AssetIconData docs_icon_save = AssetIconData('assets/icons/docs-icon-save.svg');
   static const AssetIconData docs_icon_print = AssetIconData('assets/icons/docs-icon-print.svg');
   static const AssetIconData docs_icon_print_20 = AssetIconData('assets/icons/docs-icon-print-20.svg');
+  static const AssetIconData docs_icon_undo = AssetIconData('assets/icons/docs-icon-undo.svg');
+  static const AssetIconData docs_icon_redo_rtl = AssetIconData('assets/icons/docs-icon-redo-rtl.svg');
   static const AssetIconData docs_icon_undo_20 = AssetIconData('assets/icons/docs-icon-undo-20.svg');
+  static const AssetIconData docs_icon_redo_rtl_20 = AssetIconData('assets/icons/docs-icon-redo-rtl-20.svg');
+  static const AssetIconData docs_icon_redo = AssetIconData('assets/icons/docs-icon-redo.svg');
   static const AssetIconData docs_icon_undo_rtl = AssetIconData('assets/icons/docs-icon-undo-rtl.svg');
+  static const AssetIconData docs_icon_redo_20 = AssetIconData('assets/icons/docs-icon-redo-20.svg');
   static const AssetIconData docs_icon_undo_rtl_20 = AssetIconData('assets/icons/docs-icon-undo-rtl-20.svg');
   static const AssetIconData docs_icon_copy = AssetIconData('assets/icons/docs-icon-copy.svg');
   static const AssetIconData docs_icon_copy_24 = AssetIconData('assets/icons/docs-icon-copy-24.svg');
@@ -258,6 +282,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_paste = AssetIconData('assets/icons/docs-icon-paste.svg');
   static const AssetIconData docs_icon_document = AssetIconData('assets/icons/docs-icon-document.svg');
   static const AssetIconData docs_icon_punch = AssetIconData('assets/icons/docs-icon-punch.svg');
+  static const AssetIconData docs_icon_presentation = AssetIconData('assets/icons/docs-icon-presentation.svg');
   static const AssetIconData docs_icon_presentation_grey900 = AssetIconData('assets/icons/docs-icon-presentation-grey900.svg');
   static const AssetIconData docs_icon_presentation_no_fill_18x18 = AssetIconData('assets/icons/docs-icon-presentation-no-fill-18x18.svg');
   static const AssetIconData docs_icon_presentation_encrypted_no_fill_18x18 = AssetIconData('assets/icons/docs-icon-presentation-encrypted-no-fill-18x18.svg');
@@ -265,9 +290,11 @@ class SheetIcons {
   static const AssetIconData docs_icon_spreadsheet_no_fill_18x18 = AssetIconData('assets/icons/docs-icon-spreadsheet-no-fill-18x18.svg');
   static const AssetIconData docs_icon_spreadsheet_encrypted_no_fill_18x18 = AssetIconData('assets/icons/docs-icon-spreadsheet-encrypted-no-fill-18x18.svg');
   static const AssetIconData docs_icon_form = AssetIconData('assets/icons/docs-icon-form.svg');
+  static const AssetIconData docs_icon_form_black = AssetIconData('assets/icons/docs-icon-form-black.svg');
   static const AssetIconData docs_icon_drawing = AssetIconData('assets/icons/docs-icon-drawing.svg');
   static const AssetIconData docs_icon_site = AssetIconData('assets/icons/docs-icon-site.svg');
   static const AssetIconData docs_icon_drawing_black = AssetIconData('assets/icons/docs-icon-drawing-black.svg');
+  static const AssetIconData docs_icon_drawing_black_24 = AssetIconData('assets/icons/docs-icon-drawing-black-24.svg');
   static const AssetIconData docs_icon_emoji_objects_outline_24x24 = AssetIconData('assets/icons/docs-icon-emoji-objects-outline-24x24.svg');
   static const AssetIconData docs_icon_excel = AssetIconData('assets/icons/docs-icon-excel.svg');
   static const AssetIconData docs_icon_excel_encrypted_18x18 = AssetIconData('assets/icons/docs-icon-excel-encrypted-18x18.svg');
@@ -287,6 +314,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_gif_box_18x18 = AssetIconData('assets/icons/docs-icon-gif-box-18x18.svg');
   static const AssetIconData docs_icon_gif_box_24x24 = AssetIconData('assets/icons/docs-icon-gif-box-24x24.svg');
   static const AssetIconData docs_icon_image = AssetIconData('assets/icons/docs-icon-image.svg');
+  static const AssetIconData docs_icon_clipboard = AssetIconData('assets/icons/docs-icon-clipboard.svg');
   static const AssetIconData docs_icon_bold = AssetIconData('assets/icons/docs-icon-bold.svg');
   static const AssetIconData docs_icon_bold_20 = AssetIconData('assets/icons/docs-icon-bold-20.svg');
   static const AssetIconData docs_icon_italic = AssetIconData('assets/icons/docs-icon-italic.svg');
@@ -296,10 +324,12 @@ class SheetIcons {
   static const AssetIconData docs_icon_align_left = AssetIconData('assets/icons/docs-icon-align-left.svg');
   static const AssetIconData docs_icon_align_left_20 = AssetIconData('assets/icons/docs-icon-align-left-20.svg');
   static const AssetIconData docs_icon_align_center = AssetIconData('assets/icons/docs-icon-align-center.svg');
+  static const AssetIconData docs_icon_align_center_20 = AssetIconData('assets/icons/docs-icon-align-center-20.svg');
   static const AssetIconData docs_icon_align_right = AssetIconData('assets/icons/docs-icon-align-right.svg');
   static const AssetIconData docs_icon_align_right_20 = AssetIconData('assets/icons/docs-icon-align-right-20.svg');
   static const AssetIconData docs_icon_align_justify = AssetIconData('assets/icons/docs-icon-align-justify.svg');
   static const AssetIconData docs_icon_align_justify_20 = AssetIconData('assets/icons/docs-icon-align-justify-20.svg');
+  static const AssetIconData docs_icon_align_shapes_left = AssetIconData('assets/icons/docs-icon-align-shapes-left.svg');
   static const AssetIconData docs_icon_align_shapes_center = AssetIconData('assets/icons/docs-icon-align-shapes-center.svg');
   static const AssetIconData docs_icon_align_shapes_right = AssetIconData('assets/icons/docs-icon-align-shapes-right.svg');
   static const AssetIconData docs_icon_align_shapes_top = AssetIconData('assets/icons/docs-icon-align-shapes-top.svg');
@@ -314,6 +344,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_valign_middle_20 = AssetIconData('assets/icons/docs-icon-valign-middle-20.svg');
   static const AssetIconData docs_icon_valign_bottom = AssetIconData('assets/icons/docs-icon-valign-bottom.svg');
   static const AssetIconData docs_icon_valign_bottom_20 = AssetIconData('assets/icons/docs-icon-valign-bottom-20.svg');
+  static const AssetIconData docs_icon_list_number = AssetIconData('assets/icons/docs-icon-list-number.svg');
   static const AssetIconData docs_icon_list_number_20 = AssetIconData('assets/icons/docs-icon-list-number-20.svg');
   static const AssetIconData docs_icon_list_number_24 = AssetIconData('assets/icons/docs-icon-list-number-24.svg');
   static const AssetIconData docs_icon_list_numbered_54_30 = AssetIconData('assets/icons/docs-icon-list-numbered-54-30.svg');
@@ -343,6 +374,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_add_trendline = AssetIconData('assets/icons/docs-icon-add-trendline.svg');
   static const AssetIconData docs_icon_data_label = AssetIconData('assets/icons/docs-icon-data-label.svg');
   static const AssetIconData docs_icon_next = AssetIconData('assets/icons/docs-icon-next.svg');
+  static const AssetIconData docs_icon_previous = AssetIconData('assets/icons/docs-icon-previous.svg');
   static const AssetIconData docs_icon_no_color = AssetIconData('assets/icons/docs-icon-no-color.svg');
   static const AssetIconData docs_icon_fill_color = AssetIconData('assets/icons/docs-icon-fill-color.svg');
   static const AssetIconData docs_icon_fill_color_20 = AssetIconData('assets/icons/docs-icon-fill-color-20.svg');
@@ -369,11 +401,13 @@ class SheetIcons {
   static const AssetIconData docs_icon_chart = AssetIconData('assets/icons/docs-icon-chart.svg');
   static const AssetIconData docs_icon_insert_chart_20 = AssetIconData('assets/icons/docs-icon-insert-chart-20.svg');
   static const AssetIconData docs_icon_chart_24 = AssetIconData('assets/icons/docs-icon-chart-24.svg');
+  static const AssetIconData docs_icon_list_number_rtl = AssetIconData('assets/icons/docs-icon-list-number-rtl.svg');
   static const AssetIconData docs_icon_list_number_rtl_20 = AssetIconData('assets/icons/docs-icon-list-number-rtl-20.svg');
   static const AssetIconData docs_icon_list_bullet_rtl = AssetIconData('assets/icons/docs-icon-list-bullet-rtl.svg');
   static const AssetIconData docs_icon_list_bullet_rtl_20 = AssetIconData('assets/icons/docs-icon-list-bullet-rtl-20.svg');
   static const AssetIconData docs_icon_indent_rtl = AssetIconData('assets/icons/docs-icon-indent-rtl.svg');
   static const AssetIconData docs_icon_indent_rtl_20 = AssetIconData('assets/icons/docs-icon-indent-rtl-20.svg');
+  static const AssetIconData docs_icon_outdent_rtl = AssetIconData('assets/icons/docs-icon-outdent-rtl.svg');
   static const AssetIconData docs_icon_outdent_rtl_20 = AssetIconData('assets/icons/docs-icon-outdent-rtl-20.svg');
   static const AssetIconData docs_icon_line_spacing_rtl = AssetIconData('assets/icons/docs-icon-line-spacing-rtl.svg');
   static const AssetIconData docs_icon_line_spacing_rtl_20 = AssetIconData('assets/icons/docs-icon-line-spacing-rtl-20.svg');
@@ -392,6 +426,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_strikethrough_20 = AssetIconData('assets/icons/docs-icon-strikethrough-20.svg');
   static const AssetIconData docs_icon_clear_formatting = AssetIconData('assets/icons/docs-icon-clear-formatting.svg');
   static const AssetIconData docs_icon_link = AssetIconData('assets/icons/docs-icon-link.svg');
+  static const AssetIconData docs_icon_link_20 = AssetIconData('assets/icons/docs-icon-link-20.svg');
   static const AssetIconData docs_icon_special_character = AssetIconData('assets/icons/docs-icon-special-character.svg');
   static const AssetIconData docs_icon_special_character_24 = AssetIconData('assets/icons/docs-icon-special-character-24.svg');
   static const AssetIconData docs_icon_close_white = AssetIconData('assets/icons/docs-icon-close-white.svg');
@@ -460,6 +495,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_drive_large = AssetIconData('assets/icons/docs-icon-drive-large.svg');
   static const AssetIconData docs_icon_back = AssetIconData('assets/icons/docs-icon-back.svg');
   static const AssetIconData docs_icon_back_rtl = AssetIconData('assets/icons/docs-icon-back-rtl.svg');
+  static const AssetIconData docs_icon_arrow_more = AssetIconData('assets/icons/docs-icon-arrow-more.svg');
   static const AssetIconData docs_icon_arrow_more_rtl = AssetIconData('assets/icons/docs-icon-arrow-more-rtl.svg');
   static const AssetIconData docs_icon_search_this_document = AssetIconData('assets/icons/docs-icon-search-this-document.svg');
   static const AssetIconData docs_icon_arrow_dropdown_p40 = AssetIconData('assets/icons/docs-icon-arrow-dropdown-p40.svg');
@@ -487,6 +523,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_enter_compact = AssetIconData('assets/icons/docs-icon-enter-compact.svg');
   static const AssetIconData docs_icon_exit_compact = AssetIconData('assets/icons/docs-icon-exit-compact.svg');
   static const AssetIconData docs_icon_mode_edit = AssetIconData('assets/icons/docs-icon-mode-edit.svg');
+  static const AssetIconData docs_icon_mode_edit_blue700 = AssetIconData('assets/icons/docs-icon-mode-edit-blue700.svg');
   static const AssetIconData docs_icon_mode_view = AssetIconData('assets/icons/docs-icon-mode-view.svg');
   static const AssetIconData docs_icon_chat = AssetIconData('assets/icons/docs-icon-chat.svg');
   static const AssetIconData docs_icon_chat_bubble_grey900 = AssetIconData('assets/icons/docs-icon-chat-bubble-grey900.svg');
@@ -509,6 +546,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_label_slant = AssetIconData('assets/icons/docs-icon-label-slant.svg');
   static const AssetIconData docs_icon_point_size = AssetIconData('assets/icons/docs-icon-point-size.svg');
   static const AssetIconData docs_icon_question = AssetIconData('assets/icons/docs-icon-question.svg');
+  static const AssetIconData docs_icon_quote = AssetIconData('assets/icons/docs-icon-quote.svg');
   static const AssetIconData docs_icon_vertical_gridlines = AssetIconData('assets/icons/docs-icon-vertical-gridlines.svg');
   static const AssetIconData docs_icon_left_axis = AssetIconData('assets/icons/docs-icon-left-axis.svg');
   static const AssetIconData docs_icon_right_axis = AssetIconData('assets/icons/docs-icon-right-axis.svg');
@@ -518,7 +556,9 @@ class SheetIcons {
   static const AssetIconData docs_icon_drag_move = AssetIconData('assets/icons/docs-icon-drag-move.svg');
   static const AssetIconData docs_icon_col_dragger = AssetIconData('assets/icons/docs-icon-col-dragger.svg');
   static const AssetIconData docs_icon_chrome_store = AssetIconData('assets/icons/docs-icon-chrome-store.svg');
+  static const AssetIconData docs_icon_fit_area = AssetIconData('assets/icons/docs-icon-fit-area.svg');
   static const AssetIconData docs_icon_zoom_in_20 = AssetIconData('assets/icons/docs-icon-zoom-in-20.svg');
+  static const AssetIconData docs_icon_zoom_out = AssetIconData('assets/icons/docs-icon-zoom-out.svg');
   static const AssetIconData docs_icon_zoom_tool = AssetIconData('assets/icons/docs-icon-zoom-tool.svg');
   static const AssetIconData docs_icon_download = AssetIconData('assets/icons/docs-icon-download.svg');
   static const AssetIconData docs_icon_downloading_20x20 = AssetIconData('assets/icons/docs-icon-downloading-20x20.svg');
@@ -533,6 +573,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_play_filled_24 = AssetIconData('assets/icons/docs-icon-play-filled-24.svg');
   static const AssetIconData docs_icon_play_filled_error_36 = AssetIconData('assets/icons/docs-icon-play-filled-error-36.svg');
   static const AssetIconData docs_icon_playhead = AssetIconData('assets/icons/docs-icon-playhead.svg');
+  static const AssetIconData docs_icon_playhead_rtl = AssetIconData('assets/icons/docs-icon-playhead-rtl.svg');
   static const AssetIconData docs_icon_unsupported = AssetIconData('assets/icons/docs-icon-unsupported.svg');
   static const AssetIconData docs_icon_calendar = AssetIconData('assets/icons/docs-icon-calendar.svg');
   static const AssetIconData docs_icon_calendar_busy_yellow900 = AssetIconData('assets/icons/docs-icon-calendar-busy-yellow900.svg');
@@ -562,6 +603,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_scale_type = AssetIconData('assets/icons/docs-icon-scale-type.svg');
   static const AssetIconData docs_icon_text_type = AssetIconData('assets/icons/docs-icon-text-type.svg');
   static const AssetIconData docs_icon_time_type = AssetIconData('assets/icons/docs-icon-time-type.svg');
+  static const AssetIconData docs_icon_timeline_24 = AssetIconData('assets/icons/docs-icon-timeline-24.svg');
   static const AssetIconData docs_icon_insert_text_block = AssetIconData('assets/icons/docs-icon-insert-text-block.svg');
   static const AssetIconData docs_icon_accepting_responses_on = AssetIconData('assets/icons/docs-icon-accepting-responses-on.svg');
   static const AssetIconData docs_icon_accepting_responses_on_white = AssetIconData('assets/icons/docs-icon-accepting-responses-on-white.svg');
@@ -583,9 +625,11 @@ class SheetIcons {
   static const AssetIconData docs_icon_reset_image = AssetIconData('assets/icons/docs-icon-reset-image.svg');
   static const AssetIconData docs_icon_reset_image_20 = AssetIconData('assets/icons/docs-icon-reset-image-20.svg');
   static const AssetIconData docs_icon_r_squared = AssetIconData('assets/icons/docs-icon-r-squared.svg');
+  static const AssetIconData docs_icon_graph_legend = AssetIconData('assets/icons/docs-icon-graph-legend.svg');
   static const AssetIconData docs_icon_cast = AssetIconData('assets/icons/docs-icon-cast.svg');
   static const AssetIconData docs_icon_wrap_overflow = AssetIconData('assets/icons/docs-icon-wrap-overflow.svg');
   static const AssetIconData docs_icon_wrap_wrap = AssetIconData('assets/icons/docs-icon-wrap-wrap.svg');
+  static const AssetIconData docs_icon_wrap_clip = AssetIconData('assets/icons/docs-icon-wrap-clip.svg');
   static const AssetIconData docs_icon_highlights = AssetIconData('assets/icons/docs-icon-highlights.svg');
   static const AssetIconData docs_icon_green_back = AssetIconData('assets/icons/docs-icon-green-back.svg');
   static const AssetIconData docs_icon_arrow_back_white = AssetIconData('assets/icons/docs-icon-arrow-back-white.svg');
@@ -594,9 +638,11 @@ class SheetIcons {
   static const AssetIconData docs_icon_highlight_green = AssetIconData('assets/icons/docs-icon-highlight-green.svg');
   static const AssetIconData docs_icon_equalizer = AssetIconData('assets/icons/docs-icon-equalizer.svg');
   static const AssetIconData docs_icon_explore_24 = AssetIconData('assets/icons/docs-icon-explore-24.svg');
+  static const AssetIconData docs_icon_explore_black = AssetIconData('assets/icons/docs-icon-explore-black.svg');
   static const AssetIconData docs_icon_explore_black_padded = AssetIconData('assets/icons/docs-icon-explore-black-padded.svg');
   static const AssetIconData docs_icon_explore_green = AssetIconData('assets/icons/docs-icon-explore-green.svg');
   static const AssetIconData docs_icon_explore_white = AssetIconData('assets/icons/docs-icon-explore-white.svg');
+  static const AssetIconData docs_icon_insert_autovis_chart = AssetIconData('assets/icons/docs-icon-insert-autovis-chart.svg');
   static const AssetIconData docs_icon_insert_autovis_chart_white = AssetIconData('assets/icons/docs-icon-insert-autovis-chart-white.svg');
   static const AssetIconData docs_icon_zoom_in = AssetIconData('assets/icons/docs-icon-zoom-in.svg');
   static const AssetIconData docs_icon_thumb_up = AssetIconData('assets/icons/docs-icon-thumb-up.svg');
@@ -606,6 +652,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_dlp_warning = AssetIconData('assets/icons/docs-icon-dlp-warning.svg');
   static const AssetIconData docs_icon_dogfood = AssetIconData('assets/icons/docs-icon-dogfood.svg');
   static const AssetIconData docs_icon_add_to_drive = AssetIconData('assets/icons/docs-icon-add-to-drive.svg');
+  static const AssetIconData docs_icon_paste_without_formatting = AssetIconData('assets/icons/docs-icon-paste-without-formatting.svg');
   static const AssetIconData docs_icon_qanda = AssetIconData('assets/icons/docs-icon-qanda.svg');
   static const AssetIconData docs_icon_update_chart = AssetIconData('assets/icons/docs-icon-update-chart.svg');
   static const AssetIconData docs_icon_arrow_back_dark = AssetIconData('assets/icons/docs-icon-arrow-back-dark.svg');
@@ -652,6 +699,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_restore = AssetIconData('assets/icons/docs-icon-restore.svg');
   static const AssetIconData docs_icon_paragraph_border_between = AssetIconData('assets/icons/docs-icon-paragraph-border-between.svg');
   static const AssetIconData docs_icon_paragraph_border_bottom = AssetIconData('assets/icons/docs-icon-paragraph-border-bottom.svg');
+  static const AssetIconData docs_icon_paragraph_border_left = AssetIconData('assets/icons/docs-icon-paragraph-border-left.svg');
   static const AssetIconData docs_icon_paragraph_border_right = AssetIconData('assets/icons/docs-icon-paragraph-border-right.svg');
   static const AssetIconData docs_icon_paragraph_border_top = AssetIconData('assets/icons/docs-icon-paragraph-border-top.svg');
   static const AssetIconData docs_icon_diagram_white = AssetIconData('assets/icons/docs-icon-diagram-white.svg');
@@ -672,6 +720,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_mask = AssetIconData('assets/icons/docs-icon-mask.svg');
   static const AssetIconData docs_icon_visibility = AssetIconData('assets/icons/docs-icon-visibility.svg');
   static const AssetIconData docs_icon_visibility_off = AssetIconData('assets/icons/docs-icon-visibility-off.svg');
+  static const AssetIconData docs_icon_volume_up = AssetIconData('assets/icons/docs-icon-volume-up.svg');
   static const AssetIconData docs_icon_volume_up_filled_36 = AssetIconData('assets/icons/docs-icon-volume-up-filled-36.svg');
   static const AssetIconData docs_icon_camera = AssetIconData('assets/icons/docs-icon-camera.svg');
   static const AssetIconData docs_icon_camera_outline_24 = AssetIconData('assets/icons/docs-icon-camera-outline-24.svg');
@@ -700,6 +749,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_comment_outline_20 = AssetIconData('assets/icons/docs-icon-comment-outline-20.svg');
   static const AssetIconData docs_icon_comment_outline_24 = AssetIconData('assets/icons/docs-icon-comment-outline-24.svg');
   static const AssetIconData docs_icon_edit_outline = AssetIconData('assets/icons/docs-icon-edit-outline.svg');
+  static const AssetIconData docs_icon_edit_outline_20 = AssetIconData('assets/icons/docs-icon-edit-outline-20.svg');
   static const AssetIconData docs_icon_edit_outline_24 = AssetIconData('assets/icons/docs-icon-edit-outline-24.svg');
   static const AssetIconData docs_icon_error_outline_24 = AssetIconData('assets/icons/docs-icon-error-outline-24.svg');
   static const AssetIconData docs_icon_error_outline_20 = AssetIconData('assets/icons/docs-icon-error-outline-20.svg');
@@ -723,11 +773,15 @@ class SheetIcons {
   static const AssetIconData docs_icon_present_to_all_24_white = AssetIconData('assets/icons/docs-icon-present-to-all-24-white.svg');
   static const AssetIconData docs_icon_present_to_all_p40_24x24 = AssetIconData('assets/icons/docs-icon-present-to-all-p40-24x24.svg');
   static const AssetIconData docs_icon_chevron_left_grey800_20 = AssetIconData('assets/icons/docs-icon-chevron-left-grey800-20.svg');
+  static const AssetIconData docs_icon_chevron_left_grey600_20 = AssetIconData('assets/icons/docs-icon-chevron-left-grey600-20.svg');
+  static const AssetIconData docs_icon_chevron_left_grey500_24 = AssetIconData('assets/icons/docs-icon-chevron-left-grey500-24.svg');
+  static const AssetIconData docs_icon_chevron_right_grey500_24 = AssetIconData('assets/icons/docs-icon-chevron-right-grey500-24.svg');
   static const AssetIconData docs_icon_chevron_left_24 = AssetIconData('assets/icons/docs-icon-chevron-left-24.svg');
   static const AssetIconData docs_icon_chevron_left_white_24 = AssetIconData('assets/icons/docs-icon-chevron-left-white-24.svg');
   static const AssetIconData docs_icon_chevron_left_sm_white_24 = AssetIconData('assets/icons/docs-icon-chevron-left-sm-white-24.svg');
   static const AssetIconData docs_icon_chevron_right_24 = AssetIconData('assets/icons/docs-icon-chevron-right-24.svg');
   static const AssetIconData docs_icon_chevron_right_white_24 = AssetIconData('assets/icons/docs-icon-chevron-right-white-24.svg');
+  static const AssetIconData docs_icon_chevron_right_sm_white_24 = AssetIconData('assets/icons/docs-icon-chevron-right-sm-white-24.svg');
   static const AssetIconData docs_icon_chevron_down_24 = AssetIconData('assets/icons/docs-icon-chevron-down-24.svg');
   static const AssetIconData docs_icon_chevron_up_24 = AssetIconData('assets/icons/docs-icon-chevron-up-24.svg');
   static const AssetIconData docs_icon_delete_24 = AssetIconData('assets/icons/docs-icon-delete-24.svg');
@@ -740,7 +794,10 @@ class SheetIcons {
   static const AssetIconData docs_icon_notifications_off_24 = AssetIconData('assets/icons/docs-icon-notifications-off-24.svg');
   static const AssetIconData docs_icon_notifications_20 = AssetIconData('assets/icons/docs-icon-notifications-20.svg');
   static const AssetIconData docs_icon_spellcheck = AssetIconData('assets/icons/docs-icon-spellcheck.svg');
+  static const AssetIconData docs_icon_spellcheck_20 = AssetIconData('assets/icons/docs-icon-spellcheck-20.svg');
+  static const AssetIconData docs_icon_spellcheck_24x24 = AssetIconData('assets/icons/docs-icon-spellcheck-24x24.svg');
   static const AssetIconData docs_icon_add_item = AssetIconData('assets/icons/docs-icon-add-item.svg');
+  static const AssetIconData docs_icon_datasheet_24_grey800 = AssetIconData('assets/icons/docs-icon-datasheet-24-grey800.svg');
   static const AssetIconData docs_icon_undo_autocorrect = AssetIconData('assets/icons/docs-icon-undo-autocorrect.svg');
   static const AssetIconData docs_icon_spellbubble_feedback_16 = AssetIconData('assets/icons/docs-icon-spellbubble-feedback-16.svg');
   static const AssetIconData docs_icon_spellbubble_ignore_16 = AssetIconData('assets/icons/docs-icon-spellbubble-ignore-16.svg');
@@ -764,12 +821,14 @@ class SheetIcons {
   static const AssetIconData docs_icon_approvals_lock_open = AssetIconData('assets/icons/docs-icon-approvals-lock-open.svg');
   static const AssetIconData docs_icon_approvals_stamp = AssetIconData('assets/icons/docs-icon-approvals-stamp.svg');
   static const AssetIconData docs_icon_approvals_stamp_24 = AssetIconData('assets/icons/docs-icon-approvals-stamp-24.svg');
+  static const AssetIconData docs_icon_recall_24 = AssetIconData('assets/icons/docs-icon-recall-24.svg');
   static const AssetIconData docs_icon_feedback = AssetIconData('assets/icons/docs-icon-feedback.svg');
   static const AssetIconData docs_icon_offline_cloud_24 = AssetIconData('assets/icons/docs-icon-offline-cloud-24.svg');
   static const AssetIconData docs_icon_arrow_down = AssetIconData('assets/icons/docs-icon-arrow-down.svg');
   static const AssetIconData docs_icon_arrow_up = AssetIconData('assets/icons/docs-icon-arrow-up.svg');
   static const AssetIconData docs_icon_avatar_grey600 = AssetIconData('assets/icons/docs-icon-avatar-grey600.svg');
   static const AssetIconData docs_icon_description_grey600 = AssetIconData('assets/icons/docs-icon-description-grey600.svg');
+  static const AssetIconData docs_icon_popout_below = AssetIconData('assets/icons/docs-icon-popout-below.svg');
   static const AssetIconData docs_icon_group = AssetIconData('assets/icons/docs-icon-group.svg');
   static const AssetIconData docs_icon_revisions_grey600 = AssetIconData('assets/icons/docs-icon-revisions-grey600.svg');
   static const AssetIconData docs_icon_popout_viewer_24_white = AssetIconData('assets/icons/docs-icon-popout-viewer-24-white.svg');
@@ -778,6 +837,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_open_in_external_24_white = AssetIconData('assets/icons/docs-icon-open-in-external-24-white.svg');
   static const AssetIconData docs_icon_copy_24_white = AssetIconData('assets/icons/docs-icon-copy-24-white.svg');
   static const AssetIconData docs_icon_sync = AssetIconData('assets/icons/docs-icon-sync.svg');
+  static const AssetIconData docs_icon_search_insights = AssetIconData('assets/icons/docs-icon-search-insights.svg');
   static const AssetIconData docs_icon_logo_docs_40px = AssetIconData('assets/icons/docs-icon-logo-docs-40px.svg');
   static const AssetIconData docs_icon_logo_sheets_40px = AssetIconData('assets/icons/docs-icon-logo-sheets-40px.svg');
   static const AssetIconData docs_icon_logo_slides_40px = AssetIconData('assets/icons/docs-icon-logo-slides-40px.svg');
@@ -790,6 +850,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_logo_drawings_36 = AssetIconData('assets/icons/docs-icon-logo-drawings-36.svg');
   static const AssetIconData docs_icon_text_wrapping_wrap_72 = AssetIconData('assets/icons/docs-icon-text-wrapping-wrap-72.svg');
   static const AssetIconData docs_icon_text_wrapping_break_72 = AssetIconData('assets/icons/docs-icon-text-wrapping-break-72.svg');
+  static const AssetIconData docs_icon_text_wrapping_inline_72 = AssetIconData('assets/icons/docs-icon-text-wrapping-inline-72.svg');
   static const AssetIconData docs_icon_text_wrapping_above_72 = AssetIconData('assets/icons/docs-icon-text-wrapping-above-72.svg');
   static const AssetIconData docs_icon_text_wrapping_behind_72 = AssetIconData('assets/icons/docs-icon-text-wrapping-behind-72.svg');
   static const AssetIconData docs_icon_text_wrapping_wrap_text = AssetIconData('assets/icons/docs-icon-text-wrapping-wrap-text.svg');
@@ -837,6 +898,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_warning_24 = AssetIconData('assets/icons/docs-icon-warning-24.svg');
   static const AssetIconData docs_icon_warning_filled_red700 = AssetIconData('assets/icons/docs-icon-warning-filled-red700.svg');
   static const AssetIconData docs_icon_watermark = AssetIconData('assets/icons/docs-icon-watermark.svg');
+  static const AssetIconData docs_icon_watermark_24 = AssetIconData('assets/icons/docs-icon-watermark-24.svg');
   static const AssetIconData docs_icon_info = AssetIconData('assets/icons/docs-icon-info.svg');
   static const AssetIconData docs_icon_info_blue800 = AssetIconData('assets/icons/docs-icon-info-blue800.svg');
   static const AssetIconData docs_icon_info_p40 = AssetIconData('assets/icons/docs-icon-info-p40.svg');
@@ -846,6 +908,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_info_14 = AssetIconData('assets/icons/docs-icon-info_14.svg');
   static const AssetIconData docs_icon_info_24 = AssetIconData('assets/icons/docs-icon-info-24.svg');
   static const AssetIconData docs_icon_info_outline_grey = AssetIconData('assets/icons/docs-icon-info-outline-grey.svg');
+  static const AssetIconData docs_icon_search_20 = AssetIconData('assets/icons/docs-icon-search-20.svg');
   static const AssetIconData docs_icon_search_24 = AssetIconData('assets/icons/docs-icon-search-24.svg');
   static const AssetIconData docs_icon_sync_24 = AssetIconData('assets/icons/docs-icon-sync-24.svg');
   static const AssetIconData docs_icon_add = AssetIconData('assets/icons/docs-icon-add.svg');
@@ -872,19 +935,24 @@ class SheetIcons {
   static const AssetIconData docs_icon_sync_pending_24 = AssetIconData('assets/icons/docs-icon-sync-pending-24.svg');
   static const AssetIconData docs_icon_check_24 = AssetIconData('assets/icons/docs-icon-check-24.svg');
   static const AssetIconData docs_icon_check_24_white = AssetIconData('assets/icons/docs-icon-check-24-white.svg');
+  static const AssetIconData docs_icon_check_n10_24x24 = AssetIconData('assets/icons/docs-icon-check-n10-24x24.svg');
   static const AssetIconData docs_icon_close_n10_24x24 = AssetIconData('assets/icons/docs-icon-close-n10-24x24.svg');
   static const AssetIconData docs_icon_check_p40_24x24 = AssetIconData('assets/icons/docs-icon-check-p40-24x24.svg');
   static const AssetIconData docs_icon_close_p40_24x24 = AssetIconData('assets/icons/docs-icon-close-p40-24x24.svg');
   static const AssetIconData docs_icon_instant_comment_24 = AssetIconData('assets/icons/docs-icon-instant-comment-24.svg');
   static const AssetIconData docs_icon_instant_comment_blue600_24 = AssetIconData('assets/icons/docs-icon-instant-comment-blue600-24.svg');
+  static const AssetIconData docs_icon_instant_comment_blue40_24 = AssetIconData('assets/icons/docs-icon-instant-comment-blue40-24.svg');
   static const AssetIconData docs_icon_instant_suggest_24 = AssetIconData('assets/icons/docs-icon-instant-suggest-24.svg');
   static const AssetIconData docs_icon_instant_suggest_green600_24 = AssetIconData('assets/icons/docs-icon-instant-suggest-green600-24.svg');
   static const AssetIconData docs_icon_instant_suggest_blue40_24 = AssetIconData('assets/icons/docs-icon-instant-suggest-blue40-24.svg');
   static const AssetIconData docs_icon_inventory_24 = AssetIconData('assets/icons/docs-icon-inventory-24.svg');
+  static const AssetIconData docs_icon_inventory = AssetIconData('assets/icons/docs-icon-inventory.svg');
   static const AssetIconData docs_icon_timeline = AssetIconData('assets/icons/docs-icon-timeline.svg');
   static const AssetIconData docs_icon_timeline_20x20 = AssetIconData('assets/icons/docs-icon-timeline-20x20.svg');
   static const AssetIconData docs_icon_timeline_p40_20x20 = AssetIconData('assets/icons/docs-icon-timeline-p40-20x20.svg');
+  static const AssetIconData docs_icon_table_chart_20x20 = AssetIconData('assets/icons/docs-icon-table-chart-20x20.svg');
   static const AssetIconData docs_icon_docos_continue_the_conversation_24 = AssetIconData('assets/icons/docs-icon-docos-continue-the-conversation-24.svg');
+  static const AssetIconData docs_icon_locked_white = AssetIconData('assets/icons/docs-icon-locked-white.svg');
   static const AssetIconData docs_icon_locked_outline = AssetIconData('assets/icons/docs-icon-locked-outline.svg');
   static const AssetIconData docs_icon_youtube_red = AssetIconData('assets/icons/docs-icon-youtube-red.svg');
   static const AssetIconData docs_icon_unarchive_24 = AssetIconData('assets/icons/docs-icon-unarchive-24.svg');
@@ -980,6 +1048,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_loop_24_red700 = AssetIconData('assets/icons/docs-icon-loop-24-red700.svg');
   static const AssetIconData docs_icon_send_to_email_24 = AssetIconData('assets/icons/docs-icon-send-to-email-24.svg');
   static const AssetIconData docs_icon_send_to_email_20 = AssetIconData('assets/icons/docs-icon-send-to-email-20.svg');
+  static const AssetIconData docs_icon_send_to_email_p40_20 = AssetIconData('assets/icons/docs-icon-send-to-email-p40-20.svg');
   static const AssetIconData docs_icon_play_filled_20_yellow600 = AssetIconData('assets/icons/docs-icon-play-filled-20-yellow600.svg');
   static const AssetIconData docs_icon_record_voice_over = AssetIconData('assets/icons/docs-icon-record-voice-over.svg');
   static const AssetIconData docs_icon_record_circle = AssetIconData('assets/icons/docs-icon-record-circle.svg');
@@ -1007,6 +1076,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_meet_24_white = AssetIconData('assets/icons/docs-icon-meet-24-white.svg');
   static const AssetIconData docs_icon_meet_p40_24x24 = AssetIconData('assets/icons/docs-icon-meet-p40-24x24.svg');
   static const AssetIconData docs_icon_meet_white = AssetIconData('assets/icons/docs-icon-meet-white.svg');
+  static const AssetIconData docs_icon_finance_mode = AssetIconData('assets/icons/docs-icon-finance-mode.svg');
   static const AssetIconData docs_icon_arrow_upward_green800 = AssetIconData('assets/icons/docs-icon-arrow-upward-green800.svg');
   static const AssetIconData docs_icon_arrow_downward_red900 = AssetIconData('assets/icons/docs-icon-arrow-downward-red900.svg');
   static const AssetIconData docs_icon_plus_green800 = AssetIconData('assets/icons/docs-icon-plus-green800.svg');
@@ -1028,6 +1098,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_add_to_drive_20 = AssetIconData('assets/icons/docs-icon-add-to-drive-20.svg');
   static const AssetIconData docs_icon_cloud_check_20 = AssetIconData('assets/icons/docs-icon-cloud-check-20.svg');
   static const AssetIconData docs_icon_folder_20x20 = AssetIconData('assets/icons/docs-icon-folder-20x20.svg');
+  static const AssetIconData docs_icon_folder_move_20 = AssetIconData('assets/icons/docs-icon-folder-move-20.svg');
   static const AssetIconData docs_icon_info_20 = AssetIconData('assets/icons/docs-icon-info-20.svg');
   static const AssetIconData docs_icon_star_border_20 = AssetIconData('assets/icons/docs-icon-star-border-20.svg');
   static const AssetIconData docs_icon_star_filled_20_blue600 = AssetIconData('assets/icons/docs-icon-star-filled-20-blue600.svg');
@@ -1106,6 +1177,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_line_start_20 = AssetIconData('assets/icons/docs-icon-line-start-20.svg');
   static const AssetIconData docs_icon_line_start_arrow_20 = AssetIconData('assets/icons/docs-icon-line-start-arrow-20.svg');
   static const AssetIconData docs_icon_line_start_arrow_filled_20 = AssetIconData('assets/icons/docs-icon-line-start-arrow-filled-20.svg');
+  static const AssetIconData docs_icon_line_start_arrow_notch_20 = AssetIconData('assets/icons/docs-icon-line-start-arrow-notch-20.svg');
   static const AssetIconData docs_icon_line_start_circle_20 = AssetIconData('assets/icons/docs-icon-line-start-circle-20.svg');
   static const AssetIconData docs_icon_line_start_circle_filled_20 = AssetIconData('assets/icons/docs-icon-line-start-circle-filled-20.svg');
   static const AssetIconData docs_icon_line_start_diamond_20 = AssetIconData('assets/icons/docs-icon-line-start-diamond-20.svg');
@@ -1129,11 +1201,13 @@ class SheetIcons {
   static const AssetIconData docs_icon_table_quick_layout_top_center_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-top-center-56.svg');
   static const AssetIconData docs_icon_table_quick_layout_top_right_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-top-right-56.svg');
   static const AssetIconData docs_icon_table_quick_layout_center_left_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-center-left-56.svg');
+  static const AssetIconData docs_icon_table_quick_layout_center_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-center-56.svg');
   static const AssetIconData docs_icon_table_quick_layout_center_right_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-center-right-56.svg');
   static const AssetIconData docs_icon_table_quick_layout_bottom_left_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-bottom-left-56.svg');
   static const AssetIconData docs_icon_table_quick_layout_bottom_center_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-bottom-center-56.svg');
   static const AssetIconData docs_icon_table_quick_layout_bottom_right_56 = AssetIconData('assets/icons/docs-icon-table-quick-layout-bottom-right-56.svg');
   static const AssetIconData docs_icon_table_left_aligned_72 = AssetIconData('assets/icons/docs-icon-table-left-aligned-72.svg');
+  static const AssetIconData docs_icon_table_center_aligned_72 = AssetIconData('assets/icons/docs-icon-table-center-aligned-72.svg');
   static const AssetIconData docs_icon_table_right_aligned_72 = AssetIconData('assets/icons/docs-icon-table-right-aligned-72.svg');
   static const AssetIconData docs_icon_table_text_wrapping_inline_72 = AssetIconData('assets/icons/docs-icon-table-text-wrapping-inline-72.svg');
   static const AssetIconData docs_icon_table_text_wrapping_wrap_72 = AssetIconData('assets/icons/docs-icon-table-text-wrapping-wrap-72.svg');
@@ -1155,6 +1229,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_filter_alt_filled_20 = AssetIconData('assets/icons/docs-icon-filter-alt-filled-20.svg');
   static const AssetIconData docs_icon_logo_colab_18x18 = AssetIconData('assets/icons/docs-icon-logo-colab-18x18.svg');
   static const AssetIconData docs_icon_timeline_milestones_18x18 = AssetIconData('assets/icons/docs-icon-timeline-milestones-18x18.svg');
+  static const AssetIconData docs_icon_lock_filled_20x20 = AssetIconData('assets/icons/docs-icon-lock-filled-20x20.svg');
   static const AssetIconData docs_icon_lock_filled_p40_20x20 = AssetIconData('assets/icons/docs-icon-lock-filled-p40-20x20.svg');
   static const AssetIconData docs_icon_hourglass_empty_18x18 = AssetIconData('assets/icons/docs-icon-hourglass-empty-18x18.svg');
   static const AssetIconData docs_icon_hourglass_empty_24x24 = AssetIconData('assets/icons/docs-icon-hourglass-empty-24x24.svg');
@@ -1164,6 +1239,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_assistant_p40_24x24 = AssetIconData('assets/icons/docs-icon-assistant-p40-24x24.svg');
   static const AssetIconData docs_icon_calendar_event_draft_18x18 = AssetIconData('assets/icons/docs-icon-calendar-event-draft-18x18.svg');
   static const AssetIconData docs_icon_calendar_event_draft_24x24 = AssetIconData('assets/icons/docs-icon-calendar-event-draft-24x24.svg');
+  static const AssetIconData docs_icon_timely_p40_24 = AssetIconData('assets/icons/docs-icon-timely-p40-24.svg');
   static const AssetIconData docs_icon_chip_extraction_18x18 = AssetIconData('assets/icons/docs-icon-chip-extraction-18x18.svg');
   static const AssetIconData docs_icon_lock_20x20 = AssetIconData('assets/icons/docs-icon-lock-20x20.svg');
   static const AssetIconData docs_icon_visibility_20x20 = AssetIconData('assets/icons/docs-icon-visibility-20x20.svg');
@@ -1215,6 +1291,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_slide_library_24 = AssetIconData('assets/icons/docs-icon-slide-library-24.svg');
   static const AssetIconData docs_icon_warning_red40_20x20 = AssetIconData('assets/icons/docs-icon-warning-red40-20x20.svg');
   static const AssetIconData docs_icon_thumb_up_18x18 = AssetIconData('assets/icons/docs-icon-thumb-up-18x18.svg');
+  static const AssetIconData docs_icon_thumb_down_18x18 = AssetIconData('assets/icons/docs-icon-thumb-down-18x18.svg');
   static const AssetIconData docs_icon_live_pointer_empty_20x20 = AssetIconData('assets/icons/docs-icon-live-pointer-empty-20x20.svg');
   static const AssetIconData docs_icon_live_pointer_filled_20x20 = AssetIconData('assets/icons/docs-icon-live-pointer-filled-20x20.svg');
   static const AssetIconData docs_icon_encrypted_blue_20x20 = AssetIconData('assets/icons/docs-icon-encrypted-blue-20x20.svg');
@@ -1256,6 +1333,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_wallpaper_20x20 = AssetIconData('assets/icons/docs-icon-wallpaper-20x20.svg');
   static const AssetIconData docs_icon_settings_outline_18x18 = AssetIconData('assets/icons/docs-icon-settings-outline-18x18.svg');
   static const AssetIconData docs_icon_attach_file_24x24 = AssetIconData('assets/icons/docs-icon-attach-file-24x24.svg');
+  static const AssetIconData docs_icon_lightbulb_24x24 = AssetIconData('assets/icons/docs-icon-lightbulb-24x24.svg');
   static const AssetIconData docs_icon_event_24x24 = AssetIconData('assets/icons/docs-icon-event-24x24.svg');
   static const AssetIconData docs_icon_suggestion_24x24 = AssetIconData('assets/icons/docs-icon-suggestion-24x24.svg');
   static const AssetIconData docs_icon_background_replace_18x18 = AssetIconData('assets/icons/docs-icon-background-replace-18x18.svg');
@@ -1274,12 +1352,14 @@ class SheetIcons {
   static const AssetIconData docs_icon_arrow_forward_18x18 = AssetIconData('assets/icons/docs-icon-arrow-forward-18x18.svg');
   static const AssetIconData docs_icon_markdown_copy_18x18 = AssetIconData('assets/icons/docs-icon-markdown-copy-18x18.svg');
   static const AssetIconData docs_icon_markdown_paste_18x18 = AssetIconData('assets/icons/docs-icon-markdown-paste-18x18.svg');
+  static const AssetIconData docs_icon_masked_transitions_18x18 = AssetIconData('assets/icons/docs-icon-masked-transitions-18x18.svg');
   static const AssetIconData docs_icon_stream_arts = AssetIconData('assets/icons/docs-icon-stream-arts.svg');
   static const AssetIconData docs_icon_stream_arts_24x24 = AssetIconData('assets/icons/docs-icon-stream-arts-24x24.svg');
   static const AssetIconData docs_icon_check_white_20x20 = AssetIconData('assets/icons/docs-icon-check-white-20x20.svg');
   static const AssetIconData docs_icon_retry_20x20 = AssetIconData('assets/icons/docs-icon-retry-20x20.svg');
   static const AssetIconData docs_icon_close_20x20 = AssetIconData('assets/icons/docs-icon-close-20x20.svg');
   static const AssetIconData docs_icon_arrow_downward_18x18 = AssetIconData('assets/icons/docs-icon-arrow-downward-18x18.svg');
+  static const AssetIconData docs_icon_arrow_upward_18x18 = AssetIconData('assets/icons/docs-icon-arrow-upward-18x18.svg');
   static const AssetIconData docs_icon_tab_18x18 = AssetIconData('assets/icons/docs-icon-tab-18x18.svg');
   static const AssetIconData docs_icon_arrow_right_20x20 = AssetIconData('assets/icons/docs-icon-arrow-right-20x20.svg');
   static const AssetIconData docs_icon_article_20x20 = AssetIconData('assets/icons/docs-icon-article-20x20.svg');
@@ -1365,11 +1445,13 @@ class SheetIcons {
   static const AssetIconData docs_icon_drive_video_red_18x18 = AssetIconData('assets/icons/docs-icon-drive-video-red-18x18.svg');
   static const AssetIconData docs_icon_replace_video_18x18 = AssetIconData('assets/icons/docs-icon-replace-video-18x18.svg');
   static const AssetIconData docs_icon_policy_18x18 = AssetIconData('assets/icons/docs-icon-policy-18x18.svg');
+  static const AssetIconData docs_icon_assignment_ind_20x20 = AssetIconData('assets/icons/docs-icon-assignment-ind-20x20.svg');
   static const AssetIconData docs_icon_contacts_20x20 = AssetIconData('assets/icons/docs-icon-contacts-20x20.svg');
   static const AssetIconData docs_icon_contact_page_20x20 = AssetIconData('assets/icons/docs-icon-contact-page-20x20.svg');
   static const AssetIconData docs_icon_contact_page_24x24 = AssetIconData('assets/icons/docs-icon-contact-page-24x24.svg');
   static const AssetIconData docs_icon_user_attributes_20x20 = AssetIconData('assets/icons/docs-icon-user-attributes-20x20.svg');
   static const AssetIconData docs_icon_user_attributes_24x24 = AssetIconData('assets/icons/docs-icon-user-attributes-24x24.svg');
+  static const AssetIconData docs_icon_signature_20x20 = AssetIconData('assets/icons/docs-icon-signature-20x20.svg');
   static const AssetIconData docs_icon_interests_20x20 = AssetIconData('assets/icons/docs-icon-interests-20x20.svg');
   static const AssetIconData docs_icon_interests_24x24 = AssetIconData('assets/icons/docs-icon-interests-24x24.svg');
   static const AssetIconData docs_icon_text_18x18 = AssetIconData('assets/icons/docs-icon-text-18x18.svg');
@@ -1396,6 +1478,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_apps_script_24x24 = AssetIconData('assets/icons/docs-icon-apps-script-24x24.svg');
   static const AssetIconData docs_icon_speech_to_text_20x20 = AssetIconData('assets/icons/docs-icon-speech-to-text-20x20.svg');
   static const AssetIconData docs_icon_add_reaction_p40_18x18 = AssetIconData('assets/icons/docs-icon-add-reaction-p40-18x18.svg');
+  static const AssetIconData docs_icon_border_bottom_24x24 = AssetIconData('assets/icons/docs-icon-border-bottom-24x24.svg');
   static const AssetIconData docs_icon_border_horizontal_24x24 = AssetIconData('assets/icons/docs-icon-border-horizontal-24x24.svg');
   static const AssetIconData docs_icon_border_left_24x24 = AssetIconData('assets/icons/docs-icon-border-left-24x24.svg');
   static const AssetIconData docs_icon_border_right_24x24 = AssetIconData('assets/icons/docs-icon-border-right-24x24.svg');
@@ -1424,6 +1507,7 @@ class SheetIcons {
   static const AssetIconData docs_icon_table_chart_24x24 = AssetIconData('assets/icons/docs-icon-table-chart-24x24.svg');
   static const AssetIconData docs_icon_view_timeline_24x24 = AssetIconData('assets/icons/docs-icon-view-timeline-24x24.svg');
   static const AssetIconData docs_icon_check_circle_blue600_24x24 = AssetIconData('assets/icons/docs-icon-check-circle-blue600-24x24.svg');
+  static const AssetIconData docs_icon_format_list_bulleted_spark_18x18 = AssetIconData('assets/icons/docs-icon-format-list-bulleted-spark-18x18.svg');
   static const AssetIconData docs_icon_format_list_bulleted_spark_24x24 = AssetIconData('assets/icons/docs-icon-format-list-bulleted-spark-24x24.svg');
   static const AssetIconData docs_icon_add_task_blue_20x20 = AssetIconData('assets/icons/docs-icon-add-task-blue-20x20.svg');
   static const AssetIconData docs_icon_add_on_18x18 = AssetIconData('assets/icons/docs-icon-add-on-18x18.svg');
