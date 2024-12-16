@@ -32,88 +32,54 @@ class ToolbarSearchbox extends StatelessWidget implements StaticSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_expanded) {
-      return _ExpandedSearchbox(size: _size, margin: _margin);
-    } else {
-      return _CollapsedSearchbox(size: _size, margin: _margin);
-    }
-  }
-}
-
-class _ExpandedSearchbox extends StatelessWidget {
-  const _ExpandedSearchbox({
-    required Size size,
-    required EdgeInsets margin,
-  })  : _size = size,
-        _margin = margin;
-
-  final Size _size;
-  final EdgeInsets _margin;
-
-  @override
-  Widget build(BuildContext context) {
     Color foregroundColor = const Color(0xff444746);
-
-    return Container(
-      width: _size.width,
-      height: _size.height,
-      margin: _margin,
-      padding: const EdgeInsets.symmetric(horizontal: 9),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(45),
-      ),
-      child: Row(
-        children: <Widget>[
-          AssetIcon(SheetIcons.docs_icon_search_20_nv50, size: 19, color: foregroundColor),
-          const SizedBox(width: 7),
-          Text(
-            'Menu',
-            style: TextStyle(
-              fontFamily: 'GoogleSans',
-              package: 'sheets',
-              color: foregroundColor,
-              fontSize: 15,
-              height: 1,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
+    Widget icon = Padding(
+      padding: const EdgeInsets.only(left: 11, right: 12, top: 7, bottom: 7),
+      child: AssetIcon(SheetIcons.docs_icon_search_20, color: foregroundColor),
     );
-  }
-}
 
-class _CollapsedSearchbox extends StatelessWidget {
-  const _CollapsedSearchbox({
-    required Size size,
-    required EdgeInsets margin,
-  })  : _size = size,
-        _margin = margin;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(45),
+      child: Container(
+        width: _size.width,
+        height: _size.height,
+        margin: _margin,
+        decoration: BoxDecoration(
+          color: _expanded ? Colors.white : Colors.transparent,
+        ),
+        child: Row(
+          children: <Widget>[
+            if (!_expanded) ...<Widget>[
+              WidgetStateBuilder(
+                builder: (Set<WidgetState> states) {
+                  Color? backgroundColor = _resolveBackgroundColor(states);
 
-  final Size _size;
-  final EdgeInsets _margin;
-
-  @override
-  Widget build(BuildContext context) {
-    return WidgetStateBuilder(
-      builder: (Set<WidgetState> states) {
-        Color? backgroundColor = _resolveBackgroundColor(states);
-        Color? foregroundColor = _resolveForegroundColor(states);
-
-        return Container(
-          width: _size.width,
-          height: _size.height,
-          margin: _margin,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: Center(
-            child: AssetIcon(SheetIcons.docs_icon_search_20_nv50, size: 19, color: foregroundColor),
-          ),
-        );
-      },
+                  return Container(
+                    width: _size.width,
+                    height: _size.height,
+                    decoration: BoxDecoration(color: backgroundColor),
+                    child: icon,
+                  );
+                },
+              ),
+            ],
+            if (_expanded) ...<Widget>[
+              icon,
+              Text(
+                'Menu',
+                style: TextStyle(
+                  fontFamily: 'GoogleSans',
+                  package: 'sheets',
+                  color: foregroundColor,
+                  fontSize: 15,
+                  height: 1,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -123,9 +89,5 @@ class _CollapsedSearchbox extends StatelessWidget {
     } else {
       return const Color(0xffF1F4F9);
     }
-  }
-
-  Color _resolveForegroundColor(Set<WidgetState> states) {
-    return const Color(0xff444746);
   }
 }

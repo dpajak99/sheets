@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
-import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
-import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
-import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_field_button.dart';
+import 'package:sheets/widgets/material/goog/goog_palette.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_combo_button.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarTextRotationButton extends StatefulWidget implements StaticSizeWidget {
@@ -59,17 +58,21 @@ class _ToolbarTextRotationButtonState extends State<ToolbarTextRotationButton> {
         return GoogToolbarMenuButton(margin: widget.margin, child: GoogIcon(icon));
       },
       popupBuilder: (BuildContext context) {
-        return DropdownGridMenu(
+        return GoogPalette(
           gap: 1,
-          trailing: ToolbarTextFieldButton(
+          trailing: GoogToolbarComboButton(
             size: const Size(61, 26),
             margin: widget.margin,
             controller: _controller,
             focusNode: _focusNode,
-            backgroundColor: Colors.white,
-            textAlign: TextAlign.left,
-            dropdownVisible: true,
-            hintText: '0°',
+            decoration: GoogToolbarComboButtonInputDecoration(
+              hasDropdown: true,
+              textAlign: TextAlign.left,
+              hintText: '0°',
+            ),
+            style: GoogToolbarComboButtonStyle.defaultStyle().copyWith(
+              backgroundColor: WidgetStateProperty.all(Colors.white),
+            ),
           ),
           children: TextRotation.values.map((TextRotation textRotation) {
             AssetIconData icon = _resolveIcon(textRotation);
@@ -114,6 +117,6 @@ class _TextRotationOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownGridMenuItem(selected: _selected, icon: _icon, onPressed: _onPressed);
+    return GoogPaletteItem(selected: _selected, icon: _icon, onPressed: _onPressed);
   }
 }

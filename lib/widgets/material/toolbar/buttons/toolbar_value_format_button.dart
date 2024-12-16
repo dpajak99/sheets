@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_button.dart';
+import 'package:sheets/widgets/material/goog/goog_text.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarValueFormatButton extends StatefulWidget implements StaticSizeWidget {
@@ -44,7 +45,10 @@ class _ToolbarValueFormatButtonState extends State<ToolbarValueFormatButton> {
     return SheetDropdownButton(
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return ToolbarTextButton(text: '123', opened: isOpen);
+        return GoogToolbarButton(
+          width: 32,
+          child: const GoogText('123'),
+        );
       },
       popupBuilder: (BuildContext context) {
         return DropdownListMenu(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_text.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
@@ -62,9 +63,17 @@ class GoogToolbarButton extends StatelessWidget implements StaticSizeWidget {
             borderRadius: BorderRadius.circular(3),
           ),
           child: Align(
-            child: GoogIconTheme(
+            child: GoogTextTheme(
+              fontFamily: 'GoogleSans',
+              package: 'sheets',
+              fontSize: 13,
+              height: 1,
+              fontWeight: FontWeight.w500,
               color: foregroundColor,
-              child: _child,
+              child: GoogIconTheme(
+                color: foregroundColor,
+                child: _child,
+              ),
             ),
           ),
         );

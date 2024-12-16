@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 
@@ -13,7 +15,7 @@ class ToolbarBorderStyleButton extends StatefulWidget implements StaticSizeWidge
     Size? size,
     EdgeInsets? margin,
     super.key,
-  })  : _size = size ?? const Size(39, 30),
+  })  : _size = size ?? const Size(37, 26),
         _margin = margin ?? const EdgeInsets.symmetric(horizontal: 1);
 
   final Size _size;
@@ -48,11 +50,12 @@ class _ToolbarBorderStyleButtonState extends State<ToolbarBorderStyleButton> {
       controller: _dropdownButtonController,
       level: 2,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return _BorderStyleButton(
-          size: widget.size,
+        return GoogToolbarMenuButton(
+          width: widget.size.width,
+          height: widget.size.height,
           margin: widget.margin,
-          icon: SheetIcons.docs_icon_line_style_20,
-          opened: isOpen,
+          childPadding: const EdgeInsets.only(top: 8, bottom: 6),
+          child: const GoogIcon(SheetIcons.docs_icon_line_style_20),
         );
       },
       popupBuilder: (BuildContext context) {

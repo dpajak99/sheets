@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/border_edges.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
-import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_palette.dart';
 import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
-import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_border_style_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_border_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
@@ -57,7 +56,7 @@ class _ToolbarBorderButtonState extends State<ToolbarBorderButton> {
         );
       },
       popupBuilder: (BuildContext context) {
-        return DropdownGridMenu(
+        return GoogPalette(
           gap: 2,
           columns: 5,
           trailing: Column(
@@ -119,6 +118,11 @@ class _BorderOption extends StatelessWidget {
       BorderEdges.clear => SheetIcons.docs_icon_border_none_20,
     };
 
-    return DropdownGridMenuItem(selected: false, icon: icon, onPressed: () => _onPressed(_value));
+    return GoogPaletteItem(
+      size: 32,
+      icon: icon,
+      padding: const EdgeInsets.only(top: 10, bottom: 8),
+      onPressed: () => _onPressed(_value),
+    );
   }
 }

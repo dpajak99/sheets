@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_field_button.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_combo_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarZoomButton extends StatefulWidget implements StaticSizeWidget {
@@ -16,7 +16,7 @@ class ToolbarZoomButton extends StatefulWidget implements StaticSizeWidget {
   final ValueChanged<double> onChanged;
 
   @override
-  Size get size => const Size(77, 30);
+  Size get size => const Size(74, 28);
 
   @override
   EdgeInsets get margin => const EdgeInsets.symmetric(horizontal: 1);
@@ -66,13 +66,25 @@ class _ToolbarZoomButtonState extends State<ToolbarZoomButton> {
       disabled: true,
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return ToolbarTextFieldButton(
+        return GoogToolbarComboButton(
           focusNode: _focusNode,
           controller: _textController,
           size: widget.size,
           margin: widget.margin,
-          borderVisible: false,
-          dropdownVisible: true,
+          decoration: GoogToolbarComboButtonInputDecoration(
+            hasDropdown: true,
+            textAlign: TextAlign.left,
+            border: InputBorder.none
+          ),
+          style: GoogToolbarComboButtonStyle.defaultStyle().copyWith(
+            backgroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+              if(states.contains(WidgetState.hovered)) {
+                return const Color(0xffe2e7ea);
+              } else {
+                return Colors.transparent;
+              }
+            }),
+          )
         );
       },
       popupBuilder: (BuildContext context) {

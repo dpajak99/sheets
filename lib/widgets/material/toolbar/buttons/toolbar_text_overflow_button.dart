@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
-import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
-import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
-import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
+import 'package:sheets/widgets/material/goog/goog_palette.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 // TODO(Dominik): Rename to Text wrap
@@ -32,7 +31,7 @@ class ToolbarTextOverflowButton extends StatelessWidget implements StaticSizeWid
         );
       },
       popupBuilder: (BuildContext context) {
-        return DropdownGridMenu(
+        return GoogPalette(
           gap: 1,
           children: TextOverflowBehavior.values.map((TextOverflowBehavior textOverflow) {
             AssetIconData icon = _resolveIcon(textOverflow);
@@ -77,6 +76,6 @@ class _TextOverflowOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownGridMenuItem(selected: _selected, icon: _icon, onPressed: _onPressed);
+    return GoogPaletteItem(selected: _selected, icon: _icon, onPressed: _onPressed);
   }
 }

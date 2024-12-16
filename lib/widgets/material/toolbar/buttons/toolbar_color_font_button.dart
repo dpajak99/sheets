@@ -5,7 +5,7 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/widgets/material/generic/color_picker/color_grid_picker.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
-import 'package:sheets/widgets/material/goog/goog_color_menu_indicator.dart';
+import 'package:sheets/widgets/material/goog/goog_color_indicator.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
 import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
@@ -47,7 +47,7 @@ class _ToolbarColorFontButtonState extends State<ToolbarColorFontButton> {
     return SheetDropdownButton(
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return GoogColorMenuIndicator(
+        return GoogColorIndicator(
           color: widget.value,
           child: GoogToolbarButton(
             // opened: isOpen,

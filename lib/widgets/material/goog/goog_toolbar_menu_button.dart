@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_text.dart';
 import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
@@ -60,7 +61,7 @@ class GoogToolbarMenuButton extends StatelessWidget implements StaticSizeWidget 
                 onTap: _onTap,
                 disabled: _disabled,
                 cursor: SystemMouseCursors.click,
-                builder: _buildIcon,
+                builder: _buildChild,
               ),
             ),
             const SizedBox(width: 2),
@@ -87,7 +88,7 @@ class GoogToolbarMenuButton extends StatelessWidget implements StaticSizeWidget 
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: _buildIcon(states),
+                  child: _buildChild(states),
                 ),
                 _buildDropdown(states),
               ],
@@ -98,7 +99,7 @@ class GoogToolbarMenuButton extends StatelessWidget implements StaticSizeWidget 
     }
   }
 
-  Widget _buildIcon(Set<WidgetState> states) {
+  Widget _buildChild(Set<WidgetState> states) {
     Set<WidgetState> updatedStates = <WidgetState>{
       if (_selected) WidgetState.selected,
       ...states,
@@ -116,9 +117,19 @@ class GoogToolbarMenuButton extends StatelessWidget implements StaticSizeWidget 
           bottomLeft: Radius.circular(3),
         ),
       ),
-      child: GoogIconTheme(
-        color: foregroundColor,
-        child: _child,
+      child: Align(
+        child: GoogTextTheme(
+          fontFamily: 'GoogleSans',
+          package: 'sheets',
+          fontSize: 13,
+          height: 1,
+          fontWeight: FontWeight.w500,
+          color: foregroundColor,
+          child: GoogIconTheme(
+            color: foregroundColor,
+            child: _child,
+          ),
+        ),
       ),
     );
   }

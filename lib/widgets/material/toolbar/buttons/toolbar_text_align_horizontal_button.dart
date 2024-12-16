@@ -2,10 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
-import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
-import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
-import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
+import 'package:sheets/widgets/material/goog/goog_palette.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarTextAlignHorizontalButton extends StatefulWidget implements StaticSizeWidget {
@@ -58,7 +57,7 @@ class _ToolbarTextAlignHorizontalButtonState extends State<ToolbarTextAlignHoriz
         );
       },
       popupBuilder: (BuildContext context) {
-        return DropdownGridMenu(
+        return GoogPalette(
           gap: 1,
           children: _supportedTextAligns.map((TextAlign textAlign) {
             AssetIconData icon = _resolveIcon(textAlign);
@@ -80,8 +79,7 @@ class _ToolbarTextAlignHorizontalButtonState extends State<ToolbarTextAlignHoriz
     return switch (textAlign) {
       TextAlign.start => SheetIcons.docs_icon_align_left_20,
       TextAlign.left => SheetIcons.docs_icon_align_left_20,
-      // TODO(Dominik): Missing icon
-      TextAlign.center => SheetIcons.docs_icon_align_center,
+      TextAlign.center => SheetIcons.docs_icon_align_center_20,
       TextAlign.right => SheetIcons.docs_icon_align_right_20,
       TextAlign.end => SheetIcons.docs_icon_align_right_20,
       TextAlign.justify => SheetIcons.docs_icon_align_justify_20,
@@ -104,6 +102,6 @@ class _TextAlignOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownGridMenuItem(selected: _selected, icon: _icon, onPressed: _onPressed);
+    return GoogPaletteItem(selected: _selected, icon: _icon, onPressed: _onPressed);
   }
 }

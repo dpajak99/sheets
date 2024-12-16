@@ -2,10 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
-import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
-import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
-import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
+import 'package:sheets/widgets/material/goog/goog_palette.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarTextAlignVerticalButton extends StatefulWidget implements StaticSizeWidget {
@@ -53,7 +52,7 @@ class _ToolbarTextAlignVerticalButtonState extends State<ToolbarTextAlignVertica
         return GoogToolbarMenuButton(margin: widget.margin, child: GoogIcon(icon));
       },
       popupBuilder: (BuildContext context) {
-        return DropdownGridMenu(
+        return GoogPalette(
           gap: 1,
           children: <TextAlignVertical>[
             TextAlignVertical.top,
@@ -99,6 +98,6 @@ class _TextAlignOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownGridMenuItem(selected: _selected, icon: _icon, onPressed: _onPressed);
+    return GoogPaletteItem(selected: _selected, icon: _icon, onPressed: _onPressed);
   }
 }

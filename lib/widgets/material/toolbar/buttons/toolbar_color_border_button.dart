@@ -4,7 +4,9 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/widgets/material/generic/color_picker/color_grid_picker.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_color_picker_button.dart';
+import 'package:sheets/widgets/material/goog/goog_color_indicator.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarColorBorderButton extends StatelessWidget implements StaticSizeWidget {
@@ -41,16 +43,17 @@ class ToolbarColorBorderButton extends StatelessWidget implements StaticSizeWidg
       level: 2,
       controller: _controller,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return ToolbarColorPickerButton(
-          size: size,
-          margin: margin,
-          opened: isOpen,
-          selectedColor: _value,
-          icon: SheetIcons.docs_icon_border_color_20,
-          hasDropdown: true,
-          colorBoxDy: 16,
-          colorBoxPadding: 1,
-          colorBoxHeight: 4,
+        return GoogColorIndicator(
+          color: _value,
+          lbPosition: const Offset(2, 1),
+          width: 21,
+          child: GoogToolbarMenuButton(
+            width: size.width,
+            height: size.height,
+            margin: margin,
+            childPadding: const EdgeInsets.only(top: 4, bottom: 9),
+            child: const GoogIcon(SheetIcons.docs_icon_border_color_20),
+          ),
         );
       },
       popupBuilder: (BuildContext context) {

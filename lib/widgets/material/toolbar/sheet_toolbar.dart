@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
@@ -19,9 +18,9 @@ import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_text.dart';
 import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
-import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_button.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_menu_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_border_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_fill_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_font_button.dart';
@@ -105,21 +104,25 @@ class _SheetToolbarState extends State<SheetToolbar> {
                               buttons: <StaticSizeWidget>[
                                 GoogToolbarButton(
                                   disabled: true,
+                                  padding: const EdgeInsets.only(top: 11, bottom: 8),
                                   child: const GoogIcon(SheetIcons.docs_icon_undo_20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarButton(
                                   disabled: true,
+                                  padding: const EdgeInsets.only(top: 11, bottom: 8),
                                   child: const GoogIcon(SheetIcons.docs_icon_redo_20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarButton(
                                   disabled: true,
+                                  padding: const EdgeInsets.only(top: 9, bottom: 7),
                                   child: const GoogIcon(SheetIcons.docs_icon_print_20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarButton(
                                   disabled: true,
+                                  padding: const EdgeInsets.only(top: 8, bottom: 5),
                                   child: const GoogIcon(SheetIcons.docs_icon_paint_format_20),
                                   onTap: () {},
                                 ),
@@ -129,19 +132,19 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarTextButton(
-                                    text: NumberFormat.currency().currencySymbol,
-                                    onTap: () {
-                                      widget.sheetController.resolve(FormatSelectionEvent(
-                                          SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
-                                    }),
-                                ToolbarTextButton(
+                                GoogToolbarButton(
+                                  child: const GoogText('zł'),
+                                  onTap: () {
+                                    widget.sheetController.resolve(
+                                        FormatSelectionEvent(SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
+                                  },
+                                ),
+                                GoogToolbarButton(
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(
                                         SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern())));
                                   },
-                                  // TODO(Dominik): Missing icon
-                                  text: '%',
+                                  child: const GoogText('%'),
                                 ),
                                 GoogToolbarButton(
                                   padding: const EdgeInsets.only(top: 8, bottom: 6),
@@ -326,39 +329,38 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                // TODO(Dominik): Missing icon
                                 GoogToolbarButton(
-                                  // disabled: true,
+                                  disabled: true,
                                   padding: const EdgeInsets.only(top: 8, bottom: 6),
                                   child: const GoogIcon(SheetIcons.docs_icon_link_20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarButton(
-                                  // disabled: true,
+                                  disabled: true,
                                   padding: const EdgeInsets.only(top: 8, bottom: 6),
                                   child: const GoogIcon(SheetIcons.docs_icon_add_comment_20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarButton(
-                                  // disabled: true,
+                                  disabled: true,
                                   padding: const EdgeInsets.only(top: 9, bottom: 7),
                                   child: const GoogIcon(SheetIcons.docs_icon_insert_chart_20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarButton(
-                                  // disabled: true,
+                                  disabled: true,
                                   padding: const EdgeInsets.only(top: 10, bottom: 8),
                                   child: const GoogIcon(SheetIcons.docs_icon_filter_alt_20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarMenuButton(
-                                  // disabled: true,
+                                  disabled: true,
                                   childPadding: const EdgeInsets.only(top: 7, bottom: 6),
                                   child: const GoogIcon(SheetIcons.docs_icon_table_view_20x20),
                                   onTap: () {},
                                 ),
                                 GoogToolbarButton(
-                                  // disabled: true,
+                                  disabled: true,
                                   padding: const EdgeInsets.only(top: 9, bottom: 8),
                                   child: const GoogIcon(SheetIcons.docs_icon_insert_function_20),
                                   onTap: () {},
