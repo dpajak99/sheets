@@ -4,7 +4,9 @@ import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/border_edges.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
+import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_border_style_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_border_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
@@ -20,7 +22,7 @@ class ToolbarBorderButton extends StatefulWidget implements StaticSizeWidget {
   final BorderChangedCallback onChanged;
 
   @override
-  Size get size => const Size(39, 30);
+  Size get size => const Size(32, 30);
 
   @override
   EdgeInsets get margin => const EdgeInsets.symmetric(horizontal: 1);
@@ -46,10 +48,12 @@ class _ToolbarBorderButtonState extends State<ToolbarBorderButton> {
     return SheetDropdownButton(
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return ToolbarIconButton.withDropdown(
-          icon: SheetIcons.docs_icon_border_all_20,
-          size: widget.size,
+        return GoogToolbarButton(
+          padding: const EdgeInsets.only(top: 9, bottom: 7),
+          width: widget.size.width,
+          height: widget.size.height,
           margin: widget.margin,
+          child: const GoogIcon(SheetIcons.docs_icon_border_all_20),
         );
       },
       popupBuilder: (BuildContext context) {

@@ -7,7 +7,7 @@ class ToolbarDivider extends StatelessWidget implements StaticSizeWidget {
     EdgeInsets? margin,
     super.key,
   })  : _size = size ?? const Size(1, 20),
-        _margin = margin ?? const EdgeInsets.symmetric(horizontal: 5);
+        _margin = margin ?? const EdgeInsets.symmetric(horizontal: 3);
 
   final Size _size;
   final EdgeInsets _margin;

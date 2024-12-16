@@ -5,8 +5,9 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/widgets/material/generic/color_picker/color_grid_picker.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_color_picker_button.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/goog/goog_color_menu_indicator.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarColorFontButton extends StatefulWidget implements StaticSizeWidget {
@@ -52,7 +53,6 @@ class _ToolbarColorFontButtonState extends State<ToolbarColorFontButton> {
             // opened: isOpen,
             width: widget.size.width,
             height: widget.size.height,
-            style: GoogToolbarButtonStyle.defaultStyle().copyWith(iconHeight: 10),
             padding: const EdgeInsets.only(bottom: 4),
             child: const GoogIcon(SheetIcons.docs_icon_text_color_20),
           ),

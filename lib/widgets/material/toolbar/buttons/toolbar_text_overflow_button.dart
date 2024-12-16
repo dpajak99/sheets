@@ -3,7 +3,9 @@ import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
+import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 // TODO(Dominik): Rename to Text wrap
@@ -23,7 +25,11 @@ class ToolbarTextOverflowButton extends StatelessWidget implements StaticSizeWid
     return SheetDropdownButton(
       buttonBuilder: (BuildContext context, bool isOpen) {
         AssetIconData icon = _resolveIcon(_value);
-        return ToolbarIconButton.withDropdown(icon: icon, size: size, margin: margin);
+        return GoogToolbarMenuButton(
+          margin: margin,
+          childPadding: const EdgeInsets.only(top: 10, bottom: 8),
+          child: GoogIcon(icon),
+        );
       },
       popupBuilder: (BuildContext context) {
         return DropdownGridMenu(

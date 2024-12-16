@@ -1,5 +1,35 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/config/app_icons/asset_icon.dart';
+
+class GoogIcon extends StatelessWidget {
+  const GoogIcon(
+      this._icon, {
+        double? width,
+        double? height,
+        Color? color,
+        super.key,
+      })  : _color = color,
+        _width = width,
+        _height = height;
+
+  final AssetIconData _icon;
+  final double? _width;
+  final double? _height;
+  final Color? _color;
+
+  @override
+  Widget build(BuildContext context) {
+    GoogIconThemeData? iconTheme = GoogIconTheme.of(context);
+
+    return AssetIcon(
+      _icon,
+      color: _color ?? iconTheme?.color,
+      width: _width ?? iconTheme?.width,
+      height: _height ?? iconTheme?.height,
+    );
+  }
+}
 
 class GoogIconTheme extends StatefulWidget {
   const GoogIconTheme({

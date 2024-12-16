@@ -4,7 +4,9 @@ import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_grid_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
+import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_field_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
@@ -54,7 +56,7 @@ class _ToolbarTextRotationButtonState extends State<ToolbarTextRotationButton> {
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
         AssetIconData icon = _resolveIcon(widget.value);
-        return ToolbarIconButton.withDropdown(icon: icon, size: widget.size, margin: widget.margin);
+        return GoogToolbarMenuButton(margin: widget.margin, child: GoogIcon(icon));
       },
       popupBuilder: (BuildContext context) {
         return DropdownGridMenu(

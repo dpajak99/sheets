@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarButtonsSectionWrapper extends StatefulWidget {
@@ -26,8 +27,8 @@ class _ToolbarButtonsSectionWrapperState extends State<ToolbarButtonsSectionWrap
           children: <Widget>[
             ...visibleSections,
             if (visibleSections.length != widget.sections.length)
-              ToolbarIconButton(
-                icon: SheetIcons.docs_icon_expand_less_20,
+              GoogToolbarButton(
+                child: const GoogIcon(SheetIcons.docs_icon_expand_less_20),
                 onTap: () {},
               ),
           ],

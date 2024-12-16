@@ -18,7 +18,9 @@ import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/goog_toolbar_button.dart';
+import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_text_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_border_button.dart';
 import 'package:sheets/widgets/material/toolbar/buttons/toolbar_color_fill_button.dart';
@@ -101,11 +103,26 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_undo_20, onTap: () {}),
-                                // TODO(Dominik): Missing icon
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_undo_20, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_print_20, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_paint_format_20, onTap: () {}),
+                                GoogToolbarButton(
+                                  disabled: true,
+                                  child: const GoogIcon(SheetIcons.docs_icon_undo_20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarButton(
+                                  disabled: true,
+                                  child: const GoogIcon(SheetIcons.docs_icon_redo_20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarButton(
+                                  disabled: true,
+                                  child: const GoogIcon(SheetIcons.docs_icon_print_20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarButton(
+                                  disabled: true,
+                                  child: const GoogIcon(SheetIcons.docs_icon_paint_format_20),
+                                  onTap: () {},
+                                ),
                                 ToolbarZoomButton(value: 100, onChanged: (_) {}),
                                 const ToolbarDivider(),
                               ],
@@ -118,16 +135,16 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                       widget.sheetController.resolve(FormatSelectionEvent(
                                           SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
                                     }),
-                                ToolbarIconButton(
+                                ToolbarTextButton(
+                                  onTap: () {
+                                    widget.sheetController.resolve(FormatSelectionEvent(
+                                        SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern())));
+                                  },
                                   // TODO(Dominik): Missing icon
-                                    icon: SheetIcons.docs_cloud_off_20,
-                                    onTap: () {
-                                      widget.sheetController.resolve(FormatSelectionEvent(
-                                          SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern())));
-                                    }),
-                                ToolbarIconButton(
-                                  // TODO(Dominik): Missing icon
-                                  icon: SheetIcons.docs_cloud_off_20,
+                                  text: '%',
+                                ),
+                                GoogToolbarButton(
+                                  padding: const EdgeInsets.only(top: 8, bottom: 6),
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
@@ -135,9 +152,11 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                       },
                                     )));
                                   },
+                                  child: const GoogIcon(SheetIcons.docs_icon_decimal_decrease_20),
                                 ),
-                                ToolbarIconButton(
-                                  icon: SheetIcons.docs_icon_decimal_increase_20,
+                                GoogToolbarButton(
+                                  padding: const EdgeInsets.only(top: 8, bottom: 6),
+                                  child: const GoogIcon(SheetIcons.docs_icon_decimal_increase_20),
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
@@ -169,8 +188,11 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ),
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
-                                ToolbarIconButton.small(
-                                  icon: SheetIcons.docs_icon_remove_20,
+                                GoogToolbarButton(
+                                  height: 24,
+                                  width: 24,
+                                  padding: const EdgeInsets.all(7),
+                                  child: const GoogIcon(SheetIcons.docs_icon_remove_20),
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(DecreaseFontSizeIntent()));
                                   },
@@ -182,8 +204,11 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                         .resolve(FormatSelectionEvent(SetFontSizeIntent(fontSize: FontSize.fromPoints(value))));
                                   },
                                 ),
-                                ToolbarIconButton.small(
-                                  icon: SheetIcons.docs_icon_add_20,
+                                GoogToolbarButton(
+                                  height: 24,
+                                  width: 24,
+                                  padding: const EdgeInsets.all(7),
+                                  child: const GoogIcon(SheetIcons.docs_icon_add_20),
                                   onTap: () {
                                     widget.sheetController.resolve(FormatSelectionEvent(IncreaseFontSizeIntent()));
                                   },
@@ -213,6 +238,7 @@ class _SheetToolbarState extends State<SheetToolbar> {
                                     widget.sheetController.resolve(
                                         FormatSelectionEvent(ToggleTextDecorationIntent(value: TextDecoration.lineThrough)));
                                   },
+                                  padding: const EdgeInsets.only(top: 9, bottom: 8),
                                   child: const GoogIcon(SheetIcons.docs_icon_strikethrough_20),
                                 ),
                                 ToolbarColorFontButton(
@@ -301,18 +327,52 @@ class _SheetToolbarState extends State<SheetToolbar> {
                             ToolbarButtonsSection(
                               buttons: <StaticSizeWidget>[
                                 // TODO(Dominik): Missing icon
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_link_24, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_add_comment_20, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_insert_chart_20, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_filter_alt_20, onTap: () {}),
-                                ToolbarIconButton.withDropdown(disabled: true, icon: SheetIcons.docs_icon_table_view_20x20, onTap: () {}),
-                                ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_insert_function_20, onTap: () {}),
+                                GoogToolbarButton(
+                                  // disabled: true,
+                                  padding: const EdgeInsets.only(top: 8, bottom: 6),
+                                  child: const GoogIcon(SheetIcons.docs_icon_link_20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarButton(
+                                  // disabled: true,
+                                  padding: const EdgeInsets.only(top: 8, bottom: 6),
+                                  child: const GoogIcon(SheetIcons.docs_icon_add_comment_20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarButton(
+                                  // disabled: true,
+                                  padding: const EdgeInsets.only(top: 9, bottom: 7),
+                                  child: const GoogIcon(SheetIcons.docs_icon_insert_chart_20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarButton(
+                                  // disabled: true,
+                                  padding: const EdgeInsets.only(top: 10, bottom: 8),
+                                  child: const GoogIcon(SheetIcons.docs_icon_filter_alt_20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarMenuButton(
+                                  // disabled: true,
+                                  childPadding: const EdgeInsets.only(top: 7, bottom: 6),
+                                  child: const GoogIcon(SheetIcons.docs_icon_table_view_20x20),
+                                  onTap: () {},
+                                ),
+                                GoogToolbarButton(
+                                  // disabled: true,
+                                  padding: const EdgeInsets.only(top: 9, bottom: 8),
+                                  child: const GoogIcon(SheetIcons.docs_icon_insert_function_20),
+                                  onTap: () {},
+                                ),
                               ],
                             ),
                           ],
                         ),
                       ),
-                      ToolbarIconButton(disabled: true, icon: SheetIcons.docs_icon_expand_less_20, onTap: () {}),
+                      GoogToolbarButton(
+                        disabled: true,
+                        child: const GoogIcon(SheetIcons.docs_icon_expand_less_20),
+                        onTap: () {},
+                      ),
                     ],
                   );
                 },

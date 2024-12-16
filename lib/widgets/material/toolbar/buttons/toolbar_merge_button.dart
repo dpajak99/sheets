@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_button.dart';
 import 'package:sheets/widgets/material/generic/dropdown/dropdown_list_menu.dart';
-import 'package:sheets/widgets/material/toolbar/buttons/generic/toolbar_icon_button.dart';
+import 'package:sheets/widgets/material/goog/goog_icon.dart';
+import 'package:sheets/widgets/material/goog/googl_toolbar_menu_button.dart';
 import 'package:sheets/widgets/static_size_widget.dart';
 
 class ToolbarMergeButton extends StatefulWidget implements StaticSizeWidget {
@@ -69,13 +70,11 @@ class _ToolbarMergeButtonState extends State<ToolbarMergeButton> {
       activateDropdownBehavior: ActivateDropdownBehavior.manual,
       controller: _dropdownController,
       buttonBuilder: (BuildContext context, bool isOpen) {
-        return ToolbarIconButton.withDropdown(
+        return GoogToolbarMenuButton(
           disabled: !(widget.canMerge || widget.canSplit),
-          size: widget.size,
           margin: widget.margin,
           selected: widget.merged,
-          opened: isOpen,
-          icon: SheetIcons.docs_icon_cell_merge_20,
+          child: const GoogIcon(SheetIcons.docs_icon_cell_merge_20),
           onDropdownTap: () {
             _dropdownController.toggle();
           },
