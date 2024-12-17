@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/widgets/goog/generic/goog_icon.dart';
 import 'package:sheets/widgets/goog/generic/goog_text.dart';
 import 'package:sheets/widgets/goog/menu/goog_menu_vertical.dart';
@@ -95,25 +96,25 @@ class _GoogToolbarMergeBtnState extends State<GoogToolbarMergeBtn> {
             GoogMenuItem(
               disabled: !widget.canMerge,
               iconPlaceholderVisible: false,
-              label: const GoogText('Scal wszystkie'),
+              label: GoogText(t.menu.format.merge_cells_options.merge_all),
               onPressed: widget.onMerge,
             ),
             GoogMenuItem(
               disabled: !widget.canMergeVertically,
               iconPlaceholderVisible: false,
-              label: const GoogText('Scal w pionie'),
+              label: GoogText(t.menu.format.merge_cells_options.merge_vertically),
               onPressed: widget.onMergeVertically,
             ),
             GoogMenuItem(
               disabled: !widget.canMergeHorizontally,
               iconPlaceholderVisible: false,
-              label: const GoogText('Scal w poziomie'),
+              label: GoogText(t.menu.format.merge_cells_options.merge_horizontally),
               onPressed: widget.onMergeHorizontally,
             ),
             GoogMenuItem(
               disabled: !widget.canSplit,
               iconPlaceholderVisible: false,
-              label: const GoogText('Rozdziel'),
+              label: GoogText(t.menu.format.merge_cells_options.unmerge),
               onPressed: widget.onSplit,
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/widgets/goog/generic/goog_text.dart';
 import 'package:sheets/widgets/goog/menu/goog_menu_vertical.dart';
 import 'package:sheets/widgets/goog/toolbar/buttons/generic/goog_toolbar_button.dart';
@@ -55,68 +56,68 @@ class _GoogToolbarFormatBtnState extends State<GoogToolbarFormatBtn> {
           width: 312,
           children: <Widget>[
             _ValueFormatOption(
-              label: 'Automatycznie',
+              label: t.menu.format.number_options.automatic,
               onPressed: () => _handleValueFormatChanged(null),
             ),
             _ValueFormatOption(
-              label: 'Zwykły tekst',
+              label: t.menu.format.number_options.plain_text,
               onPressed: () => _handleValueFormatChanged(SheetStringFormat()),
             ),
             const GoogMenuSeperator(),
             _ValueFormatOption(
-              label: 'Liczba',
+              label: t.menu.format.number_options.number,
               example: '1 000,12',
               onPressed: () => _handleValueFormatChanged(SheetNumberFormat.decimalPattern()),
             ),
             _ValueFormatOption(
-              label: 'Procentowy',
+              label: t.menu.format.number_options.percent,
               example: '10,12%',
               onPressed: () => _handleValueFormatChanged(SheetNumberFormat.percentPattern()),
             ),
             _ValueFormatOption(
-              label: 'Naukowy',
+              label: t.menu.format.number_options.scientific,
               example: '1,01E+03',
               onPressed: () => _handleValueFormatChanged(SheetNumberFormat.scientificPattern()),
             ),
             const GoogMenuSeperator(),
             _ValueFormatOption(
-              label: 'Księgowy',
+              label: t.menu.format.number_options.accounting,
               example: '(1 000,12) zł',
               onPressed: () => _handleValueFormatChanged(SheetNumberFormat.currency()),
             ),
             _ValueFormatOption(
-              label: 'Finansowy',
+              label: t.menu.format.number_options.financial,
               example: '(1 000,12)',
               onPressed: () => _handleValueFormatChanged(SheetNumberFormat.decimalPatternDigits()),
             ),
             _ValueFormatOption(
-              label: 'Waluta',
+              label: t.menu.format.number_options.currency,
               example: '1 000,12 zł',
               onPressed: () => _handleValueFormatChanged(SheetNumberFormat.currency()),
             ),
             _ValueFormatOption(
-              label: 'Waluta (w zaokrągleniu)',
+              label: t.menu.format.number_options.currency_rounded,
               example: '1 000 zł',
               onPressed: () => _handleValueFormatChanged(SheetNumberFormat.currency(rounded: true)),
             ),
             const GoogMenuSeperator(),
             _ValueFormatOption(
-              label: 'Data',
+              label: t.menu.format.number_options.date,
               example: '2008-09-26',
               onPressed: () => _handleValueFormatChanged(SheetDateFormat('yyyy-MM-dd')),
             ),
             _ValueFormatOption(
-              label: 'Godzina',
+              label: t.menu.format.number_options.time,
               example: '15:59:00',
               onPressed: () => _handleValueFormatChanged(SheetDateFormat('HH:mm:ss')),
             ),
             _ValueFormatOption(
-              label: 'Data i godzina',
+              label: t.menu.format.number_options.date_time,
               example: '2008-09-26 15:59:00',
               onPressed: () => _handleValueFormatChanged(SheetDateFormat('yyyy-MM-dd HH:mm:ss')),
             ),
             _ValueFormatOption(
-              label: 'Czas trwania',
+              label: t.menu.format.number_options.duration,
               example: '24:01:00',
               onPressed: () => _handleValueFormatChanged(SheetDurationFormat.auto()),
             ),

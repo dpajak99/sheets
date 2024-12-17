@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/widgets/goog/generic/goog_icon.dart';
 import 'package:sheets/widgets/goog/generic/goog_text.dart';
 import 'package:sheets/widgets/goog/menu/header/goog_data_control_menu.dart';
@@ -24,7 +25,7 @@ class GoogHeader extends StatefulWidget {
 
 class _GoogHeaderState extends State<GoogHeader> {
   final FocusNode _focusNode = FocusNode();
-  final TextEditingController _controller = TextEditingController(text: 'Arkusz kalkulacyjny bez tytułu');
+  final TextEditingController _controller = TextEditingController(text: t.title);
 
   @override
   Widget build(BuildContext context) {
@@ -66,14 +67,17 @@ class _GoogHeaderState extends State<GoogHeader> {
                 ),
                 Row(
                   children: <Widget>[
-                    GoogHeaderControlButton(child: const GoogText('Plik'), popupBuilder: (_) => const GoogFileControlMenu()),
-                    GoogHeaderControlButton(child: const GoogText('Edytuj'), popupBuilder: (_) => const GoogEditControlMenu()),
-                    GoogHeaderControlButton(child: const GoogText('Widok'), popupBuilder: (_) => const GoogViewControlMenu()),
-                    GoogHeaderControlButton(child: const GoogText('Wstaw'), popupBuilder: (_) => const GoogInsertControlMenu()),
-                    GoogHeaderControlButton(child: const GoogText('Formatuj'), popupBuilder: (_) => const GoogFormatControlMenu()),
-                    GoogHeaderControlButton(child: const GoogText('Dane'), popupBuilder: (_) => const GoogDataControlMenu()),
-                    GoogHeaderControlButton(child: const GoogText('Narzędzia'), popupBuilder: (_) => const GoogToolsControlMenu()),
-                    GoogHeaderControlButton(child: const GoogText('Pomoc'), popupBuilder: (_) => const GoogHelpControlMenu()),
+                    GoogHeaderControlButton(child: GoogText(t.menu.file.name), popupBuilder: (_) => const GoogFileControlMenu()),
+                    GoogHeaderControlButton(child: GoogText(t.menu.edit.name), popupBuilder: (_) => const GoogEditControlMenu()),
+                    GoogHeaderControlButton(child: GoogText(t.menu.view.name), popupBuilder: (_) => const GoogViewControlMenu()),
+                    GoogHeaderControlButton(
+                        child: GoogText(t.menu.insert.name), popupBuilder: (_) => const GoogInsertControlMenu()),
+                    GoogHeaderControlButton(
+                        child: GoogText(t.menu.format.name), popupBuilder: (_) => const GoogFormatControlMenu()),
+                    GoogHeaderControlButton(child: GoogText(t.menu.data.name), popupBuilder: (_) => const GoogDataControlMenu()),
+                    GoogHeaderControlButton(
+                        child: GoogText(t.menu.tools.name), popupBuilder: (_) => const GoogToolsControlMenu()),
+                    GoogHeaderControlButton(child: GoogText(t.menu.help.name), popupBuilder: (_) => const GoogHelpControlMenu()),
                   ],
                 ),
               ],
@@ -350,7 +354,6 @@ class GoogTitlebarShareButton extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(45),
       child: SizedBox(
-        width: 159,
         height: 40,
         child: Row(
           children: <Widget>[
@@ -363,7 +366,6 @@ class GoogTitlebarShareButton extends StatelessWidget {
 
                 return Container(
                   color: backgroundColor,
-                  width: 125,
                   height: double.infinity,
                   padding: const EdgeInsets.only(left: 20, right: 9),
                   child: Row(
@@ -377,7 +379,7 @@ class GoogTitlebarShareButton extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Udostępnij',
+                        t.share,
                         style: TextStyle(
                           fontFamily: 'Google Sans',
                           package: 'sheets',

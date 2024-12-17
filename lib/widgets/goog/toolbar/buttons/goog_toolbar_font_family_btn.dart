@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/widgets/goog/generic/goog_icon.dart';
 import 'package:sheets/widgets/goog/generic/goog_text.dart';
 import 'package:sheets/widgets/goog/menu/goog_menu_vertical.dart';
@@ -68,21 +69,21 @@ class _GoogToolbarFontFamilyBtnState extends State<GoogToolbarFontFamilyBtn> {
             GoogMenuItem(
               leading: const GoogIcon(SheetIcons.docs_icon_add_fonts),
               iconSize: const Size(16, 13),
-              label: const GoogText('Więcej czcionek'),
+              label: GoogText(t.menu.font.more_fonts),
             ),
             const SizedBox(height: 2),
             const GoogMenuSeperator(),
             const SizedBox(height: 2),
-            const GoogMenuSectionHeader(label: GoogText('MOTYW')),
+            GoogMenuSectionHeader(label: GoogText(t.menu.font.theme.toUpperCase())),
             const SizedBox(height: 2),
             _FontFamilyOption(
               selected: widget.value == _defaultFont,
-              label: 'Domyślna ($_defaultFont)',
+              label: t.menu.font.kDefault(name: _defaultFont),
               fontFamily: _defaultFont,
               onSelect: _handleFontFamilyChanged,
             ),
             const SizedBox(height: 2),
-            const GoogMenuSectionHeader(label: GoogText('OSTATNIE')),
+            GoogMenuSectionHeader(label: GoogText(t.menu.font.recent.toUpperCase())),
             const SizedBox(height: 2),
             ..._recentFonts.map((String fontFamily) {
               return _FontFamilyOption(

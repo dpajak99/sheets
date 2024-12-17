@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/widgets/goog/bottom_bar/goog_bottom_bar_button.dart';
 import 'package:sheets/widgets/goog/bottom_bar/goog_bottom_bar_tab.dart';
 import 'package:sheets/widgets/sheet_theme.dart';
@@ -28,7 +29,7 @@ class GoogBottomBar extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             GoogBottomBarTab(
-              title: 'Arkusz1',
+              title: t.bottom_bar.tab_name(index: 1),
               selected: true,
               onPressed: () {},
             ),

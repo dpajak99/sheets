@@ -1,0 +1,621 @@
+{
+  "title": "Untitled spreadsheet",
+  "share": "Share",
+  "menu": {
+    "font": {
+      "default": "Default ($name)",
+      "more_fonts": "More fonts",
+      "theme": "Theme",
+      "recent": "Recent"
+    },
+    "file": {
+      "name": "File",
+      "new": "New",
+      "new_options": {
+        "spreadsheet": "Spreadsheet",
+        "template": "From template gallery"
+      },
+      "open": "Open",
+      "import": "Import",
+      "make_copy": "Make a copy",
+      "share": "Share",
+      "share_options": {
+        "email": "Share with others",
+        "web": "Publish to web"
+      },
+      "email": "Email",
+      "email_options": {
+        "file": "Email this file",
+        "collaborators": "Email collaborators"
+      },
+      "download": "Download",
+      "download_options": {
+        "xlsx": "Microsoft Excel (.xlsx)",
+        "ods": "OpenDocument (.ods)",
+        "pdf": "PDF (.pdf)",
+        "html": "Web page (.html)",
+        "csv": "Comma-separated values (.csv)",
+        "tsv": "Tab-separated values (.tsv)"
+      },
+      "rename": "Rename",
+      "move": "Move",
+      "add_to_drive": "Add to drive",
+      "move_to_trash": "Move to trash",
+      "version_history": "Version history",
+      "version_history_options": {
+        "name_current_version": "Name current version",
+        "see_version_history": "See version history"
+      },
+      "make_available_offline": "Make available offline",
+      "details": "Details",
+      "security_limitations": "Security limitations",
+      "settings": "Settings",
+      "language": "Language",
+      "print": "Print"
+    },
+    "edit": {
+      "name": "Edit",
+      "undo": "Undo",
+      "redo": "Redo",
+      "cut": "Cut",
+      "copy": "Copy",
+      "paste": "Paste",
+      "paste_special": "Paste special",
+      "paste_special_options": {
+        "values": "Paste values only",
+        "formatting": "Paste format only",
+        "formulas": "Paste formula only",
+        "conditional_formatting": "Conditional formatting only",
+        "data_validation": "Data validation only",
+        "transposed": "Transposed",
+        "column_width": "Column width only",
+        "all_without_borders": "All except borders"
+      },
+      "move": "Move",
+      "delete": "Delete",
+      "delete_options": {
+        "values": "Values",
+        "row": "Row $index",
+        "column": "Column $index",
+        "cells_shift_up": "Cells and shift up",
+        "cells_shift_left": "Cells and shift left",
+        "notes": "Notes"
+      },
+      "find_and_replace": "Find and replace"
+    },
+    "view": {
+      "name": "View",
+      "show": "Show",
+      "show_options": {
+        "formula_bar": "Formula bar",
+        "gridlines": "Gridlines",
+        "formulas": "Formulas",
+        "protected_ranges": "Protected ranges"
+      },
+      "freeze": "Freeze",
+      "freeze_options": {
+        "no_rows": "No rows",
+        "1_row": "1 row",
+        "2_rows": "2 rows",
+        "up_to_current_row": "Up to row $index",
+        "no_columns": "No columns",
+        "1_column": "1 column",
+        "2_columns": "2 columns",
+        "up_to_current_column": "Up to column $index"
+      },
+      "group": "Group",
+      "group_options": {
+        "group": "Group",
+        "ungroup": "Ungroup"
+      },
+      "comments": "Comments",
+      "comments_options": {
+        "hide_comments": "Hide comments",
+        "minimize_comments": "Minimize comments",
+        "show_all": "Show all comments"
+      },
+      "hidden_sheets": "Hidden sheets",
+      "zoom": "Zoom",
+      "full_screen": "Full screen"
+    },
+    "insert": {
+      "name": "Insert",
+      "cells": "Cells",
+      "cells_options": {
+        "cells_and_shift_right": "Insert cells and shift right",
+        "cells_and_shift_down": "Insert cells and shift down"
+      },
+      "rows": "Rows",
+      "rows_options": {
+        "above": "Insert 1 row above",
+        "below": "Insert 1 row below"
+      },
+      "columns": "Columns",
+      "columns_options": {
+        "left": "Insert 1 column left",
+        "right": "Insert 1 column right"
+      },
+      "sheet": "Sheet",
+      "tables": "Tables",
+      "chart": "Chart",
+      "pivot_table": "Pivot table",
+      "image": "Image",
+      "image_options": {
+        "in_cell": "Insert image in cell",
+        "over_cells": "Insert image over cells"
+      },
+      "drawing": "Drawing",
+      "function": "Function",
+      "link": "Link",
+      "checkbox": "Checkbox",
+      "dropdown": "Dropdown",
+      "emoji": "Emoji",
+      "smart_chips": "Smart chips",
+      "smart_chips_options": {
+        "people": "People",
+        "file": "File",
+        "calendar": "Calendar events",
+        "place": "Place",
+        "finance": "Finance",
+        "rating": "Rating"
+      },
+      "comment": "Comment",
+      "note": "Note"
+    },
+    "format": {
+      "name": "Format",
+      "theme": "Theme",
+      "number": "Number",
+      "number_options": {
+        "automatic": "Automatic",
+        "plain_text": "Plain text",
+        "number": "Number",
+        "percent": "Percent",
+        "scientific": "Scientific",
+        "accounting": "Accounting",
+        "financial": "Financial",
+        "currency": "Currency",
+        "currency_rounded": "Currency rounded",
+        "date": "Date",
+        "time": "Time",
+        "date_time": "Date time",
+        "duration": "Duration",
+        "custom_currency": "Custom currency",
+        "custom_date": "Custom date and time",
+        "custom_number": "Custom number format"
+      },
+      "text": "Text",
+      "text_options": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "underline": "Underline",
+        "strikethrough": "Strikethrough"
+      },
+      "alignment": "Alignment",
+      "alignment_options": {
+        "left": "Left",
+        "center": "Center",
+        "right": "Right",
+        "top": "Top",
+        "middle": "Middle",
+        "bottom": "Bottom"
+      },
+      "wrapping": "Wrapping",
+      "wrapping_options": {
+        "overflow": "Overflow",
+        "wrap": "Wrap",
+        "clip": "Clip"
+      },
+      "rotation": "Rotation",
+      "rotation_options": {
+        "none": "None",
+        "tilt_up": "Tilt up",
+        "tilt_down": "Tilt down",
+        "stack_vertically": "Stack vertically",
+        "rotate_up": "Rotate up",
+        "rotate_down": "Rotate down",
+        "custom_angle": "Custom angle"
+      },
+      "font_size": "Font size",
+      "merge_cells": "Merge cells",
+      "merge_cells_options": {
+        "merge_all": "Merge all",
+        "merge_vertically": "Merge vertically",
+        "merge_horizontally": "Merge horizontally",
+        "unmerge": "Unmerge"
+      },
+      "convert_to_table": "Convert to table",
+      "conditional_formatting": "Conditional formatting",
+      "alternating_colors": "Alternating colors",
+      "clear_formatting": "Clear formatting"
+    },
+    "data": {
+      "name": "Data",
+      "sort_sheet": "Sort sheet",
+      "sort_sheet_options": {
+        "by_column_asc": "Sort sheet by column $index (A to Z)",
+        "by_column_desc": "Sort sheet by column $index (Z to A)"
+      },
+      "sort_range": "Sort range",
+      "sort_range_options": {
+        "by_column_asc": "Sort range by column $index (A to Z)",
+        "by_column_desc": "Sort range by column $index (Z to A)",
+        "advanced": "Advanced range sorting options"
+      },
+      "create_filter": "Create a filter",
+      "create_group_by_view": "Create group by view",
+      "create_filter_view": "Create filter view",
+      "add_slicer": "Add a slicer",
+      "protect_sheet": "Protect sheet and ranges",
+      "named_ranges": "Named ranges",
+      "named_functions": "Named functions",
+      "randomize_range": "Randomize range",
+      "column_stats": "Column stats",
+      "data_validation": "Data validation",
+      "data_cleanup": "Data cleanup",
+      "data_cleanup_options": {
+        "cleanup_suggestions": "Cleanup suggestions",
+        "remove_duplicates": "Remove duplicates",
+        "trim_whitespace": "Trim whitespace"
+      },
+      "split_to_columns": "Split text to columns",
+      "data_extraction": "Data extraction"
+    },
+    "tools": {
+      "name": "Tools",
+      "create_new_form": "Create a new form",
+      "spelling": "Spelling",
+      "spelling_options": {
+        "spell_check": "Spell check",
+        "personal_dictionary": "Personal dictionary"
+      },
+      "suggestion_controls": "Suggestion controls",
+      "suggestion_controls_options": {
+        "enable_autocomplete": "Enable autocomplete",
+        "enable_formula_suggestions": "Enable formula suggestions",
+        "enable_formula_corrections": "Enable formula corrections",
+        "enable_named_functions_suggestions": "Enable named functions suggestions",
+        "enable_pivot_table_suggestions": "Enable pivot table suggestions",
+        "enable_dropdown_chip_suggestions": "Enable dropdown chip suggestions",
+        "enable_people_suggestions": "Enable smart people chip suggestions",
+        "enable_table_suggestions": "Enable table suggestions",
+        "enable_data_analysis_suggestions": "Enable data analysis suggestions"
+      },
+      "notifications_settings": "Notifications settings",
+      "notifications_settings_options": {
+        "edit_notifications": "Edit notifications",
+        "comment_notifications": "Comment notifications"
+      },
+      "accessibility": "Accessibility"
+    },
+    "help": {
+      "name": "Help",
+      "search": "Search the menus",
+      "sheets_help": "Sheets help",
+      "training": "Training",
+      "updates": "Updates",
+      "help_sheets_improve": "Help Sheets improve",
+      "privacy_policy": "Privacy policy",
+      "terms_of_service": "Terms of service",
+      "function_list": "Function list",
+      "keyboard_shortcuts": "Keyboard shortcuts"
+    }
+  },
+  "toolbar": {
+    "menus": {
+      "hint": "Menus",
+      "tooltip": "Search the menus (Alt+/)"
+    },
+    "undo": {
+      "tooltip": "Undo (Ctrl+Z)"
+    },
+    "redo": {
+      "tooltip": "Redo (Ctrl+Y)"
+    },
+    "print": {
+      "tooltip": "Print (Ctrl+P)"
+    },
+    "paint_format": {
+      "tooltip": "Paint format"
+    },
+    "zoom": {
+      "tooltip": "Zoom"
+    },
+    "currency": {
+      "tooltip": "Format as currency"
+    },
+    "percent": {
+      "tooltip": "Format as percent"
+    },
+    "decrease_decimal": {
+      "tooltip": "Decrease decimal places"
+    },
+    "increase_decimal": {
+      "tooltip": "Increase decimal places"
+    },
+    "more_formats": {
+      "tooltip": "More formats"
+    },
+    "font": {
+      "tooltip": "Font",
+      "options": "More fonts"
+    },
+    "decrease_font_size": {
+      "tooltip": "Decrease font size (Ctrl+Shift+,)"
+    },
+    "font_size": {
+      "tooltip": "Font size"
+    },
+    "increase_font_size": {
+      "tooltip": "Increase font size (Ctrl+Shift+.)"
+    },
+    "bold": {
+      "tooltip": "Bold (Ctrl+B)"
+    },
+    "italic": {
+      "tooltip": "Italic (Ctrl+I)"
+    },
+    "strikethrough": {
+      "tooltip": "Strikethrough (Alt+Shift+5)"
+    },
+    "text_color": {
+      "tooltip": "Text color"
+    },
+    "fill_color": {
+      "tooltip": "Fill color",
+      "alternating_colors": "Alternating colors"
+    },
+    "borders": {
+      "tooltip": "Borders",
+      "options": {
+        "all": "All borders",
+        "inner": "Inner borders",
+        "horizontal": "Horizontal borders",
+        "vertical": "Vertical borders",
+        "outer": "Outer borders",
+        "left": "Left border",
+        "top": "Top border",
+        "right": "Right border",
+        "bottom": "Bottom border",
+        "clear": "Clear borders",
+        "border_color": "Border color",
+        "border_style": "Border style"
+      }
+    },
+    "merge": {
+      "tooltip": "Merge cells",
+      "options": {
+        "merge_all": "Merge all",
+        "merge_vertically": "Merge vertically",
+        "merge_horizontally": "Merge horizontally",
+        "unmerge": "Unmerge"
+      }
+    },
+    "merge_types": {
+      "tooltip": "Select merge type"
+    },
+    "align": {
+      "tooltip": "Horizontal align",
+      "options": {
+        "left": "Left",
+        "center": "Center",
+        "right": "Right"
+      }
+    },
+    "valign": {
+      "tooltip": "Vertical align",
+      "options": {
+        "top": "Top",
+        "middle": "Middle",
+        "bottom": "Bottom"
+      }
+    },
+    "wrap": {
+      "tooltip": "Text wrapping",
+      "options": {
+        "overflow": "Overflow",
+        "wrap": "Wrap",
+        "clip": "Clip"
+      }
+    },
+    "rotate": {
+      "tooltip": "Text rotation",
+      "options": {
+        "none": "None",
+        "tilt_up": "Tilt up",
+        "tilt_down": "Tilt down",
+        "stack_vertically": "Stack vertically",
+        "rotate_up": "Rotate up",
+        "rotate_down": "Rotate down",
+        "custom_angle": "Custom angle"
+      }
+    },
+    "link": {
+      "tooltip": "Insert link (Ctrl+K)"
+    },
+    "comment": {
+      "tooltip": "Insert comment (Ctrl+Alt+M)"
+    },
+    "chart": {
+      "tooltip": "Insert chart"
+    },
+    "filter": {
+      "tooltip": "Create a filter"
+    },
+    "filter_views": {
+      "tooltip": "Filter views",
+      "options": {
+        "create_group_by_view": "Create group by view",
+        "create_filter_view": "Create filter view"
+      }
+    },
+    "functions": {
+      "tooltip": "Functions"
+    }
+  },
+  "cell_menu": {
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "paste_special": "Paste special",
+    "paste_special_options": {
+      "values": "Paste values only",
+      "formatting": "Paste format only",
+      "formulas": "Paste formula only",
+      "conditional_formatting": "Conditional formatting only",
+      "data_validation": "Data validation only",
+      "transposed": "Transposed",
+      "column_width": "Column width only",
+      "all_without_borders": "All except borders"
+    },
+    "insert_row_above": "Insert 1 row above",
+    "insert_column_left": "Insert 1 column left",
+    "insert_cells": "Insert cells",
+    "insert_cells_options": {
+      "cells_and_shift_right": "Insert cells and shift right",
+      "cells_and_shift_down": "Insert cells and shift down"
+    },
+    "delete_row": "Delete row",
+    "delete_column": "Delete column",
+    "delete_cells": "Delete cells",
+    "delete_cells_options": {
+      "cells_and_shift_left": "Insert cells and shift left",
+      "cells_and_shift_up": "Insert cells and shift up"
+    },
+    "convert_to_table": "Convert to table",
+    "create_filter": "Create a filter",
+    "filter_by_cell_value": "Filter by cell value",
+    "show_edit_history": "Show edit history",
+    "insert_link": "Insert link",
+    "comment": "Comment",
+    "insert_note": "Insert note",
+    "tables": "Tables",
+    "dropdown": "Dropdown",
+    "smart_chips": "Smart chips",
+    "smart_chips_options": {
+      "people": "People",
+      "file": "File",
+      "calendar": "Calendar events",
+      "place": "Place",
+      "finance": "Finance",
+      "rating": "Rating"
+    },
+    "more": "View more cell actions",
+    "more_options": {
+      "conditional_formatting": "Conditional formatting",
+      "data_validation": "Data validation",
+      "get_link_to_cell": "Get link to this cell",
+      "define_named_range": "Define named range",
+      "protect_range": "Protect range"
+    }
+  },
+  "column_menu": {
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "paste_special": "Paste special",
+    "paste_special_options": {
+      "values": "Paste values only",
+      "formatting": "Paste format only",
+      "formulas": "Paste formula only",
+      "conditional_formatting": "Conditional formatting only",
+      "data_validation": "Data validation only",
+      "transposed": "Transposed",
+      "column_width": "Column width only",
+      "all_without_borders": "All except borders"
+    },
+    "insert_column_left": "Insert 1 column left",
+    "insert_column_right": "Insert 1 column right",
+    "delete_column": "Delete column",
+    "clear_column": "Clear column",
+    "hide_column": "Hide column",
+    "resize_column": "Resize column",
+    "create_filter": "Create a filter",
+    "sort_asc": "Sort sheet A to Z",
+    "sort_desc": "Sort sheet Z to A",
+    "conditional_formatting": "Conditional formatting",
+    "data_validation": "Data validation",
+    "column_stats": "Column stats",
+    "dropdown": "Dropdown",
+    "smart_chips": "Smart chips",
+    "smart_chips_options": {
+      "people": "People",
+      "file": "File",
+      "calendar": "Calendar events",
+      "place": "Place",
+      "finance": "Finance",
+      "rating": "Rating"
+    },
+    "more": "View more column actions",
+    "more_options": {
+      "freeze": "Freeze up to column $index",
+      "group": "Group column",
+      "get_link_to_range": "Get link to this range",
+      "randomize_range": "Randomize range",
+      "define_named_range": "Define named range",
+      "protect_range": "Protect range"
+    }
+  },
+  "row_menu": {
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "paste_special": "Paste special",
+    "paste_special_options": {
+      "values": "Paste values only",
+      "formatting": "Paste format only",
+      "formulas": "Paste formula only",
+      "conditional_formatting": "Conditional formatting only",
+      "data_validation": "Data validation only",
+      "transposed": "Transposed",
+      "column_width": "Column width only",
+      "all_without_borders": "All except borders"
+    },
+    "insert_row_above": "Insert 1 row above",
+    "insert_row_below": "Insert 1 row below",
+    "delete_row": "Delete row",
+    "clear_row": "Clear row",
+    "hide_row": "Hide row",
+    "resize_row": "Resize row",
+    "create_filter": "Create a filter",
+    "conditional_formatting": "Conditional formatting",
+    "data_validation": "Data validation",
+    "more": "View more row actions",
+    "more_options": {
+      "freeze": "Freeze up to row $index",
+      "group": "Group row",
+      "get_link_to_range": "Get link to this range",
+      "define_named_range": "Define named range",
+      "protect_range": "Protect range"
+    }
+  },
+  "header": {
+    "star": {
+      "tooltip": "Star"
+    },
+    "move": {
+      "tooltip": "Move"
+    },
+    "status": {
+      "tooltip": "See document status"
+    },
+    "history": {
+      "tooltip": "Show document history"
+    },
+    "comments": {
+      "tooltip": "Show all comments"
+    },
+    "call": {
+      "tooltip": "Join a call here or present this tab to the cell"
+    },
+    "share": {
+      "tooltip": "Quick sharing actions"
+    }
+  },
+  "bottom_bar": {
+    "tab_name": "Sheet$index",
+    "add_sheet": "Add sheet",
+    "all_sheets": "All sheets",
+    "show_side_panel": "Show side panel"
+  }
+}
