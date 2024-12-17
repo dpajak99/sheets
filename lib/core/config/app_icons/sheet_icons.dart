@@ -1512,4 +1512,5 @@ class SheetIcons {
   static const AssetIconData docs_icon_add_task_blue_20x20 = AssetIconData('assets/icons/docs-icon-add-task-blue-20x20.svg');
   static const AssetIconData docs_icon_add_on_18x18 = AssetIconData('assets/icons/docs-icon-add-on-18x18.svg');
   static const AssetIconData docs_icon_docs_add_on_24x24 = AssetIconData('assets/icons/docs-icon-docs-add-on-24x24.svg');
+  static const AssetIconData scb_lock_s900 = AssetIconData('assets/icons/scb-lock-s900.svg');
 }
