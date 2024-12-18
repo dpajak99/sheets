@@ -10,7 +10,7 @@
       },
       "open": "Otwórz",
       "import": "Importuj",
-      "make_a_copy": "Utwórz kopię",
+      "make_copy": "Utwórz kopię",
       "share": "Udostępnij",
       "share_options": {
         "email": "Share with others",
@@ -31,6 +31,8 @@
         "tsv": "Wartości rozdzielane tabulatorami (.tsv)"
       },
       "rename": "Zmień nazwę",
+      "move": "Przenieś",
+      "add_to_drive": "Dodaj skrót do dysku",
       "move_to_trash": "Przenieś do kosza",
       "version_history": "Historia zmian",
       "version_history_options": {
@@ -41,6 +43,7 @@
       "details": "Szczegóły",
       "security_limitations": "Ograniczenia zabezpieczeń",
       "settings": "Ustawienia",
+      "language": "Język",
       "print": "Drukuj"
     },
     "edit": {
@@ -61,6 +64,7 @@
         "column_width": "Tylko szerokość kolumny",
         "all_without_borders": "Wszystko oprócz obramowania"
       },
+      "move": "Przenieś",
       "delete": "Usuń",
       "delete_options": {
         "values": "Wartości",
@@ -266,7 +270,8 @@
         "enable_named_functions_suggestions": "Włącz sugestie funkcji nazwanych",
         "enable_pivot_table_suggestions": "Włącz sugestie dotyczace tabel przestawnych",
         "enable_dropdown_chip_suggestions": "Włącz sugestie związane z elementami menu",
-        "enable_table_suggestions": "Włącz sugestie związane z inteligentnymi elementami dotyczacymi osób",
+        "enable_people_suggestions": "Włącz sugestie związane z inteligentnymi elementami dotyczacymi osób",
+        "enable_table_suggestions": "Włącz sugeste dotyczące tabel",
         "enable_data_analysis_suggestions": "Włącz sugestie dotyczące analizy danych"
       },
       "notifications_settings": "Ustawienia powiadomień",

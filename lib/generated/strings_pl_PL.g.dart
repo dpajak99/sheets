@@ -234,7 +234,7 @@ class _TranslationsMenuFilePlPl implements TranslationsMenuFileEn {
 	@override late final _TranslationsMenuFileNewOptionsPlPl new_options = _TranslationsMenuFileNewOptionsPlPl._(_root);
 	@override String get open => 'Otwórz';
 	@override String get import => 'Importuj';
-	@override String get make_a_copy => 'Utwórz kopię';
+	@override String get make_copy => 'Utwórz kopię';
 	@override String get share => 'Udostępnij';
 	@override late final _TranslationsMenuFileShareOptionsPlPl share_options = _TranslationsMenuFileShareOptionsPlPl._(_root);
 	@override String get email => 'Wyślij e-mailem';
@@ -242,6 +242,8 @@ class _TranslationsMenuFilePlPl implements TranslationsMenuFileEn {
 	@override String get download => 'Pobierz';
 	@override late final _TranslationsMenuFileDownloadOptionsPlPl download_options = _TranslationsMenuFileDownloadOptionsPlPl._(_root);
 	@override String get rename => 'Zmień nazwę';
+	@override String get move => 'Przenieś';
+	@override String get add_to_drive => 'Dodaj skrót do dysku';
 	@override String get move_to_trash => 'Przenieś do kosza';
 	@override String get version_history => 'Historia zmian';
 	@override late final _TranslationsMenuFileVersionHistoryOptionsPlPl version_history_options = _TranslationsMenuFileVersionHistoryOptionsPlPl._(_root);
@@ -249,6 +251,7 @@ class _TranslationsMenuFilePlPl implements TranslationsMenuFileEn {
 	@override String get details => 'Szczegóły';
 	@override String get security_limitations => 'Ograniczenia zabezpieczeń';
 	@override String get settings => 'Ustawienia';
+	@override String get language => 'Język';
 	@override String get print => 'Drukuj';
 }
 
@@ -267,6 +270,7 @@ class _TranslationsMenuEditPlPl implements TranslationsMenuEditEn {
 	@override String get paste => 'Wklej';
 	@override String get paste_special => 'Wklej specjalne';
 	@override late final _TranslationsMenuEditPasteSpecialOptionsPlPl paste_special_options = _TranslationsMenuEditPasteSpecialOptionsPlPl._(_root);
+	@override String get move => 'Przenieś';
 	@override String get delete => 'Usuń';
 	@override late final _TranslationsMenuEditDeleteOptionsPlPl delete_options = _TranslationsMenuEditDeleteOptionsPlPl._(_root);
 	@override String get find_and_replace => 'Znajdź i zamień';
@@ -1330,7 +1334,8 @@ class _TranslationsMenuToolsSuggestionControlsOptionsPlPl implements Translation
 	@override String get enable_named_functions_suggestions => 'Włącz sugestie funkcji nazwanych';
 	@override String get enable_pivot_table_suggestions => 'Włącz sugestie dotyczace tabel przestawnych';
 	@override String get enable_dropdown_chip_suggestions => 'Włącz sugestie związane z elementami menu';
-	@override String get enable_table_suggestions => 'Włącz sugestie związane z inteligentnymi elementami dotyczacymi osób';
+	@override String get enable_people_suggestions => 'Włącz sugestie związane z inteligentnymi elementami dotyczacymi osób';
+	@override String get enable_table_suggestions => 'Włącz sugeste dotyczące tabel';
 	@override String get enable_data_analysis_suggestions => 'Włącz sugestie dotyczące analizy danych';
 }
 
@@ -1454,7 +1459,7 @@ extension on TranslationsPlPl {
 			case 'menu.file.new_options.template': return 'Z galerii szablonów';
 			case 'menu.file.open': return 'Otwórz';
 			case 'menu.file.import': return 'Importuj';
-			case 'menu.file.make_a_copy': return 'Utwórz kopię';
+			case 'menu.file.make_copy': return 'Utwórz kopię';
 			case 'menu.file.share': return 'Udostępnij';
 			case 'menu.file.share_options.email': return 'Share with others';
 			case 'menu.file.share_options.web': return 'Publish to web';
@@ -1469,6 +1474,8 @@ extension on TranslationsPlPl {
 			case 'menu.file.download_options.csv': return 'Wartości rozdzielane przecinkami (.csv)';
 			case 'menu.file.download_options.tsv': return 'Wartości rozdzielane tabulatorami (.tsv)';
 			case 'menu.file.rename': return 'Zmień nazwę';
+			case 'menu.file.move': return 'Przenieś';
+			case 'menu.file.add_to_drive': return 'Dodaj skrót do dysku';
 			case 'menu.file.move_to_trash': return 'Przenieś do kosza';
 			case 'menu.file.version_history': return 'Historia zmian';
 			case 'menu.file.version_history_options.name_current_version': return 'Nazwij obecną wersję';
@@ -1477,6 +1484,7 @@ extension on TranslationsPlPl {
 			case 'menu.file.details': return 'Szczegóły';
 			case 'menu.file.security_limitations': return 'Ograniczenia zabezpieczeń';
 			case 'menu.file.settings': return 'Ustawienia';
+			case 'menu.file.language': return 'Język';
 			case 'menu.file.print': return 'Drukuj';
 			case 'menu.edit.name': return 'Edytuj';
 			case 'menu.edit.undo': return 'Cofnij';
@@ -1493,6 +1501,7 @@ extension on TranslationsPlPl {
 			case 'menu.edit.paste_special_options.transposed': return 'Z transpozycją';
 			case 'menu.edit.paste_special_options.column_width': return 'Tylko szerokość kolumny';
 			case 'menu.edit.paste_special_options.all_without_borders': return 'Wszystko oprócz obramowania';
+			case 'menu.edit.move': return 'Przenieś';
 			case 'menu.edit.delete': return 'Usuń';
 			case 'menu.edit.delete_options.values': return 'Wartości';
 			case 'menu.edit.delete_options.row': return 'Wiersz {index}';
@@ -1647,7 +1656,8 @@ extension on TranslationsPlPl {
 			case 'menu.tools.suggestion_controls_options.enable_named_functions_suggestions': return 'Włącz sugestie funkcji nazwanych';
 			case 'menu.tools.suggestion_controls_options.enable_pivot_table_suggestions': return 'Włącz sugestie dotyczace tabel przestawnych';
 			case 'menu.tools.suggestion_controls_options.enable_dropdown_chip_suggestions': return 'Włącz sugestie związane z elementami menu';
-			case 'menu.tools.suggestion_controls_options.enable_table_suggestions': return 'Włącz sugestie związane z inteligentnymi elementami dotyczacymi osób';
+			case 'menu.tools.suggestion_controls_options.enable_people_suggestions': return 'Włącz sugestie związane z inteligentnymi elementami dotyczacymi osób';
+			case 'menu.tools.suggestion_controls_options.enable_table_suggestions': return 'Włącz sugeste dotyczące tabel';
 			case 'menu.tools.suggestion_controls_options.enable_data_analysis_suggestions': return 'Włącz sugestie dotyczące analizy danych';
 			case 'menu.tools.notifications_settings': return 'Ustawienia powiadomień';
 			case 'menu.tools.notifications_settings_options.edit_notifications': return 'Powiadomienia o edycji';

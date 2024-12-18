@@ -10,7 +10,7 @@
       },
       "open": "Open",
       "import": "Import",
-      "make_a_copy": "Make a copy",
+      "make_copy": "Make a copy",
       "share": "Share",
       "share_options": {
         "email": "Share with others",
@@ -31,6 +31,8 @@
         "tsv": "Tab-separated values (.tsv)"
       },
       "rename": "Rename",
+      "move": "Move",
+      "add_to_drive": "Add to drive",
       "move_to_trash": "Move to trash",
       "version_history": "Version history",
       "version_history_options": {
@@ -41,6 +43,7 @@
       "details": "Details",
       "security_limitations": "Security limitations",
       "settings": "Settings",
+      "language": "Language",
       "print": "Print"
     },
     "edit": {
@@ -61,6 +64,7 @@
         "column_width": "Column width only",
         "all_without_borders": "All except borders"
       },
+      "move": "Move",
       "delete": "Delete",
       "delete_options": {
         "values": "Values",
@@ -266,6 +270,7 @@
         "enable_named_functions_suggestions": "Enable named functions suggestions",
         "enable_pivot_table_suggestions": "Enable pivot table suggestions",
         "enable_dropdown_chip_suggestions": "Enable dropdown chip suggestions",
+        "enable_people_suggestions": "Enable smart people chip suggestions",
         "enable_table_suggestions": "Enable table suggestions",
         "enable_data_analysis_suggestions": "Enable data analysis suggestions"
       },

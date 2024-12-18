@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/widgets/goog/generic/goog_icon.dart';
 import 'package:sheets/widgets/goog/generic/goog_text.dart';
 import 'package:sheets/widgets/goog/menu/goog_menu_vertical.dart';
@@ -13,19 +14,19 @@ class GoogInsertControlMenu extends StatelessWidget {
       width: 322,
       children: <Widget>[
         GoogSubmenuItem(
-          label: const GoogText('Komórki'),
+          label: GoogText(t.menu.insert.cells),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_square_rounded),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Wstaw komórki z przesunięciem w prawo'),
+                  label: GoogText(t.menu.insert.cells_options.cells_and_shift_right),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Wstaw komórki z przesunięciem w dół'),
+                  label: GoogText(t.menu.insert.cells_options.cells_and_shift_down),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
@@ -34,19 +35,19 @@ class GoogInsertControlMenu extends StatelessWidget {
           },
         ),
         GoogSubmenuItem(
-          label: const GoogText('Wiersze'),
+          label: GoogText(t.menu.insert.rows),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_horizontal_rows),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Wstaw wiersz powyżej'),
+                  label: GoogText(t.menu.insert.rows_options.above),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Wstaw wiersz poniżej'),
+                  label: GoogText(t.menu.insert.rows_options.below),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
@@ -55,19 +56,19 @@ class GoogInsertControlMenu extends StatelessWidget {
           },
         ),
         GoogSubmenuItem(
-          label: const GoogText('Kolumny'),
+          label: GoogText(t.menu.insert.columns),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_vertical_columns),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Wstaw kolumnę po lewej'),
+                  label: GoogText(t.menu.insert.columns_options.left),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Wstaw kolumnę po prawej'),
+                  label: GoogText(t.menu.insert.columns_options.right),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
@@ -76,42 +77,42 @@ class GoogInsertControlMenu extends StatelessWidget {
           },
         ),
         GoogMenuItem(
-          label: const GoogText('Arkusz'),
+          label: GoogText(t.menu.insert.sheet),
           trailing: const GoogText('Shift + F11'),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_sheets_tab),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
         GoogMenuItem(
-          label: const GoogText('Tabele'),
+          label: GoogText(t.menu.insert.tables),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_table_chart),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
         GoogMenuItem(
-          label: const GoogText('Wykres'),
+          label: GoogText(t.menu.insert.chart),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_chart),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Tabela przestawna'),
+          label: GoogText(t.menu.insert.pivot_table),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_pivot_table),
           disabled: true,
         ),
         GoogSubmenuItem(
-          label: const GoogText('Obraz'),
+          label: GoogText(t.menu.insert.image),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_photo_image),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Wstaw obraz w komórce'),
+                  label: GoogText(t.menu.insert.image_options.in_cell),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Wstaw obraz nad komórkami'),
+                  label: GoogText(t.menu.insert.image_options.over_cells),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
@@ -120,13 +121,13 @@ class GoogInsertControlMenu extends StatelessWidget {
           },
         ),
         GoogMenuItem(
-          label: const GoogText('Rysunek'),
+          label: GoogText(t.menu.insert.drawing),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_drawings),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
         GoogSubmenuItem(
-          label: const GoogText('Funkcja'),
+          label: GoogText(t.menu.insert.function),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_sigma_function),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
@@ -299,39 +300,75 @@ class GoogInsertControlMenu extends StatelessWidget {
           },
         ),
         GoogMenuItem(
-          label: const GoogText('Link'),
+          label: GoogText(t.menu.insert.link),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_link),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
         GoogMenuItem(
-          label: const GoogText('Pole wyboru'),
+          label: GoogText(t.menu.insert.checkbox),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_checkbox),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Menu'),
+          label: GoogText(t.menu.insert.dropdown),
           leading: const GoogIcon(SheetIcons.docs_icon_dropdown_arrow_in_oval),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Emotikony'),
+          label: GoogText(t.menu.insert.emoji),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_emoji),
           disabled: true,
         ),
-        GoogMenuItem(
-          label: const GoogText('Elementy inteligentne'),
+        GoogSubmenuItem(
+          label: GoogText(t.menu.insert.smart_chips),
           leading: const GoogIcon(SheetIcons.docs_icon_docs_smart_chips_18),
-          disabled: true,
+          popupBuilder: (BuildContext context) {
+            return GoogMenuVertical(
+              width: 262,
+              children: <Widget>[
+                GoogMenuItem(
+                  label: GoogText(t.menu.insert.smart_chips_options.people),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+                GoogMenuItem(
+                  label: GoogText(t.menu.insert.smart_chips_options.file),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+                GoogMenuItem(
+                  label: GoogText(t.menu.insert.smart_chips_options.calendar),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+                GoogMenuItem(
+                  label: GoogText(t.menu.insert.smart_chips_options.place),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+                GoogMenuItem(
+                  label: GoogText(t.menu.insert.smart_chips_options.finance),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+                GoogMenuItem(
+                  label: GoogText(t.menu.insert.smart_chips_options.rating),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+              ],
+            );
+          },
         ),
         const GoogMenuSeperator.expand(),
         GoogMenuItem(
-          label: const GoogText('Komentarz'),
+          label: GoogText(t.menu.insert.comment),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_add_comment),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Notatka'),
+          label: GoogText(t.menu.insert.note),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_note),
           disabled: true,
         ),

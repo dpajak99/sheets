@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/app_icons/asset_icon.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/widgets/goog/generic/goog_icon.dart';
 import 'package:sheets/widgets/goog/generic/goog_text.dart';
 import 'package:sheets/widgets/goog/menu/goog_menu_vertical.dart';
@@ -14,19 +15,19 @@ class GoogFileControlMenu extends StatelessWidget {
       width: 322,
       children: <Widget>[
         GoogSubmenuItem(
-          label: const GoogText('Nowy'),
+          label: GoogText(t.menu.file.kNew),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_spreadsheet_black),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Arkusz kalkulacyjny'),
+                  label: GoogText(t.menu.file.new_options.spreadsheet),
                   leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_spreadsheet_green),
                   disabled: true,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Z galerii szablonów'),
+                  label: GoogText(t.menu.file.new_options.template),
                   leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_paintbrush_box),
                   disabled: true,
                 ),
@@ -35,35 +36,35 @@ class GoogFileControlMenu extends StatelessWidget {
           },
         ),
         GoogMenuItem(
-          label: const GoogText('Otwórz'),
+          label: GoogText(t.menu.file.open),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_folder),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Importuj'),
+          label: GoogText(t.menu.file.import),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_import),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Utwórz kopię'),
+          label: GoogText(t.menu.file.make_copy),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_file_copy),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
         GoogSubmenuItem(
-          label: const GoogText('Udostepnij'),
+          label: GoogText(t.menu.file.share),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_add_person),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Udostępnij innym'),
+                  label: GoogText(t.menu.file.share_options.email),
                   leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_add_person),
                   disabled: true,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Opublikuj w internecie'),
+                  label: GoogText(t.menu.file.share_options.web),
                   leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_globe),
                   disabled: true,
                 ),
@@ -72,19 +73,19 @@ class GoogFileControlMenu extends StatelessWidget {
           },
         ),
         GoogSubmenuItem(
-          label: const GoogText('Wyślij e-mailem'),
+          label: GoogText(t.menu.file.email),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_email_outline),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Wyślij ten plik emailem'),
+                  label: GoogText(t.menu.file.email_options.file),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Wyślij emaila do współpracowników'),
+                  label: GoogText(t.menu.file.email_options.collaborators),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
@@ -93,39 +94,39 @@ class GoogFileControlMenu extends StatelessWidget {
           },
         ),
         GoogSubmenuItem(
-          label: const GoogText('Pobierz'),
+          label: GoogText(t.menu.file.download),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_download),
           popupBuilder: (BuildContext context) {
             return GoogMenuVertical(
               width: 262,
               children: <Widget>[
                 GoogMenuItem(
-                  label: const GoogText('Microsoft Excel (.xlsx)'),
+                  label: GoogText(t.menu.file.download_options.xlsx),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('OpenDocument (.ods)'),
+                  label: GoogText(t.menu.file.download_options.ods),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('PDF (.pdf)'),
+                  label: GoogText(t.menu.file.download_options.pdf),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Strona internetowa (.html)'),
+                  label: GoogText(t.menu.file.download_options.html),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Wartości rozdzielane przecinkami (.csv)'),
+                  label: GoogText(t.menu.file.download_options.csv),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
                 GoogMenuItem(
-                  label: const GoogText('Wartości rozdzielane tabulatorami (.tsv)'),
+                  label: GoogText(t.menu.file.download_options.tsv),
                   disabled: true,
                   iconPlaceholderVisible: false,
                 ),
@@ -135,60 +136,76 @@ class GoogFileControlMenu extends StatelessWidget {
         ),
         const GoogMenuSeperator.expand(),
         GoogMenuItem(
-          label: const GoogText('Zmień nazwę'),
+          label: GoogText(t.menu.file.rename),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_rename),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Przenieś'),
+          label: GoogText(t.menu.file.move),
           leading: const GoogIcon(SheetIcons.docs_icon_folder_move),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Dodaj skrót do dysku'),
+          label: GoogText(t.menu.file.add_to_drive),
           leading: const GoogIcon(SheetIcons.docs_icon_add_to_drive_2021),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Przenieś do kosza'),
+          label: GoogText(t.menu.file.move_to_trash),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_delete_trash),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
-        GoogMenuItem(
-          label: const GoogText('Historia zmian'),
+        GoogSubmenuItem(
+          label: GoogText(t.menu.file.version_history),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_history_restore),
-          disabled: true,
+          popupBuilder: (BuildContext context) {
+            return GoogMenuVertical(
+              width: 262,
+              children: <Widget>[
+                GoogMenuItem(
+                  label: GoogText(t.menu.file.version_history_options.name_current_version),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+                GoogMenuItem(
+                  label: GoogText(t.menu.file.version_history_options.see_version_history),
+                  disabled: true,
+                  iconPlaceholderVisible: false,
+                ),
+              ],
+            );
+          },
         ),
         GoogMenuItem(
-          label: const GoogText('Udostępnij offline'),
+          label: GoogText(t.menu.file.make_available_offline),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_offline_pin),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
         GoogMenuItem(
-          label: const GoogText('Szczegóły'),
+          label: GoogText(t.menu.file.details),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_info),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Ograniczenia zabezpieczeń'),
+          label: GoogText(t.menu.file.security_limitations),
           leading: const GoogIcon(SheetIcons.docs_icon_policy_18x18),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Ustawienia'),
+          label: GoogText(t.menu.file.settings),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_settings_gear),
           disabled: true,
         ),
         GoogMenuItem(
-          label: const GoogText('Język'),
+          label: GoogText(t.menu.file.language),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_internet_globe),
           disabled: true,
         ),
         const GoogMenuSeperator.expand(),
         GoogMenuItem(
-          label: const GoogText('Drukuj'),
+          label: GoogText(t.menu.file.print),
           leading: const GoogIcon(SheetIcons.docs_icon_editors_ia_print),
           disabled: true,
         ),

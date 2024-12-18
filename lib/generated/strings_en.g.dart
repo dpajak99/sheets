@@ -238,7 +238,7 @@ class TranslationsMenuFileEn {
 	late final TranslationsMenuFileNewOptionsEn new_options = TranslationsMenuFileNewOptionsEn._(_root);
 	String get open => 'Open';
 	String get import => 'Import';
-	String get make_a_copy => 'Make a copy';
+	String get make_copy => 'Make a copy';
 	String get share => 'Share';
 	late final TranslationsMenuFileShareOptionsEn share_options = TranslationsMenuFileShareOptionsEn._(_root);
 	String get email => 'Email';
@@ -246,6 +246,8 @@ class TranslationsMenuFileEn {
 	String get download => 'Download';
 	late final TranslationsMenuFileDownloadOptionsEn download_options = TranslationsMenuFileDownloadOptionsEn._(_root);
 	String get rename => 'Rename';
+	String get move => 'Move';
+	String get add_to_drive => 'Add to drive';
 	String get move_to_trash => 'Move to trash';
 	String get version_history => 'Version history';
 	late final TranslationsMenuFileVersionHistoryOptionsEn version_history_options = TranslationsMenuFileVersionHistoryOptionsEn._(_root);
@@ -253,6 +255,7 @@ class TranslationsMenuFileEn {
 	String get details => 'Details';
 	String get security_limitations => 'Security limitations';
 	String get settings => 'Settings';
+	String get language => 'Language';
 	String get print => 'Print';
 }
 
@@ -271,6 +274,7 @@ class TranslationsMenuEditEn {
 	String get paste => 'Paste';
 	String get paste_special => 'Paste special';
 	late final TranslationsMenuEditPasteSpecialOptionsEn paste_special_options = TranslationsMenuEditPasteSpecialOptionsEn._(_root);
+	String get move => 'Move';
 	String get delete => 'Delete';
 	late final TranslationsMenuEditDeleteOptionsEn delete_options = TranslationsMenuEditDeleteOptionsEn._(_root);
 	String get find_and_replace => 'Find and replace';
@@ -1334,6 +1338,7 @@ class TranslationsMenuToolsSuggestionControlsOptionsEn {
 	String get enable_named_functions_suggestions => 'Enable named functions suggestions';
 	String get enable_pivot_table_suggestions => 'Enable pivot table suggestions';
 	String get enable_dropdown_chip_suggestions => 'Enable dropdown chip suggestions';
+	String get enable_people_suggestions => 'Enable smart people chip suggestions';
 	String get enable_table_suggestions => 'Enable table suggestions';
 	String get enable_data_analysis_suggestions => 'Enable data analysis suggestions';
 }
@@ -1458,7 +1463,7 @@ extension on Translations {
 			case 'menu.file.new_options.template': return 'From template gallery';
 			case 'menu.file.open': return 'Open';
 			case 'menu.file.import': return 'Import';
-			case 'menu.file.make_a_copy': return 'Make a copy';
+			case 'menu.file.make_copy': return 'Make a copy';
 			case 'menu.file.share': return 'Share';
 			case 'menu.file.share_options.email': return 'Share with others';
 			case 'menu.file.share_options.web': return 'Publish to web';
@@ -1473,6 +1478,8 @@ extension on Translations {
 			case 'menu.file.download_options.csv': return 'Comma-separated values (.csv)';
 			case 'menu.file.download_options.tsv': return 'Tab-separated values (.tsv)';
 			case 'menu.file.rename': return 'Rename';
+			case 'menu.file.move': return 'Move';
+			case 'menu.file.add_to_drive': return 'Add to drive';
 			case 'menu.file.move_to_trash': return 'Move to trash';
 			case 'menu.file.version_history': return 'Version history';
 			case 'menu.file.version_history_options.name_current_version': return 'Name current version';
@@ -1481,6 +1488,7 @@ extension on Translations {
 			case 'menu.file.details': return 'Details';
 			case 'menu.file.security_limitations': return 'Security limitations';
 			case 'menu.file.settings': return 'Settings';
+			case 'menu.file.language': return 'Language';
 			case 'menu.file.print': return 'Print';
 			case 'menu.edit.name': return 'Edit';
 			case 'menu.edit.undo': return 'Undo';
@@ -1497,6 +1505,7 @@ extension on Translations {
 			case 'menu.edit.paste_special_options.transposed': return 'Transposed';
 			case 'menu.edit.paste_special_options.column_width': return 'Column width only';
 			case 'menu.edit.paste_special_options.all_without_borders': return 'All except borders';
+			case 'menu.edit.move': return 'Move';
 			case 'menu.edit.delete': return 'Delete';
 			case 'menu.edit.delete_options.values': return 'Values';
 			case 'menu.edit.delete_options.row': return 'Row {index}';
@@ -1651,6 +1660,7 @@ extension on Translations {
 			case 'menu.tools.suggestion_controls_options.enable_named_functions_suggestions': return 'Enable named functions suggestions';
 			case 'menu.tools.suggestion_controls_options.enable_pivot_table_suggestions': return 'Enable pivot table suggestions';
 			case 'menu.tools.suggestion_controls_options.enable_dropdown_chip_suggestions': return 'Enable dropdown chip suggestions';
+			case 'menu.tools.suggestion_controls_options.enable_people_suggestions': return 'Enable smart people chip suggestions';
 			case 'menu.tools.suggestion_controls_options.enable_table_suggestions': return 'Enable table suggestions';
 			case 'menu.tools.suggestion_controls_options.enable_data_analysis_suggestions': return 'Enable data analysis suggestions';
 			case 'menu.tools.notifications_settings': return 'Notifications settings';
