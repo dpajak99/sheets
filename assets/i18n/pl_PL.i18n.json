@@ -1,0 +1,621 @@
+{
+  "title": "Untitled spreadsheet",
+  "share": "Udostępnij",
+  "menu": {
+    "font": {
+      "default": "Domyślna ($name)",
+      "more_fonts": "Więcej czcionek",
+      "theme": "Motyw",
+      "recent": "Ostatnie"
+    },
+    "file": {
+      "name": "Plik",
+      "new": "Nowy",
+      "new_options": {
+        "spreadsheet": "Arkusz kalkulacyjny",
+        "template": "Z galerii szablonów"
+      },
+      "open": "Otwórz",
+      "import": "Importuj",
+      "make_copy": "Utwórz kopię",
+      "share": "Udostępnij",
+      "share_options": {
+        "email": "Share with others",
+        "web": "Publish to web"
+      },
+      "email": "Wyślij e-mailem",
+      "email_options": {
+        "file": "Wyślij ten plik e-mailem",
+        "collaborators": "Wyślij e-maila do współpracowników"
+      },
+      "download": "Pobierz",
+      "download_options": {
+        "xlsx": "Microsoft Excel (.xlsx)",
+        "ods": "OpenDocument (.ods)",
+        "pdf": "PDF (.pdf)",
+        "html": "Strona internetowa (.html)",
+        "csv": "Wartości rozdzielane przecinkami (.csv)",
+        "tsv": "Wartości rozdzielane tabulatorami (.tsv)"
+      },
+      "rename": "Zmień nazwę",
+      "move": "Przenieś",
+      "add_to_drive": "Dodaj skrót do dysku",
+      "move_to_trash": "Przenieś do kosza",
+      "version_history": "Historia zmian",
+      "version_history_options": {
+        "name_current_version": "Nazwij obecną wersję",
+        "see_version_history": "Wyświetl historię zmian"
+      },
+      "make_available_offline": "Udostępnij offline",
+      "details": "Szczegóły",
+      "security_limitations": "Ograniczenia zabezpieczeń",
+      "settings": "Ustawienia",
+      "language": "Język",
+      "print": "Drukuj"
+    },
+    "edit": {
+      "name": "Edytuj",
+      "undo": "Cofnij",
+      "redo": "Ponów",
+      "cut": "Wytnij",
+      "copy": "Kopiuj",
+      "paste": "Wklej",
+      "paste_special": "Wklej specjalne",
+      "paste_special_options": {
+        "values": "Tylko wartości",
+        "formatting": "Tylko formatowanie",
+        "formulas": "Tylko formuła",
+        "conditional_formatting": "Tylko formatowanie warunkowe",
+        "data_validation": "Tylko sprawdzanie poprawności danych",
+        "transposed": "Z transpozycją",
+        "column_width": "Tylko szerokość kolumny",
+        "all_without_borders": "Wszystko oprócz obramowania"
+      },
+      "move": "Przenieś",
+      "delete": "Usuń",
+      "delete_options": {
+        "values": "Wartości",
+        "row": "Wiersz $index",
+        "column": "Kolumna $index",
+        "cells_shift_up": "Komórki z przesunięciem w górę",
+        "cells_shift_left": "Komórki z przesunięciem w lewo",
+        "notes": "Uwagi"
+      },
+      "find_and_replace": "Znajdź i zamień"
+    },
+    "view": {
+      "name": "Widok",
+      "show": "Pokaż",
+      "show_options": {
+        "formula_bar": "Pasek formuły",
+        "gridlines": "Linie siatki",
+        "formulas": "Formuły",
+        "protected_ranges": "Zakresy chronione"
+      },
+      "freeze": "Zablokuj",
+      "freeze_options": {
+        "no_rows": "Nie blokuj wierszy",
+        "1_row": "Wiersze: 1",
+        "2_rows": "Wiersze: 2",
+        "up_to_current_row": "Do wiersza $index",
+        "no_columns": "Nie blokuj kolumn",
+        "1_column": "Kolumny: 1",
+        "2_columns": "Kolumny: 2",
+        "up_to_current_column": "Do kolumny $index"
+      },
+      "group": "Grupuj",
+      "group_options": {
+        "group": "Grupuj",
+        "ungroup": "Rozgrupuj"
+      },
+      "comments": "Komentarze",
+      "comments_options": {
+        "hide_comments": "Ukryj komentarze",
+        "minimize_comments": "Minimalizuj komentarze",
+        "show_all": "Pokaż wszystkie komentarze"
+      },
+      "hidden_sheets": "Ukryte arkusze",
+      "zoom": "Zoom",
+      "full_screen": "Pełny ekran"
+    },
+    "insert": {
+      "name": "Wstaw",
+      "cells": "Komórki",
+      "cells_options": {
+        "cells_and_shift_right": "Wstaw komórki z przesunięciem w lewo",
+        "cells_and_shift_down": "Wstaw komórki z przesunięciem w dół"
+      },
+      "rows": "Wiersze",
+      "rows_options": {
+        "above": "Wstaw wiersz powyżej",
+        "below": "Wstaw wiersz poniżej"
+      },
+      "columns": "Kolumny",
+      "columns_options": {
+        "left": "Wstaw kolumnę po lewej",
+        "right": "Wstaw kolumnę po prawej"
+      },
+      "sheet": "Arkusz",
+      "tables": "Tabele",
+      "chart": "Wykres",
+      "pivot_table": "Tabela przestawna",
+      "image": "Obraz",
+      "image_options": {
+        "in_cell": "Wstaw obraz w komórce",
+        "over_cells": "Wstaw obraz nad komórkami"
+      },
+      "drawing": "Rysunek",
+      "function": "Funkcja",
+      "link": "Link",
+      "checkbox": "Pole wyboru",
+      "dropdown": "Menu",
+      "emoji": "Emotikony",
+      "smart_chips": "Elementy inteligentne",
+      "smart_chips_options": {
+        "people": "Osoby",
+        "file": "Plik",
+        "calendar": "Wydarzenia w kalendarzu",
+        "place": "Miejsce",
+        "finance": "Finanse",
+        "rating": "Ocena"
+      },
+      "comment": "Komentarz",
+      "note": "Notatka"
+    },
+    "format": {
+      "name": "Formatuj",
+      "theme": "Motyw",
+      "number": "Liczba",
+      "number_options": {
+        "automatic": "Automatycznie",
+        "plain_text": "Zwykły tekst",
+        "number": "Liczba",
+        "percent": "Procentowy",
+        "scientific": "Naukowy",
+        "accounting": "Księgowy",
+        "financial": "Finansowy",
+        "currency": "Waluta",
+        "currency_rounded": "Waluta (w zaokrągleniu)",
+        "date": "Data",
+        "time": "Godzina",
+        "date_time": "Data i godzina",
+        "duration": "Czas trwania",
+        "custom_currency": "Waluta niestandardowa",
+        "custom_date": "Niestandardowa data i godzina",
+        "custom_number": "Niestandardowy format liczbowy"
+      },
+      "text": "Tekst",
+      "text_options": {
+        "bold": "Pogrubienie",
+        "italic": "Kursywa",
+        "underline": "Podkreślenie",
+        "strikethrough": "Przekreślenie"
+      },
+      "alignment": "Wyrównanie",
+      "alignment_options": {
+        "left": "Do lewej",
+        "center": "Wyśrodkuj",
+        "right": "Do prawej",
+        "top": "Do góry",
+        "middle": "Do środka",
+        "bottom": "Do dołu"
+      },
+      "wrapping": "Zawijanie",
+      "wrapping_options": {
+        "overflow": "Przenieś",
+        "wrap": "Zawijaj",
+        "clip": "Przytnij"
+      },
+      "rotation": "Obrót",
+      "rotation_options": {
+        "none": "Brak",
+        "tilt_up": "Przechyl do góry",
+        "tilt_down": "Przechyl w dół",
+        "stack_vertically": "Ustaw pionowo",
+        "rotate_up": "Obróć w górę",
+        "rotate_down": "Obróć w dół",
+        "custom_angle": "Niestandardowy kąt"
+      },
+      "font_size": "Rozmiar czcionki",
+      "merge_cells": "Scal komórki",
+      "merge_cells_options": {
+        "merge_all": "Scal wszystkie",
+        "merge_vertically": "Scal w pionie",
+        "merge_horizontally": "Scal w poziomie",
+        "unmerge": "Rozdziel"
+      },
+      "convert_to_table": "Przekonwertuj na tabelę",
+      "conditional_formatting": "Formatowanie warunkowe",
+      "alternating_colors": "Naprzemienne kolory",
+      "clear_formatting": "Wyczyść formatowanie"
+    },
+    "data": {
+      "name": "Dane",
+      "sort_sheet": "Sortuj arkusz",
+      "sort_sheet_options": {
+        "by_column_asc": "Sortuj arkusz według kolumny $index (Od A do Z)",
+        "by_column_desc": "Sortuj arkusz według kolumny $index (Od Z do A)"
+      },
+      "sort_range": "Sortuj zakres",
+      "sort_range_options": {
+        "by_column_asc": "Sortuj zakres według kolumny $index (Od A do Z)",
+        "by_column_desc": "Sortuj zakres według kolumny $index (Od Z do A)",
+        "advanced": "Zaawansowane opcje sortowania zakresów"
+      },
+      "create_filter": "Utwórz filtr",
+      "create_group_by_view": "Utwórz widok \"grupuj według\"" ,
+      "create_filter_view": "Utwórz widok filtra",
+      "add_slicer": "Dodaj fragmentator",
+      "protect_sheet": "Chroń arkusze i zakresy",
+      "named_ranges": "Zakresy nazwane",
+      "named_functions": "Funkcje nazwane",
+      "randomize_range": "Losuj zakres",
+      "column_stats": "Statystyki dotyczące kolumn",
+      "data_validation": "Sprawdzanie poprawności danych",
+      "data_cleanup": "Czyszczenie danych",
+      "data_cleanup_options": {
+        "cleanup_suggestions": "Sugestie dotyczące czyszczenia danych",
+        "remove_duplicates": "Usuń duplikaty",
+        "trim_whitespace": "Usuń spacje"
+      },
+      "split_to_columns": "Podziel tekst na kolumny",
+      "data_extraction": "Wyodrębnianie danych"
+    },
+    "tools": {
+      "name": "Narzędzia",
+      "create_new_form": "Utwórz nowy formularz",
+      "spelling": "Pisownia",
+      "spelling_options": {
+        "spell_check": "Sprawdzanie pisowni",
+        "personal_dictionary": "Słownik osobisty"
+      },
+      "suggestion_controls": "Opcje sugestii",
+      "suggestion_controls_options": {
+        "enable_autocomplete": "Włącz autouzupełnianie",
+        "enable_formula_suggestions": "Włącz sugestie dotyczące formuł",
+        "enable_formula_corrections": "Włącz poprawki formuły",
+        "enable_named_functions_suggestions": "Włącz sugestie funkcji nazwanych",
+        "enable_pivot_table_suggestions": "Włącz sugestie dotyczace tabel przestawnych",
+        "enable_dropdown_chip_suggestions": "Włącz sugestie związane z elementami menu",
+        "enable_people_suggestions": "Włącz sugestie związane z inteligentnymi elementami dotyczacymi osób",
+        "enable_table_suggestions": "Włącz sugeste dotyczące tabel",
+        "enable_data_analysis_suggestions": "Włącz sugestie dotyczące analizy danych"
+      },
+      "notifications_settings": "Ustawienia powiadomień",
+      "notifications_settings_options": {
+        "edit_notifications": "Powiadomienia o edycji",
+        "comment_notifications": "Powiadomienia o komentarzach"
+      },
+      "accessibility": "Ułatwienia dostępu"
+    },
+    "help": {
+      "name": "Pomoc",
+      "search": "Przeszukaj menu",
+      "sheets_help": "Pomoc do Arkuszy",
+      "training": "Szkolenia",
+      "updates": "Aktualizacje",
+      "help_sheets_improve": "Pomóż w ulepszaniu Arkuszy",
+      "privacy_policy": "Polityka prywatności",
+      "terms_of_service": "Warunki korzystania z usługi",
+      "function_list": "Lista funkcji",
+      "keyboard_shortcuts": "Skróty klawiszowe"
+    }
+  },
+  "toolbar": {
+    "menus": {
+      "hint": "Menu",
+      "tooltip": "Szukaj w menu (Alt+/)"
+    },
+    "undo": {
+      "tooltip": "Cofnij (Ctrl+Z)"
+    },
+    "redo": {
+      "tooltip": "Ponów (Ctrl+Y)"
+    },
+    "print": {
+      "tooltip": "Drukuj (Ctrl+P)"
+    },
+    "paint_format": {
+      "tooltip": "Kopiuj formatowanie"
+    },
+    "zoom": {
+      "tooltip": "Powiększ"
+    },
+    "currency": {
+      "tooltip": "Sformatuj jako walutę"
+    },
+    "percent": {
+      "tooltip": "Sformatuj jako wartość procentową"
+    },
+    "decrease_decimal": {
+      "tooltip": "Zmniejsz liczbę miejsc po przecinku"
+    },
+    "increase_decimal": {
+      "tooltip": "Zwiększ liczbę miejsc po przecinku"
+    },
+    "more_formats": {
+      "tooltip": "Więcej formatów"
+    },
+    "font": {
+      "tooltip": "Czcionka",
+      "options": "Więcej czcionek"
+    },
+    "decrease_font_size": {
+      "tooltip": "Zmniejsz rozmiar czcionki (Ctrl+Shift+,)"
+    },
+    "font_size": {
+      "tooltip": "Rozmiar czcionki"
+    },
+    "increase_font_size": {
+      "tooltip": "Zwiększ rozmiar czcionki (Ctrl+Shift+.)"
+    },
+    "bold": {
+      "tooltip": "Pogrubienie (Ctrl+B)"
+    },
+    "italic": {
+      "tooltip": "Kursywa (Ctrl+I)"
+    },
+    "strikethrough": {
+      "tooltip": "Przekreślenie (Alt+Shift+5)"
+    },
+    "text_color": {
+      "tooltip": "Kolor tekstu"
+    },
+    "fill_color": {
+      "tooltip": "Kolor wypełnienia",
+      "alternating_colors": "Naprzemienne kolory"
+    },
+    "borders": {
+      "tooltip": "Obramowania",
+      "options": {
+        "all": "Wszystkie krawędzie",
+        "inner": "Krawędzie wewnętrzne",
+        "horizontal": "Krawędzie poziome",
+        "vertical": "Krawędzie pionowe",
+        "outer": "Krawędzie zewnętrzne",
+        "left": "Lewa krawędź",
+        "top": "Górna krawędź",
+        "right": "Prawa krawędź",
+        "bottom": "Dolna krawędź",
+        "clear": "Wyczyść obramowanie",
+        "border_color": "Kolor obramowania",
+        "border_style": "Styl obramowania"
+      }
+    },
+    "merge": {
+      "tooltip": "Scal komórki",
+      "options": {
+        "merge_all": "Scal wszystkie",
+        "merge_vertically": "Scal w pionie",
+        "merge_horizontally": "Scal w poziomie",
+        "unmerge": "Rozdziel"
+      }
+    },
+    "merge_types": {
+      "tooltip": "Wybierz typ scalania"
+    },
+    "align": {
+      "tooltip": "Wyrównanie w poziomie",
+      "options": {
+        "left": "Do lewej",
+        "center": "Wyśrodkuj",
+        "right": "Do prawej"
+      }
+    },
+    "valign": {
+      "tooltip": "Wyrównanie w pionie",
+      "options": {
+        "top": "Do góry",
+        "middle": "Do środka",
+        "bottom": "Do dołu"
+      }
+    },
+    "wrap": {
+      "tooltip": "Zawijanie tekstu",
+      "options": {
+        "overflow": "Przenieś",
+        "wrap": "Zawijaj",
+        "clip": "Przytnij"
+      }
+    },
+    "rotate": {
+      "tooltip": "Obrót tekstu",
+      "options": {
+        "none": "Brak",
+        "tilt_up": "Przechyl do góry",
+        "tilt_down": "Przechyl w dół",
+        "stack_vertically": "Ustaw pionowo",
+        "rotate_up": "Obróć w górę",
+        "rotate_down": "Obróć w dół",
+        "custom_angle": "Niestandardowy kąt"
+      }
+    },
+    "link": {
+      "tooltip": "Wstaw link (Ctrl+K)"
+    },
+    "comment": {
+      "tooltip": "Wstaw komentarz (Ctrl+Alt+M)"
+    },
+    "chart": {
+      "tooltip": "Wstaw wykres"
+    },
+    "filter": {
+      "tooltip": "Utwórz filtr"
+    },
+    "filter_views": {
+      "tooltip": "Widoki filtrów",
+      "options": {
+        "create_group_by_view": "Utwórz widok \"grupuj według\"" ,
+        "create_filter_view": "Utwórz widok filtra"
+      }
+    },
+    "functions": {
+      "tooltip": "Funkcje"
+    }
+  },
+  "cell_menu": {
+    "cut": "Wytnij",
+    "copy": "Kopiuj",
+    "paste": "Wklej",
+    "paste_special": "Wklej specjalne",
+    "paste_special_options": {
+      "values": "Tylko wartości",
+      "formatting": "Tylko formatowanie",
+      "formulas": "Tylko formuła",
+      "conditional_formatting": "Tylko formatowanie warunkowe",
+      "data_validation": "Tylko sprawdzanie poprawności danych",
+      "transposed": "Z transpozycją",
+      "column_width": "Tylko szerokość kolumny",
+      "all_without_borders": "Wszystko oprócz obramowania"
+    },
+    "insert_row_above": "Wstaw wiersz powyzej",
+    "insert_column_left": "Wstaw kolumnę po lewej",
+    "insert_cells": "Wstaw komórki",
+    "insert_cells_options": {
+      "cells_and_shift_right": "Wstaw komórki z przesunięciem w prawo",
+      "cells_and_shift_down": "Wstaw komórki z przesunięciem w dół"
+    },
+    "delete_row": "Usuń wiersz",
+    "delete_column": "Usuń kolumnę",
+    "delete_cells": "Usuń komórki",
+    "delete_cells_options": {
+      "cells_and_shift_left": "Usuń komórki z przesunięciem w prawo",
+      "cells_and_shift_up": "Usuń komórki z przesunięciem w dół"
+    },
+    "convert_to_table": "Przekonwertuj na tabelę",
+    "create_filter": "Utwórz filtr",
+    "filter_by_cell_value": "Filtruj według wartości w komórce",
+    "show_edit_history": "Pokaż historię zmian",
+    "insert_link": "Wstaw link",
+    "comment": "Komentarz",
+    "insert_note": "Wstaw notatkę",
+    "tables": "Tabele",
+    "dropdown": "Menu",
+    "smart_chips": "Elementy inteligentne",
+    "smart_chips_options": {
+      "people": "Osoby",
+      "file": "Plik",
+      "calendar": "Wydarzenia w kalendarzu",
+      "place": "Miejsce",
+      "finance": "Finanse",
+      "rating": "Ocena"
+    },
+    "more": "Zobacz więcej czynności dotyczących komórki",
+    "more_options": {
+      "conditional_formatting": "Formatowanie warunkowe",
+      "data_validation": "Sprawdzanie poprawności danych",
+      "get_link_to_cell": "Pobierz link do tej komórki",
+      "define_named_range": "Zdefiniuj zakres nazwany",
+      "protect_range": "Chroń zakres"
+    }
+  },
+  "column_menu": {
+    "cut": "Wytnij",
+    "copy": "Kopiuj",
+    "paste": "Wklej",
+    "paste_special": "Wklej specjalne",
+    "paste_special_options": {
+      "values": "Tylko wartości",
+      "formatting": "Tylko formatowanie",
+      "formulas": "Tylko formuła",
+      "conditional_formatting": "Tylko formatowanie warunkowe",
+      "data_validation": "Tylko sprawdzanie poprawności danych",
+      "transposed": "Z transpozycją",
+      "column_width": "Tylko szerokość kolumny",
+      "all_without_borders": "Wszystko oprócz obramowania"
+    },
+    "insert_column_left": "Wstaw kolumnę po lewej",
+    "insert_column_right": "Wstaw kolumnę po prawej",
+    "delete_column": "Usuń kolumnę",
+    "clear_column": "Wyczyść kolumnę",
+    "hide_column": "Ukryj kolumnę",
+    "resize_column": "Zmień rozmiar kolumny",
+    "create_filter": "Utwórz filtr",
+    "sort_asc": "Sortuj arkusz Od A do Z",
+    "sort_desc": "Sortuj arkusz Od Z do A",
+    "conditional_formatting": "Formatowanie warunkowe",
+    "data_validation": "Sprawdzanie poprawności danych",
+    "column_stats": "Statystyki dotyczące kolumn",
+    "dropdown": "Menu",
+    "smart_chips": "Elementy inteligentne",
+    "smart_chips_options": {
+      "people": "Osoby",
+      "file": "Plik",
+      "calendar": "Wydarzenia w kalendarzu",
+      "place": "Miejsce",
+      "finance": "Finanse",
+      "rating": "Ocena"
+    },
+    "more": "Zobacz więcej czynności dotyczących kolumny",
+    "more_options": {
+      "freeze": "Zablokuj kolumny do $index",
+      "group": "Grupuj kolumnę",
+      "get_link_to_range": "Pobierz link do tego zakres",
+      "randomize_range": "Losuj w zakresie",
+      "define_named_range": "Zdefiniuj zakres nazwany",
+      "protect_range": "Chroń zakres"
+    }
+  },
+  "row_menu": {
+    "cut": "Wytnij",
+    "copy": "Kopiuj",
+    "paste": "Wklej",
+    "paste_special": "Wklej specjalne",
+    "paste_special_options": {
+      "values": "Tylko wartości",
+      "formatting": "Tylko formatowanie",
+      "formulas": "Tylko formuła",
+      "conditional_formatting": "Tylko formatowanie warunkowe",
+      "data_validation": "Tylko sprawdzanie poprawności danych",
+      "transposed": "Z transpozycją",
+      "column_width": "Tylko szerokość kolumny",
+      "all_without_borders": "Wszystko oprócz obramowania"
+    },
+    "insert_row_above": "Wstaw wiersz powyżej",
+    "insert_row_below": "Wstaw wiersz poniżej",
+    "delete_row": "Usuń wiersz",
+    "clear_row": "Wyczyść wiersz",
+    "hide_row": "Ukryj wiersz",
+    "resize_row": "Zmień rozmiar wiersza",
+    "create_filter": "Utwórz filtr",
+    "conditional_formatting": "Formatowanie warunkowe",
+    "data_validation": "Sprawdzanie poprawności danych",
+    "more": "Zobacz więcej czynności dotyczących wiersza",
+    "more_options": {
+      "freeze": "Zablokuj dp wiersza $index",
+      "group": "Grupuj wiersz",
+      "get_link_to_range": "Pobierz link do tego zakresu",
+      "define_named_range": "Zdefiniuj zakres nazwany",
+      "protect_range": "Chroń zakres"
+    }
+  },
+  "header": {
+    "star": {
+      "tooltip": "Oznacz gwiazdką"
+    },
+    "move": {
+      "tooltip": "Przenieś"
+    },
+    "status": {
+      "tooltip": "Zobacz stan dokumentu"
+    },
+    "history": {
+      "tooltip": "Pokaż historię zmian"
+    },
+    "comments": {
+      "tooltip": "Pokaż wszystkie komentarze"
+    },
+    "call": {
+      "tooltip": "Dołącz do rozmowy tutaj lub zaprezentuj tę kartę podczas rozmowy"
+    },
+    "share": {
+      "tooltip": "Szybkie działania związane z udostępnianiem"
+    }
+  },
+  "bottom_bar": {
+    "tab_name": "Arkusz$index",
+    "add_sheet": "Dodaj arkusz",
+    "all_sheets": "Wszystkie arkusze",
+    "show_side_panel": "Pokaż panel boczny"
+  }
+}

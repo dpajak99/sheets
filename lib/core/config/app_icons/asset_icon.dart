@@ -10,7 +10,7 @@ part 'sheet_icons.dart';
 class AssetIcon extends StatelessWidget {
   const AssetIcon(
     this.assetIconData, {
-    this.size = 24,
+    this.size,
     this.width,
     this.height,
     this.color,
@@ -35,16 +35,12 @@ class AssetIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return SvgPicture.asset(
+      assetIconData.assetName,
+      package: 'sheets',
       width: width ?? size,
       height: height ?? size,
-      child: SvgPicture.asset(
-        assetIconData.assetName,
-        package: 'sheets',
-        width: width ?? size,
-        height: height ?? size,
-        colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
-      ),
+      colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
     );
   }
 }

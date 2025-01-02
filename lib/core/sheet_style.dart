@@ -18,7 +18,7 @@ class CellStyle with EquatableMixin {
         textOverflow = textOverflow ?? TextOverflowBehavior.clip,
         verticalAlign = verticalAlign ?? TextAlignVertical.bottom,
         rotation = rotation ?? TextRotation.none,
-        backgroundColor = (backgroundColor != null && backgroundColor.opacity == 1) ? backgroundColor : Colors.white,
+        backgroundColor = (backgroundColor != null && backgroundColor.a == 1) ? backgroundColor : Colors.white,
         borderZIndex = border != null ? globalBorderZIndex++ : null;
 
   static int globalBorderZIndex = 0;

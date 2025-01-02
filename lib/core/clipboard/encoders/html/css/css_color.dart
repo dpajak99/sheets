@@ -117,14 +117,14 @@ class CssColorValue extends CssValue<Color> {
   Color toDart() => _value;
 
   String toCss() {
-    int r = _value.red;
-    int g = _value.green;
-    int b = _value.blue;
+    double r = _value.r;
+    double g = _value.g;
+    double b = _value.b;
 
-    if (_value.alpha == 255) {
-      return '#${r.toRadixString(16).padLeft(2, '0')}${g.toRadixString(16).padLeft(2, '0')}${b.toRadixString(16).padLeft(2, '0')}';
+    if (_value.a == 255) {
+      return '#${r.toInt().toRadixString(16).padLeft(2, '0')}${g.toInt().toRadixString(16).padLeft(2, '0')}${b.toInt().toRadixString(16).padLeft(2, '0')}';
     } else {
-      return 'rgba($r, $g, $b, ${(_value.alpha / 255).toStringAsFixed(2)})';
+      return 'rgba($r, $g, $b, ${(_value.a / 255).toStringAsFixed(2)})';
     }
   }
 }
@@ -278,9 +278,4 @@ enum CssColors {
 
   final String name;
   final Color color;
-
-  @override
-  String toString() {
-    return '$name: ${color.value.toRadixString(16).padLeft(8, '0')}';
-  }
 }

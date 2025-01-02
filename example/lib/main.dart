@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_data.dart';
+import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/sheet.dart';
-import 'package:sheets/widgets/material/toolbar/sheet_toolbar.dart';
-import 'package:sheets/widgets/sections/sheet_footer.dart';
-import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
+import 'package:sheets/widgets/goog/bottom_bar/goog_bottom_bar.dart';
+import 'package:sheets/widgets/goog/header/goog_header.dart';
+import 'package:sheets/widgets/goog/toolbar/goog_formula_bar.dart';
+import 'package:sheets/widgets/goog/toolbar/goog_toolbar.dart';
 
 void main() async {
-  Intl.defaultLocale = 'pl_PL';
-  await initializeDateFormatting('pl_PL');
-
-  runApp(const MaterialSheetExample());
+  await LocaleSettings.setLocale(AppLocale.en);
+  // await LocaleSettings.setLocale(AppLocale.plPl);
+  runApp(TranslationProvider(child: const MaterialSheetExample()));
 }
 
 class MaterialSheetExample extends StatefulWidget {
@@ -39,21 +39,24 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sheets example',
-      locale: const Locale('pl_PL'),
+      locale: TranslationProvider.of(context).flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
           child: Column(
             children: <Widget>[
-              SheetToolbar(sheetController: sheetController),
-              SheetSectionDetailsBar(sheetController: sheetController),
+              const GoogHeader(),
+              GoogToolbar(sheetController: sheetController),
+              GoogFormulaBar(sheetController: sheetController),
               Expanded(
                 child: Sheet(sheetController: sheetController),
               ),
               Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
               Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
               Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
-              const SheetFooter(),
+              const GoogBottomBar(),
             ],
           ),
         ),

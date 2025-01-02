@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/sheet.dart';
-import 'package:sheets/widgets/material/toolbar/sheet_toolbar.dart';
-import 'package:sheets/widgets/sections/sheet_footer.dart';
-import 'package:sheets/widgets/sections/sheet_section_details_bar.dart';
+import 'package:sheets/widgets/goog/bottom_bar/goog_bottom_bar.dart';
+import 'package:sheets/widgets/goog/toolbar/goog_formula_bar.dart';
+import 'package:sheets/widgets/goog/toolbar/goog_toolbar.dart';
 import 'package:spreadsheet_table/spreadsheet_table.dart';
 
 void main() {
@@ -124,15 +124,15 @@ class _SheetPageState extends State<_SheetPage> {
         body: SafeArea(
           child: Column(
             children: <Widget>[
-              SheetToolbar(sheetController: sheetController),
-              SheetSectionDetailsBar(sheetController: sheetController),
+              GoogToolbar(sheetController: sheetController),
+              GoogFormulaBar(sheetController: sheetController),
               Expanded(
                 child: Sheet(sheetController: sheetController),
               ),
               Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
               Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
               Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
-              const SheetFooter(),
+              const GoogBottomBar(),
             ],
           ),
         ),

@@ -14,10 +14,10 @@ import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/sheet/sheet_layer.dart';
 import 'package:sheets/layers/textfield/sheet_textfield_layer.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
-import 'package:sheets/widgets/material/generic/popup/sheet_popup.dart';
-import 'package:sheets/widgets/material/menu/cell_context_menu.dart';
-import 'package:sheets/widgets/material/menu/column_context_menu.dart';
-import 'package:sheets/widgets/material/menu/row_context_menu.dart';
+import 'package:sheets/widgets/goog/menu/context/goog_cell_context_menu.dart';
+import 'package:sheets/widgets/goog/menu/context/goog_column_context_menu.dart';
+import 'package:sheets/widgets/goog/menu/context/goog_row_context_menu.dart';
+import 'package:sheets/widgets/popup/sheet_popup.dart';
 import 'package:sheets/widgets/sheet_cursor_wrapper.dart';
 import 'package:sheets/widgets/sheet_scrollable.dart';
 
@@ -254,9 +254,9 @@ class SheetGrid extends StatelessWidget {
 
   void _openContextMenuFor(BuildContext context, ViewportItem viewportItem) {
     Widget? popupWidget = switch (viewportItem) {
-      ViewportCell _ => const CellContextMenu(),
-      ViewportColumn _ => const ColumnContextMenu(),
-      ViewportRow _ => const RowContextMenu(),
+      ViewportCell _ => const GoogCellContextMenu(),
+      ViewportColumn _ => const GoogColumnContextMenu(),
+      ViewportRow _ => const GoogRowContextMenu(),
       (_) => null,
     };
 
