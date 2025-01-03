@@ -69,13 +69,12 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   }
 
   void _paintMesh(Canvas canvas, Size size) {
-    Set<Line> lines = <Line>{};
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    List<ViewportColumn> visibleColumns = _visibleContent.columns;
-    List<ViewportRow> visibleRows = _visibleContent.rows;
-    List<ViewportCell> visibleCells = _visibleContent.cells;
 
-    if (visibleColumns.isEmpty || visibleRows.isEmpty) {
+    Mesh mesh = Mesh();
+
+    List<ViewportCell> visibleCells = _visibleContent.cells;
+    if (visibleCells.isEmpty) {
       return;
     }
 
@@ -83,34 +82,32 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
       Rect cellRect = cell.rect;
       Border? border = cell.properties.style.border;
 
-      lines.add(Line(
+      mesh.addHorizontal(Line(
         cellRect.topLeft.moveY(-borderWidth),
         cellRect.topRight.moveY(-borderWidth).expandEndX(borderWidth),
         border?.top,
       ));
 
-      lines.add(Line(
+      mesh.addVertical(Line(
         cellRect.topRight.moveX(borderWidth).expandEndY(-1),
         cellRect.bottomRight.moveX(borderWidth),
         border?.right,
       ));
 
-      lines.add(Line(
+      mesh.addHorizontal(Line(
         cellRect.bottomLeft,
         cellRect.bottomRight.expandEndX(borderWidth),
         border?.bottom,
       ));
 
-      lines.add(Line(
+      mesh.addVertical(Line(
         cellRect.topLeft.expandEndY(-borderWidth),
         cellRect.bottomLeft,
         border?.left,
       ));
     }
 
-    List<Line> mergedLines = mergeOverlappingLines(lines.toList());
-
-    for (Line line in mergedLines) {
+    for (Line line in mesh.lines) {
       Paint paint = Paint()
         ..color = line.side.color
         ..strokeWidth = line.side.width
@@ -120,40 +117,6 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
 
       canvas.drawLine(line.start, line.end, paint);
     }
-  }
-
-  List<Line> mergeOverlappingLines(List<Line> lines) {
-    List<Line> mergedLines = lines;
-
-    // Merge overlapping lines iteratively
-    bool merged = true;
-    while (merged) {
-      merged = false;
-      for (int i = 0; i < mergedLines.length; i++) {
-        for (int j = i + 1; j < mergedLines.length; j++) {
-          if (mergedLines[i].canReplace(mergedLines[j])) {
-            mergedLines.add(mergedLines[j]);
-            mergedLines.removeAt(j);
-            mergedLines.removeAt(i);
-            merged = true;
-            break;
-          }
-
-          if (mergedLines[i].canMerge(mergedLines[j])) {
-            mergedLines.add(mergedLines[i].merge(mergedLines[j]));
-            mergedLines.removeAt(j);
-            mergedLines.removeAt(i);
-            merged = true;
-            break;
-          }
-        }
-        if (merged) {
-          break;
-        }
-      }
-    }
-
-    return mergedLines;
   }
 
   void _paintCellBackground(Canvas canvas, ViewportCell cell) {
@@ -267,6 +230,70 @@ class SheetCellsLayerPainter extends SheetCellsLayerPainterBase {
   }
 }
 
+class Mesh with EquatableMixin {
+  Mesh()
+      : verticalLines = <double, List<Line>>{},
+        horizontalLines = <double, List<Line>>{};
+
+  final Map<double, List<Line>> verticalLines;
+  final Map<double, List<Line>> horizontalLines;
+
+  void addHorizontal(Line line) {
+    if(horizontalLines[line.start.dy] == null) {
+      horizontalLines[line.start.dy] = <Line>[line];
+      return;
+    }
+
+    List<Line> lines = horizontalLines[line.start.dy]!;
+    bool merged = false;
+
+    for (int i = 0; i < lines.length; i++) {
+      Line currentLine = lines[i];
+      if (currentLine.canMergeHorizontal(line)) {
+        lines[i] = currentLine.merge(line);
+        merged = true;
+        return;
+      }
+    }
+
+    if(!merged) {
+      lines.add(line);
+    }
+  }
+
+  void addVertical(Line line) {
+    if(verticalLines[line.start.dx] == null) {
+      verticalLines[line.start.dx] = <Line>[line];
+      return;
+    }
+
+    List<Line> lines = verticalLines[line.start.dx]!;
+    bool merged = false;
+    for (int i = 0; i < lines.length; i++) {
+      Line currentLine = lines[i];
+      if (currentLine.canMergeVertical(line)) {
+        lines[i] = currentLine.merge(line);
+        merged = true;
+        return;
+      }
+    }
+
+    if(!merged) {
+      lines.add(line);
+    }
+  }
+
+  List<Line> get lines {
+    List<Line> allLines = <Line>[];
+    allLines.addAll(verticalLines.values.expand((List<Line> lines) => lines));
+    allLines.addAll(horizontalLines.values.expand((List<Line> lines) => lines));
+    return allLines;
+  }
+
+  @override
+  List<Object?> get props => <Object?>[verticalLines, horizontalLines];
+}
+
 class Line with EquatableMixin {
   Line(this.start, this.end, this._side);
 
@@ -280,22 +307,29 @@ class Line with EquatableMixin {
     return side == other.side && isOverlapping(other);
   }
 
+  bool canMergeVertical(Line other) {
+    return side == other.side && isOverlappingVertical(other);
+  }
+
+  bool canMergeHorizontal(Line other) {
+    return side == other.side && isOverlappingHorizontal(other);
+  }
+
   bool canReplace(Line other) {
     bool sameEdge = start == other.start && end == other.end;
     return sameEdge && other.side != MaterialSheetTheme.defaultBorderSide;
   }
 
+  bool isOverlappingVertical(Line other) {
+    return start.dx == end.dx && other.start.dx == other.end.dx && start.dx == other.start.dx && end.dy >= other.start.dy && start.dy <= other.end.dy;
+  }
+
+  bool isOverlappingHorizontal(Line other) {
+    return start.dy == end.dy && other.start.dy == other.end.dy && start.dy == other.start.dy && end.dx >= other.start.dx && start.dx <= other.end.dx;
+  }
+
   bool isOverlapping(Line other) {
-    return (start.dy == end.dy &&
-            other.start.dy == other.end.dy &&
-            start.dy == other.start.dy &&
-            end.dx >= other.start.dx &&
-            start.dx <= other.end.dx) ||
-        (start.dx == end.dx &&
-            other.start.dx == other.end.dx &&
-            start.dx == other.start.dx &&
-            end.dy >= other.start.dy &&
-            start.dy <= other.end.dy);
+    return isOverlappingVertical(other) || isOverlappingHorizontal(other);
   }
 
   // Merge two overlapping lines into one
