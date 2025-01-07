@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/core/clipboard/encoders/html/html_clipboard_decoder.dart';
 import 'package:sheets/core/clipboard/sheet_clipboard.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 void main() {

@@ -1,21 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/data/sheet_data.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
 class VisibleRowsRenderer {
   VisibleRowsRenderer({
     required this.viewportRect,
-    required this.data,
+    required this.worksheet,
     required this.scrollOffset,
   });
 
   final SheetViewportRect viewportRect;
 
-  final SheetData data;
+  final Worksheet worksheet;
 
   final double scrollOffset;
 
@@ -29,17 +28,17 @@ class VisibleRowsRenderer {
     List<ViewportRow> visibleRows = <ViewportRow>[];
     int index = firstVisibleRowInfo.index.value;
 
-    while (currentContentHeight < maxContentHeight && index < data.rowCount) {
+    while (currentContentHeight < maxContentHeight && index < worksheet.rows) {
       RowIndex rowIndex = RowIndex(index);
-      RowStyle rowStyle = data.getRowStyle(rowIndex);
+      RowConfig rowConfig = worksheet.getRow(rowIndex);
 
       ViewportRow viewportRow = ViewportRow(
         index: rowIndex,
-        style: rowStyle,
-        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight + borderWidth, rowHeadersWidth, rowStyle.height),
+        config: rowConfig,
+        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight + borderWidth, rowHeadersWidth, rowConfig.height),
       );
       visibleRows.add(viewportRow);
-      currentContentHeight += viewportRow.style.height + borderWidth;
+      currentContentHeight += viewportRow.config.height + borderWidth;
 
       index++;
     }
@@ -55,8 +54,8 @@ class VisibleRowsRenderer {
 
     while (firstVisibleRowInfo == null) {
       RowIndex rowIndex = RowIndex(actualRowIndex);
-      RowStyle rowStyle = data.getRowStyle(rowIndex);
-      double rowHeightEnd = currentHeightStart + rowStyle.height + borderWidth;
+      RowConfig rowConfig = worksheet.getRow(rowIndex);
+      double rowHeightEnd = currentHeightStart + rowConfig.height + borderWidth;
 
       if (y >= currentHeightStart && y < rowHeightEnd) {
         firstVisibleRowInfo = _FirstVisibleRowInfo(

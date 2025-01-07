@@ -1,11 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/clipboard/encoders/html/html_clipboard_decoder.dart';
 import 'package:sheets/core/clipboard/encoders/html/html_clipboard_encoder.dart';
 import 'package:sheets/core/clipboard/encoders/plaintext/plaintext_clipboard_decoder.dart';
 import 'package:sheets/core/clipboard/encoders/plaintext/plaintext_clipboard_encoder.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
@@ -32,7 +31,7 @@ class SheetClipboard {
     return <PastedCellProperties>[];
   }
 
-  static Future<void> write(List<IndexedCellProperties> cells) async {
+  static Future<void> write(List<CellProperties> cells) async {
     String htmlString = HtmlClipboardEncoder.encode(cells);
     String plainText = PlaintextClipboardEncoder.encode(cells);
 
@@ -64,13 +63,13 @@ class PastedCellProperties with EquatableMixin {
   final int rowSpan;
   final int colSpan;
 
-  IndexedCellProperties position(CellIndex anchor) {
+  CellProperties position(CellIndex anchor) {
     CellIndex index = CellIndex(
       row: anchor.row + rowOffset,
       column: anchor.column + colOffset,
     );
 
-    CellMergeStatus mergeStatus = NoCellMerge();
+    CellMergeStatus mergeStatus = const NoCellMerge();
     if (rowSpan > 1 || colSpan > 1) {
       mergeStatus = MergedCell(
         start: index,
@@ -78,16 +77,14 @@ class PastedCellProperties with EquatableMixin {
       );
     }
 
-    return IndexedCellProperties(
+    return CellProperties(
       index: CellIndex(
         row: anchor.row + rowOffset,
         column: anchor.column + colOffset,
       ),
-      properties: CellProperties(
-        value: text,
-        style: style,
-        mergeStatus: mergeStatus,
-      ),
+      value: text,
+      style: style,
+      mergeStatus: mergeStatus,
     );
   }
 

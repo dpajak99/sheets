@@ -1,11 +1,11 @@
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearDatePatternMatcher implements ValuePatternMatcher {
   @override
-  DateSequencePattern? detect(List<IndexedCellProperties> values) {
+  DateSequencePattern? detect(List<CellProperties> values) {
     try {
       List<DateTime> dateValues = _parseDateValues(values);
       List<Duration> steps = _calculateSteps(dateValues);
@@ -20,11 +20,11 @@ class LinearDatePatternMatcher implements ValuePatternMatcher {
     }
   }
 
-  List<DateTime> _parseDateValues(List<IndexedCellProperties> values) {
-    return values.map((IndexedCellProperties cell) {
-      SheetValueFormat format = cell.properties.visibleValueFormat;
+  List<DateTime> _parseDateValues(List<CellProperties> values) {
+    return values.map((CellProperties cell) {
+      SheetValueFormat format = cell.visibleValueFormat;
       if (format is SheetDateFormat) {
-        return format.toDate(cell.properties.value.toPlainText());
+        return format.toDate(cell.value.toPlainText());
       } else {
         throw ArgumentError('Invalid format: $format');
       }

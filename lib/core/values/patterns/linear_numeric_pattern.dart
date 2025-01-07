@@ -1,11 +1,11 @@
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearNumericPatternMatcher implements ValuePatternMatcher {
   @override
-  LinearNumericPattern? detect(List<IndexedCellProperties> values) {
+  LinearNumericPattern? detect(List<CellProperties> values) {
     try {
       List<num> numericValues = _parseNumericValues(values);
       List<num> steps = _calculateSteps(numericValues);
@@ -23,11 +23,11 @@ class LinearNumericPatternMatcher implements ValuePatternMatcher {
       return null;
     }
   }
-  List<num> _parseNumericValues(List<IndexedCellProperties> values) {
-    return values.map((IndexedCellProperties cell) {
-      SheetValueFormat format = cell.properties.visibleValueFormat;
+  List<num> _parseNumericValues(List<CellProperties> values) {
+    return values.map((CellProperties cell) {
+      SheetValueFormat format = cell.visibleValueFormat;
       if (format is SheetNumberFormat) {
-        return format.toNumber(cell.properties.value.toPlainText());
+        return format.toNumber(cell.value.toPlainText());
       } else {
         throw ArgumentError('Invalid format: $format');
       }

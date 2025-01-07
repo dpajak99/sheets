@@ -1,5 +1,5 @@
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/clipboard/sheet_clipboard.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
@@ -34,16 +34,12 @@ class CopySelectionAction extends SheetClipboardAction<CopySelectionEvent> {
 
   @override
   Future<void> execute() async {
-    List<CellIndex> selectedCells =
-        controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
+    List<CellIndex> selectedCells = controller.selection.value.getSelectedCells(
+      controller.worksheet.cols,
+      controller.worksheet.rows,
+    );
 
-    List<IndexedCellProperties> cellsProperties = selectedCells.map((CellIndex index) {
-      return IndexedCellProperties(
-        index: index,
-        properties: controller.data.getCellProperties(index),
-      );
-    }).toList();
-
+    List<CellProperties> cellsProperties = controller.worksheet.getCells(selectedCells);
     await SheetClipboard.write(cellsProperties);
   }
 }
@@ -76,29 +72,11 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
     CellIndex selectionAnchor = controller.selection.value.mainCell;
 
     List<PastedCellProperties> pastedCells = await SheetClipboard.read(html: !event.valuesOnly);
-    List<IndexedCellProperties> cellsProperties = pastedCells.map((PastedCellProperties cell) {
+    List<CellProperties> cellsProperties = pastedCells.map((PastedCellProperties cell) {
       return cell.position(selectionAnchor);
     }).toList();
 
-    List<MergedCell> mergedCells = cellsProperties
-        .map((IndexedCellProperties cell) {
-          return cell.properties.mergeStatus;
-        })
-        .whereType<MergedCell>()
-        .toList();
-
-    for (MergedCell mergedCell in mergedCells) {
-      controller.data.mergeCells(mergedCell.mergedCells);
-    }
-
-    controller.data.setCellsProperties(cellsProperties);
-
-    List<RowIndex> rows = cellsProperties.map((IndexedCellProperties cell) => cell.index.row).toSet().toList();
-    for (RowIndex row in rows) {
-      double minRowHeight = controller.data.getMinRowHeight(row);
-      controller.data.setRowHeight(row, minRowHeight);
-    }
-
+    controller.worksheet.dispatchEvent(InsertCellsEvent(cellsProperties));
     controller.selection.update(SheetSelectionFactory.range(
       start: cellsProperties.first.index,
       end: cellsProperties.last.index,

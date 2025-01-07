@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
 import 'package:sheets/utils/text_rotation.dart';

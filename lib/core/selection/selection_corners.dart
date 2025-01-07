@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
-import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -36,7 +36,7 @@ class SelectionCellCorners with EquatableMixin {
   int get width => bottomRight.column.value - topLeft.column.value + 1;
   int get height => bottomRight.row.value - topLeft.row.value + 1;
 
-  SelectionCellCorners includeMergedCells(SheetData data) {
+  SelectionCellCorners includeMergedCells(Worksheet worksheet) {
     ColumnIndex left = topLeft.column;
     ColumnIndex right = bottomRight.column;
     RowIndex top = topLeft.row;
@@ -49,7 +49,7 @@ class SelectionCellCorners with EquatableMixin {
       for (int y = top.value; y <= bottom.value; y++) {
         for (int x = left.value; x <= right.value; x++) {
           CellIndex cellIndex = CellIndex(row: RowIndex(y), column: ColumnIndex(x));
-          CellIndex filledCellIndex = data.fillCellIndex(cellIndex);
+          CellIndex filledCellIndex = worksheet.fillCellIndex(cellIndex);
 
           if (filledCellIndex is MergedCellIndex) {
             if (filledCellIndex.start.column.value < left.value) {

@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/patterns/linear_string_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
@@ -11,7 +10,7 @@ void main() {
       test('Should [return null] when [values list is empty]', () {
         // Arrange
         LinearStringPatternMatcher matcher = LinearStringPatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[];
+        List<CellProperties> values = <CellProperties>[];
 
         // Act
         LinearStringPattern? actualPattern = matcher.detect(values);
@@ -23,20 +22,16 @@ void main() {
       test('Should [return null] when [values contain inconsistent integer positions]', () {
         // Arrange
         LinearStringPatternMatcher matcher = LinearStringPatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> values = <CellProperties>[
+          CellProperties(
             index: CellIndex.zero,
-            properties: CellProperties(
-              value: SheetRichText.single(text: '1 Text'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: '1 Text'),
+            style: CellStyle(),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: 'Text 2'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: 'Text 2'),
+            style: CellStyle(),
           ),
         ];
 
@@ -50,13 +45,11 @@ void main() {
       test('Should [return null] when [values contain no integers]', () {
         // Arrange
         LinearStringPatternMatcher matcher = LinearStringPatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> values = <CellProperties>[
+          CellProperties(
             index: CellIndex.zero,
-            properties: CellProperties(
-              value: SheetRichText.single(text: 'Text'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: 'Text'),
+            style: CellStyle(),
           ),
         ];
 
@@ -70,20 +63,16 @@ void main() {
       test('Should [return LinearStringPattern] when [values contain valid left-positioned integers]', () {
         // Arrange
         LinearStringPatternMatcher matcher = LinearStringPatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> values = <CellProperties>[
+          CellProperties(
             index: CellIndex.zero,
-            properties: CellProperties(
-              value: SheetRichText.single(text: '1 Text'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: '1 Text'),
+            style: CellStyle(),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2 Text'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: '2 Text'),
+            style: CellStyle(),
           ),
         ];
 
@@ -106,20 +95,16 @@ void main() {
       test('Should [return LinearStringPattern] when [values contain valid right-positioned integers]', () {
         // Arrange
         LinearStringPatternMatcher matcher = LinearStringPatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> values = <CellProperties>[
+          CellProperties(
             index: CellIndex.zero,
-            properties: CellProperties(
-              value: SheetRichText.single(text: 'Text 1'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: 'Text 1'),
+            style: CellStyle(),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: 'Text 2'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: 'Text 2'),
+            style: CellStyle(),
           ),
         ];
 
@@ -152,51 +137,41 @@ void main() {
           values: <String>[' Text'],
         );
 
-        List<IndexedCellProperties> baseCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> baseCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.zero,
-            properties: CellProperties(
-              value: SheetRichText.single(text: '1 Text'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: '1 Text'),
+            style: CellStyle(),
           ),
         ];
 
-        List<IndexedCellProperties> fillCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> fillCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: ''),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: ''),
+            style: CellStyle(),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(2, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: ''),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: ''),
+            style: CellStyle(),
           ),
         ];
 
         // Act
-        List<IndexedCellProperties> filledCells = pattern.apply(baseCells, fillCells);
+        List<CellProperties> filledCells = pattern.apply(baseCells, fillCells);
 
         // Assert
-        List<IndexedCellProperties> expectedFilledCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> expectedFilledCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2 Text'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: '2 Text'),
+            style: CellStyle(),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(2, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '3 Text'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: '3 Text'),
+            style: CellStyle(),
           ),
         ];
 
@@ -212,37 +187,31 @@ void main() {
           values: <String>['Text '],
         );
 
-        List<IndexedCellProperties> baseCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> baseCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.zero,
-            properties: CellProperties(
-              value: SheetRichText.single(text: 'Text 1'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: 'Text 1'),
+            style: CellStyle(),
           ),
         ];
 
-        List<IndexedCellProperties> fillCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> fillCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: ''),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: ''),
+            style: CellStyle(),
           ),
         ];
 
         // Act
-        List<IndexedCellProperties> filledCells = pattern.apply(baseCells, fillCells);
+        List<CellProperties> filledCells = pattern.apply(baseCells, fillCells);
 
         // Assert
-        List<IndexedCellProperties> expectedFilledCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> expectedFilledCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: 'Text 2'),
-              style: CellStyle(),
-            ),
+            value: SheetRichText.single(text: 'Text 2'),
+            style: CellStyle(),
           ),
         ];
 

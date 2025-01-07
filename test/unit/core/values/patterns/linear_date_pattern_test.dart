@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
@@ -14,7 +13,7 @@ void main() {
       test('Should [return null] when [values list is empty]', () {
         // Arrange
         LinearDatePatternMatcher matcher = LinearDatePatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[];
+        List<CellProperties> values = <CellProperties>[];
 
         // Act
         DateSequencePattern? actualPattern = matcher.detect(values);
@@ -26,14 +25,12 @@ void main() {
       test('Should [return null] when [values contain non-date formats]', () {
         // Arrange
         LinearDatePatternMatcher matcher = LinearDatePatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> values = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(0, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: 'text'),
-              style: CellStyle(
-                valueFormat: SheetStringFormat(),
-              ),
+            value: SheetRichText.single(text: 'text'),
+            style: CellStyle(
+              valueFormat: SheetStringFormat(),
             ),
           ),
         ];
@@ -48,23 +45,19 @@ void main() {
       test('Should [return DateSequencePattern] when [values contain valid date formats] (single step)', () {
         // Arrange
         LinearDatePatternMatcher matcher = LinearDatePatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> values = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(0, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-01'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-01'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(0, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-02'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-02'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
         ];
@@ -86,32 +79,26 @@ void main() {
       test('Should [return DateSequencePattern] when [values contain valid date formats] (multi steps)', () {
         // Arrange
         LinearDatePatternMatcher matcher = LinearDatePatternMatcher();
-        List<IndexedCellProperties> values = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> values = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(0, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-01'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-01'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(0, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-03'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-03'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(0, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-06'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-06'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
         ];
@@ -144,60 +131,50 @@ void main() {
           lastDate: DateTime(2023, 11),
         );
 
-        List<IndexedCellProperties> baseCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> baseCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(0, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-01'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-01'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
         ];
 
-        List<IndexedCellProperties> fillCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> fillCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: ''),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: ''),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(2, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: ''),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: ''),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
         ];
 
         // Act
-        List<IndexedCellProperties> filledCells = pattern.apply(baseCells, fillCells);
+        List<CellProperties> filledCells = pattern.apply(baseCells, fillCells);
 
         // Assert
-        List<IndexedCellProperties> expectedFilledCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> expectedFilledCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-02 00:00:00.000'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-02 00:00:00.000'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
-          IndexedCellProperties(
+          CellProperties(
             index: CellIndex.raw(2, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-03 00:00:00.000'),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-              ),
+            value: SheetRichText.single(text: '2023-11-03 00:00:00.000'),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
             ),
           ),
         ];
@@ -213,6 +190,7 @@ void main() {
         );
 
         CellProperties baseProperties = CellProperties(
+          index: CellIndex.zero,
           value: SheetRichText.single(text: '2023-11-01', style: SheetTextSpanStyle(color: Colors.red)),
           style: CellStyle(
             valueFormat: SheetDateFormat('yyyy-MM-dd'),
@@ -220,36 +198,30 @@ void main() {
           ),
         );
 
-        List<IndexedCellProperties> baseCells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.zero, properties: baseProperties),
-        ];
+        List<CellProperties> baseCells = <CellProperties>[baseProperties];
 
-        List<IndexedCellProperties> fillCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> fillCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '', style: SheetTextSpanStyle(color: Colors.red)),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-                rotation: TextRotation.angleDown,
-              ),
+            value: SheetRichText.single(text: '', style: SheetTextSpanStyle(color: Colors.red)),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
+              rotation: TextRotation.angleDown,
             ),
           ),
         ];
 
         // Act
-        List<IndexedCellProperties> actualFilledCells = pattern.apply(baseCells, fillCells);
+        List<CellProperties> actualFilledCells = pattern.apply(baseCells, fillCells);
 
         // Assert
-        List<IndexedCellProperties> expectedFilledCells = <IndexedCellProperties>[
-          IndexedCellProperties(
+        List<CellProperties> expectedFilledCells = <CellProperties>[
+          CellProperties(
             index: CellIndex.raw(1, 0),
-            properties: CellProperties(
-              value: SheetRichText.single(text: '2023-11-02 00:00:00.000', style: SheetTextSpanStyle(color: Colors.red)),
-              style: CellStyle(
-                valueFormat: SheetDateFormat('yyyy-MM-dd'),
-                rotation: TextRotation.angleDown,
-              ),
+            value: SheetRichText.single(text: '2023-11-02 00:00:00.000', style: SheetTextSpanStyle(color: Colors.red)),
+            style: CellStyle(
+              valueFormat: SheetDateFormat('yyyy-MM-dd'),
+              rotation: TextRotation.angleDown,
             ),
           ),
         ];

@@ -54,7 +54,7 @@ class StartSelectionAction extends SheetAction<StartSelectionEvent> {
       controller.resolve(DisableEditingEvent(save: true));
     }
 
-    SheetIndex? selectedIndex = controller.data.fillCellIndex(event.selectionStart.index);
+    SheetIndex? selectedIndex = controller.worksheet.fillCellIndex(event.selectionStart.index);
 
     SheetSelection previousSelection = controller.selection.value;
 
@@ -113,7 +113,7 @@ class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
       controller.viewport.firstVisibleRow,
       controller.viewport.firstVisibleColumn,
     );
-    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = controller.worksheet.fillCellIndex(selectedIndex);
 
     SheetSelection previousSelection = controller.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
@@ -215,12 +215,12 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
     }
 
     CellIndex maxIndex = CellIndex.max.toRealIndex(
-      columnCount: controller.data.columnCount,
-      rowCount: controller.data.rowCount,
+      cols: controller.worksheet.cols,
+      rows: controller.worksheet.rows,
     );
-    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = controller.worksheet.fillCellIndex(selectedIndex);
     selectedIndex = selectedIndex.move(dx: event.dx, dy: event.dy).clamp(maxIndex);
-    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = controller.worksheet.fillCellIndex(selectedIndex);
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 

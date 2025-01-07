@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/text_rotation.dart';

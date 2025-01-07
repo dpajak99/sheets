@@ -1,11 +1,11 @@
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearDurationPatternMatcher implements ValuePatternMatcher {
   @override
-  DurationSequencePattern? detect(List<IndexedCellProperties> values) {
+  DurationSequencePattern? detect(List<CellProperties> values) {
     try {
       List<Duration> durationValues = _parseDurationValues(values);
       List<Duration> steps = _calculateSteps(durationValues);
@@ -20,11 +20,11 @@ class LinearDurationPatternMatcher implements ValuePatternMatcher {
     }
   }
 
-  List<Duration> _parseDurationValues(List<IndexedCellProperties> values) {
-    return values.map((IndexedCellProperties cell) {
-      SheetValueFormat format = cell.properties.visibleValueFormat;
+  List<Duration> _parseDurationValues(List<CellProperties> values) {
+    return values.map((CellProperties cell) {
+      SheetValueFormat format = cell.visibleValueFormat;
       if (format is SheetDurationFormat) {
-        return format.toDuration(cell.properties.value.toPlainText());
+        return format.toDuration(cell.value.toPlainText());
       } else {
         throw ArgumentError('Invalid format: $format');
       }

@@ -1,19 +1,15 @@
 import 'dart:math';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/sheet/sheet_mesh_layer_painter.dart';
-import 'package:sheets/utils/extensions/offset_extensions.dart';
 import 'package:sheets/utils/extensions/rect_extensions.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
 import 'package:sheets/utils/text_rotation.dart';
-import 'package:sheets/widgets/material/material_sheet_theme.dart';
 
 abstract class SheetCellsLayerPainterBase extends ChangeNotifier implements CustomPainter {
   @override

@@ -1,21 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
 
 void main() {
-  group('Tests of IndexedCellPropertiesExtensions', () {
+  group('Tests of CellPropertiesExtensions', () {
     group('Tests of groupByColumns()', () {
       test('Should [group cells by columns]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(1, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(0, 1), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
+          CellProperties(index: CellIndex.raw(1, 0)),
+          CellProperties(index: CellIndex.raw(0, 1)),
         ];
 
         // Act
-        Map<ColumnIndex, List<IndexedCellProperties>> grouped = cells.groupByColumns();
+        Map<ColumnIndex, List<CellProperties>> grouped = cells.groupByColumns();
 
         // Assert
         expect(grouped.length, 2);
@@ -25,10 +25,10 @@ void main() {
 
       test('Should [return empty map] when [no cells are provided]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[];
+        List<CellProperties> cells = <CellProperties>[];
 
         // Act
-        Map<ColumnIndex, List<IndexedCellProperties>> grouped = cells.groupByColumns();
+        Map<ColumnIndex, List<CellProperties>> grouped = cells.groupByColumns();
 
         // Assert
         expect(grouped.isEmpty, isTrue);
@@ -38,28 +38,28 @@ void main() {
     group('Tests of whereColumn()', () {
       test('Should [filter cells by column]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(1, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(0, 1), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
+          CellProperties(index: CellIndex.raw(1, 0)),
+          CellProperties(index: CellIndex.raw(0, 1)),
         ];
 
         // Act
-        List<IndexedCellProperties> columnCells = cells.whereColumn(ColumnIndex(0));
+        List<CellProperties> columnCells = cells.whereColumn(ColumnIndex(0));
 
         // Assert
         expect(columnCells.length, 2);
-        expect(columnCells.every((IndexedCellProperties cell) => cell.index.column == ColumnIndex(0)), isTrue);
+        expect(columnCells.every((CellProperties cell) => cell.index.column == ColumnIndex(0)), isTrue);
       });
 
       test('Should [return empty list] when [no cells match the column]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
         ];
 
         // Act
-        List<IndexedCellProperties> columnCells = cells.whereColumn(ColumnIndex(1));
+        List<CellProperties> columnCells = cells.whereColumn(ColumnIndex(1));
 
         // Assert
         expect(columnCells.isEmpty, isTrue);
@@ -69,14 +69,14 @@ void main() {
     group('Tests of groupByRows()', () {
       test('Should [group cells by rows]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(0, 1), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(1, 0), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
+          CellProperties(index: CellIndex.raw(0, 1)),
+          CellProperties(index: CellIndex.raw(1, 0)),
         ];
 
         // Act
-        Map<RowIndex, List<IndexedCellProperties>> grouped = cells.groupByRows();
+        Map<RowIndex, List<CellProperties>> grouped = cells.groupByRows();
 
         // Assert
         expect(grouped.length, 2);
@@ -86,10 +86,10 @@ void main() {
 
       test('Should [return empty map] when [no cells are provided]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[];
+        List<CellProperties> cells = <CellProperties>[];
 
         // Act
-        Map<RowIndex, List<IndexedCellProperties>> grouped = cells.groupByRows();
+        Map<RowIndex, List<CellProperties>> grouped = cells.groupByRows();
 
         // Assert
         expect(grouped.isEmpty, isTrue);
@@ -99,28 +99,28 @@ void main() {
     group('Tests of whereRow()', () {
       test('Should [filter cells by row]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(0, 1), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(1, 0), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
+          CellProperties(index: CellIndex.raw(0, 1)),
+          CellProperties(index: CellIndex.raw(1, 0)),
         ];
 
         // Act
-        List<IndexedCellProperties> rowCells = cells.whereRow(RowIndex(0));
+        List<CellProperties> rowCells = cells.whereRow(RowIndex(0));
 
         // Assert
         expect(rowCells.length, 2);
-        expect(rowCells.every((IndexedCellProperties cell) => cell.index.row == RowIndex(0)), isTrue);
+        expect(rowCells.every((CellProperties cell) => cell.index.row == RowIndex(0)), isTrue);
       });
 
       test('Should [return empty list] when [no cells match the row]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
         ];
 
         // Act
-        List<IndexedCellProperties> rowCells = cells.whereRow(RowIndex(1));
+        List<CellProperties> rowCells = cells.whereRow(RowIndex(1));
 
         // Assert
         expect(rowCells.isEmpty, isTrue);
@@ -130,13 +130,13 @@ void main() {
     group('Tests of maybeReverse()', () {
       test('Should [reverse cells] when [value is true]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(1, 0), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
+          CellProperties(index: CellIndex.raw(1, 0)),
         ];
 
         // Act
-        List<IndexedCellProperties> reversedCells = cells.maybeReverse(true);
+        List<CellProperties> reversedCells = cells.maybeReverse(true);
 
         // Assert
         expect(reversedCells, isNot(equals(cells)));
@@ -145,13 +145,13 @@ void main() {
 
       test('Should [not reverse cells] when [value is false]', () {
         // Arrange
-        List<IndexedCellProperties> cells = <IndexedCellProperties>[
-          IndexedCellProperties(index: CellIndex.raw(0, 0), properties: CellProperties()),
-          IndexedCellProperties(index: CellIndex.raw(1, 0), properties: CellProperties()),
+        List<CellProperties> cells = <CellProperties>[
+          CellProperties(index: CellIndex.raw(0, 0)),
+          CellProperties(index: CellIndex.raw(1, 0)),
         ];
 
         // Act
-        List<IndexedCellProperties> reversedCells = cells.maybeReverse(false);
+        List<CellProperties> reversedCells = cells.maybeReverse(false);
 
         // Assert
         expect(reversedCells, equals(cells));

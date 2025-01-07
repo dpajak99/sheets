@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
-import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -389,7 +389,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.top', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(Worksheet(cols: 1000, rows: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(1, 5));
@@ -408,7 +408,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.bottom', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(Worksheet(cols: 1000, rows: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(9, 5));
@@ -427,7 +427,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.left', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(Worksheet(cols: 1000, rows: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(5, 1));
@@ -446,7 +446,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.right', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(Worksheet(cols: 1000, rows: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(5, 9));

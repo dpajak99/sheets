@@ -1,9 +1,9 @@
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
-import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -50,9 +50,9 @@ class GestureSelectionStrategyModify implements GestureSelectionStrategy {
 }
 
 class GestureSelectionStrategyFill implements GestureSelectionStrategy {
-  GestureSelectionStrategyFill(this.data);
+  GestureSelectionStrategyFill(this.worksheet);
 
-  final SheetData data;
+  final Worksheet worksheet;
 
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {
@@ -64,7 +64,7 @@ class GestureSelectionStrategyFill implements GestureSelectionStrategy {
         ? previousSelection.baseSelection //
         : previousSelection;
 
-    SelectionCellCorners? corners = baseSelection.cellCorners?.includeMergedCells(data);
+    SelectionCellCorners? corners = baseSelection.cellCorners?.includeMergedCells(worksheet);
 
     if (corners == null) {
       return previousSelection;

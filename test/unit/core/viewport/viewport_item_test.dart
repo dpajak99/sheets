@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 
@@ -12,17 +11,17 @@ void main() {
       test('Should [create ViewportCell] with given parameters', () {
         // Arrange
         CellIndex index = CellIndex(row: RowIndex(5), column: ColumnIndex(3));
-        RowStyle rowStyle = RowStyle.defaults();
-        ColumnStyle columnStyle = ColumnStyle.defaults();
+        RowConfig rowConfig = const RowConfig();
+        ColumnConfig columnConfig = const ColumnConfig();
         ViewportRow viewportRow = ViewportRow(
           rect: const BorderRect.fromLTWH(0, 100, 100, 20),
           index: index.row,
-          style: rowStyle,
+          config: rowConfig,
         );
         ViewportColumn viewportColumn = ViewportColumn(
           rect: const BorderRect.fromLTWH(50, 0, 50, 100),
           index: index.column,
-          style: columnStyle,
+          config: columnConfig,
         );
         String value = 'Test Value';
 
@@ -30,7 +29,11 @@ void main() {
         ViewportCell viewportCell = ViewportCell(
           row: viewportRow,
           column: viewportColumn,
-          properties: CellProperties(value: SheetRichText.single(text: value), style: CellStyle()),
+          properties: CellProperties(
+            index: index,
+            value: SheetRichText.single(text: value),
+            style: CellStyle(),
+          ),
         );
 
         // Assert
@@ -45,17 +48,17 @@ void main() {
       test('Should [return adjusted Rect] when [scrollOffset is applied]', () {
         // Arrange
         CellIndex index = CellIndex(row: RowIndex(5), column: ColumnIndex(3));
-        RowStyle rowStyle = RowStyle.defaults();
-        ColumnStyle columnStyle = ColumnStyle.defaults();
+        RowConfig rowConfig = const RowConfig();
+        ColumnConfig columnConfig = const ColumnConfig();
         ViewportRow viewportRow = ViewportRow(
           rect: const BorderRect.fromLTWH(0, 100, 100, 20),
           index: index.row,
-          style: rowStyle,
+          config: rowConfig,
         );
         ViewportColumn viewportColumn = ViewportColumn(
           rect: const BorderRect.fromLTWH(50, 0, 50, 100),
           index: index.column,
-          style: columnStyle,
+          config: columnConfig,
         );
         String value = 'Test Value';
 
@@ -63,7 +66,11 @@ void main() {
         ViewportCell viewportCell = ViewportCell(
           row: viewportRow,
           column: viewportColumn,
-          properties: CellProperties(value: SheetRichText.single(text: value), style: CellStyle()),
+          properties: CellProperties(
+            index: index,
+            value: SheetRichText.single(text: value),
+            style: CellStyle(),
+          ),
         );
 
         // Act
@@ -88,15 +95,15 @@ void main() {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 100, 20);
         RowIndex index = RowIndex(5);
-        RowStyle style = RowStyle.defaults();
+        RowConfig config = const RowConfig();
 
         // Act
-        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, style: style);
+        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, config: config);
 
         // Assert
         expect(viewportRow.rect, equals(rect));
         expect(viewportRow.index, equals(index));
-        expect(viewportRow.style, equals(style));
+        expect(viewportRow.config, equals(config));
       });
     });
 
@@ -105,8 +112,8 @@ void main() {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 100, 20);
         RowIndex index = RowIndex(5);
-        RowStyle style = RowStyle.defaults();
-        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, style: style);
+        RowConfig config = const RowConfig();
+        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, config: config);
 
         // Act
         String value = viewportRow.value;
@@ -121,8 +128,8 @@ void main() {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 100, 20);
         RowIndex index = RowIndex(3);
-        RowStyle style = RowStyle.defaults();
-        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, style: style);
+        RowConfig config = const RowConfig();
+        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, config: config);
 
         // Act
         RowIndex retrievedIndex = viewportRow.index;
@@ -132,19 +139,19 @@ void main() {
       });
     });
 
-    group('Tests of ViewportRow.style getter', () {
-      test('Should [return the stored RowStyle]', () {
+    group('Tests of ViewportRow.rowConfig getter', () {
+      test('Should [return the stored RowConfig]', () {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 100, 20);
         RowIndex index = RowIndex(3);
-        RowStyle style = RowStyle.defaults();
-        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, style: style);
+        RowConfig config = const RowConfig();
+        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, config: config);
 
         // Act
-        RowStyle retrievedStyle = viewportRow.style;
+        RowConfig retrievedStyle = viewportRow.config;
 
         // Assert
-        expect(retrievedStyle, equals(style));
+        expect(retrievedStyle, equals(config));
       });
     });
 
@@ -153,8 +160,8 @@ void main() {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(50, 100, 100, 20);
         RowIndex index = RowIndex(5);
-        RowStyle style = RowStyle.defaults();
-        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, style: style);
+        RowConfig config = const RowConfig();
+        ViewportRow viewportRow = ViewportRow(rect: rect, index: index, config: config);
         Offset scrollOffset = const Offset(-10, -20);
 
         // Act
@@ -173,53 +180,53 @@ void main() {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 50, 20);
         ColumnIndex index = ColumnIndex(5);
-        ColumnStyle style = ColumnStyle.defaults();
+        ColumnConfig config = const ColumnConfig();
 
         // Act
-        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, style: style);
+        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, config: config);
 
         // Assert
         expect(viewportColumn.rect, equals(rect));
         expect(viewportColumn.index, equals(index));
-        expect(viewportColumn.style, equals(style));
+        expect(viewportColumn.style, equals(config));
       });
     });
 
     group('Tests of ViewportColumn.value getter', () {
-      test('Should [return Excel-style column label] for given index', () {
+      test('Should [return Excel-rowConfig column label] for given index', () {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 50, 20);
-        ColumnStyle style = ColumnStyle.defaults();
+        ColumnConfig config = const ColumnConfig();
 
         // Test for index 0 (should be 'A')
         ColumnIndex indexA = ColumnIndex(0);
-        ViewportColumn viewportColumnA = ViewportColumn(rect: rect, index: indexA, style: style);
+        ViewportColumn viewportColumnA = ViewportColumn(rect: rect, index: indexA, config: config);
         expect(viewportColumnA.value, equals('A'));
 
         // Test for index 25 (should be 'Z')
         ColumnIndex indexZ = ColumnIndex(25);
-        ViewportColumn viewportColumnZ = ViewportColumn(rect: rect, index: indexZ, style: style);
+        ViewportColumn viewportColumnZ = ViewportColumn(rect: rect, index: indexZ, config: config);
         expect(viewportColumnZ.value, equals('Z'));
 
         // Test for index 26 (should be 'AA')
         ColumnIndex indexAA = ColumnIndex(26);
-        ViewportColumn viewportColumnAA = ViewportColumn(rect: rect, index: indexAA, style: style);
+        ViewportColumn viewportColumnAA = ViewportColumn(rect: rect, index: indexAA, config: config);
         expect(viewportColumnAA.value, equals('AA'));
 
         // Test for index 27 (should be 'AB')
         ColumnIndex indexAB = ColumnIndex(27);
-        ViewportColumn viewportColumnAB = ViewportColumn(rect: rect, index: indexAB, style: style);
+        ViewportColumn viewportColumnAB = ViewportColumn(rect: rect, index: indexAB, config: config);
         expect(viewportColumnAB.value, equals('AB'));
       });
     });
 
     group('Tests of ViewportColumn.numberToExcelColumn()', () {
-      test('Should [return correct Excel-style column label] for given number', () {
+      test('Should [return correct Excel-rowConfig column label] for given number', () {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 50, 20);
         ColumnIndex index = ColumnIndex(0);
-        ColumnStyle style = ColumnStyle.defaults();
-        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, style: style);
+        ColumnConfig config = const ColumnConfig();
+        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, config: config);
 
         // Act & Assert
         expect(viewportColumn.numberToExcelColumn(1), equals('A'));
@@ -235,8 +242,8 @@ void main() {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 50, 20);
         ColumnIndex index = ColumnIndex(3);
-        ColumnStyle style = ColumnStyle.defaults();
-        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, style: style);
+        ColumnConfig config = const ColumnConfig();
+        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, config: config);
 
         // Act
         ColumnIndex retrievedIndex = viewportColumn.index;
@@ -246,19 +253,19 @@ void main() {
       });
     });
 
-    group('Tests of ViewportColumn.style getter', () {
-      test('Should [return the stored ColumnStyle]', () {
+    group('Tests of ViewportColumn.rowConfig getter', () {
+      test('Should [return the stored ColumnConfig]', () {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(0, 0, 50, 20);
         ColumnIndex index = ColumnIndex(3);
-        ColumnStyle style = ColumnStyle.defaults();
-        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, style: style);
+        ColumnConfig config = const ColumnConfig();
+        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, config: config);
 
         // Act
-        ColumnStyle retrievedStyle = viewportColumn.style;
+        ColumnConfig retrievedStyle = viewportColumn.style;
 
         // Assert
-        expect(retrievedStyle, equals(style));
+        expect(retrievedStyle, equals(config));
       });
     });
 
@@ -267,8 +274,8 @@ void main() {
         // Arrange
         BorderRect rect = const BorderRect.fromLTWH(50, 100, 50, 20);
         ColumnIndex index = ColumnIndex(5);
-        ColumnStyle style = ColumnStyle.defaults();
-        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, style: style);
+        ColumnConfig config = const ColumnConfig();
+        ViewportColumn viewportColumn = ViewportColumn(rect: rect, index: index, config: config);
         Offset scrollOffset = const Offset(-10, -20);
 
         // Act

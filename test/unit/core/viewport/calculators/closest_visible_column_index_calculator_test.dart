@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/calculators/closest_visible_column_index_calculator.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/closest_visible.dart';
@@ -12,9 +12,9 @@ void main() {
       test('Should [return fully visible] when [cell column is within visible columns]', () {
         // Arrange
         List<ViewportColumn> visibleColumns = <ViewportColumn>[
-          ViewportColumn(index: ColumnIndex(2), rect: BorderRect.zero, style: ColumnStyle.defaults()),
-          ViewportColumn(index: ColumnIndex(3), rect: BorderRect.zero, style: ColumnStyle.defaults()),
-          ViewportColumn(index: ColumnIndex(4), rect: BorderRect.zero, style: ColumnStyle.defaults()),
+          ViewportColumn(index: ColumnIndex(2), rect: BorderRect.zero, config: const ColumnConfig()),
+          ViewportColumn(index: ColumnIndex(3), rect: BorderRect.zero, config: const ColumnConfig()),
+          ViewportColumn(index: ColumnIndex(4), rect: BorderRect.zero, config: const ColumnConfig()),
         ];
         ClosestVisibleColumnIndexCalculator calculator = ClosestVisibleColumnIndexCalculator(visibleColumns);
         CellIndex cellIndex = CellIndex(row: RowIndex(0), column: ColumnIndex(3));
@@ -33,8 +33,8 @@ void main() {
       test('Should [return partially visible from left] when [cell column is before visible columns]', () {
         // Arrange
         List<ViewportColumn> visibleColumns = <ViewportColumn>[
-          ViewportColumn(index: ColumnIndex(5), rect: BorderRect.zero, style: ColumnStyle.defaults()),
-          ViewportColumn(index: ColumnIndex(6), rect: BorderRect.zero, style: ColumnStyle.defaults()),
+          ViewportColumn(index: ColumnIndex(5), rect: BorderRect.zero, config: const ColumnConfig()),
+          ViewportColumn(index: ColumnIndex(6), rect: BorderRect.zero, config: const ColumnConfig()),
         ];
         ClosestVisibleColumnIndexCalculator calculator = ClosestVisibleColumnIndexCalculator(visibleColumns);
         CellIndex cellIndex = CellIndex(row: RowIndex(0), column: ColumnIndex(4));
@@ -54,8 +54,8 @@ void main() {
       test('Should [return partially visible from right] when [cell column is after visible columns]', () {
         // Arrange
         List<ViewportColumn> visibleColumns = <ViewportColumn>[
-          ViewportColumn(index: ColumnIndex(2), rect: BorderRect.zero, style: ColumnStyle.defaults()),
-          ViewportColumn(index: ColumnIndex(3), rect: BorderRect.zero, style: ColumnStyle.defaults()),
+          ViewportColumn(index: ColumnIndex(2), rect: BorderRect.zero, config: const ColumnConfig()),
+          ViewportColumn(index: ColumnIndex(3), rect: BorderRect.zero, config: const ColumnConfig()),
         ];
         ClosestVisibleColumnIndexCalculator calculator = ClosestVisibleColumnIndexCalculator(visibleColumns);
         CellIndex cellIndex = CellIndex(row: RowIndex(0), column: ColumnIndex(5));
@@ -75,7 +75,7 @@ void main() {
       test('Should [handle single visible column] correctly', () {
         // Arrange
         List<ViewportColumn> visibleColumns = <ViewportColumn>[
-          ViewportColumn(index: ColumnIndex(10), rect: BorderRect.zero, style: ColumnStyle.defaults()),
+          ViewportColumn(index: ColumnIndex(10), rect: BorderRect.zero, config: const ColumnConfig()),
         ];
         ClosestVisibleColumnIndexCalculator calculator = ClosestVisibleColumnIndexCalculator(visibleColumns);
         CellIndex cellIndex = CellIndex(row: RowIndex(0), column: ColumnIndex(10));
@@ -92,7 +92,7 @@ void main() {
       test('Should [return partially visible from left] when [cell column is before first visible column]', () {
         // Arrange
         List<ViewportColumn> visibleColumns = <ViewportColumn>[
-          ViewportColumn(index: ColumnIndex(5), rect: BorderRect.zero, style: ColumnStyle.defaults()),
+          ViewportColumn(index: ColumnIndex(5), rect: BorderRect.zero, config: const ColumnConfig()),
         ];
         ClosestVisibleColumnIndexCalculator calculator = ClosestVisibleColumnIndexCalculator(visibleColumns);
         CellIndex cellIndex = CellIndex(row: RowIndex(0), column: ColumnIndex(3));

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/events/sheet_scroll_events.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
@@ -37,7 +38,7 @@ abstract class SheetAction<T extends SheetEvent> {
 
   SheetRangeSelection<CellIndex> ensureMergedCellsVisible(SheetRangeSelection<CellIndex> selection) {
     SelectionCellCorners corners = selection.cellCorners;
-    SelectionCellCorners cornersWithMergedCells = selection.cellCorners.includeMergedCells(controller.data);
+    SelectionCellCorners cornersWithMergedCells = selection.cellCorners.includeMergedCells(controller.worksheet);
     if (corners == cornersWithMergedCells) {
       return selection;
     }
@@ -127,9 +128,9 @@ class DisableEditingAction extends SheetAction<DisableEditingEvent> {
       CellIndex index = editedCell.cell.index;
 
       TextSpan textSpan = editedCell.controller.value.text.toTextSpan();
-      controller.data.setText(index, SheetRichText.fromTextSpan(textSpan));
-      controller.data.adjustCellHeight(index);
+      controller.worksheet.dispatchEvent(SetTextEvent(index, SheetRichText.fromTextSpan(textSpan)));
     }
+
     controller.sheetFocusNode.requestFocus();
     controller.editableCellNotifier.setValue(null);
 

@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/values/sheet_text_span.dart';
 
 abstract class ViewportItem with EquatableMixin {
   ViewportItem({
@@ -107,34 +107,34 @@ class ViewportRow extends ViewportItem {
   ViewportRow({
     required super.rect,
     required RowIndex index,
-    required RowStyle style,
+    required RowConfig config,
   })  : _index = index,
-        _style = style;
+        _config = config;
 
   final RowIndex _index;
-  final RowStyle _style;
+  final RowConfig _config;
 
   String get value => '${_index.value + 1}';
 
   @override
   RowIndex get index => _index;
 
-  RowStyle get style => _style;
+  RowConfig get config => _config;
 
   @override
-  List<Object?> get props => <Object?>[_index, _style, rect];
+  List<Object?> get props => <Object?>[_index, _config, rect];
 }
 
 class ViewportColumn extends ViewportItem {
   ViewportColumn({
     required super.rect,
     required ColumnIndex index,
-    required ColumnStyle style,
+    required ColumnConfig config,
   })  : _index = index,
-        _style = style;
+        _config = config;
 
   final ColumnIndex _index;
-  final ColumnStyle _style;
+  final ColumnConfig _config;
 
   String get value {
     return numberToExcelColumn(_index.value + 1);
@@ -143,7 +143,7 @@ class ViewportColumn extends ViewportItem {
   @override
   ColumnIndex get index => _index;
 
-  ColumnStyle get style => _style;
+  ColumnConfig get style => _config;
 
   String numberToExcelColumn(int number) {
     String result = '';
@@ -159,7 +159,7 @@ class ViewportColumn extends ViewportItem {
   }
 
   @override
-  List<Object?> get props => <Object?>[_index, _style, rect];
+  List<Object?> get props => <Object?>[_index, _config, rect];
 }
 
 class ViewportCell extends ViewportItem {
@@ -172,7 +172,11 @@ class ViewportCell extends ViewportItem {
       rect: BorderRect.fromLTRB(column.rect.left, row.rect.top, column.rect.right, row.rect.bottom),
       row: row,
       column: column,
-      properties: properties,
+      properties: properties ??
+          CellProperties(
+            index: CellIndex(row: row.index, column: column.index),
+            value: SheetRichText(),
+          ),
     );
   }
 
@@ -182,7 +186,7 @@ class ViewportCell extends ViewportItem {
     required ViewportRow rowEnd,
     required ViewportColumn columnStart,
     required ViewportColumn columnEnd,
-    CellProperties? properties,
+    required CellProperties properties,
   }) {
     return ViewportCell._(
       index: index,
@@ -197,12 +201,12 @@ class ViewportCell extends ViewportItem {
     required super.rect,
     required ViewportRow row,
     required ViewportColumn column,
-    CellProperties? properties,
+    required CellProperties properties,
     CellIndex? index,
   })  : _index = index ?? CellIndex(row: row.index, column: column.index),
         _row = row,
         _column = column {
-    _properties = properties ?? CellProperties();
+    _properties = properties;
   }
 
   ViewportCell copyWith({

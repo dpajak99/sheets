@@ -13,7 +13,6 @@ import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/border_edges.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
-import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
@@ -262,11 +261,11 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 ),
                                 GoogToolbarBorderBtn(
                                   onChanged: (BorderEdges edges, Color color, double width) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetBorderIntent(
-                                      edges: edges,
-                                      borderSide: BorderSide(color: color, width: width),
-                                      selectedCells: widget.sheetController.selectedCells,
-                                    )));
+                                    // widget.sheetController.resolve(FormatSelectionEvent(SetBorderIntent(
+                                    //   edges: edges,
+                                    //   borderSide: BorderSide(color: color, width: width),
+                                    //   selectedCells: widget.sheetController.selectedCells,
+                                    // )));
                                   },
                                 ),
                                 () {

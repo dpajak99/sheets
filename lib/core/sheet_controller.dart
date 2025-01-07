@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/workbook.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/selection/selection_state.dart';
 import 'package:sheets/core/selection/selection_style.dart';
-import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
@@ -29,19 +29,23 @@ class SheetRebuildNotifier extends ChangeNotifier {
 
 class SheetController extends SheetRebuildNotifier {
   SheetController({
-    required this.data,
+    required this.workbook,
   }) {
     editableCellNotifier = SilentValueNotifier<EditableViewportCell?>(null);
 
     scroll = SheetScrollController();
-    viewport = SheetViewport(data);
+    viewport = SheetViewport(worksheet);
     selection = SelectionState.defaultSelection();
 
-    scroll.setContentSize(data.contentSize);
+    scroll.setContentSize(worksheet.contentSize);
   }
 
   final FocusNode sheetFocusNode = FocusNode()..requestFocus();
-  final SheetData data;
+  final Workbook workbook;
+  int get _worksheetIndex => 0;
+
+  Worksheet get worksheet => workbook.worksheets[_worksheetIndex];
+
   late final SheetViewport viewport;
   late final SheetScrollController scroll;
   late final SilentValueNotifier<EditableViewportCell?> editableCellNotifier;
@@ -80,7 +84,7 @@ class SheetController extends SheetRebuildNotifier {
 
   bool isFullyVisible(SheetIndex index) {
     Offset scrollOffset = scroll.offset;
-    Rect cellSheetCoords = index.getSheetCoordinates(data);
+    Rect cellSheetCoords = index.getSheetCoordinates(worksheet);
     Rect sheetInnerRect = viewport.rect.innerLocal;
 
     return cellSheetCoords.top >= scrollOffset.dy &&
@@ -90,13 +94,13 @@ class SheetController extends SheetRebuildNotifier {
   }
 
   List<CellIndex> get selectedCells {
-    return selection.value.getSelectedCells(data.columnCount, data.rowCount);
+    return selection.value.getSelectedCells(worksheet.cols, worksheet.rows);
   }
 
   bool get isEditingMode => editableCellNotifier.value != null;
 
   SelectionStyle getSelectionStyle() {
-    CellProperties cellProperties = data.getCellProperties(selection.value.mainCell);
+    CellProperties cellProperties = worksheet.getCell(selection.value.mainCell);
 
     if (editableCellNotifier.value == null) {
       return CellSelectionStyle(cellProperties: cellProperties);
@@ -117,7 +121,7 @@ class SheetController extends SheetRebuildNotifier {
   }
 
   CellProperties getCellProperties(CellIndex index) {
-    return data.getCellProperties(index);
+    return worksheet.getCell(index);
   }
 }
 

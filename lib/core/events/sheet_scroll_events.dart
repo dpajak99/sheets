@@ -80,7 +80,7 @@ class ScrollToElementAction extends ScrollAction<ScrollToElementEvent> {
   void execute() {
     Offset scrollOffset = controller.scroll.offset;
 
-    Rect cellSheetCoords = event.index.getSheetCoordinates(controller.data);
+    Rect cellSheetCoords = event.index.getSheetCoordinates(controller.worksheet);
 
     double sheetWidth = controller.viewport.rect.innerLocal.width;
     double sheetHeight = controller.viewport.rect.innerLocal.height;

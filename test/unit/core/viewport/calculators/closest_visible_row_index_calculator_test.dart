@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/viewport/calculators/closest_visible_row_index_calculator.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/closest_visible.dart';
@@ -12,9 +12,9 @@ void main() {
       test('Should [return fully visible] when [cell row is within visible rows]', () {
         // Arrange
         List<ViewportRow> visibleRows = <ViewportRow>[
-          ViewportRow(index: RowIndex(2), rect: BorderRect.zero, style: RowStyle.defaults()),
-          ViewportRow(index: RowIndex(3), rect: BorderRect.zero, style: RowStyle.defaults()),
-          ViewportRow(index: RowIndex(4), rect: BorderRect.zero, style: RowStyle.defaults()),
+          ViewportRow(index: RowIndex(2), rect: BorderRect.zero, config: const RowConfig()),
+          ViewportRow(index: RowIndex(3), rect: BorderRect.zero, config: const RowConfig()),
+          ViewportRow(index: RowIndex(4), rect: BorderRect.zero, config: const RowConfig()),
         ];
         ClosestVisibleRowIndexCalculator calculator = ClosestVisibleRowIndexCalculator(visibleRows);
         CellIndex cellIndex = CellIndex(row: RowIndex(3), column: ColumnIndex(0));
@@ -33,8 +33,8 @@ void main() {
       test('Should [return partially visible from top] when [cell row is before visible rows]', () {
         // Arrange
         List<ViewportRow> visibleRows = <ViewportRow>[
-          ViewportRow(index: RowIndex(5), rect: BorderRect.zero, style: RowStyle.defaults()),
-          ViewportRow(index: RowIndex(6), rect: BorderRect.zero, style: RowStyle.defaults()),
+          ViewportRow(index: RowIndex(5), rect: BorderRect.zero, config: const RowConfig()),
+          ViewportRow(index: RowIndex(6), rect: BorderRect.zero, config: const RowConfig()),
         ];
         ClosestVisibleRowIndexCalculator calculator = ClosestVisibleRowIndexCalculator(visibleRows);
         CellIndex cellIndex = CellIndex(row: RowIndex(4), column: ColumnIndex(0));
@@ -54,8 +54,8 @@ void main() {
       test('Should [return partially visible from bottom] when [cell row is after visible rows]', () {
         // Arrange
         List<ViewportRow> visibleRows = <ViewportRow>[
-          ViewportRow(index: RowIndex(2), rect: BorderRect.zero, style: RowStyle.defaults()),
-          ViewportRow(index: RowIndex(3), rect: BorderRect.zero, style: RowStyle.defaults()),
+          ViewportRow(index: RowIndex(2), rect: BorderRect.zero, config: const RowConfig()),
+          ViewportRow(index: RowIndex(3), rect: BorderRect.zero, config: const RowConfig()),
         ];
         ClosestVisibleRowIndexCalculator calculator = ClosestVisibleRowIndexCalculator(visibleRows);
         CellIndex cellIndex = CellIndex(row: RowIndex(5), column: ColumnIndex(0));
@@ -75,7 +75,7 @@ void main() {
       test('Should [handle single visible row] correctly', () {
         // Arrange
         List<ViewportRow> visibleRows = <ViewportRow>[
-          ViewportRow(index: RowIndex(10), rect: BorderRect.zero, style: RowStyle.defaults()),
+          ViewportRow(index: RowIndex(10), rect: BorderRect.zero, config: const RowConfig()),
         ];
         ClosestVisibleRowIndexCalculator calculator = ClosestVisibleRowIndexCalculator(visibleRows);
         CellIndex cellIndex = CellIndex(row: RowIndex(10), column: ColumnIndex(0));
@@ -92,7 +92,7 @@ void main() {
       test('Should [return partially visible from top] when [cell row is before first visible row]', () {
         // Arrange
         List<ViewportRow> visibleRows = <ViewportRow>[
-          ViewportRow(index: RowIndex(5), rect: BorderRect.zero, style: RowStyle.defaults()),
+          ViewportRow(index: RowIndex(5), rect: BorderRect.zero, config: const RowConfig()),
         ];
         ClosestVisibleRowIndexCalculator calculator = ClosestVisibleRowIndexCalculator(visibleRows);
         CellIndex cellIndex = CellIndex(row: RowIndex(3), column: ColumnIndex(0));

@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'package:sheets/core/cell_properties.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class LinearStringPatternMatcher implements ValuePatternMatcher {
   @override
-  LinearStringPattern? detect(List<IndexedCellProperties> baseCells) {
+  LinearStringPattern? detect(List<CellProperties> baseCells) {
     List<_SegmentedStringCellValue>? segmentedValues = _segmentCellValues(baseCells);
     if (segmentedValues == null || segmentedValues.isEmpty) {
       return null;
@@ -37,11 +37,11 @@ class LinearStringPatternMatcher implements ValuePatternMatcher {
     );
   }
 
-  List<_SegmentedStringCellValue>? _segmentCellValues(List<IndexedCellProperties> baseCells) {
+  List<_SegmentedStringCellValue>? _segmentCellValues(List<CellProperties> baseCells) {
     List<_SegmentedStringCellValue> segmentedValues = <_SegmentedStringCellValue>[];
 
-    for (IndexedCellProperties cell in baseCells) {
-      String plainText = cell.properties.value.toPlainText();
+    for (CellProperties cell in baseCells) {
+      String plainText = cell.value.toPlainText();
 
       _SegmentedStringCellValue? segmentedValue = _segmentText(plainText);
       if (segmentedValue == null) {

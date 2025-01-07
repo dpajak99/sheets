@@ -1,5 +1,4 @@
-import 'package:sheets/core/cell_properties.dart';
-import 'package:sheets/core/data/sheet_data.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/extensions/viewport_extensions.dart';
@@ -14,7 +13,7 @@ class VisibleCellsRenderer {
 
   final List<ViewportColumn> visibleColumns;
 
-  List<ViewportCell> build(SheetData data) {
+  List<ViewportCell> build(Worksheet worksheet) {
     List<ViewportCell> visibleCells = <ViewportCell>[];
     List<ViewportCell> mergedCells = <ViewportCell>[];
     List<MergedCell> resolvedMergedCells = <MergedCell>[];
@@ -26,11 +25,11 @@ class VisibleCellsRenderer {
         ViewportColumn column = visibleColumns[x];
 
         CellIndex cellIndex = CellIndex(column: column.index, row: row.index);
-        CellProperties cellProperties = data.getCellProperties(cellIndex);
+        CellProperties cellProperties = worksheet.getCell(cellIndex);
 
         if (cellProperties.mergeStatus is MergedCell) {
           MergedCell mergedCell = cellProperties.mergeStatus as MergedCell;
-          CellProperties startCellProperties = data.getCellProperties(mergedCell.start);
+          CellProperties startCellProperties = worksheet.getCell(mergedCell.start);
 
           if (mergedCell.isMainCell(cellIndex) || (y == 0 || x == 0) && !resolvedMergedCells.contains(mergedCell)) {
             CellIndex mergeEnd = mergedCell.end;

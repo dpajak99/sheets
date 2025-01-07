@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/data/sheet_data.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/calculators/closest_visible_cell_index_calculator.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -27,23 +26,23 @@ class SheetViewportContentData {
     return cells.any((ViewportCell cell) => cell.index == cellIndex);
   }
 
-  ClosestVisible<ViewportCell> findCellOrClosest(SheetData data, CellIndex cellIndex) {
-    CellMergeStatus mergeStatus = data.getCellProperties(cellIndex).mergeStatus;
+  ClosestVisible<ViewportCell> findCellOrClosest(Worksheet worksheet, CellIndex cellIndex) {
+    CellMergeStatus mergeStatus = worksheet.getCell(cellIndex).mergeStatus;
     if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
-      return findCellOrClosest(data, mergeStatus.start);
+      return findCellOrClosest(worksheet, mergeStatus.start);
     }
 
     if (containsCell(cellIndex)) {
-      return ClosestVisible<ViewportCell>.fullyVisible(findCell(data, cellIndex)!);
+      return ClosestVisible<ViewportCell>.fullyVisible(findCell(worksheet, cellIndex)!);
     }
-    return findClosestCell(data, cellIndex);
+    return findClosestCell(worksheet, cellIndex);
   }
 
-  ViewportCell? findCell(SheetData data, CellIndex cellIndex) {
-    CellProperties properties = data.getCellProperties(cellIndex);
+  ViewportCell? findCell(Worksheet worksheet, CellIndex cellIndex) {
+    CellProperties properties = worksheet.getCell(cellIndex);
     CellMergeStatus mergeStatus = properties.mergeStatus;
     if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
-      return findCell(data, mergeStatus.start);
+      return findCell(worksheet, mergeStatus.start);
     }
     return cells.where((ViewportCell cell) => cell.index == cellIndex).firstOrNull;
   }
@@ -59,12 +58,12 @@ class SheetViewportContentData {
     }
   }
 
-  ClosestVisible<ViewportCell> findClosestCell(SheetData data, CellIndex cellIndex) {
+  ClosestVisible<ViewportCell> findClosestCell(Worksheet worksheet, CellIndex cellIndex) {
     ClosestVisibleCellIndexCalculator calculator = ClosestVisibleCellIndexCalculator(visibleRows: rows, visibleColumns: columns);
     ClosestVisible<CellIndex> closestVisibleCellIndex = calculator.findFor(cellIndex);
 
     return ClosestVisible<ViewportCell>.partiallyVisible(
-      value: findCell(data, closestVisibleCellIndex.value)!,
+      value: findCell(worksheet, closestVisibleCellIndex.value)!,
       hiddenBorders: closestVisibleCellIndex.hiddenBorders,
     );
   }

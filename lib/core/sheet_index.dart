@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/data/sheet_data.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/utils/extensions/int_extensions.dart';
 import 'package:sheets/utils/numeric_index_mixin.dart';
 
@@ -32,7 +31,7 @@ sealed class SheetIndex with EquatableMixin {
     }
   }
 
-  Rect getSheetCoordinates(SheetData data);
+  Rect getSheetCoordinates(Worksheet worksheet);
 
   CellIndex toCellIndex() {
     return switch (this) {
@@ -56,10 +55,6 @@ class MergedCellIndex extends CellIndex {
 
   final CellIndex start;
   final CellIndex end;
-
-  MergedCell toCellMergeStatus() {
-    return MergedCell(start: start, end: end);
-  }
 
   bool containsRow(RowIndex rowIndex) {
     return rowIndex >= start.row && rowIndex <= end.row;
@@ -148,17 +143,17 @@ class CellIndex extends SheetIndex {
   final RowIndex row;
   final ColumnIndex column;
 
-  CellIndex toRealIndex({required int columnCount, required int rowCount}) {
-    ColumnIndex realColumnIndex = column.toRealIndex(columnCount: columnCount);
-    RowIndex realRowIndex = row.toRealIndex(rowCount: rowCount);
+  CellIndex toRealIndex({required int cols, required int rows}) {
+    ColumnIndex realColumnIndex = column.toRealIndex(cols: cols);
+    RowIndex realRowIndex = row.toRealIndex(rows: rows);
 
     return CellIndex(row: realRowIndex, column: realColumnIndex);
   }
 
   @override
-  Rect getSheetCoordinates(SheetData data) {
-    Rect xRect = column.getSheetCoordinates(data);
-    Rect yRect = row.getSheetCoordinates(data);
+  Rect getSheetCoordinates(Worksheet worksheet) {
+    Rect xRect = column.getSheetCoordinates(worksheet);
+    Rect yRect = row.getSheetCoordinates(worksheet);
 
     return Rect.fromLTWH(xRect.left, yRect.top, xRect.width, yRect.height);
   }
@@ -204,25 +199,24 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
 
   static ColumnIndex max = ColumnIndex(Int.max);
 
-  ColumnIndex toRealIndex({required int columnCount}) {
+  ColumnIndex toRealIndex({required int cols}) {
     if (this == max) {
-      return ColumnIndex(columnCount - 1);
+      return ColumnIndex(cols - 1);
     } else {
       return this;
     }
   }
 
   @override
-  Rect getSheetCoordinates(SheetData data) {
+  Rect getSheetCoordinates(Worksheet worksheet) {
     double x = 0;
     for (int i = 0; i < value; i++) {
-      double columnWidth = data.getColumnWidth(ColumnIndex(i));
-      x += columnWidth + borderWidth;
+      ColumnConfig columnConfig = worksheet.getColumn(ColumnIndex(i));
+      x += columnConfig.width + borderWidth;
     }
 
-    double width = data.getColumnWidth(this);
-
-    return Rect.fromLTWH(x, 0, width + borderWidth, defaultRowHeight + borderWidth);
+    ColumnConfig columnConfig = worksheet.getColumn(this);
+    return Rect.fromLTWH(x, 0, columnConfig.width + borderWidth, defaultRowHeight + borderWidth);
   }
 
   ColumnIndex operator +(int number) {
@@ -284,9 +278,9 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
 
   static RowIndex max = RowIndex(Int.max);
 
-  RowIndex toRealIndex({required int rowCount}) {
+  RowIndex toRealIndex({required int rows}) {
     if (this == max) {
-      return RowIndex(rowCount - 1);
+      return RowIndex(rows - 1);
     } else {
       return this;
     }
@@ -296,15 +290,14 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
   int get value => _value;
 
   @override
-  Rect getSheetCoordinates(SheetData data) {
+  Rect getSheetCoordinates(Worksheet worksheet) {
     double y = 0;
     for (int i = 0; i < value; i++) {
-      double rowHeight = data.getRowHeight(RowIndex(i));
-      y += rowHeight + borderWidth;
+      RowConfig rowConfig = worksheet.getRow(RowIndex(i));
+      y += rowConfig.height + borderWidth;
     }
-
-    double height = data.getRowHeight(this);
-    return Rect.fromLTWH(0, y, defaultColumnWidth + borderWidth, height + borderWidth);
+    RowConfig rowConfig = worksheet.getRow(this);
+    return Rect.fromLTWH(0, y, defaultColumnWidth + borderWidth, rowConfig.height + borderWidth);
   }
 
   RowIndex move(int number) {

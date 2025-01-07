@@ -1,5 +1,5 @@
 import 'package:sheets/core/clipboard/sheet_clipboard.dart';
-import 'package:sheets/core/sheet_style.dart';
+import 'package:sheets/core/data/worksheet.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 
 class PlaintextClipboardDecoder {
