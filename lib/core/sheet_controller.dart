@@ -8,7 +8,7 @@ import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/scroll/sheet_scroll_controller.dart';
 import 'package:sheets/core/selection/selection_state.dart';
 import 'package:sheets/core/selection/selection_style.dart';
-import 'package:sheets/core/sheet_data.dart';
+import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';

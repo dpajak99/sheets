@@ -10,7 +10,7 @@ import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_controller.dart';
-import 'package:sheets/core/sheet_data.dart';
+import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 
 // Start Fill

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sheets/core/selection/selection_direction.dart';
-import 'package:sheets/core/sheet_data.dart';
+import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/direction.dart';
 

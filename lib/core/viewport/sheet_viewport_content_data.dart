@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/sheet_data.dart';
+import 'package:sheets/core/data/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/calculators/closest_visible_cell_index_calculator.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
