@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/data/worksheet.dart';
+import 'package:sheets/core/data/worksheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/events/sheet_scroll_events.dart';
 import 'package:sheets/core/events/sheet_selection_events.dart';
@@ -49,6 +49,36 @@ abstract class SheetAction<T extends SheetEvent> {
       completed: selection.isCompleted,
       customMainCell: selection.mainCell,
     );
+  }
+}
+
+class ChangeWorksheetEvent extends SheetEvent {
+  ChangeWorksheetEvent(this.index);
+
+  final int index;
+
+  @override
+  SheetAction<SheetEvent> createAction(SheetController controller) => ChangeWorksheetAction(this, controller);
+
+  @override
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig.all();
+  }
+
+  @override
+  List<Object?> get props => <Object?>[index];
+}
+
+
+class ChangeWorksheetAction extends SheetAction<ChangeWorksheetEvent> {
+  ChangeWorksheetAction(super.event, super.controller);
+
+  @override
+  void execute() {
+    controller.worksheetIndex = event.index;
+    controller.selection.update(SheetSingleSelection(CellIndex.zero, fillHandleVisible: false));
+    controller.scroll.setContentSize(controller.worksheet.contentSize);
+    controller.scroll.scrollTo(Offset.zero);
   }
 }
 
@@ -128,7 +158,7 @@ class DisableEditingAction extends SheetAction<DisableEditingEvent> {
       CellIndex index = editedCell.cell.index;
 
       TextSpan textSpan = editedCell.controller.value.text.toTextSpan();
-      controller.worksheet.dispatchEvent(SetTextEvent(index, SheetRichText.fromTextSpan(textSpan)));
+      controller.worksheet.dispatchEvent(SetTextWorksheetEvent(index, SheetRichText.fromTextSpan(textSpan)));
     }
 
     controller.sheetFocusNode.requestFocus();

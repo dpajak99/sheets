@@ -69,9 +69,9 @@ class PastedCellProperties with EquatableMixin {
       column: anchor.column + colOffset,
     );
 
-    CellMergeStatus mergeStatus = const NoCellMerge();
+    CellMergeStatus mergeStatus = const CellMergeStatus.noMerge();
     if (rowSpan > 1 || colSpan > 1) {
-      mergeStatus = MergedCell(
+      mergeStatus = CellMergeStatus.merged(
         start: index,
         end: CellIndex(row: index.row + rowSpan - 1, column: index.column + colSpan - 1),
       );

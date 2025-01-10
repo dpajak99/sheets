@@ -137,7 +137,7 @@ class _SheetPageState extends State<_SheetPage> {
               Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
               Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
               Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
-              const GoogBottomBar(),
+              GoogBottomBar(controller: sheetController),
             ],
           ),
         ),

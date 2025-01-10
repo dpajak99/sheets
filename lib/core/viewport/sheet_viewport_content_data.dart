@@ -28,8 +28,8 @@ class SheetViewportContentData {
 
   ClosestVisible<ViewportCell> findCellOrClosest(Worksheet worksheet, CellIndex cellIndex) {
     CellMergeStatus mergeStatus = worksheet.getCell(cellIndex).mergeStatus;
-    if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
-      return findCellOrClosest(worksheet, mergeStatus.start);
+    if(mergeStatus.isMerged && mergeStatus.start != cellIndex) {
+      return findCellOrClosest(worksheet, mergeStatus.start!);
     }
 
     if (containsCell(cellIndex)) {
@@ -41,8 +41,8 @@ class SheetViewportContentData {
   ViewportCell? findCell(Worksheet worksheet, CellIndex cellIndex) {
     CellProperties properties = worksheet.getCell(cellIndex);
     CellMergeStatus mergeStatus = properties.mergeStatus;
-    if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
-      return findCell(worksheet, mergeStatus.start);
+    if(mergeStatus.isMerged && mergeStatus.start != cellIndex) {
+      return findCell(worksheet, mergeStatus.start!);
     }
     return cells.where((ViewportCell cell) => cell.index == cellIndex).firstOrNull;
   }

@@ -106,7 +106,7 @@ class SheetSingleSelection extends SheetSelectionBase {
 
   @override
   String stringifySelection() {
-    return _selectedIndex.stringifyPosition();
+    return _selectedIndex.reference;
   }
 
   @override

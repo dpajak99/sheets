@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:sheets/core/data/worksheet.dart';
+import 'package:sheets/core/data/worksheet_event.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
@@ -52,7 +53,8 @@ class FormatSelectionAction extends SheetFormattingAction<FormatSelectionEvent> 
 
   @override
   void execute() {
-    List<CellIndex> selectedCells = controller.selection.value.getSelectedCells(controller.worksheet.cols, controller.worksheet.rows);
+    List<CellIndex> selectedCells =
+        controller.selection.value.getSelectedCells(controller.worksheet.cols, controller.worksheet.rows);
     SelectionStyle selectionStyle = controller.getSelectionStyle();
 
     StyleFormatIntent intent = event.intent;
@@ -69,7 +71,7 @@ class FormatSelectionAction extends SheetFormattingAction<FormatSelectionEvent> 
       (_) => throw UnimplementedError(),
     };
 
-    controller.worksheet.dispatchEvent(FormatSelectionDataEvent(selectedCells, formatAction));
+    controller.worksheet.dispatchEvent(FormatSelectionWorksheetEvent(selectedCells, formatAction));
   }
 }
 
@@ -102,7 +104,7 @@ class ResizeColumnAction extends SheetFormattingAction<ResizeColumnEvent> {
 
   @override
   void execute() {
-    controller.worksheet.dispatchEvent(SetColumnWidthEvent(event.column, event.width));
+    controller.worksheet.dispatchEvent(SetColumnWidthWorksheetEvent(event.column, event.width));
   }
 }
 
@@ -135,7 +137,7 @@ class ResizeRowAction extends SheetFormattingAction<ResizeRowEvent> {
 
   @override
   void execute() {
-    controller.worksheet.dispatchEvent(SetRowHeightEvent(event.row, event.height));
+    controller.worksheet.dispatchEvent(SetRowHeightWorksheetEvent(event.row, event.height));
   }
 }
 
@@ -165,14 +167,18 @@ class MergeSelectionAction extends SheetFormattingAction<MergeSelectionEvent> {
     if (selection is SheetRangeSelection) {
       List<CellIndex> selectedCells = selection.getSelectedCells(controller.worksheet.cols, controller.worksheet.rows);
       controller.selection.update(SheetSingleSelection(MergedCellIndex(start: selectedCells.first, end: selectedCells.last)));
-      controller.worksheet.dispatchEvent(MergeCellsEvent(cells: selectedCells));
+      controller.worksheet.dispatchEvent(MergeCellsWorksheetEvent(cells: selectedCells));
     } else if (selection is SheetSingleSelection) {
       CellProperties cellProperties = controller.worksheet.getCell(selection.mainCell);
       CellMergeStatus mergeStatus = cellProperties.mergeStatus;
-      if (mergeStatus is MergedCell) {
+      if (mergeStatus.isMerged) {
         List<CellIndex> mergedCells = mergeStatus.mergedCells;
-        controller.worksheet.dispatchEvent(UnmergeCellsEvent(mergedCells));
-        controller.selection.update(SheetSelectionFactory.range(start: mergeStatus.start, end: mergeStatus.end, completed: true));
+        controller.worksheet.dispatchEvent(UnmergeCellsWorksheetEvent(mergedCells));
+        controller.selection.update(SheetSelectionFactory.range(
+          start: mergeStatus.start!,
+          end: mergeStatus.end!,
+          completed: true,
+        ));
       }
     }
   }
@@ -205,10 +211,10 @@ class UnmergeSelectionAction extends SheetFormattingAction<UnmergeSelectionEvent
 
     List<CellIndex> selectedCells = selection.getSelectedCells(controller.worksheet.cols, controller.worksheet.rows);
     for (CellIndex cellIndex in selectedCells) {
-      controller.worksheet.dispatchEvent(UnmergeCellsEvent.single(cellIndex));
+      controller.worksheet.dispatchEvent(UnmergeCellsWorksheetEvent.single(cellIndex));
     }
 
-    if(corners != null) {
+    if (corners != null) {
       controller.selection.update(SheetSelectionFactory.range(start: corners.topLeft, end: corners.bottomRight, completed: true));
     }
   }
@@ -238,6 +244,6 @@ class ClearSelectionAction extends SheetFormattingAction<ClearSelectionEvent> {
   void execute() {
     List<CellIndex> selectedCells =
         controller.selection.value.getSelectedCells(controller.worksheet.cols, controller.worksheet.rows);
-    controller.worksheet.dispatchEvent(ClearCellsEvent(selectedCells));
+    controller.worksheet.dispatchEvent(ClearCellsWorksheetEvent(selectedCells));
   }
 }

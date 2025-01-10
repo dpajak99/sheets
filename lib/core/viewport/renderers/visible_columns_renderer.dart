@@ -8,17 +8,15 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 class VisibleColumnsRenderer {
   VisibleColumnsRenderer({
     required this.viewportRect,
-    required this.worksheet,
     required this.scrollOffset,
   });
 
   final SheetViewportRect viewportRect;
-  final Worksheet worksheet;
   final double scrollOffset;
 
-  List<ViewportColumn> build() {
+  List<ViewportColumn> build(Worksheet worksheet) {
     double firstVisibleCoordinate = scrollOffset;
-    _FirstVisibleColumnInfo firstVisibleColumnInfo = _findColumnByX(firstVisibleCoordinate);
+    FirstVisibleColumnInfo firstVisibleColumnInfo = worksheet.findColumnByX(firstVisibleCoordinate);
 
     double maxContentWidth = viewportRect.width - rowHeadersWidth;
     double currentContentWidth = -firstVisibleColumnInfo.hiddenWidth;
@@ -44,47 +42,5 @@ class VisibleColumnsRenderer {
     return visibleColumns;
   }
 
-  _FirstVisibleColumnInfo _findColumnByX(double x) {
-    int actualColumnIndex = 0;
-    double currentWidthStart = 0;
 
-    _FirstVisibleColumnInfo? firstVisibleColumnInfo;
-
-    while (firstVisibleColumnInfo == null) {
-      ColumnIndex columnIndex = ColumnIndex(actualColumnIndex);
-      ColumnConfig columnConfig = worksheet.getColumn(columnIndex);
-      double columnWidthEnd = currentWidthStart + columnConfig.width + borderWidth;
-
-      if (x >= currentWidthStart && x < columnWidthEnd) {
-        firstVisibleColumnInfo = _FirstVisibleColumnInfo(
-          index: columnIndex,
-          startCoordinate: currentWidthStart - borderWidth,
-          visibleWidth: columnWidthEnd - x,
-          hiddenWidth: x - currentWidthStart,
-        );
-      } else {
-        actualColumnIndex++;
-        currentWidthStart = columnWidthEnd;
-      }
-    }
-
-    return firstVisibleColumnInfo;
-  }
-}
-
-class _FirstVisibleColumnInfo with EquatableMixin {
-  const _FirstVisibleColumnInfo({
-    required this.index,
-    required this.startCoordinate,
-    required this.visibleWidth,
-    required this.hiddenWidth,
-  });
-
-  final ColumnIndex index;
-  final double startCoordinate;
-  final double visibleWidth;
-  final double hiddenWidth;
-
-  @override
-  List<Object?> get props => <Object?>[index, startCoordinate, visibleWidth, hiddenWidth];
 }

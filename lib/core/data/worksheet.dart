@@ -1,269 +1,15 @@
 import 'dart:math' as math;
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/data/worksheet_event.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
-import 'package:sheets/utils/formatters/style/cell_style_format.dart';
-import 'package:sheets/utils/formatters/style/style_format.dart';
-import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_overflow_behavior.dart';
 import 'package:sheets/utils/text_rotation.dart';
 
-/// --------------------------------------------------------------------
-/// 1. The base WorksheetEvent class + several example events
-///    Each event fully defines its own functionality inside handle().
-/// --------------------------------------------------------------------
-abstract class WorksheetEvent {
-  void handle(Worksheet worksheet);
-}
-
-/// Inserts a batch of cell properties into the worksheet.
-class InsertCellsEvent extends WorksheetEvent {
-  InsertCellsEvent(this.cells);
-
-  final List<CellProperties> cells;
-
-  @override
-  void handle(Worksheet worksheet) {
-    List<MergedCell> mergedCells = cells.map((CellProperties cell) => cell.mergeStatus).whereType<MergedCell>().toList();
-
-    for (MergedCell mergedCell in mergedCells) {
-      worksheet.dispatchEvent(MergeCellsEvent(cells: mergedCell.mergedCells));
-    }
-
-    // Each event can implement its own logic.
-    for (CellProperties cell in cells) {
-      worksheet.cellConfigs[cell.index] = CellConfig.fromProperties(cell);
-    }
-    // Possibly recalc the sheet size, etc.
-    worksheet.recalculateContentSize();
-
-    List<RowIndex> rows = cells.map((CellProperties cell) => cell.index.row).toSet().toList();
-    for (RowIndex row in rows) {
-      double minRowHeight = worksheet.getMinRowHeight(row);
-      worksheet.dispatchEvent(SetRowHeightEvent(row, minRowHeight));
-    }
-  }
-}
-
-/// Merges a list of cells into one merged region.
-class MergeCellsEvent extends WorksheetEvent {
-  MergeCellsEvent({
-    required this.cells,
-    this.overrideStyle,
-  });
-
-  final List<CellIndex> cells;
-  final CellStyle? overrideStyle;
-
-  @override
-  void handle(Worksheet worksheet) {
-    if (cells.length < 2) {
-      return;
-    }
-
-    CellIndex start = cells.first;
-    CellIndex end = cells.last;
-
-    // 1. Unmerge all cells in the given range first.
-    for (CellIndex cellIndex in cells) {
-      _unmergeCell(worksheet, cellIndex);
-    }
-
-    // 2. Create a reference config from the first cell.
-    CellConfig reference = CellConfig.fromProperties(
-      worksheet.getCell(start),
-    );
-
-    // 3. Merge each cell in [cells].
-    for (CellIndex cellIndex in cells) {
-      worksheet.cellConfigs[cellIndex] = reference.copyWith(
-        mergeStatus: MergedCell(start: start, end: end),
-        style: overrideStyle ?? reference.style,
-      );
-    }
-
-    // Recalculate if needed
-    worksheet.recalculateContentSize();
-  }
-
-  void _unmergeCell(Worksheet worksheet, CellIndex cellIndex) {
-    CellConfig? cellConfig = worksheet.cellConfigs[cellIndex];
-    if (cellConfig == null) {
-      return;
-    }
-
-    CellMergeStatus mergeStatus = cellConfig.mergeStatus;
-    if (mergeStatus is MergedCell) {
-      CellConfig? mainCellConfig = worksheet.cellConfigs[mergeStatus.start];
-      for (CellIndex index in mergeStatus.mergedCells) {
-        worksheet.cellConfigs[index] = mainCellConfig?.copyWith(
-              mergeStatus: const NoCellMerge(),
-            ) ??
-            CellConfig();
-      }
-    }
-  }
-}
-
-/// Unmerges a list of cells.
-class UnmergeCellsEvent extends WorksheetEvent {
-  UnmergeCellsEvent(this.cells);
-
-  UnmergeCellsEvent.single(CellIndex cell) : cells = <CellIndex>[cell];
-
-  final List<CellIndex> cells;
-
-  @override
-  void handle(Worksheet worksheet) {
-    for (CellIndex cellIndex in cells) {
-      _unmergeCell(worksheet, cellIndex);
-    }
-    worksheet.recalculateContentSize();
-  }
-
-  void _unmergeCell(Worksheet worksheet, CellIndex cellIndex) {
-    CellConfig? cellConfig = worksheet.cellConfigs[cellIndex];
-    if (cellConfig == null) {
-      return;
-    }
-
-    CellMergeStatus mergeStatus = cellConfig.mergeStatus;
-    if (mergeStatus is MergedCell) {
-      CellConfig? mainCellConfig = worksheet.cellConfigs[mergeStatus.start];
-      for (CellIndex index in mergeStatus.mergedCells) {
-        worksheet.cellConfigs[index] = mainCellConfig?.copyWith(
-              mergeStatus: const NoCellMerge(),
-            ) ??
-            CellConfig();
-      }
-    }
-  }
-}
-
-/// Clears the contents (but not style) of given cells.
-class ClearCellsEvent extends WorksheetEvent {
-  ClearCellsEvent(this.cells);
-
-  final List<CellIndex> cells;
-
-  @override
-  void handle(Worksheet worksheet) {
-    for (CellIndex cellIndex in cells) {
-      CellConfig? currentConfig = worksheet.cellConfigs[cellIndex];
-      if (currentConfig == null) {
-        continue;
-      }
-
-      worksheet.cellConfigs[cellIndex] = currentConfig.copyWith(
-        value: currentConfig.value.clear(),
-      );
-    }
-    worksheet.recalculateContentSize();
-  }
-}
-
-/// Applies a style-format action to a range of cells.
-class FormatSelectionDataEvent extends WorksheetEvent {
-  FormatSelectionDataEvent(this.cells, this.formatAction);
-
-  final List<CellIndex> cells;
-  final StyleFormatAction<StyleFormatIntent> formatAction;
-
-  @override
-  void handle(Worksheet worksheet) {
-    for (CellIndex cellIndex in cells) {
-      worksheet.cellConfigs[cellIndex] ??= CellConfig();
-      CellConfig currentConfig = worksheet.cellConfigs[cellIndex]!;
-
-      switch (formatAction) {
-        case TextStyleFormatAction<TextStyleFormatIntent> _:
-          // Updating text style
-          worksheet.cellConfigs[cellIndex] = currentConfig.copyWith(
-            value: currentConfig.value.updateStyle(
-              formatAction as TextStyleFormatAction<TextStyleFormatIntent>,
-            ),
-          );
-        case CellStyleFormatAction<CellStyleFormatIntent> _:
-          // Updating cell style
-          worksheet.cellConfigs[cellIndex] = currentConfig.copyWith(
-            style: (formatAction as CellStyleFormatAction<CellStyleFormatIntent>).format(currentConfig.style),
-          );
-      }
-      // Optionally adjust row height if needed
-      worksheet.adjustCellHeight(cellIndex);
-    }
-    worksheet.recalculateContentSize();
-  }
-}
-
-/// Sets a new text value in the given cell.
-class SetTextEvent extends WorksheetEvent {
-  SetTextEvent(this.cellIndex, this.text);
-
-  final CellIndex cellIndex;
-  final SheetRichText text;
-
-  @override
-  void handle(Worksheet worksheet) {
-    CellConfig currentConfig = worksheet.cellConfigs[cellIndex] ?? CellConfig();
-    worksheet.cellConfigs[cellIndex] = currentConfig.copyWith(value: text);
-
-    // Adjust row height (optional)
-    worksheet.adjustCellHeight(cellIndex);
-
-    worksheet.recalculateContentSize();
-  }
-}
-
-/// Example event: set row height
-class SetRowHeightEvent extends WorksheetEvent {
-  SetRowHeightEvent(this.rowIndex, this.height, {this.keepValue = false});
-
-  final RowIndex rowIndex;
-  final double height;
-  final bool keepValue;
-
-  @override
-  void handle(Worksheet worksheet) {
-    RowConfig oldRowConfig = worksheet.rowConfigs[rowIndex] ?? const RowConfig();
-    RowConfig newRowConfig = oldRowConfig.copyWith(
-      height: height,
-      customHeight: keepValue ? height : null,
-    );
-
-    worksheet.rowConfigs[rowIndex] = newRowConfig;
-    // Recalculate if something changed
-    worksheet.recalculateContentSize();
-  }
-}
-
-/// Example event: set column width
-class SetColumnWidthEvent extends WorksheetEvent {
-  SetColumnWidthEvent(this.columnIndex, this.width);
-
-  final ColumnIndex columnIndex;
-  final double width;
-
-  @override
-  void handle(Worksheet worksheet) {
-    ColumnConfig oldColumnConfig = worksheet.columnConfigs[columnIndex] ?? const ColumnConfig();
-    ColumnConfig newColumnConfig = oldColumnConfig.copyWith(width: width);
-
-    worksheet.columnConfigs[columnIndex] = newColumnConfig;
-    // Recalculate if something changed
-    worksheet.recalculateContentSize();
-  }
-}
-
-/// --------------------------------------------------------------------
-/// 2. Worksheet class
-///    - Holds rowConfigs, columnConfigs, cellConfigs directly
-///    - Dispatches events by calling `event.handle(this)`
-///    - Contains all "utility" methods needed by events
-/// --------------------------------------------------------------------
 class Worksheet {
   Worksheet({
     required this.rows,
@@ -312,11 +58,65 @@ class Worksheet {
       return sheetIndex;
     }
     CellMergeStatus mergeStatus = getCell(sheetIndex).mergeStatus;
-    if (mergeStatus is MergedCell) {
-      return MergedCellIndex(start: mergeStatus.start, end: mergeStatus.end) as T;
+    if (mergeStatus.isMerged) {
+      return MergedCellIndex(start: mergeStatus.start!, end: mergeStatus.end!) as T;
     } else {
       return sheetIndex;
     }
+  }
+
+  FirstVisibleRowInfo findRowByY(double y) {
+    int actualRowIndex = 0;
+    double currentHeightStart = 0;
+
+    FirstVisibleRowInfo? firstVisibleRowInfo;
+
+    while (firstVisibleRowInfo == null) {
+      RowIndex rowIndex = RowIndex(actualRowIndex);
+      RowConfig rowConfig = getRow(rowIndex);
+      double rowHeightEnd = currentHeightStart + rowConfig.height + borderWidth;
+
+      if (y >= currentHeightStart && y < rowHeightEnd) {
+        firstVisibleRowInfo = FirstVisibleRowInfo(
+          index: rowIndex,
+          startCoordinate: currentHeightStart,
+          visibleHeight: rowHeightEnd - y,
+          hiddenHeight: y - currentHeightStart,
+        );
+      } else {
+        actualRowIndex++;
+        currentHeightStart = rowHeightEnd;
+      }
+    }
+
+    return firstVisibleRowInfo;
+  }
+
+  FirstVisibleColumnInfo findColumnByX(double x) {
+    int actualColumnIndex = 0;
+    double currentWidthStart = 0;
+
+    FirstVisibleColumnInfo? firstVisibleColumnInfo;
+
+    while (firstVisibleColumnInfo == null) {
+      ColumnIndex columnIndex = ColumnIndex(actualColumnIndex);
+      ColumnConfig columnConfig = getColumn(columnIndex);
+      double columnWidthEnd = currentWidthStart + columnConfig.width + borderWidth;
+
+      if (x >= currentWidthStart && x < columnWidthEnd) {
+        firstVisibleColumnInfo = FirstVisibleColumnInfo(
+          index: columnIndex,
+          startCoordinate: currentWidthStart - borderWidth,
+          visibleWidth: columnWidthEnd - x,
+          hiddenWidth: x - currentWidthStart,
+        );
+      } else {
+        actualColumnIndex++;
+        currentWidthStart = columnWidthEnd;
+      }
+    }
+
+    return firstVisibleColumnInfo;
   }
 
   /// Recalculates total content size (width + height) based on row/column configs.
@@ -417,103 +217,124 @@ class Worksheet {
   }
 }
 
-// --------------------------------------------------------------------
-// 3. Supporting classes, constants, and stubs
-// --------------------------------------------------------------------
+class CellMergeStatus {
+  /// If `start` and `end` are null, this represents a "NoCellMerge" scenario.
+  /// Otherwise, it represents a "MergedCell" scenario.
+  final CellIndex? start;
+  final CellIndex? end;
 
-abstract class CellMergeStatus {
-  const CellMergeStatus();
+  const CellMergeStatus.noMerge()
+      : start = null,
+        end = null;
 
-  CellMergeStatus move({required int dx, required int dy});
-
-  int get width => 0;
-
-  int get height => 0;
-
-  List<CellIndex> get mergedCells => <CellIndex>[];
-
-  bool contains(CellIndex index) {
-    return false;
-  }
-}
-
-class NoCellMerge extends CellMergeStatus {
-  const NoCellMerge();
-
-  @override
-  NoCellMerge move({required int dx, required int dy}) {
-    return this;
-  }
-}
-
-class MergedCell extends CellMergeStatus {
-  MergedCell({
+  const CellMergeStatus.merged({
     required this.start,
     required this.end,
   });
 
-  final CellIndex start;
-  final CellIndex end;
+  /// Indicates whether this instance is a merged cell range.
+  bool get isMerged => start != null && end != null;
 
-  MergedCellIndex get index => MergedCellIndex(start: start, end: end);
-
-  @override
+  /// Returns the width of the merged cell range.
+  /// If not merged, returns 0.
   int get width {
-    return end.column.value - start.column.value;
+    if (!isMerged) return 0;
+    return end!.column.value - start!.column.value;
   }
 
-  String get id => '${width + 1}x${height + 1}';
-
-  @override
-  int get height => end.row.value - start.row.value;
-
-  bool isMainCell(CellIndex index) {
-    return index == start;
+  /// Returns the height of the merged cell range.
+  /// If not merged, returns 0.
+  int get height {
+    if (!isMerged) return 0;
+    return end!.row.value - start!.row.value;
   }
 
-  @override
+  /// Checks if a given [index] is within this merged cell range.
+  /// Always returns false if not merged.
   bool contains(CellIndex index) {
+    // If this is not merged, it can't contain any cell.
+    if (!isMerged) {
+      return false;
+    }
+
+    // If [index] is a MergedCellIndex, check each of its selected cells.
     if (index is MergedCellIndex) {
       return index.selectedCells.any(contains);
     }
-    return index.row.value >= start.row.value &&
-        index.row.value <= end.row.value &&
-        index.column.value >= start.column.value &&
-        index.column.value <= end.column.value;
+
+    return index.row.value >= start!.row.value &&
+        index.row.value <= end!.row.value &&
+        index.column.value >= start!.column.value &&
+        index.column.value <= end!.column.value;
   }
 
-  @override
+  /// Returns a list of all cells in this merged cell range.
+  /// For a non-merged scenario, returns an empty list.
   List<CellIndex> get mergedCells {
-    List<CellIndex> mergedCells = <CellIndex>[];
-    for (int i = start.row.value; i <= end.row.value; i++) {
-      for (int j = start.column.value; j <= end.column.value; j++) {
-        mergedCells.add(CellIndex(row: RowIndex(i), column: ColumnIndex(j)));
+    if (!isMerged) {
+      return <CellIndex>[];
+    }
+    final List<CellIndex> result = <CellIndex>[];
+    for (int r = start!.row.value; r <= end!.row.value; r++) {
+      for (int c = start!.column.value; c <= end!.column.value; c++) {
+        result.add(
+          CellIndex(
+            row: RowIndex(r),
+            column: ColumnIndex(c),
+          ),
+        );
       }
     }
-    return mergedCells;
+    return result;
   }
 
-  @override
-  MergedCell move({required int dx, required int dy}) {
-    return MergedCell(
-      start: start.move(dx: dx, dy: dy),
-      end: end.move(dx: dx, dy: dy),
+  /// Returns a textual reference of the merged size, for example "3x2".
+  String get reference {
+    return '${width + 1}x${height + 1}';
+  }
+
+  /// Checks if the given [index] is the main cell of the merged range (i.e., the `start` cell).
+  bool isMainCell(CellIndex index) {
+    if (!isMerged) return false;
+    return index == start;
+  }
+
+  /// Creates a new instance of [CellMergeStatus], shifted by (dx, dy).
+  /// If the current instance is not merged, it simply returns the same instance.
+  CellMergeStatus move({required int dx, required int dy}) {
+    if (!isMerged) {
+      // Not merged, so no change.
+      return this;
+    }
+    return CellMergeStatus.merged(
+      start: start!.move(dx: dx, dy: dy),
+      end: end!.move(dx: dx, dy: dy),
     );
   }
 
-  MergedCell moveVertical({required int dy, bool reverse = false}) {
-    int updatedDy = reverse ? dy - height : dy;
-    return MergedCell(
-      start: start.move(dx: 0, dy: updatedDy),
-      end: end.move(dx: 0, dy: updatedDy),
+  /// Moves the merged range vertically by [dy].
+  /// If [reverse] is true, it subtracts the height from [dy].
+  CellMergeStatus moveVertical({required int dy, bool reverse = false}) {
+    if (!isMerged) {
+      return this;
+    }
+    final int updatedDy = reverse ? dy - height : dy;
+    return CellMergeStatus.merged(
+      start: start!.move(dx: 0, dy: updatedDy),
+      end: end!.move(dx: 0, dy: updatedDy),
     );
   }
 
-  MergedCell moveHorizontal({required int dx, bool reverse = false}) {
-    int updatedDx = reverse ? dx - width : dx;
-    return MergedCell(
-      start: start.move(dx: updatedDx, dy: 0),
-      end: end.move(dx: updatedDx, dy: 0),
+  /// Moves the merged range horizontally by [dx].
+  /// If [reverse] is true, it subtracts the width from [dx].
+  CellMergeStatus moveHorizontal({required int dx, bool reverse = false}) {
+    if (!isMerged) {
+      return this;
+    }
+    final int updatedDx = reverse ? dx - width : dx;
+    return CellMergeStatus.merged(
+      start: start!.move(dx: updatedDx, dy: 0),
+      end: end!.move(dx: updatedDx, dy: 0),
     );
   }
 }
@@ -562,7 +383,7 @@ class CellConfig {
   CellConfig({
     CellStyle? style,
     SheetRichText? value,
-    this.mergeStatus = const NoCellMerge(),
+    this.mergeStatus = const CellMergeStatus.noMerge(),
   })  : style = style ?? CellStyle(),
         value = value ?? SheetRichText();
 
@@ -596,7 +417,7 @@ class CellProperties {
     required this.index,
     this.rowConfig = const RowConfig(),
     this.columnConfig = const ColumnConfig(),
-    this.mergeStatus = const NoCellMerge(),
+    this.mergeStatus = const CellMergeStatus.noMerge(),
     CellStyle? style,
     SheetRichText? value,
   })  : style = style ?? CellStyle(),
@@ -627,19 +448,9 @@ class CellProperties {
     return visibleValueFormat.formatEditable(value);
   }
 
-  CellIndex get startIndex {
-    if (mergeStatus is MergedCell) {
-      return (mergeStatus as MergedCell).start;
-    }
-    return index;
-  }
+  CellIndex get startIndex => mergeStatus.start ?? index;
 
-  CellIndex get endIndex {
-    if (mergeStatus is MergedCell) {
-      return (mergeStatus as MergedCell).end;
-    }
-    return index;
-  }
+  CellIndex get endIndex => mergeStatus.end ?? index;
 
   double get neededWidth {
     return neededSize.width;
@@ -769,4 +580,39 @@ class CellStyle {
       border: border ?? this.border,
     );
   }
+}
+
+
+class FirstVisibleColumnInfo with EquatableMixin {
+  const FirstVisibleColumnInfo({
+    required this.index,
+    required this.startCoordinate,
+    required this.visibleWidth,
+    required this.hiddenWidth,
+  });
+
+  final ColumnIndex index;
+  final double startCoordinate;
+  final double visibleWidth;
+  final double hiddenWidth;
+
+  @override
+  List<Object?> get props => <Object?>[index, startCoordinate, visibleWidth, hiddenWidth];
+}
+
+class FirstVisibleRowInfo with EquatableMixin {
+  const FirstVisibleRowInfo({
+    required this.index,
+    required this.startCoordinate,
+    required this.visibleHeight,
+    required this.hiddenHeight,
+  });
+
+  final RowIndex index;
+  final double startCoordinate;
+  final double visibleHeight;
+  final double hiddenHeight;
+
+  @override
+  List<Object?> get props => <Object?>[index, startCoordinate, visibleHeight, hiddenHeight];
 }

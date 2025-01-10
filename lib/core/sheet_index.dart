@@ -6,7 +6,7 @@ import 'package:sheets/utils/extensions/int_extensions.dart';
 import 'package:sheets/utils/numeric_index_mixin.dart';
 
 sealed class SheetIndex with EquatableMixin {
-  String stringifyPosition();
+  String get reference;
 
   static SheetIndex matchType(SheetIndex base, SheetIndex other) {
     switch (base) {
@@ -43,7 +43,7 @@ sealed class SheetIndex with EquatableMixin {
 
   @override
   String toString() {
-    return stringifyPosition();
+    return reference;
   }
 }
 
@@ -103,8 +103,8 @@ class MergedCellIndex extends CellIndex {
   }
 
   @override
-  String stringifyPosition() {
-    return '${start.stringifyPosition()}:${end.stringifyPosition()}';
+  String get reference {
+    return '${start.reference}:${end.reference}';
   }
   @override
   List<Object?> get props => <Object?>[start, end];
@@ -173,8 +173,8 @@ class CellIndex extends SheetIndex {
   }
 
   @override
-  String stringifyPosition() {
-    return '${column.stringifyPosition()}${row.stringifyPosition()}';
+  String get reference {
+    return '${column.reference}${row.reference}';
   }
 
   int compareTo(CellIndex other) {
@@ -235,7 +235,7 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
   int get value => _value;
 
   @override
-  String stringifyPosition() {
+  String get reference {
     return numberToExcelColumn(value + 1);
   }
 
@@ -309,7 +309,7 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
   }
 
   @override
-  String stringifyPosition() {
+  String get reference {
     return (value + 1).toString();
   }
 

@@ -31,6 +31,8 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
     workbook: Workbook(
       worksheets: <Worksheet>[
         Worksheet(name: 'Test1', rows: 100, cols: 100),
+        Worksheet(name: 'Test2', rows: 10, cols: 10),
+        Worksheet(name: 'Test3', rows: 25, cols: 25),
       ],
     ),
   );
@@ -61,7 +63,7 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
               Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
               Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
               Container(height: 1, width: double.infinity, color: const Color(0xfff0f1f0)),
-              const GoogBottomBar(),
+              GoogBottomBar(controller: sheetController),
             ],
           ),
         ),

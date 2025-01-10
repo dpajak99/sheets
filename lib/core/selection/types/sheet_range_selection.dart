@@ -135,7 +135,7 @@ class SheetRangeSelection<T extends SheetIndex> extends SheetSelectionBase {
 
   @override
   String stringifySelection() {
-    return '${start.index.stringifyPosition()}:${end.index.stringifyPosition()}';
+    return '${start.index.reference}:${end.index.reference}';
   }
 
   SelectionDirection get direction {

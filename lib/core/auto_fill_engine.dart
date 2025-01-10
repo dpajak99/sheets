@@ -1,4 +1,5 @@
 import 'package:sheets/core/data/worksheet.dart';
+import 'package:sheets/core/data/worksheet_event.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
 import 'package:sheets/core/values/patterns/linear_duration_pattern.dart';
@@ -11,18 +12,17 @@ import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
 
 class AutoFillEngine {
   AutoFillEngine(
-    this.worksheet,
     this.fillDirection,
     this._patternCells,
     this._cellsToFill,
   );
 
-  final Worksheet worksheet;
+
   final Direction fillDirection;
   final List<CellProperties> _patternCells;
   final List<CellProperties> _cellsToFill;
 
-  void resolve() {
+  void resolve(Worksheet worksheet) {
     bool reversed = fillDirection.isReversed;
     _PatternApplier cellMergePattern = _PatternApplier(
       fillDirection: fillDirection,
@@ -90,7 +90,7 @@ class _PatternApplier {
         continue;
       }
 
-      if (baseMergeStatus is! MergedCell) {
+      if (!baseMergeStatus.isMerged) {
         _handleUnmergedTemplateCell(baseCell, targetCell, templateRanges, fillRanges);
         templateIndex++;
         continue;
@@ -126,7 +126,7 @@ class _PatternApplier {
   bool _handleMergedTemplateCell(
     CellProperties baseCell,
     CellProperties targetCell,
-    MergedCell baseMergeStatus,
+      CellMergeStatus baseMergeStatus,
     List<CellProperties> unprocessedFillCells,
     Map<String, Set<CellProperties>> templateRanges,
     Map<String, List<CellProperties>> fillRanges,
@@ -134,7 +134,7 @@ class _PatternApplier {
     int dxDiff = targetCell.index.column.value - baseCell.index.column.value;
     int dyDiff = targetCell.index.row.value - baseCell.index.row.value;
 
-    MergedCell movedMergeStatus = fillDirection.isHorizontal
+    CellMergeStatus movedMergeStatus = fillDirection.isHorizontal
         ? baseMergeStatus.moveHorizontal(dx: dxDiff, reverse: reversed)
         : baseMergeStatus.moveVertical(dy: dyDiff, reverse: reversed);
 
@@ -147,11 +147,11 @@ class _PatternApplier {
       completedCells.add(index);
     }
 
-    worksheet.dispatchEvent(MergeCellsEvent(cells: movedMergeStatus.mergedCells));
+    worksheet.dispatchEvent(MergeCellsWorksheetEvent(cells: movedMergeStatus.mergedCells));
 
-    String key = movedMergeStatus.id;
+    String key = movedMergeStatus.reference;
     templateRanges.putIfAbsent(key, () => <CellProperties>{}).add(baseCell);
-    fillRanges.putIfAbsent(key, () => <CellProperties>[]).add(worksheet.getCell(movedMergeStatus.start));
+    fillRanges.putIfAbsent(key, () => <CellProperties>[]).add(worksheet.getCell(movedMergeStatus.start!));
 
     return true;
   }
@@ -165,7 +165,7 @@ class _PatternApplier {
       List<CellProperties> patternCells = templateRanges[key]!.toList();
       ValuePattern<dynamic, dynamic> pattern = _detectPattern(patternCells);
       List<CellProperties> filledCells = pattern.apply(patternCells, fillRangeEntry.value);
-      worksheet.dispatchEvent(InsertCellsEvent(filledCells));
+      worksheet.dispatchEvent(InsertCellsWorksheetEvent(filledCells));
     }
   }
 

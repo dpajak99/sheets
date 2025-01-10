@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
+import 'package:sheets/core/encoders/xls/xls_encoder.dart';
 import 'package:sheets/core/events/sheet_clipboard_events.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
@@ -107,6 +110,15 @@ class _SheetState extends State<Sheet> {
         },
         onCut: () {
           widget.sheetController.resolve(CutSelectionEvent());
+        },
+        onSave: () {
+          print('Saving...');
+          List<int> bytes = encodeWorkbookToXlsx(worksheets: widget.sheetController.workbook.worksheets);
+
+          File file = File('test.xlsx');
+          file.writeAsBytesSync(bytes);
+
+          print('Plik "test.xlsx" został utworzony!');
         },
         child: SizedBox.expand(
           child: DecoratedBox(
@@ -306,6 +318,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
     required this.onPasteValues,
     required this.onCopy,
     required this.onCut,
+    required this.onSave,
   }) {
     // @formatter:off
     shortcuts = <ShortcutActivator, VoidCallback>{
@@ -339,6 +352,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
       const SingleActivator(LogicalKeyboardKey.keyV, control: true, shift: true): onPasteValues,
       const SingleActivator(LogicalKeyboardKey.keyC, control: true): onCopy,
       const SingleActivator(LogicalKeyboardKey.keyX, control: true): onCut,
+      const SingleActivator(LogicalKeyboardKey.keyS, control: true): onSave,
     };
     // @formatter:on
   }
@@ -356,6 +370,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
   final VoidCallback onPasteValues;
   final VoidCallback onCopy;
   final VoidCallback onCut;
+  final VoidCallback onSave;
 
   final Widget child;
   final FocusNode focusNode;
@@ -379,6 +394,7 @@ class _SheetKeyboardGestureDetector extends StatelessWidget {
     properties.add(ObjectFlagProperty<VoidCallback>.has('onCopy', onCopy));
     properties.add(ObjectFlagProperty<VoidCallback>.has('onCut', onCut));
     properties.add(ObjectFlagProperty<VoidCallback>.has('onPasteValues', onPasteValues));
+    properties.add(ObjectFlagProperty<VoidCallback>.has('onSave', onSave));
   }
 
   @override

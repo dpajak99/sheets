@@ -16,7 +16,7 @@ class VisibleCellsRenderer {
   List<ViewportCell> build(Worksheet worksheet) {
     List<ViewportCell> visibleCells = <ViewportCell>[];
     List<ViewportCell> mergedCells = <ViewportCell>[];
-    List<MergedCell> resolvedMergedCells = <MergedCell>[];
+    List<CellMergeStatus> resolvedMergedCells = <CellMergeStatus>[];
 
     for (int y = 0; y < visibleRows.length; y++) {
       ViewportRow row = visibleRows[y];
@@ -27,18 +27,18 @@ class VisibleCellsRenderer {
         CellIndex cellIndex = CellIndex(column: column.index, row: row.index);
         CellProperties cellProperties = worksheet.getCell(cellIndex);
 
-        if (cellProperties.mergeStatus is MergedCell) {
-          MergedCell mergedCell = cellProperties.mergeStatus as MergedCell;
-          CellProperties startCellProperties = worksheet.getCell(mergedCell.start);
+        if (cellProperties.mergeStatus.isMerged) {
+          CellMergeStatus mergedCell = cellProperties.mergeStatus;
+          CellProperties startCellProperties = worksheet.getCell(mergedCell.start!);
 
           if (mergedCell.isMainCell(cellIndex) || (y == 0 || x == 0) && !resolvedMergedCells.contains(mergedCell)) {
-            CellIndex mergeEnd = mergedCell.end;
+            CellIndex mergeEnd = mergedCell.end!;
 
             ViewportRow rowEnd = visibleRows.findByIndex(mergeEnd.row);
             ViewportColumn columnEnd = visibleColumns.findByIndex(mergeEnd.column);
 
             mergedCells.add(ViewportCell.merged(
-              index: mergedCell.start,
+              index: mergedCell.start!,
               rowStart: row,
               rowEnd: rowEnd,
               columnStart: column,

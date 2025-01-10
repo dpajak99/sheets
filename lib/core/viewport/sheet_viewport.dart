@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/data/worksheet.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 
 class SheetViewport {
-  SheetViewport(Worksheet worksheet)
-      : visibleContent = SheetViewportContentManager(worksheet) {
+  SheetViewport(SheetController controller)
+      : visibleContent = SheetViewportContentManager(controller) {
     rect = SheetViewportRect(Rect.zero);
   }
 

@@ -8,9 +8,9 @@ extension CellPropertiesExtensions on Iterable<CellProperties> {
     Map<ColumnIndex, List<CellProperties>> groupedCells = <ColumnIndex, List<CellProperties>>{};
     for (CellProperties cell in this) {
       CellMergeStatus mergeStatus = cell.mergeStatus;
-      if (mergeStatus is MergedCell && mergeStatus.start == cell.index) {
+      if (mergeStatus.isMerged && mergeStatus.start == cell.index) {
         groupedCells.putIfAbsent(cell.index.column, () => <CellProperties>[]).add(cell);
-      } else if (mergeStatus is! MergedCell) {
+      } else if(!mergeStatus.isMerged) {
         groupedCells.putIfAbsent(cell.index.column, () => <CellProperties>[]).add(cell);
       }
     }
@@ -25,9 +25,9 @@ extension CellPropertiesExtensions on Iterable<CellProperties> {
     Map<RowIndex, List<CellProperties>> groupedCells = <RowIndex, List<CellProperties>>{};
     for (CellProperties cell in this) {
       CellMergeStatus mergeStatus = cell.mergeStatus;
-      if (mergeStatus is MergedCell && mergeStatus.start == cell.index) {
+      if (mergeStatus.isMerged && mergeStatus.start == cell.index) {
         groupedCells.putIfAbsent(cell.index.row, () => <CellProperties>[]).add(cell);
-      } else if (mergeStatus is! MergedCell) {
+      } else if (!mergeStatus.isMerged) {
         groupedCells.putIfAbsent(cell.index.row, () => <CellProperties>[]).add(cell);
       }
     }

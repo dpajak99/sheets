@@ -34,7 +34,7 @@ class SheetController extends SheetRebuildNotifier {
     editableCellNotifier = SilentValueNotifier<EditableViewportCell?>(null);
 
     scroll = SheetScrollController();
-    viewport = SheetViewport(worksheet);
+    viewport = SheetViewport(this);
     selection = SelectionState.defaultSelection();
 
     scroll.setContentSize(worksheet.contentSize);
@@ -42,9 +42,9 @@ class SheetController extends SheetRebuildNotifier {
 
   final FocusNode sheetFocusNode = FocusNode()..requestFocus();
   final Workbook workbook;
-  int get _worksheetIndex => 0;
+  int worksheetIndex = 0;
 
-  Worksheet get worksheet => workbook.worksheets[_worksheetIndex];
+  Worksheet get worksheet => workbook.worksheets[worksheetIndex];
 
   late final SheetViewport viewport;
   late final SheetScrollController scroll;

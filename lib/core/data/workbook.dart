@@ -3,9 +3,11 @@ import 'package:sheets/core/data/worksheet.dart';
 class Workbook {
   Workbook({
     required this.worksheets,
-    this.name,
+    this.title,
+    this.author,
   });
 
-  final String? name;
+  final String? title;
+  final String? author;
   final List<Worksheet> worksheets;
 }

@@ -1,5 +1,6 @@
 import 'package:sheets/core/clipboard/sheet_clipboard.dart';
 import 'package:sheets/core/data/worksheet.dart';
+import 'package:sheets/core/data/worksheet_event.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
@@ -76,7 +77,7 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
       return cell.position(selectionAnchor);
     }).toList();
 
-    controller.worksheet.dispatchEvent(InsertCellsEvent(cellsProperties));
+    controller.worksheet.dispatchEvent(InsertCellsWorksheetEvent(cellsProperties));
     controller.selection.update(SheetSelectionFactory.range(
       start: cellsProperties.first.index,
       end: cellsProperties.last.index,

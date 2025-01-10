@@ -189,7 +189,7 @@ void main() {
         CellIndex cellIndex = CellIndex(row: RowIndex(0), column: ColumnIndex(0));
 
         // Act
-        String positionString = cellIndex.stringifyPosition();
+        String positionString = cellIndex.reference;
 
         // Assert
         expect(positionString, equals('A1')); // Column A, Row 1
@@ -200,7 +200,7 @@ void main() {
         CellIndex cellIndex = CellIndex(row: RowIndex(4), column: ColumnIndex(27));
 
         // Act
-        String positionString = cellIndex.stringifyPosition();
+        String positionString = cellIndex.reference;
 
         // Assert
         expect(positionString, equals('AB5')); // Column AB, Row 5
@@ -214,7 +214,7 @@ void main() {
 
         // Act
         String toStringResult = cellIndex.toString();
-        String expectedString = cellIndex.stringifyPosition();
+        String expectedString = cellIndex.reference;
 
         // Assert
         expect(toStringResult, equals(expectedString));
@@ -341,7 +341,7 @@ void main() {
         RowIndex rowIndex = RowIndex(0);
 
         // Act
-        String positionString = rowIndex.stringifyPosition();
+        String positionString = rowIndex.reference;
 
         // Assert
         expect(positionString, equals('1'));
@@ -532,7 +532,7 @@ void main() {
         ColumnIndex columnIndex = ColumnIndex(0);
 
         // Act
-        String positionString = columnIndex.stringifyPosition();
+        String positionString = columnIndex.reference;
 
         // Assert
         expect(positionString, equals('A'));
@@ -543,7 +543,7 @@ void main() {
         ColumnIndex columnIndex = ColumnIndex(27);
 
         // Act
-        String positionString = columnIndex.stringifyPosition();
+        String positionString = columnIndex.reference;
 
         // Assert
         expect(positionString, equals('AB'));

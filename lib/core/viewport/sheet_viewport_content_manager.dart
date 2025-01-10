@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/data/worksheet.dart';
+import 'package:sheets/core/sheet_controller.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/renderers/visible_cells_renderer.dart';
 import 'package:sheets/core/viewport/renderers/visible_columns_renderer.dart';
@@ -10,10 +11,10 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/closest_visible.dart';
 
 class SheetViewportContentManager {
-  SheetViewportContentManager(this._worksheet) : _contentData = SheetViewportContentData();
+  SheetViewportContentManager(this._controller) : _contentData = SheetViewportContentData();
 
+  final SheetController _controller;
   final SheetViewportContentData _contentData;
-  final Worksheet _worksheet;
 
   void rebuild(SheetViewportRect viewportRect, Offset scrollOffset) {
     List<ViewportRow> rows = _calculateRows(viewportRect, scrollOffset.dy);
@@ -33,43 +34,43 @@ class SheetViewportContentManager {
 
   bool containsCell(CellIndex cellIndex) {
     return _contentData.containsCell(cellIndex.toRealIndex(
-      cols: _worksheet.cols,
-      rows: _worksheet.rows,
+      cols: _controller.worksheet.cols,
+      rows: _controller.worksheet.rows,
     ));
   }
 
   ClosestVisible<ViewportCell> findCellOrClosest(CellIndex cellIndex) {
-    return _contentData.findCellOrClosest(_worksheet, cellIndex.toRealIndex(
-      cols: _worksheet.cols,
-      rows: _worksheet.rows,
+    return _contentData.findCellOrClosest(_controller.worksheet, cellIndex.toRealIndex(
+      cols: _controller.worksheet.cols,
+      rows: _controller.worksheet.rows,
     ));
   }
 
   ViewportCell? findCell(CellIndex cellIndex) {
-    return _contentData.findCell(_worksheet, cellIndex.toRealIndex(
-      cols: _worksheet.cols,
-      rows: _worksheet.rows,
+    return _contentData.findCell(_controller.worksheet, cellIndex.toRealIndex(
+      cols: _controller.worksheet.cols,
+      rows: _controller.worksheet.rows,
     ));
   }
 
   ViewportItem? findAnyByOffset(Offset mousePosition) => _contentData.findAnyByOffset(mousePosition);
 
   ClosestVisible<ViewportCell> findClosestCell(CellIndex cellIndex) {
-    return _contentData.findClosestCell(_worksheet, cellIndex.toRealIndex(
-      cols: _worksheet.cols,
-      rows: _worksheet.rows,
+    return _contentData.findClosestCell(_controller.worksheet, cellIndex.toRealIndex(
+      cols: _controller.worksheet.cols,
+      rows: _controller.worksheet.rows,
     ));
   }
 
   List<ViewportRow> _calculateRows(SheetViewportRect viewportRect, double scrollOffset) {
-    return VisibleRowsRenderer(worksheet: _worksheet, viewportRect: viewportRect, scrollOffset: scrollOffset).build();
+    return VisibleRowsRenderer(viewportRect: viewportRect, scrollOffset: scrollOffset).build(_controller.worksheet);
   }
 
   List<ViewportColumn> _calculateColumns(SheetViewportRect viewportRect, double scrollOffset) {
-    return VisibleColumnsRenderer(worksheet: _worksheet, viewportRect: viewportRect, scrollOffset: scrollOffset).build();
+    return VisibleColumnsRenderer(viewportRect: viewportRect, scrollOffset: scrollOffset).build(_controller.worksheet);
   }
 
   List<ViewportCell> _calculateCells(List<ViewportRow> visibleRows, List<ViewportColumn> visibleColumns) {
-    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build(_worksheet);
+    return VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns).build(_controller.worksheet);
   }
 }

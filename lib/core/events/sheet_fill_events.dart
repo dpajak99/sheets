@@ -112,7 +112,7 @@ class CompleteFillSelectionAction extends CompleteSelectionAction {
       for (CellIndex index in fillCells) worksheet.getCell(index),
     ];
 
-    AutoFillEngine(worksheet, fillSelection.fillDirection, baseProperties, fillProperties).resolve();
+    AutoFillEngine(fillSelection.fillDirection, baseProperties, fillProperties).resolve(worksheet);
 
     SheetSelection newSelection = controller.selection.value.complete();
     SelectionCellCorners? corners = newSelection.cellCorners?.includeMergedCells(controller.worksheet);
