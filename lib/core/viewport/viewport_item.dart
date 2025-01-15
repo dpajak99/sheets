@@ -121,6 +121,8 @@ class ViewportRow extends ViewportItem {
 
   RowConfig get config => _config;
 
+  bool get isPinned => _config.pinned;
+
   @override
   List<Object?> get props => <Object?>[_index, _config, rect];
 }
@@ -144,6 +146,8 @@ class ViewportColumn extends ViewportItem {
   ColumnIndex get index => _index;
 
   ColumnConfig get style => _config;
+
+  bool get isPinned => _config.pinned;
 
   String numberToExcelColumn(int number) {
     String result = '';
@@ -230,6 +234,10 @@ class ViewportCell extends ViewportItem {
 
   @override
   CellIndex get index => _index;
+
+  ViewportColumn get column => _column;
+
+  ViewportRow get row => _row;
 
   ViewportCell withText(String text) {
     return copyWith(

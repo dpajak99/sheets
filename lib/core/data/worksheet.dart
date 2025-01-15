@@ -318,7 +318,7 @@ class CellMergeStatus {
     if (!isMerged) {
       return this;
     }
-    final int updatedDy = reverse ? dy - height : dy;
+    int updatedDy = reverse ? dy - height : dy;
     return CellMergeStatus.merged(
       start: start!.move(dx: 0, dy: updatedDy),
       end: end!.move(dx: 0, dy: updatedDy),
@@ -331,7 +331,7 @@ class CellMergeStatus {
     if (!isMerged) {
       return this;
     }
-    final int updatedDx = reverse ? dx - width : dx;
+    int updatedDx = reverse ? dx - width : dx;
     return CellMergeStatus.merged(
       start: start!.move(dx: updatedDx, dy: 0),
       end: end!.move(dx: updatedDx, dy: 0),
@@ -339,44 +339,58 @@ class CellMergeStatus {
   }
 }
 
-class RowConfig {
+class RowConfig with EquatableMixin {
   const RowConfig({
     this.height = 21,
     this.customHeight,
+    this.pinned = false,
   });
 
   final double height;
   final double? customHeight;
+  final bool pinned;
 
   RowConfig copyWith({
     double? height,
     double? customHeight,
+    bool? pinned,
   }) {
     return RowConfig(
       height: height ?? this.height,
       customHeight: customHeight ?? this.customHeight,
+      pinned: pinned ?? this.pinned,
     );
   }
+
+  @override
+  List<Object?> get props => <Object?>[height, customHeight, pinned];
 }
 
-class ColumnConfig {
+class ColumnConfig with EquatableMixin {
   const ColumnConfig({
     this.width = 100,
     this.customWidth,
+    this.pinned = false,
   });
 
   final double width;
   final double? customWidth;
+  final bool pinned;
 
   ColumnConfig copyWith({
     double? width,
     double? customWidth,
+    bool? pinned,
   }) {
     return ColumnConfig(
       width: width ?? this.width,
       customWidth: customWidth ?? this.customWidth,
+      pinned: pinned ?? this.pinned,
     );
   }
+
+  @override
+  List<Object?> get props => <Object?>[width, customWidth, pinned];
 }
 
 class CellConfig {
@@ -581,7 +595,6 @@ class CellStyle {
     );
   }
 }
-
 
 class FirstVisibleColumnInfo with EquatableMixin {
   const FirstVisibleColumnInfo({

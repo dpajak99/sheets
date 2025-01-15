@@ -10,6 +10,7 @@ import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/layers/sheet/sheet_cells_layer_painter.dart';
 import 'package:sheets/layers/sheet/sheet_headers_painter.dart';
+import 'package:sheets/layers/sheet/sheet_pin_painter.dart';
 import 'package:sheets/layers/sheet/sheet_selection_layer_painter.dart';
 import 'package:sheets/utils/repeat_action_timer.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
@@ -52,6 +53,8 @@ class _SheetLayerState extends State<SheetLayer> {
   late final SheetColumnHeadersPainter _columnHeadersPainter;
   late final SheetRowHeadersPainter _rowHeadersPainter;
   late final SheetSelectionLayerPainter _selectionPainter;
+  late final SheetPinPainter _verticalPinPainter;
+  late final SheetPinPainter _horizontalPinPainter;
   late final RepeatActionTimer _repeatDragUpdateTimer;
   ViewportItem? _lastHoveredItem;
   DateTime? _lastTapTime;
@@ -63,6 +66,8 @@ class _SheetLayerState extends State<SheetLayer> {
     _columnHeadersPainter = SheetColumnHeadersPainter();
     _rowHeadersPainter = SheetRowHeadersPainter();
     _selectionPainter = SheetSelectionLayerPainter();
+    _verticalPinPainter = SheetPinPainter(orientation: PinOrientation.vertical);
+    _horizontalPinPainter = SheetPinPainter(orientation: PinOrientation.horizontal);
 
     _repeatDragUpdateTimer = RepeatActionTimer(
       startDuration: const Duration(milliseconds: 200),
@@ -75,6 +80,7 @@ class _SheetLayerState extends State<SheetLayer> {
     _rebuildHorizontalHeaders();
     _rebuildVerticalHeaders();
     _rebuildSelection();
+    _rebuildPinDivider();
   }
 
   @override
@@ -107,6 +113,16 @@ class _SheetLayerState extends State<SheetLayer> {
             child: CustomPaint(
               size: Size(rowHeadersWidth + borderWidth, double.infinity),
               painter: _rowHeadersPainter,
+            ),
+          ),
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(painter: _verticalPinPainter),
+            ),
+          ),
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(painter: _horizontalPinPainter),
             ),
           ),
           Positioned.fill(
@@ -171,6 +187,8 @@ class _SheetLayerState extends State<SheetLayer> {
     SheetRebuildConfig rebuildConfig = widget.sheetController.value;
     if (rebuildConfig.rebuildCellsLayer) {
       _rebuildCells();
+      _rebuildPinDivider();
+
     }
     if (rebuildConfig.rebuildHorizontalHeaders) {
       _rebuildHorizontalHeaders();
@@ -181,6 +199,7 @@ class _SheetLayerState extends State<SheetLayer> {
     if (rebuildConfig.rebuildSelection) {
       _rebuildSelection();
     }
+
   }
 
   void _rebuildCells() {
@@ -207,6 +226,15 @@ class _SheetLayerState extends State<SheetLayer> {
     _selectionPainter.rebuild(
       selection: _selection,
       viewport: _viewport,
+    );
+  }
+
+  void _rebuildPinDivider() {
+    _horizontalPinPainter.rebuildRows(
+      visibleRows: _visibleContent.rows,
+    );
+    _verticalPinPainter.rebuildColumns(
+      visibleColumns: _visibleContent.columns,
     );
   }
 

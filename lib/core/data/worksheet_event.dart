@@ -28,6 +28,7 @@ class InsertCellsWorksheetEvent extends WorksheetEvent {
 
     // Each event can implement its own logic.
     for (CellProperties cell in cells) {
+      print('Inserting cell: ${cell.rowConfig}');
       worksheet.cellConfigs[cell.index] = CellConfig.fromProperties(cell);
     }
     // Possibly recalc the sheet size, etc.

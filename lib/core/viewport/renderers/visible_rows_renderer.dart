@@ -15,18 +15,36 @@ class VisibleRowsRenderer {
   final double scrollOffset;
 
   List<ViewportRow> build(Worksheet worksheet) {
-    double firstVisibleCoordinate = scrollOffset;
+    List<ViewportRow> visibleRows = <ViewportRow>[];
+    List<MapEntry<RowIndex, RowConfig>> pinnedRows = worksheet.rowConfigs.entries.map((MapEntry<RowIndex, RowConfig> e) => e).toList();
+
+    double currentContentHeight = 0;
+    for(MapEntry<RowIndex, RowConfig> row in pinnedRows) {
+      ViewportRow viewportRow = ViewportRow(
+        index: row.key,
+        config: row.value,
+        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight + borderWidth, rowHeadersWidth, row.value.height),
+      );
+      visibleRows.add(viewportRow);
+
+      currentContentHeight += row.value.height + borderWidth;
+    }
+
+    double firstVisibleCoordinate = currentContentHeight + scrollOffset;
     FirstVisibleRowInfo firstVisibleRowInfo = worksheet.findRowByY(firstVisibleCoordinate);
 
     double maxContentHeight = viewportRect.height - columnHeadersHeight;
-    double currentContentHeight = -firstVisibleRowInfo.hiddenHeight;
+    currentContentHeight -= firstVisibleRowInfo.hiddenHeight;
 
-    List<ViewportRow> visibleRows = <ViewportRow>[];
     int index = firstVisibleRowInfo.index.value;
 
     while (currentContentHeight < maxContentHeight && index < worksheet.rows) {
       RowIndex rowIndex = RowIndex(index);
       RowConfig rowConfig = worksheet.getRow(rowIndex);
+      if(rowConfig.pinned) {
+        index++;
+        continue;
+      }
 
       ViewportRow viewportRow = ViewportRow(
         index: rowIndex,
