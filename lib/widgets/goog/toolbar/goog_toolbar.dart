@@ -40,11 +40,11 @@ import 'package:sheets/widgets/static_size_widget.dart';
 
 class GoogToolbar extends StatefulWidget {
   const GoogToolbar({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<StatefulWidget> createState() => _GoogToolbarState();
@@ -52,7 +52,7 @@ class GoogToolbar extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
@@ -75,16 +75,16 @@ class _GoogToolbarState extends State<GoogToolbar> {
           ),
           child: ListenableBuilder(
             listenable: Listenable.merge(<Listenable?>[
-              widget.sheetController.editableCellNotifier,
-              widget.sheetController,
+              widget.worksheet.editableCellNotifier,
+              widget.worksheet,
             ]),
             builder: (BuildContext context, _) {
               return ListenableBuilder(
                 listenable: Listenable.merge(<Listenable?>[
-                  widget.sheetController.editableCellNotifier.value?.controller,
+                  widget.worksheet.editableCellNotifier.value?.controller,
                 ]),
                 builder: (BuildContext context, _) {
-                  SelectionStyle selectionStyle = widget.sheetController.getSelectionStyle();
+                  SelectionStyle selectionStyle = widget.worksheet.getSelectionStyle();
 
                   return Row(
                     children: <Widget>[
@@ -134,13 +134,13 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 GoogToolbarButton(
                                   child: const GoogText('zł'),
                                   onTap: () {
-                                    widget.sheetController.resolve(
+                                    widget.worksheet.resolve(
                                         FormatSelectionEvent(SetValueFormatIntent(format: (_) => SheetNumberFormat.currency())));
                                   },
                                 ),
                                 GoogToolbarButton(
                                   onTap: () {
-                                    widget.sheetController.resolve(FormatSelectionEvent(
+                                    widget.worksheet.resolve(FormatSelectionEvent(
                                         SetValueFormatIntent(format: (_) => SheetNumberFormat.percentPattern())));
                                   },
                                   child: const GoogText('%'),
@@ -148,7 +148,7 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 GoogToolbarButton(
                                   padding: const EdgeInsets.only(top: 8, bottom: 6),
                                   onTap: () {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
                                         return previous?.decreaseDecimal() ?? SheetNumberFormat.decimalPattern();
                                       },
@@ -160,7 +160,7 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                   padding: const EdgeInsets.only(top: 8, bottom: 6),
                                   child: const GoogIcon(SheetIcons.docs_icon_decimal_increase_20),
                                   onTap: () {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetValueFormatIntent(
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetValueFormatIntent(
                                       format: (SheetValueFormat? previous) {
                                         return previous?.increaseDecimal() ?? SheetNumberFormat.decimalPattern();
                                       },
@@ -169,7 +169,7 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 ),
                                 GoogToolbarFormatBtn(
                                   onChanged: (SheetValueFormat? value) {
-                                    widget.sheetController
+                                    widget.worksheet
                                         .resolve(FormatSelectionEvent(SetValueFormatIntent(format: (_) => value)));
                                   },
                                 ),
@@ -181,7 +181,7 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 GoogToolbarFontFamilyBtn(
                                   value: selectionStyle.textStyle.fontFamily,
                                   onChanged: (String fontFamily) {
-                                    widget.sheetController
+                                    widget.worksheet
                                         .resolve(FormatSelectionEvent(SetFontFamilyIntent(fontFamily: fontFamily)));
                                   },
                                 ),
@@ -196,13 +196,13 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                   padding: const EdgeInsets.all(7),
                                   child: const GoogIcon(SheetIcons.docs_icon_remove_20),
                                   onTap: () {
-                                    widget.sheetController.resolve(FormatSelectionEvent(DecreaseFontSizeIntent()));
+                                    widget.worksheet.resolve(FormatSelectionEvent(DecreaseFontSizeIntent()));
                                   },
                                 ),
                                 GoogToolbarFontSizeBtn(
                                   value: selectionStyle.fontSize.pt,
                                   onChanged: (double value) {
-                                    widget.sheetController
+                                    widget.worksheet
                                         .resolve(FormatSelectionEvent(SetFontSizeIntent(fontSize: FontSize.fromPoints(value))));
                                   },
                                 ),
@@ -212,7 +212,7 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                   padding: const EdgeInsets.all(7),
                                   child: const GoogIcon(SheetIcons.docs_icon_add_20),
                                   onTap: () {
-                                    widget.sheetController.resolve(FormatSelectionEvent(IncreaseFontSizeIntent()));
+                                    widget.worksheet.resolve(FormatSelectionEvent(IncreaseFontSizeIntent()));
                                   },
                                 ),
                                 const _GoogToolbarDivider(),
@@ -223,21 +223,21 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 GoogToolbarButton(
                                   selected: selectionStyle.fontWeight == FontWeight.bold,
                                   onTap: () {
-                                    widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent()));
+                                    widget.worksheet.resolve(FormatSelectionEvent(ToggleFontWeightIntent()));
                                   },
                                   child: const GoogIcon(SheetIcons.docs_icon_bold_20),
                                 ),
                                 GoogToolbarButton(
                                   selected: selectionStyle.fontStyle == FontStyle.italic,
                                   onTap: () {
-                                    widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent()));
+                                    widget.worksheet.resolve(FormatSelectionEvent(ToggleFontStyleIntent()));
                                   },
                                   child: const GoogIcon(SheetIcons.docs_icon_italic_20),
                                 ),
                                 GoogToolbarButton(
                                   selected: selectionStyle.decoration == TextDecoration.lineThrough,
                                   onTap: () {
-                                    widget.sheetController.resolve(
+                                    widget.worksheet.resolve(
                                         FormatSelectionEvent(ToggleTextDecorationIntent(value: TextDecoration.lineThrough)));
                                   },
                                   padding: const EdgeInsets.only(top: 9, bottom: 8),
@@ -246,7 +246,7 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 GoogToolbarColorFontBtn(
                                   value: selectionStyle.color ?? defaultTextStyle.color ?? Colors.black,
                                   onChanged: (Color color) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetFontColorIntent(color: color)));
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetFontColorIntent(color: color)));
                                   },
                                 ),
                                 const _GoogToolbarDivider(),
@@ -257,20 +257,20 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 GoogToolbarCellColorBtn(
                                   value: selectionStyle.backgroundColor ?? Colors.white,
                                   onChanged: (Color color) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetBackgroundColorIntent(color: color)));
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetBackgroundColorIntent(color: color)));
                                   },
                                 ),
                                 GoogToolbarBorderBtn(
                                   onChanged: (BorderEdges edges, Color color, double width) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetBorderIntent(
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetBorderIntent(
                                       edges: edges,
                                       borderSide: BorderSide(color: color, width: width),
-                                      selectedCells: widget.sheetController.selectedCells,
+                                      selectedCells: widget.worksheet.selectedCells,
                                     )));
                                   },
                                 ),
                                 () {
-                                  SheetSelection selection = widget.sheetController.selection.value;
+                                  SheetSelection selection = widget.worksheet.selection.value;
                                   bool merged = selection is SheetSingleSelection && selection.mainCell is MergedCellIndex;
                                   bool canMerge = selection is SheetRangeSelection;
 
@@ -281,16 +281,16 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                     canMergeHorizontally: canMerge,
                                     canSplit: merged,
                                     onMerge: () {
-                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                      widget.worksheet.resolve(MergeSelectionEvent());
                                     },
                                     onMergeHorizontally: () {
-                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                      widget.worksheet.resolve(MergeSelectionEvent());
                                     },
                                     onMergeVertically: () {
-                                      widget.sheetController.resolve(MergeSelectionEvent());
+                                      widget.worksheet.resolve(MergeSelectionEvent());
                                     },
                                     onSplit: () {
-                                      widget.sheetController.resolve(UnmergeSelectionEvent());
+                                      widget.worksheet.resolve(UnmergeSelectionEvent());
                                     },
                                   );
                                 }(),
@@ -302,25 +302,25 @@ class _GoogToolbarState extends State<GoogToolbar> {
                                 GoogToolbarTextAlignBtn(
                                   value: selectionStyle.textAlignHorizontal,
                                   onChanged: (TextAlign value) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetHorizontalAlignIntent(value)));
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetHorizontalAlignIntent(value)));
                                   },
                                 ),
                                 GoogToolbarTextValignBtn(
                                   value: selectionStyle.textAlignVertical,
                                   onChanged: (TextAlignVertical value) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetVerticalAlignIntent(value)));
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetVerticalAlignIntent(value)));
                                   },
                                 ),
                                 GoogToolbarTextWrapBtn(
                                   value: TextOverflowBehavior.overflow,
                                   onChanged: (TextOverflowBehavior value) {
-                                    // widget.sheetController.formatSelection(UpdateVerticalAlignAction(selectionStyle, value));
+                                    // widget.worksheet.formatSelection(UpdateVerticalAlignAction(selectionStyle, value));
                                   },
                                 ),
                                 GoogToolbarRotationBtn(
                                   value: selectionStyle.cellStyle.rotation,
                                   onChanged: (TextRotation rotation) {
-                                    widget.sheetController.resolve(FormatSelectionEvent(SetRotationIntent(rotation)));
+                                    widget.worksheet.resolve(FormatSelectionEvent(SetRotationIntent(rotation)));
                                   },
                                 ),
                                 const _GoogToolbarDivider(),

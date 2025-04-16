@@ -27,8 +27,8 @@ class SheetRebuildNotifier extends ChangeNotifier {
   SheetRebuildConfig get value => _value;
 }
 
-class SheetController extends SheetRebuildNotifier {
-  SheetController({
+class Worksheet extends SheetRebuildNotifier {
+  Worksheet({
     required this.data,
   }) {
     editableCellNotifier = SilentValueNotifier<EditableViewportCell?>(null);

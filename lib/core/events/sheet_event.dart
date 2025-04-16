@@ -16,7 +16,7 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 abstract class SheetEvent with EquatableMixin {
   Duration? get lockdownDuration => null;
 
-  SheetAction<SheetEvent>? createAction(SheetController controller);
+  SheetAction<SheetEvent>? createAction(Worksheet controller);
 
   SheetRebuildConfig get rebuildConfig;
 }
@@ -25,7 +25,7 @@ abstract class SheetAction<T extends SheetEvent> {
   SheetAction(this.event, this.controller);
 
   final T event;
-  final SheetController controller;
+  final Worksheet controller;
 
   FutureOr<void> execute();
 
@@ -59,7 +59,7 @@ class EnableEditingEvent extends SheetEvent {
   final String? initialValue;
 
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller) => EnableEditingAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet controller) => EnableEditingAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -106,7 +106,7 @@ class DisableEditingEvent extends SheetEvent {
   final bool move;
 
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller) => DisableEditingAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet controller) => DisableEditingAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -146,7 +146,7 @@ class SetViewportSizeEvent extends SheetEvent {
   final Rect rect;
 
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller) => SetViewportSizeAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet controller) => SetViewportSizeAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {

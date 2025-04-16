@@ -11,11 +11,11 @@ import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class SheetFillHandleLayer extends StatefulWidget {
   const SheetFillHandleLayer({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<StatefulWidget> createState() => SheetFillHandleLayerState();
@@ -23,7 +23,7 @@ class SheetFillHandleLayer extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
@@ -37,16 +37,16 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   void initState() {
     super.initState();
     SheetSelectionRenderer<SheetSelection> selectionRenderer =
-        widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
+        widget.worksheet.selection.createRenderer(widget.worksheet.viewport);
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
-    widget.sheetController.addListener(_handleSheetControllerChanged);
+    widget.worksheet.addListener(_handleSheetControllerChanged);
   }
 
   @override
   void dispose() {
-    widget.sheetController.removeListener(_handleSheetControllerChanged);
+    widget.worksheet.removeListener(_handleSheetControllerChanged);
     super.dispose();
   }
 
@@ -77,29 +77,29 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
   }
 
   void _handleFillStart(PointerDownEvent event) {
-    Offset sheetPosition = widget.sheetController.viewport.globalOffsetToLocal(event.position);
+    Offset sheetPosition = widget.worksheet.viewport.globalOffsetToLocal(event.position);
     ViewportItem? viewportItem = _visibleContent.findAnyByOffset(sheetPosition);
     if (viewportItem != null) {
-      widget.sheetController.resolve(StartFillSelectionEvent(viewportItem));
+      widget.worksheet.resolve(StartFillSelectionEvent(viewportItem));
     }
   }
 
   void _handleFillUpdate(PointerMoveEvent event) {
-    Offset sheetPosition = widget.sheetController.viewport.globalOffsetToLocal(event.position);
+    Offset sheetPosition = widget.worksheet.viewport.globalOffsetToLocal(event.position);
     ViewportItem? viewportItem = _visibleContent.findAnyByOffset(sheetPosition);
     if (viewportItem != null) {
-      widget.sheetController.resolve(UpdateFillSelectionEvent(viewportItem));
+      widget.worksheet.resolve(UpdateFillSelectionEvent(viewportItem));
     }
   }
 
   void _handleFillEnd() {
-    widget.sheetController.resolve(CompleteFillSelectionEvent());
+    widget.worksheet.resolve(CompleteFillSelectionEvent());
   }
 
-  SheetViewportContentManager get _visibleContent => widget.sheetController.viewport.visibleContent;
+  SheetViewportContentManager get _visibleContent => widget.worksheet.viewport.visibleContent;
 
   void _handleSheetControllerChanged() {
-    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    SheetRebuildConfig rebuildConfig = widget.worksheet.value;
     if (rebuildConfig.rebuildFillHandle) {
       _updateFillHandle();
     }
@@ -107,7 +107,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
 
   void _updateFillHandle() {
     SheetSelectionRenderer<SheetSelection> selectionRenderer =
-        widget.sheetController.selection.createRenderer(widget.sheetController.viewport);
+        widget.worksheet.selection.createRenderer(widget.worksheet.viewport);
 
     setState(() {
       _visible = selectionRenderer.fillHandleVisible;

@@ -11,11 +11,11 @@ import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class HeadersResizerLayer extends StatefulWidget {
   const HeadersResizerLayer({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<StatefulWidget> createState() => _HeadersResizerLayerState();
@@ -23,7 +23,7 @@ class HeadersResizerLayer extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
@@ -40,7 +40,7 @@ class _HeadersResizerLayerState extends State<HeadersResizerLayer> {
     _visibleRowsNotifier = ValueNotifier<List<ViewportRow>>(visibleRows);
     _visibleColumnsNotifier = ValueNotifier<List<ViewportColumn>>(visibleColumns);
 
-    widget.sheetController.addListener(_handleSheetControllerChanged);
+    widget.worksheet.addListener(_handleSheetControllerChanged);
   }
 
   @override
@@ -56,9 +56,9 @@ class _HeadersResizerLayerState extends State<HeadersResizerLayer> {
                 fit: StackFit.expand,
                 children: visibleColumns.map((ViewportColumn column) {
                   return _VerticalHeaderResizer(
-                    height: widget.sheetController.viewport.height,
+                    height: widget.worksheet.viewport.height,
                     column: column,
-                    onResize: (double delta) => widget.sheetController.resolve(ResizeColumnEvent(column.index, delta)),
+                    onResize: (double delta) => widget.worksheet.resolve(ResizeColumnEvent(column.index, delta)),
                   );
                 }).toList(),
               );
@@ -73,9 +73,9 @@ class _HeadersResizerLayerState extends State<HeadersResizerLayer> {
                 fit: StackFit.expand,
                 children: visibleRows.map((ViewportRow row) {
                   return _HorizontalHeaderResizer(
-                    width: widget.sheetController.viewport.width,
+                    width: widget.worksheet.viewport.width,
                     row: row,
-                    onResize: (double delta) => widget.sheetController.resolve(ResizeRowEvent(row.index, delta)),
+                    onResize: (double delta) => widget.worksheet.resolve(ResizeRowEvent(row.index, delta)),
                   );
                 }).toList(),
               );
@@ -87,14 +87,14 @@ class _HeadersResizerLayerState extends State<HeadersResizerLayer> {
   }
 
   void _handleSheetControllerChanged() {
-    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    SheetRebuildConfig rebuildConfig = widget.worksheet.value;
     if (rebuildConfig.rebuildHorizontalHeaders || rebuildConfig.rebuildVerticalHeaders) {
       _visibleRowsNotifier.value = _visibleContent.rows;
       _visibleColumnsNotifier.value = _visibleContent.columns;
     }
   }
 
-  SheetViewportContentManager get _visibleContent => widget.sheetController.viewport.visibleContent;
+  SheetViewportContentManager get _visibleContent => widget.worksheet.viewport.visibleContent;
 }
 
 class _VerticalHeaderResizer extends StatelessWidget {

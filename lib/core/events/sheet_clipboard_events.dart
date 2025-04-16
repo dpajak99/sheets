@@ -9,7 +9,7 @@ import 'package:sheets/core/sheet_index.dart';
 
 abstract class SheetClipboardEvent extends SheetEvent {
   @override
-  SheetClipboardAction<SheetClipboardEvent> createAction(SheetController controller);
+  SheetClipboardAction<SheetClipboardEvent> createAction(Worksheet controller);
 }
 
 abstract class SheetClipboardAction<T extends SheetClipboardEvent> extends SheetAction<T> {
@@ -20,7 +20,7 @@ class CopySelectionEvent extends SheetClipboardEvent {
   CopySelectionEvent();
 
   @override
-  CopySelectionAction createAction(SheetController controller) => CopySelectionAction(this, controller);
+  CopySelectionAction createAction(Worksheet controller) => CopySelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig();
@@ -56,7 +56,7 @@ class PasteSelectionEvent extends SheetClipboardEvent {
   final bool valuesOnly;
 
   @override
-  PasteSelectionAction createAction(SheetController controller) => PasteSelectionAction(this, controller);
+  PasteSelectionAction createAction(Worksheet controller) => PasteSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
@@ -111,7 +111,7 @@ class CutSelectionEvent extends SheetClipboardEvent {
   CutSelectionEvent();
 
   @override
-  CutSelectionAction createAction(SheetController controller) => CutSelectionAction(this, controller);
+  CutSelectionAction createAction(Worksheet controller) => CutSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(

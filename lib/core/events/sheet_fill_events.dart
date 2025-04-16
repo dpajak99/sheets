@@ -18,7 +18,7 @@ class StartFillSelectionEvent extends StartSelectionEvent {
   StartFillSelectionEvent(super.selectionStart);
 
   @override
-  StartFillSelectionAction createAction(SheetController controller) => StartFillSelectionAction(this, controller);
+  StartFillSelectionAction createAction(Worksheet controller) => StartFillSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -41,7 +41,7 @@ class UpdateFillSelectionEvent extends UpdateSelectionEvent {
   UpdateFillSelectionEvent(super.selectionEnd);
 
   @override
-  UpdateFillSelectionAction createAction(SheetController controller) => UpdateFillSelectionAction(this, controller);
+  UpdateFillSelectionAction createAction(Worksheet controller) => UpdateFillSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -78,7 +78,7 @@ class UpdateFillSelectionAction extends UpdateSelectionAction {
 // Complete fill
 class CompleteFillSelectionEvent extends CompleteSelectionEvent {
   @override
-  CompleteFillSelectionAction createAction(SheetController controller) => CompleteFillSelectionAction(this, controller);
+  CompleteFillSelectionAction createAction(Worksheet controller) => CompleteFillSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {

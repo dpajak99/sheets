@@ -20,7 +20,7 @@ import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 abstract class SheetFormattingEvent extends SheetEvent {
   @override
-  SheetFormattingAction<SheetFormattingEvent> createAction(SheetController controller);
+  SheetFormattingAction<SheetFormattingEvent> createAction(Worksheet controller);
 }
 
 abstract class SheetFormattingAction<T extends SheetFormattingEvent> extends SheetAction<T> {
@@ -34,7 +34,7 @@ class FormatSelectionEvent extends SheetFormattingEvent {
   final StyleFormatIntent intent;
 
   @override
-  FormatSelectionAction createAction(SheetController controller) => FormatSelectionAction(this, controller);
+  FormatSelectionAction createAction(Worksheet controller) => FormatSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -82,7 +82,7 @@ class ResizeColumnEvent extends SheetFormattingEvent {
   final double width;
 
   @override
-  ResizeColumnAction createAction(SheetController controller) => ResizeColumnAction(this, controller);
+  ResizeColumnAction createAction(Worksheet controller) => ResizeColumnAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -115,7 +115,7 @@ class ResizeRowEvent extends SheetFormattingEvent {
   final double height;
 
   @override
-  ResizeRowAction createAction(SheetController controller) => ResizeRowAction(this, controller);
+  ResizeRowAction createAction(Worksheet controller) => ResizeRowAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -143,7 +143,7 @@ class ResizeRowAction extends SheetFormattingAction<ResizeRowEvent> {
 // Merge Selection
 class MergeSelectionEvent extends SheetFormattingEvent {
   @override
-  MergeSelectionAction createAction(SheetController controller) => MergeSelectionAction(this, controller);
+  MergeSelectionAction createAction(Worksheet controller) => MergeSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -182,7 +182,7 @@ class MergeSelectionAction extends SheetFormattingAction<MergeSelectionEvent> {
 // Unmerge Selection
 class UnmergeSelectionEvent extends SheetFormattingEvent {
   @override
-  UnmergeSelectionAction createAction(SheetController controller) => UnmergeSelectionAction(this, controller);
+  UnmergeSelectionAction createAction(Worksheet controller) => UnmergeSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -216,7 +216,7 @@ class UnmergeSelectionAction extends SheetFormattingAction<UnmergeSelectionEvent
 // Clear Selection
 class ClearSelectionEvent extends SheetFormattingEvent {
   @override
-  ClearSelectionAction createAction(SheetController controller) => ClearSelectionAction(this, controller);
+  ClearSelectionAction createAction(Worksheet controller) => ClearSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {

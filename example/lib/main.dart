@@ -26,7 +26,7 @@ class MaterialSheetExample extends StatefulWidget {
 }
 
 class _MaterialSheetExampleState extends State<MaterialSheetExample> {
-  final SheetController sheetController = SheetController(
+  final Worksheet worksheet = Worksheet(
     data: SheetData.dev(),
   );
 
@@ -48,10 +48,10 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
           child: Column(
             children: <Widget>[
               const GoogHeader(),
-              GoogToolbar(sheetController: sheetController),
-              GoogFormulaBar(sheetController: sheetController),
+              GoogToolbar(worksheet: worksheet),
+              GoogFormulaBar(worksheet: worksheet),
               Expanded(
-                child: Sheet(sheetController: sheetController),
+                child: Sheet(worksheet: worksheet),
               ),
               Container(height: 1, width: double.infinity, color: const Color(0xfff9fbfd)),
               Container(height: 1, width: double.infinity, color: const Color(0xffe1e3e1)),
@@ -67,6 +67,6 @@ class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }

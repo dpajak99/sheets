@@ -15,12 +15,12 @@ import 'package:sheets/widgets/widget_state_builder.dart';
 class SheetScrollable extends StatefulWidget {
   const SheetScrollable({
     required this.child,
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
   final Widget child;
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<SheetScrollable> createState() => _SheetScrollableState();
@@ -28,7 +28,7 @@ class SheetScrollable extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
@@ -39,13 +39,13 @@ class _SheetScrollableState extends State<SheetScrollable> {
   @override
   void initState() {
     super.initState();
-    widget.sheetController.addListener(_rebuild);
+    widget.worksheet.addListener(_rebuild);
     _rebuild();
   }
 
   @override
   void dispose() {
-    widget.sheetController.removeListener(_rebuild);
+    widget.worksheet.removeListener(_rebuild);
     super.dispose();
   }
 
@@ -64,7 +64,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
               painter: verticalScrollbarPainter,
               deltaModifier: (Offset offset) => offset.dy,
               onScroll: (double offset) {
-                widget.sheetController.resolve(ScrollByEvent(Offset(0, offset)));
+                widget.worksheet.resolve(ScrollByEvent(Offset(0, offset)));
               },
             ),
           ),
@@ -73,7 +73,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_drop_up,
             onPressed: () {
-              widget.sheetController.resolve(ScrollByEvent(const Offset(0, -20)));
+              widget.worksheet.resolve(ScrollByEvent(const Offset(0, -20)));
             },
           ),
           Divider(height: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -81,7 +81,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_drop_down,
             onPressed: () {
-              widget.sheetController.resolve(ScrollByEvent(const Offset(0, 20)));
+              widget.worksheet.resolve(ScrollByEvent(const Offset(0, 20)));
             },
           ),
         ],
@@ -95,7 +95,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
               painter: horizontalScrollbarPainter,
               deltaModifier: (Offset offset) => offset.dx,
               onScroll: (double offset) {
-                widget.sheetController.resolve(ScrollByEvent(Offset(offset, 0)));
+                widget.worksheet.resolve(ScrollByEvent(Offset(offset, 0)));
               },
             ),
           ),
@@ -104,7 +104,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_left,
             onPressed: () {
-              widget.sheetController.resolve(ScrollByEvent(const Offset(-20, 0)));
+              widget.worksheet.resolve(ScrollByEvent(const Offset(-20, 0)));
             },
           ),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -112,7 +112,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
             size: scrollbarWeight,
             icon: Icons.arrow_right,
             onPressed: () {
-              widget.sheetController.resolve(ScrollByEvent(const Offset(20, 0)));
+              widget.worksheet.resolve(ScrollByEvent(const Offset(20, 0)));
             },
           ),
           VerticalDivider(width: borderWidth, thickness: borderWidth, color: const Color(0xffd9d9d9)),
@@ -122,7 +122,7 @@ class _SheetScrollableState extends State<SheetScrollable> {
       child: Listener(
         onPointerSignal: (PointerSignalEvent event) {
           if (event is PointerScrollEvent) {
-            widget.sheetController.resolve(ScrollByEvent(event.scrollDelta));
+            widget.worksheet.resolve(ScrollByEvent(event.scrollDelta));
           }
         },
         child: widget.child,
@@ -137,16 +137,16 @@ class _SheetScrollableState extends State<SheetScrollable> {
   }
 
   void _updateVerticalPosition() {
-    verticalScrollbarPainter.scrollPosition = widget.sheetController.scroll.position.vertical;
+    verticalScrollbarPainter.scrollPosition = widget.worksheet.scroll.position.vertical;
   }
 
   void _updateHorizontalPosition() {
-    horizontalScrollbarPainter.scrollPosition = widget.sheetController.scroll.position.horizontal;
+    horizontalScrollbarPainter.scrollPosition = widget.worksheet.scroll.position.horizontal;
   }
 
   void _updateMetrics() {
-    verticalScrollbarPainter.scrollMetrics = widget.sheetController.scroll.metrics.vertical;
-    horizontalScrollbarPainter.scrollMetrics = widget.sheetController.scroll.metrics.horizontal;
+    verticalScrollbarPainter.scrollMetrics = widget.worksheet.scroll.metrics.vertical;
+    horizontalScrollbarPainter.scrollMetrics = widget.worksheet.scroll.metrics.horizontal;
   }
 
   @override

@@ -16,7 +16,7 @@ import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class SheetLayer extends StatefulWidget {
   const SheetLayer({
-    required this.sheetController,
+    required this.worksheet,
     required this.onDragStart,
     required this.onDragUpdate,
     required this.onDragEnd,
@@ -25,7 +25,7 @@ class SheetLayer extends StatefulWidget {
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
   final ValueChanged<ViewportItem> onDragStart;
   final ValueChanged<ViewportItem> onDragUpdate;
   final VoidCallback onDragEnd;
@@ -35,7 +35,7 @@ class SheetLayer extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
     properties.add(ObjectFlagProperty<ValueChanged<ViewportItem>>.has('onDragStart', onDragStart));
     properties.add(ObjectFlagProperty<ValueChanged<ViewportItem>>.has('onDragUpdate', onDragUpdate));
     properties.add(ObjectFlagProperty<VoidCallback>.has('onDragEnd', onDragEnd));
@@ -48,7 +48,7 @@ class SheetLayer extends StatefulWidget {
 }
 
 class _SheetLayerState extends State<SheetLayer> {
-  late final SheetCellsLayerPainter _cellsPainter;
+  late final CellsDrawingController _cellsDrawingController;
   late final SheetColumnHeadersPainter _columnHeadersPainter;
   late final SheetRowHeadersPainter _rowHeadersPainter;
   late final SheetSelectionLayerPainter _selectionPainter;
@@ -59,7 +59,7 @@ class _SheetLayerState extends State<SheetLayer> {
   @override
   void initState() {
     super.initState();
-    _cellsPainter = SheetCellsLayerPainter();
+    _cellsDrawingController = CellsDrawingController();
     _columnHeadersPainter = SheetColumnHeadersPainter();
     _rowHeadersPainter = SheetRowHeadersPainter();
     _selectionPainter = SheetSelectionLayerPainter();
@@ -69,7 +69,7 @@ class _SheetLayerState extends State<SheetLayer> {
       nextHoldDuration: const Duration(milliseconds: 50),
     );
 
-    widget.sheetController.addListener(_handleSheetControllerChanged);
+    widget.worksheet.addListener(_handleSheetControllerChanged);
 
     _rebuildCells();
     _rebuildHorizontalHeaders();
@@ -80,7 +80,7 @@ class _SheetLayerState extends State<SheetLayer> {
   @override
   void dispose() {
     super.dispose();
-    widget.sheetController.removeListener(_handleSheetControllerChanged);
+    widget.worksheet.removeListener(_handleSheetControllerChanged);
   }
 
   @override
@@ -94,7 +94,12 @@ class _SheetLayerState extends State<SheetLayer> {
         children: <Widget>[
           Positioned.fill(
             child: RepaintBoundary(
-              child: CustomPaint(painter: _cellsPainter),
+              child: CustomPaint(
+                painter: SheetCellsLayerPainter(
+                  worksheet: widget.worksheet,
+                  drawingController: _cellsDrawingController,
+                ),
+              ),
             ),
           ),
           RepaintBoundary(
@@ -168,7 +173,7 @@ class _SheetLayerState extends State<SheetLayer> {
   }
 
   void _handleSheetControllerChanged() {
-    SheetRebuildConfig rebuildConfig = widget.sheetController.value;
+    SheetRebuildConfig rebuildConfig = widget.worksheet.value;
     if (rebuildConfig.rebuildCellsLayer) {
       _rebuildCells();
     }
@@ -184,9 +189,7 @@ class _SheetLayerState extends State<SheetLayer> {
   }
 
   void _rebuildCells() {
-    _cellsPainter.rebuild(
-      visibleContent: _visibleContent,
-    );
+    _cellsDrawingController.rebuild();
   }
 
   void _rebuildHorizontalHeaders() {
@@ -212,7 +215,7 @@ class _SheetLayerState extends State<SheetLayer> {
 
   SheetViewportContentManager get _visibleContent => _viewport.visibleContent;
 
-  SheetViewport get _viewport => widget.sheetController.viewport;
+  SheetViewport get _viewport => widget.worksheet.viewport;
 
-  SheetSelection get _selection => widget.sheetController.selection.value;
+  SheetSelection get _selection => widget.worksheet.selection.value;
 }

@@ -6,11 +6,11 @@ import 'package:sheets/widgets/sheet_theme.dart';
 
 class GoogFormulaBar extends StatefulWidget {
   const GoogFormulaBar({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<StatefulWidget> createState() => _GoogFormulaBarState();
@@ -18,7 +18,7 @@ class GoogFormulaBar extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
@@ -38,7 +38,7 @@ class _GoogFormulaBarState extends State<GoogFormulaBar> {
         child: Row(
           children: <Widget>[
             ListenableBuilder(
-              listenable: widget.sheetController,
+              listenable: widget.worksheet,
               builder: (BuildContext context, _) {
                 return Container(
                   width: 100,
@@ -47,7 +47,7 @@ class _GoogFormulaBarState extends State<GoogFormulaBar> {
                     children: <Widget>[
                       Expanded(
                         child: Text(
-                          widget.sheetController.selection.stringify(),
+                          widget.worksheet.selection.stringify(),
                           overflow: TextOverflow.clip,
                           maxLines: 1,
                           style: const TextStyle(
@@ -74,7 +74,7 @@ class _GoogFormulaBarState extends State<GoogFormulaBar> {
               padding: EdgeInsets.only(top: 4, bottom: 3),
               child: VerticalDivider(color: Color(0xffc7c7c7), width: 1, thickness: 1),
             ),
-            Expanded(child: _GoogFormulaBarInput(sheetController: widget.sheetController)),
+            Expanded(child: _GoogFormulaBarInput(worksheet: widget.worksheet)),
           ],
         ),
       ),
@@ -84,10 +84,10 @@ class _GoogFormulaBarState extends State<GoogFormulaBar> {
 
 class _GoogFormulaBarInput extends StatelessWidget {
   const _GoogFormulaBarInput({
-    required SheetController sheetController,
-  }) : _sheetController = sheetController;
+    required Worksheet worksheet,
+  }) : _worksheet = worksheet;
 
-  final SheetController _sheetController;
+  final Worksheet _worksheet;
 
   @override
   Widget build(BuildContext context) {
@@ -102,11 +102,11 @@ class _GoogFormulaBarInput extends StatelessWidget {
           // Formula bar input
           Expanded(
             child: ListenableBuilder(
-              listenable: _sheetController,
+              listenable: _worksheet,
               builder: (BuildContext context, _) {
                 return Text(
-                  _sheetController.data
-                      .getCellProperties(_sheetController.selection.value.mainCell)
+                  _worksheet.data
+                      .getCellProperties(_worksheet.selection.value.mainCell)
                       .editableRichText
                       .toPlainText(),
                   overflow: TextOverflow.clip,

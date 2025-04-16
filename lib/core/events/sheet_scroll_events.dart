@@ -7,7 +7,7 @@ import 'package:sheets/utils/extensions/offset_extensions.dart';
 
 abstract class ScrollEvent extends SheetEvent {
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller);
+  SheetAction<SheetEvent> createAction(Worksheet controller);
 }
 
 abstract class ScrollAction<T extends ScrollEvent> extends SheetAction<T> {
@@ -21,7 +21,7 @@ class ScrollByEvent extends ScrollEvent {
   final Offset delta;
 
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller) => ScrollByAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet controller) => ScrollByAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -58,7 +58,7 @@ class ScrollToElementEvent extends ScrollEvent {
   final SheetIndex index;
 
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller) => ScrollToElementAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet controller) => ScrollToElementAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {

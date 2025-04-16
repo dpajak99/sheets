@@ -13,7 +13,7 @@ import 'package:sheets/core/viewport/viewport_item.dart';
 
 abstract class SelectionEvent extends SheetEvent {
   @override
-  SelectionAction<SelectionEvent> createAction(SheetController controller);
+  SelectionAction<SelectionEvent> createAction(Worksheet controller);
 }
 
 abstract class SelectionAction<T extends SelectionEvent> extends SheetAction<T> {
@@ -27,7 +27,7 @@ class StartSelectionEvent extends SheetEvent {
   final ViewportItem selectionStart;
 
   @override
-  SheetAction<SheetEvent>? createAction(SheetController controller) {
+  SheetAction<SheetEvent>? createAction(Worksheet controller) {
     SheetSelection previousSelection = controller.selection.value;
     if (previousSelection == SheetSelectionFactory.single(selectionStart.index)) {
       return null;
@@ -86,7 +86,7 @@ class UpdateSelectionEvent extends SheetEvent {
   final ViewportItem selectionEnd;
 
   @override
-  SheetAction<SheetEvent>? createAction(SheetController controller) {
+  SheetAction<SheetEvent>? createAction(Worksheet controller) {
     if (controller.isEditingMode) {
       return null;
     } else {
@@ -146,7 +146,7 @@ class CompleteSelectionEvent extends SheetEvent {
   CompleteSelectionEvent();
 
   @override
-  SheetAction<SheetEvent>? createAction(SheetController controller) {
+  SheetAction<SheetEvent>? createAction(Worksheet controller) {
     if (controller.selection.value.isCompleted) {
       return null;
     } else {
@@ -184,7 +184,7 @@ class MoveSelectionEvent extends SheetEvent {
   final int dy;
 
   @override
-  SheetAction<SheetEvent> createAction(SheetController controller) => MoveSelectionAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet controller) => MoveSelectionAction(this, controller);
 
   @override
   SheetRebuildConfig get rebuildConfig {

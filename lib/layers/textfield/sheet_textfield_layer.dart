@@ -8,11 +8,11 @@ import 'package:sheets/widgets/text/sheet_text_field.dart';
 
 class SheetTextfieldLayer extends StatefulWidget {
   const SheetTextfieldLayer({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<StatefulWidget> createState() => _SheetTextfieldLayerState();
@@ -20,7 +20,7 @@ class SheetTextfieldLayer extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
@@ -42,7 +42,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
     double verticalPadding = verticalBorderWidth + contentPadding.vertical;
 
     return ValueListenableBuilder<EditableViewportCell?>(
-      valueListenable: widget.sheetController.editableCellNotifier,
+      valueListenable: widget.worksheet.editableCellNotifier,
       builder: (BuildContext context, EditableViewportCell? activeCell, Widget? child) {
         if (activeCell == null) {
           return const SizedBox();
@@ -51,8 +51,8 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
         activeCell.controller.layout(
           minWidth: viewportCell.rect.width - horizontalPadding,
           minHeight: viewportCell.rect.height - verticalPadding,
-          maxWidth: widget.sheetController.viewport.width - activeCell.cell.rect.left - 10,
-          maxHeight: widget.sheetController.viewport.height - activeCell.cell.rect.top - 10,
+          maxWidth: widget.worksheet.viewport.width - activeCell.cell.rect.left - 10,
+          maxHeight: widget.worksheet.viewport.height - activeCell.cell.rect.top - 10,
           step: 100,
         );
 
@@ -76,11 +76,11 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
                     outerBorder: outerBorder,
                     innerBorder: innerBorder,
                     contentPadding: contentPadding,
-                    sheetController: widget.sheetController,
+                    worksheet: widget.worksheet,
                     textAlign: activeCell.cell.properties.visibleTextAlign,
                     backgroundColor: activeCell.cell.properties.style.backgroundColor,
                     onCompleted: (bool shouldSaveValue, bool shouldMove) {
-                      widget.sheetController.resolve(DisableEditingEvent(save: shouldSaveValue, move: shouldMove));
+                      widget.worksheet.resolve(DisableEditingEvent(save: shouldSaveValue, move: shouldMove));
                     },
                     editableViewportCell: activeCell,
                   ),
@@ -96,7 +96,7 @@ class _SheetTextfieldLayerState extends State<SheetTextfieldLayer> {
 
 class SheetTextfieldLayout extends StatefulWidget {
   const SheetTextfieldLayout({
-    required this.sheetController,
+    required this.worksheet,
     required this.editableViewportCell,
     required this.textAlign,
     required this.onCompleted,
@@ -108,7 +108,7 @@ class SheetTextfieldLayout extends StatefulWidget {
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
   final EditableViewportCell editableViewportCell;
   final TextAlign textAlign;
   final void Function(bool shouldSaveValue, bool shouldMove) onCompleted;
@@ -129,7 +129,7 @@ class SheetTextfieldLayout extends StatefulWidget {
     properties.add(DoubleProperty('paddingHorizontal', paddingHorizontal));
     properties.add(DoubleProperty('paddingVertical', paddingVertical));
     properties.add(EnumProperty<TextAlign>('textAlign', textAlign));
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
     properties.add(DiagnosticsProperty<EditableViewportCell>('editableViewportCell', editableViewportCell));
     properties.add(ObjectFlagProperty<void Function(bool shouldSaveValue, bool shouldMove)>.has('onCompleted', onCompleted));
   }

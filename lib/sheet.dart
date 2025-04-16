@@ -56,11 +56,11 @@ class SheetCursor extends ChangeNotifier {
 
 class Sheet extends StatefulWidget {
   const Sheet({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<StatefulWidget> createState() => _SheetState();
@@ -68,12 +68,12 @@ class Sheet extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
 class _SheetState extends State<Sheet> {
-  SheetController get sheetController => widget.sheetController;
+  Worksheet get worksheet => widget.worksheet;
 
   @override
   void initState() {
@@ -84,29 +84,29 @@ class _SheetState extends State<Sheet> {
   Widget build(BuildContext context) {
     return SheetCursorWrapper(
       child: _SheetKeyboardGestureDetector(
-        focusNode: sheetController.sheetFocusNode,
-        onSelectAll: () => sheetController.selection.update(SheetSelectionFactory.all()),
-        onStartEditing: ([String? initialValue]) => sheetController.resolve(EnableEditingEvent(initialValue: initialValue)),
-        onMove: (CellMoveDirection direction) => sheetController.resolve(MoveSelectionEvent.fromOffset(direction.toOffset())),
-        onRemove: () => sheetController.resolve(ClearSelectionEvent()),
+        focusNode: worksheet.sheetFocusNode,
+        onSelectAll: () => worksheet.selection.update(SheetSelectionFactory.all()),
+        onStartEditing: ([String? initialValue]) => worksheet.resolve(EnableEditingEvent(initialValue: initialValue)),
+        onMove: (CellMoveDirection direction) => worksheet.resolve(MoveSelectionEvent.fromOffset(direction.toOffset())),
+        onRemove: () => worksheet.resolve(ClearSelectionEvent()),
         onFontWeightUpdate: (FontWeight fontWeight) =>
-            widget.sheetController.resolve(FormatSelectionEvent(ToggleFontWeightIntent())),
-        onFontStyleUpdate: (FontStyle fontStyle) => widget.sheetController.resolve(FormatSelectionEvent(ToggleFontStyleIntent())),
+            widget.worksheet.resolve(FormatSelectionEvent(ToggleFontWeightIntent())),
+        onFontStyleUpdate: (FontStyle fontStyle) => widget.worksheet.resolve(FormatSelectionEvent(ToggleFontStyleIntent())),
         onTextDecorationUpdate: (TextDecoration decoration) =>
-            widget.sheetController.resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: decoration))),
+            widget.worksheet.resolve(FormatSelectionEvent(ToggleTextDecorationIntent(value: decoration))),
         onUndo: () {},
         onRedo: () {},
         onPaste: () {
-          widget.sheetController.resolve(PasteSelectionEvent());
+          widget.worksheet.resolve(PasteSelectionEvent());
         },
         onPasteValues: () {
-          widget.sheetController.resolve(PasteSelectionEvent(valuesOnly: true));
+          widget.worksheet.resolve(PasteSelectionEvent(valuesOnly: true));
         },
         onCopy: () {
-          widget.sheetController.resolve(CopySelectionEvent());
+          widget.worksheet.resolve(CopySelectionEvent());
         },
         onCut: () {
-          widget.sheetController.resolve(CutSelectionEvent());
+          widget.worksheet.resolve(CutSelectionEvent());
         },
         child: SizedBox.expand(
           child: DecoratedBox(
@@ -114,10 +114,10 @@ class _SheetState extends State<Sheet> {
               color: Color(0xfff8faf8),
             ),
             child: SheetScrollable(
-              sheetController: sheetController,
+              worksheet: worksheet,
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-                  return SheetContent(sheetController: sheetController);
+                  return SheetContent(worksheet: worksheet);
                 },
               ),
             ),
@@ -130,17 +130,17 @@ class _SheetState extends State<Sheet> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
 class SheetContent extends StatefulWidget {
   const SheetContent({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   State<StatefulWidget> createState() => SheetContentState();
@@ -148,7 +148,7 @@ class SheetContent extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 }
 
@@ -171,7 +171,7 @@ class SheetContentState extends State<SheetContent> {
   Widget build(BuildContext context) {
     return Container(
       key: _sheetViewportKey,
-      child: SheetGrid(sheetController: widget.sheetController),
+      child: SheetGrid(worksheet: widget.worksheet),
     );
   }
 
@@ -182,7 +182,7 @@ class SheetContentState extends State<SheetContent> {
     }
 
     Offset position = renderBox.localToGlobal(Offset.zero);
-    widget.sheetController.resolve(SetViewportSizeEvent(Rect.fromLTRB(
+    widget.worksheet.resolve(SetViewportSizeEvent(Rect.fromLTRB(
       position.dx,
       position.dy,
       renderBox.size.width + position.dx,
@@ -193,11 +193,11 @@ class SheetContentState extends State<SheetContent> {
 
 class SheetGrid extends StatelessWidget {
   const SheetGrid({
-    required this.sheetController,
+    required this.worksheet,
     super.key,
   });
 
-  final SheetController sheetController;
+  final Worksheet worksheet;
 
   @override
   Widget build(BuildContext context) {
@@ -215,13 +215,13 @@ class SheetGrid extends StatelessWidget {
         ),
         Positioned.fill(
           child: SheetLayer(
-            sheetController: sheetController,
-            onDragStart: (ViewportItem viewportItem) => sheetController.resolve(StartSelectionEvent(viewportItem)),
-            onDragUpdate: (ViewportItem viewportItem) => sheetController.resolve(UpdateSelectionEvent(viewportItem)),
-            onDragEnd: () => sheetController.resolve(CompleteSelectionEvent()),
+            worksheet: worksheet,
+            onDragStart: (ViewportItem viewportItem) => worksheet.resolve(StartSelectionEvent(viewportItem)),
+            onDragUpdate: (ViewportItem viewportItem) => worksheet.resolve(UpdateSelectionEvent(viewportItem)),
+            onDragEnd: () => worksheet.resolve(CompleteSelectionEvent()),
             onSecondaryPointerTap: (ViewportItem item) => _openContextMenuFor(context, item),
             onDoubleTap: (ViewportItem viewportItem) =>
-                sheetController.resolve(EnableEditingEvent(cell: viewportItem.index.toCellIndex())),
+                worksheet.resolve(EnableEditingEvent(cell: viewportItem.index.toCellIndex())),
           ),
         ),
         Positioned(
@@ -239,9 +239,9 @@ class SheetGrid extends StatelessWidget {
             ),
           ),
         ),
-        Positioned.fill(child: HeadersResizerLayer(sheetController: sheetController)),
-        Positioned.fill(child: SheetFillHandleLayer(sheetController: sheetController)),
-        Positioned.fill(child: SheetTextfieldLayer(sheetController: sheetController)),
+        Positioned.fill(child: HeadersResizerLayer(worksheet: worksheet)),
+        Positioned.fill(child: SheetFillHandleLayer(worksheet: worksheet)),
+        Positioned.fill(child: SheetTextfieldLayer(worksheet: worksheet)),
       ],
     );
   }
@@ -249,7 +249,7 @@ class SheetGrid extends StatelessWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<SheetController>('sheetController', sheetController));
+    properties.add(DiagnosticsProperty<Worksheet>('worksheet', worksheet));
   }
 
   void _openContextMenuFor(BuildContext context, ViewportItem viewportItem) {

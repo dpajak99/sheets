@@ -23,5 +23,5 @@ class MaterialSheetTheme {
     0xFF000000, 0xFFFFFFFF, 0xFF4285F4, 0xFFEA4335, 0xFFFBBC04, 0xFF34A853, 0xFFFF6D01, 0xFF46BDC6 //
   ];
 
-  static BorderSide defaultBorderSide = const BorderSide(color: Color(0x1F040404));
+  static BorderSide defaultBorderSide = const BorderSide(color: Color(0x14585858));
 }
