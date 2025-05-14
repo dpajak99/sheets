@@ -5,7 +5,7 @@ import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/sheet_viewport_rect.dart';
 
 class SheetViewport {
-  SheetViewport(SheetData data)
+  SheetViewport(WorksheetData data)
       : visibleContent = SheetViewportContentManager(data) {
     rect = SheetViewportRect(Rect.zero);
   }

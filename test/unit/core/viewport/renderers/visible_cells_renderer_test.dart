@@ -28,7 +28,7 @@ void main() {
       });
 
       VisibleCellsRenderer renderer = VisibleCellsRenderer(visibleRows: visibleRows, visibleColumns: visibleColumns);
-      SheetData data = SheetData(columnCount: 3, rowCount: 3);
+      WorksheetData data = WorksheetData(columnCount: 3, rowCount: 3);
 
       // Act
       List<ViewportCell> visibleCells = renderer.build(data);
@@ -84,7 +84,7 @@ void main() {
         visibleRows: <ViewportRow>[],
         visibleColumns: <ViewportColumn>[],
       );
-      SheetData data = SheetData(columnCount: 0, rowCount: 0);
+      WorksheetData data = WorksheetData(columnCount: 0, rowCount: 0);
 
       // Act
       List<ViewportCell> visibleCells = renderer.build(data);

@@ -32,7 +32,7 @@ sealed class SheetIndex with EquatableMixin {
     }
   }
 
-  Rect getSheetCoordinates(SheetData data);
+  Rect getSheetCoordinates(WorksheetData data);
 
   CellIndex toCellIndex() {
     return switch (this) {
@@ -156,7 +156,7 @@ class CellIndex extends SheetIndex {
   }
 
   @override
-  Rect getSheetCoordinates(SheetData data) {
+  Rect getSheetCoordinates(WorksheetData data) {
     Rect xRect = column.getSheetCoordinates(data);
     Rect yRect = row.getSheetCoordinates(data);
 
@@ -213,14 +213,14 @@ class ColumnIndex extends SheetIndex with NumericIndexMixin implements Comparabl
   }
 
   @override
-  Rect getSheetCoordinates(SheetData data) {
+  Rect getSheetCoordinates(WorksheetData data) {
     double x = 0;
     for (int i = 0; i < value; i++) {
-      double columnWidth = data.getColumnWidth(ColumnIndex(i));
-      x += columnWidth + borderWidth;
+      double width = data.columns.getWidth(ColumnIndex(i));
+      x += width + borderWidth;
     }
 
-    double width = data.getColumnWidth(this);
+    double width = data.columns.getWidth(this);
 
     return Rect.fromLTWH(x, 0, width + borderWidth, defaultRowHeight + borderWidth);
   }
@@ -296,14 +296,14 @@ class RowIndex extends SheetIndex with NumericIndexMixin implements Comparable<R
   int get value => _value;
 
   @override
-  Rect getSheetCoordinates(SheetData data) {
+  Rect getSheetCoordinates(WorksheetData data) {
     double y = 0;
     for (int i = 0; i < value; i++) {
-      double rowHeight = data.getRowHeight(RowIndex(i));
-      y += rowHeight + borderWidth;
+      double height = data.rows.getHeight(RowIndex(i));
+      y += height + borderWidth;
     }
 
-    double height = data.getRowHeight(this);
+    double height = data.rows.getHeight(this);
     return Rect.fromLTWH(0, y, defaultColumnWidth + borderWidth, height + borderWidth);
   }
 

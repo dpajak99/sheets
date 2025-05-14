@@ -14,7 +14,7 @@ class VisibleCellsRenderer {
 
   final List<ViewportColumn> visibleColumns;
 
-  List<ViewportCell> build(SheetData data) {
+  List<ViewportCell> build(WorksheetData data) {
     List<ViewportCell> visibleCells = <ViewportCell>[];
     List<ViewportCell> mergedCells = <ViewportCell>[];
     List<MergedCell> resolvedMergedCells = <MergedCell>[];
@@ -26,11 +26,11 @@ class VisibleCellsRenderer {
         ViewportColumn column = visibleColumns[x];
 
         CellIndex cellIndex = CellIndex(column: column.index, row: row.index);
-        CellProperties cellProperties = data.getCellProperties(cellIndex);
+        CellProperties cellProperties = data.cells.get(cellIndex);
 
         if (cellProperties.mergeStatus is MergedCell) {
           MergedCell mergedCell = cellProperties.mergeStatus as MergedCell;
-          CellProperties startCellProperties = data.getCellProperties(mergedCell.start);
+          CellProperties startCellProperties = data.cells.get(mergedCell.start);
 
           if (mergedCell.isMainCell(cellIndex) || (y == 0 || x == 0) && !resolvedMergedCells.contains(mergedCell)) {
             CellIndex mergeEnd = mergedCell.end;

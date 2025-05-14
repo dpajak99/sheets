@@ -41,7 +41,7 @@ class Worksheet extends SheetRebuildNotifier {
   }
 
   final FocusNode sheetFocusNode = FocusNode()..requestFocus();
-  final SheetData data;
+  final WorksheetData data;
   late final SheetViewport viewport;
   late final SheetScrollController scroll;
   late final SilentValueNotifier<EditableViewportCell?> editableCellNotifier;
@@ -96,7 +96,7 @@ class Worksheet extends SheetRebuildNotifier {
   bool get isEditingMode => editableCellNotifier.value != null;
 
   SelectionStyle getSelectionStyle() {
-    CellProperties cellProperties = data.getCellProperties(selection.value.mainCell);
+    CellProperties cellProperties = data.cells.get(selection.value.mainCell);
 
     if (editableCellNotifier.value == null) {
       return CellSelectionStyle(cellProperties: cellProperties);
@@ -114,10 +114,6 @@ class Worksheet extends SheetRebuildNotifier {
         textStyles: textEditingController.selectionStyles,
       );
     }
-  }
-
-  CellProperties getCellProperties(CellIndex index) {
-    return data.getCellProperties(index);
   }
 }
 

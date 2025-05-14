@@ -36,7 +36,7 @@ class SelectionCellCorners with EquatableMixin {
   int get width => bottomRight.column.value - topLeft.column.value + 1;
   int get height => bottomRight.row.value - topLeft.row.value + 1;
 
-  SelectionCellCorners includeMergedCells(SheetData data) {
+  SelectionCellCorners includeMergedCells(WorksheetData data) {
     ColumnIndex left = topLeft.column;
     ColumnIndex right = bottomRight.column;
     RowIndex top = topLeft.row;

@@ -52,7 +52,7 @@ class GestureSelectionStrategyModify implements GestureSelectionStrategy {
 class GestureSelectionStrategyFill implements GestureSelectionStrategy {
   GestureSelectionStrategyFill(this.data);
 
-  final SheetData data;
+  final WorksheetData data;
 
   @override
   SheetSelection execute(SheetSelection previousSelection, SheetIndex selectedIndex) {

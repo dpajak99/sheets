@@ -4,23 +4,23 @@ import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/worksheet.dart';
 
 abstract class SheetClipboardEvent extends SheetEvent {
   @override
-  SheetClipboardAction<SheetClipboardEvent> createAction(Worksheet controller);
+  SheetClipboardAction<SheetClipboardEvent> createAction(Worksheet worksheet);
 }
 
 abstract class SheetClipboardAction<T extends SheetClipboardEvent> extends SheetAction<T> {
-  SheetClipboardAction(super.event, super.controller);
+  SheetClipboardAction(super.event, super.worksheet);
 }
 
 class CopySelectionEvent extends SheetClipboardEvent {
   CopySelectionEvent();
 
   @override
-  CopySelectionAction createAction(Worksheet controller) => CopySelectionAction(this, controller);
+  CopySelectionAction createAction(Worksheet worksheet) => CopySelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig();
@@ -30,17 +30,17 @@ class CopySelectionEvent extends SheetClipboardEvent {
 }
 
 class CopySelectionAction extends SheetClipboardAction<CopySelectionEvent> {
-  CopySelectionAction(super.event, super.controller);
+  CopySelectionAction(super.event, super.worksheet);
 
   @override
   Future<void> execute() async {
     List<CellIndex> selectedCells =
-        controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
+        worksheet.selection.value.getSelectedCells(worksheet.data.columnCount, worksheet.data.rowCount);
 
     List<IndexedCellProperties> cellsProperties = selectedCells.map((CellIndex index) {
       return IndexedCellProperties(
         index: index,
-        properties: controller.data.getCellProperties(index),
+        properties: worksheet.data.cells.get(index),
       );
     }).toList();
 
@@ -56,7 +56,7 @@ class PasteSelectionEvent extends SheetClipboardEvent {
   final bool valuesOnly;
 
   @override
-  PasteSelectionAction createAction(Worksheet controller) => PasteSelectionAction(this, controller);
+  PasteSelectionAction createAction(Worksheet worksheet) => PasteSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
@@ -69,11 +69,11 @@ class PasteSelectionEvent extends SheetClipboardEvent {
 }
 
 class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
-  PasteSelectionAction(super.event, super.controller);
+  PasteSelectionAction(super.event, super.worksheet);
 
   @override
   Future<void> execute() async {
-    CellIndex selectionAnchor = controller.selection.value.mainCell;
+    CellIndex selectionAnchor = worksheet.selection.value.mainCell;
 
     List<PastedCellProperties> pastedCells = await SheetClipboard.read(html: !event.valuesOnly);
     List<IndexedCellProperties> cellsProperties = pastedCells.map((PastedCellProperties cell) {
@@ -88,18 +88,18 @@ class PasteSelectionAction extends SheetClipboardAction<PasteSelectionEvent> {
         .toList();
 
     for (MergedCell mergedCell in mergedCells) {
-      controller.data.mergeCells(mergedCell.mergedCells);
+      worksheet.data.cells.merge(mergedCell.mergedCells);
     }
 
-    controller.data.setCellsProperties(cellsProperties);
+    worksheet.data.cells.setAll(cellsProperties);
 
     List<RowIndex> rows = cellsProperties.map((IndexedCellProperties cell) => cell.index.row).toSet().toList();
     for (RowIndex row in rows) {
-      double minRowHeight = controller.data.getMinRowHeight(row);
-      controller.data.setRowHeight(row, minRowHeight);
+      double minRowHeight = worksheet.data.getMinRowHeight(row);
+      worksheet.data.rows.setHeight(row, minRowHeight);
     }
 
-    controller.selection.update(SheetSelectionFactory.range(
+    worksheet.selection.update(SheetSelectionFactory.range(
       start: cellsProperties.first.index,
       end: cellsProperties.last.index,
       completed: true,
@@ -111,7 +111,7 @@ class CutSelectionEvent extends SheetClipboardEvent {
   CutSelectionEvent();
 
   @override
-  CutSelectionAction createAction(Worksheet controller) => CutSelectionAction(this, controller);
+  CutSelectionAction createAction(Worksheet worksheet) => CutSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig => SheetRebuildConfig(
@@ -123,11 +123,11 @@ class CutSelectionEvent extends SheetClipboardEvent {
 }
 
 class CutSelectionAction extends SheetClipboardAction<CutSelectionEvent> {
-  CutSelectionAction(super.event, super.controller);
+  CutSelectionAction(super.event, super.worksheet);
 
   @override
   Future<void> execute() async {
-    controller.resolve(CopySelectionEvent());
-    controller.resolve(ClearSelectionEvent());
+    worksheet.resolve(CopySelectionEvent());
+    worksheet.resolve(ClearSelectionEvent());
   }
 }

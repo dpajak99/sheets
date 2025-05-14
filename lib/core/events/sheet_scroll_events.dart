@@ -1,17 +1,17 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/utils/extensions/offset_extensions.dart';
 
 abstract class ScrollEvent extends SheetEvent {
   @override
-  SheetAction<SheetEvent> createAction(Worksheet controller);
+  SheetAction<SheetEvent> createAction(Worksheet worksheet);
 }
 
 abstract class ScrollAction<T extends ScrollEvent> extends SheetAction<T> {
-  ScrollAction(super.event, super.controller);
+  ScrollAction(super.event, super.worksheet);
 }
 
 // Scroll By
@@ -21,7 +21,7 @@ class ScrollByEvent extends ScrollEvent {
   final Offset delta;
 
   @override
-  SheetAction<SheetEvent> createAction(Worksheet controller) => ScrollByAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) => ScrollByAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -37,16 +37,16 @@ class ScrollByEvent extends ScrollEvent {
 }
 
 class ScrollByAction extends ScrollAction<ScrollByEvent> {
-  ScrollByAction(super.event, super.controller);
+  ScrollByAction(super.event, super.worksheet);
 
   @override
   void execute() {
     HardwareKeyboard keyboard = HardwareKeyboard.instance;
 
     if (keyboard.isShiftPressed) {
-      controller.scroll.scrollBy(event.delta.reverse());
+      worksheet.scroll.scrollBy(event.delta.reverse());
     } else {
-      controller.scroll.scrollBy(event.delta);
+      worksheet.scroll.scrollBy(event.delta);
     }
   }
 }
@@ -58,7 +58,7 @@ class ScrollToElementEvent extends ScrollEvent {
   final SheetIndex index;
 
   @override
-  SheetAction<SheetEvent> createAction(Worksheet controller) => ScrollToElementAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) => ScrollToElementAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -74,16 +74,16 @@ class ScrollToElementEvent extends ScrollEvent {
 }
 
 class ScrollToElementAction extends ScrollAction<ScrollToElementEvent> {
-  ScrollToElementAction(super.event, super.controller);
+  ScrollToElementAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    Offset scrollOffset = controller.scroll.offset;
+    Offset scrollOffset = worksheet.scroll.offset;
 
-    Rect cellSheetCoords = event.index.getSheetCoordinates(controller.data);
+    Rect cellSheetCoords = event.index.getSheetCoordinates(worksheet.data);
 
-    double sheetWidth = controller.viewport.rect.innerLocal.width;
-    double sheetHeight = controller.viewport.rect.innerLocal.height;
+    double sheetWidth = worksheet.viewport.rect.innerLocal.width;
+    double sheetHeight = worksheet.viewport.rect.innerLocal.height;
 
     double topMargin = cellSheetCoords.top;
     double bottomMargin = cellSheetCoords.bottom;
@@ -92,16 +92,16 @@ class ScrollToElementAction extends ScrollAction<ScrollToElementEvent> {
 
     if (topMargin < scrollOffset.dy) {
       double shift = cellSheetCoords.top - 1;
-      controller.scroll.scrollToVertical(shift);
+      worksheet.scroll.scrollToVertical(shift);
     } else if (bottomMargin > scrollOffset.dy + sheetHeight) {
       double shift = cellSheetCoords.bottom - sheetHeight + 1;
-      controller.scroll.scrollToVertical(shift);
+      worksheet.scroll.scrollToVertical(shift);
     } else if (leftMargin < scrollOffset.dx) {
       double shift = cellSheetCoords.left - 1;
-      controller.scroll.scrollToHorizontal(shift);
+      worksheet.scroll.scrollToHorizontal(shift);
     } else if (rightMargin > scrollOffset.dx + sheetWidth) {
       double shift = cellSheetCoords.right - sheetWidth + 1;
-      controller.scroll.scrollToHorizontal(shift);
+      worksheet.scroll.scrollToHorizontal(shift);
     }
   }
 }

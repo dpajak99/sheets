@@ -4,9 +4,9 @@ import 'package:sheets/core/events/sheet_fill_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class SheetFillHandleLayer extends StatefulWidget {

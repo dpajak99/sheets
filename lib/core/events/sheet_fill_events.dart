@@ -9,16 +9,16 @@ import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart'
 import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/selection/types/sheet_fill_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/worksheet.dart';
 
 // Start Fill
 class StartFillSelectionEvent extends StartSelectionEvent {
   StartFillSelectionEvent(super.selectionStart);
 
   @override
-  StartFillSelectionAction createAction(Worksheet controller) => StartFillSelectionAction(this, controller);
+  StartFillSelectionAction createAction(Worksheet worksheet) => StartFillSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -30,7 +30,7 @@ class StartFillSelectionEvent extends StartSelectionEvent {
 }
 
 class StartFillSelectionAction extends StartSelectionAction {
-  StartFillSelectionAction(super.event, super.controller);
+  StartFillSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {}
@@ -41,7 +41,7 @@ class UpdateFillSelectionEvent extends UpdateSelectionEvent {
   UpdateFillSelectionEvent(super.selectionEnd);
 
   @override
-  UpdateFillSelectionAction createAction(Worksheet controller) => UpdateFillSelectionAction(this, controller);
+  UpdateFillSelectionAction createAction(Worksheet worksheet) => UpdateFillSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -53,24 +53,24 @@ class UpdateFillSelectionEvent extends UpdateSelectionEvent {
 }
 
 class UpdateFillSelectionAction extends UpdateSelectionAction {
-  UpdateFillSelectionAction(super.event, super.controller);
+  UpdateFillSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
     SheetIndex selectedIndex = SelectionOverflowIndexAdapter.adaptToCellIndex(
       event.selectionEnd.index,
-      controller.viewport.firstVisibleRow,
-      controller.viewport.firstVisibleColumn,
+      worksheet.viewport.firstVisibleRow,
+      worksheet.viewport.firstVisibleColumn,
     );
-    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = worksheet.data.fillCellIndex(selectedIndex);
 
-    SheetSelection previousSelection = controller.selection.value;
+    SheetSelection previousSelection = worksheet.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
-    selectionBuilder.setStrategy(GestureSelectionStrategyFill(controller.data));
+    selectionBuilder.setStrategy(GestureSelectionStrategyFill(worksheet.data));
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 
-    controller.selection.update(updatedSelection);
+    worksheet.selection.update(updatedSelection);
     ensureFullyVisible(selectedIndex);
   }
 }
@@ -78,7 +78,7 @@ class UpdateFillSelectionAction extends UpdateSelectionAction {
 // Complete fill
 class CompleteFillSelectionEvent extends CompleteSelectionEvent {
   @override
-  CompleteFillSelectionAction createAction(Worksheet controller) => CompleteFillSelectionAction(this, controller);
+  CompleteFillSelectionAction createAction(Worksheet worksheet) => CompleteFillSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -93,34 +93,34 @@ class CompleteFillSelectionEvent extends CompleteSelectionEvent {
 }
 
 class CompleteFillSelectionAction extends CompleteSelectionAction {
-  CompleteFillSelectionAction(super.event, super.controller);
+  CompleteFillSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    if (controller.selection.value is! SheetFillSelection) {
+    if (worksheet.selection.value is! SheetFillSelection) {
       return;
     }
-    SheetData data = controller.data;
-    SheetFillSelection fillSelection = controller.selection.value as SheetFillSelection;
+    WorksheetData data = worksheet.data;
+    SheetFillSelection fillSelection = worksheet.selection.value as SheetFillSelection;
 
     List<CellIndex> fillCells = fillSelection.getSelectedCells(data.columnCount, data.rowCount);
     List<CellIndex> templateCells = fillSelection.baseSelection.getSelectedCells(data.columnCount, data.rowCount);
 
     List<IndexedCellProperties> baseProperties = <IndexedCellProperties>[
-      for (CellIndex index in templateCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
+      for (CellIndex index in templateCells) IndexedCellProperties(index: index, properties: data.cells.get(index)),
     ];
     List<IndexedCellProperties> fillProperties = <IndexedCellProperties>[
-      for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: data.getCellProperties(index)),
+      for (CellIndex index in fillCells) IndexedCellProperties(index: index, properties: data.cells.get(index)),
     ];
 
     AutoFillEngine(data, fillSelection.fillDirection, baseProperties, fillProperties).resolve();
 
-    SheetSelection newSelection = controller.selection.value.complete();
-    SelectionCellCorners? corners = newSelection.cellCorners?.includeMergedCells(controller.data);
+    SheetSelection newSelection = worksheet.selection.value.complete();
+    SelectionCellCorners? corners = newSelection.cellCorners?.includeMergedCells(worksheet.data);
     if (corners != null) {
-      controller.selection.update(SheetRangeSelection<CellIndex>(corners.topLeft, corners.bottomRight));
+      worksheet.selection.update(SheetRangeSelection<CellIndex>(corners.topLeft, corners.bottomRight));
     } else {
-      controller.selection.update(newSelection);
+      worksheet.selection.update(newSelection);
     }
   }
 

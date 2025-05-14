@@ -106,7 +106,7 @@ class _GoogFormulaBarInput extends StatelessWidget {
               builder: (BuildContext context, _) {
                 return Text(
                   _worksheet.data
-                      .getCellProperties(_worksheet.selection.value.mainCell)
+                      .cells.get(_worksheet.selection.value.mainCell)
                       .editableRichText
                       .toPlainText(),
                   overflow: TextOverflow.clip,

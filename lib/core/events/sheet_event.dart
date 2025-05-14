@@ -8,36 +8,36 @@ import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/core/worksheet.dart';
 
 abstract class SheetEvent with EquatableMixin {
   Duration? get lockdownDuration => null;
 
-  SheetAction<SheetEvent>? createAction(Worksheet controller);
+  SheetAction<SheetEvent>? createAction(Worksheet worksheet);
 
   SheetRebuildConfig get rebuildConfig;
 }
 
 abstract class SheetAction<T extends SheetEvent> {
-  SheetAction(this.event, this.controller);
+  SheetAction(this.event, this.worksheet);
 
   final T event;
-  final Worksheet controller;
+  final Worksheet worksheet;
 
   FutureOr<void> execute();
 
   void ensureFullyVisible(SheetIndex index) {
-    if (!controller.isFullyVisible(index)) {
-      controller.resolve(ScrollToElementEvent(index));
+    if (!worksheet.isFullyVisible(index)) {
+      worksheet.resolve(ScrollToElementEvent(index));
     }
   }
 
   SheetRangeSelection<CellIndex> ensureMergedCellsVisible(SheetRangeSelection<CellIndex> selection) {
     SelectionCellCorners corners = selection.cellCorners;
-    SelectionCellCorners cornersWithMergedCells = selection.cellCorners.includeMergedCells(controller.data);
+    SelectionCellCorners cornersWithMergedCells = selection.cellCorners.includeMergedCells(worksheet.data);
     if (corners == cornersWithMergedCells) {
       return selection;
     }
@@ -59,7 +59,7 @@ class EnableEditingEvent extends SheetEvent {
   final String? initialValue;
 
   @override
-  SheetAction<SheetEvent> createAction(Worksheet controller) => EnableEditingAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) => EnableEditingAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -71,18 +71,18 @@ class EnableEditingEvent extends SheetEvent {
 }
 
 class EnableEditingAction extends SheetAction<EnableEditingEvent> {
-  EnableEditingAction(super.event, super.controller);
+  EnableEditingAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    controller.sheetFocusNode.unfocus();
+    worksheet.sheetFocusNode.unfocus();
 
-    CellIndex mainCell = event.cell ?? controller.selection.value.mainCell;
-    controller.selection.update(SheetSingleSelection(mainCell, fillHandleVisible: false));
+    CellIndex mainCell = event.cell ?? worksheet.selection.value.mainCell;
+    worksheet.selection.update(SheetSingleSelection(mainCell, fillHandleVisible: false));
 
     ensureFullyVisible(mainCell);
 
-    ViewportCell? cell = controller.viewport.visibleContent.findCell(mainCell.toCellIndex());
+    ViewportCell? cell = worksheet.viewport.visibleContent.findCell(mainCell.toCellIndex());
     if (cell == null) {
       return;
     }
@@ -90,10 +90,10 @@ class EnableEditingAction extends SheetAction<EnableEditingEvent> {
     FocusNode textFieldFocusNode = FocusNode();
     if (event.initialValue != null) {
       ViewportCell updatedCell = cell.withText(event.initialValue!);
-      controller.editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: updatedCell));
+      worksheet.editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: updatedCell));
     } else {
       ViewportCell updatedCell = cell;
-      controller.editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: updatedCell));
+      worksheet.editableCellNotifier.setValue(EditableViewportCell(focusNode: textFieldFocusNode, cell: updatedCell));
     }
   }
 }
@@ -106,7 +106,7 @@ class DisableEditingEvent extends SheetEvent {
   final bool move;
 
   @override
-  SheetAction<SheetEvent> createAction(Worksheet controller) => DisableEditingAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) => DisableEditingAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -118,23 +118,23 @@ class DisableEditingEvent extends SheetEvent {
 }
 
 class DisableEditingAction extends SheetAction<DisableEditingEvent> {
-  DisableEditingAction(super.event, super.controller);
+  DisableEditingAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    if (controller.editableCellNotifier.value != null && event.save) {
-      EditableViewportCell editedCell = controller.editableCellNotifier.value!;
+    if (worksheet.editableCellNotifier.value != null && event.save) {
+      EditableViewportCell editedCell = worksheet.editableCellNotifier.value!;
       CellIndex index = editedCell.cell.index;
 
       TextSpan textSpan = editedCell.controller.value.text.toTextSpan();
-      controller.data.setText(index, SheetRichText.fromTextSpan(textSpan));
-      controller.data.adjustCellHeight(index);
+      worksheet.data.cells.setText(index, SheetRichText.fromTextSpan(textSpan));
+      worksheet.data.adjustCellHeight(index);
     }
-    controller.sheetFocusNode.requestFocus();
-    controller.editableCellNotifier.setValue(null);
+    worksheet.sheetFocusNode.requestFocus();
+    worksheet.editableCellNotifier.setValue(null);
 
     if (event.move) {
-      controller.resolve(MoveSelectionEvent(0, 1));
+      worksheet.resolve(MoveSelectionEvent(0, 1));
     }
   }
 }
@@ -146,7 +146,7 @@ class SetViewportSizeEvent extends SheetEvent {
   final Rect rect;
 
   @override
-  SheetAction<SheetEvent> createAction(Worksheet controller) => SetViewportSizeAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) => SetViewportSizeAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -158,10 +158,10 @@ class SetViewportSizeEvent extends SheetEvent {
 }
 
 class SetViewportSizeAction extends SheetAction<SetViewportSizeEvent> {
-  SetViewportSizeAction(super.event, super.controller);
+  SetViewportSizeAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    controller.viewport.setViewportRect(event.rect);
+    worksheet.viewport.setViewportRect(event.rect);
   }
 }

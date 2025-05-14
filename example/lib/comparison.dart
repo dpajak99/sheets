@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_data.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/sheet.dart';
 import 'package:sheets/widgets/goog/bottom_bar/goog_bottom_bar.dart';
 import 'package:sheets/widgets/goog/toolbar/goog_formula_bar.dart';
@@ -107,7 +107,7 @@ class _SpreadsheetTable extends StatelessWidget {
 
 class _SheetPageState extends State<_SheetPage> {
   final Worksheet worksheet = Worksheet(
-    data: SheetData.dev(),
+    data: WorksheetData.dev(),
   );
 
   @override

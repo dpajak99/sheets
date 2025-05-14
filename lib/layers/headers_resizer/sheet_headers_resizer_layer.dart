@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 class HeadersResizerLayer extends StatefulWidget {

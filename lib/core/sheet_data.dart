@@ -13,24 +13,196 @@ import 'package:sheets/utils/formatters/style/style_format.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/utils/text_rotation.dart';
 
-class SheetData {
-  SheetData({
+class ColumnsProperties {
+  ColumnsProperties([Map<ColumnIndex, ColumnStyle>? styles]) {
+    this.styles = styles ?? <ColumnIndex, ColumnStyle>{};
+  }
+
+  late final Map<ColumnIndex, ColumnStyle> styles;
+
+  ColumnStyle get(ColumnIndex columnIndex) {
+    return styles[columnIndex] ?? ColumnStyle.defaults();
+  }
+
+  double getWidth(ColumnIndex columnIndex) {
+    return styles[columnIndex]?.width ?? defaultColumnWidth;
+  }
+
+  void set(ColumnIndex columnIndex, ColumnStyle columnStyle) {
+    styles[columnIndex] = columnStyle;
+  }
+
+  void setWidth(ColumnIndex columnIndex, double width) {
+    ColumnStyle previousColumnStyle = get(columnIndex);
+    ColumnStyle updatedColumnStyle = previousColumnStyle.copyWith(width: width);
+    set(columnIndex, updatedColumnStyle);
+  }
+}
+
+class RowsProperties {
+  RowsProperties([Map<RowIndex, RowStyle>? styles]) {
+    this.styles = styles ?? <RowIndex, RowStyle>{};
+  }
+
+  late final Map<RowIndex, RowStyle> styles;
+
+  RowStyle get(RowIndex rowIndex) {
+    return styles[rowIndex] ?? RowStyle.defaults();
+  }
+
+  double getHeight(RowIndex rowIndex) {
+    return styles[rowIndex]?.height ?? defaultRowHeight;
+  }
+
+  void set(RowIndex rowIndex, RowStyle rowStyle) {
+    styles[rowIndex] = rowStyle;
+  }
+
+  void setHeight(RowIndex rowIndex, double height, {bool keepValue = false}) {
+    RowStyle previousRowStyle = get(rowIndex);
+    RowStyle updatedRowStyle = previousRowStyle.copyWith(height: height, customHeight: keepValue ? height : null);
+    set(rowIndex, updatedRowStyle);
+  }
+}
+
+class CellsProperties {
+  CellsProperties([Map<CellIndex, CellProperties>? data]) {
+    this.data = data ?? <CellIndex, CellProperties>{};
+  }
+
+  late final Map<CellIndex, CellProperties> data;
+
+  CellProperties get(CellIndex cellIndex) {
+    CellIndex updatedIndex = cellIndex;
+    if (cellIndex is MergedCellIndex) {
+      updatedIndex = cellIndex.start;
+    }
+    return data[updatedIndex] ?? CellProperties();
+  }
+
+  Map<CellIndex, CellProperties> getAll(List<CellIndex> cellIndexes) {
+    return Map<CellIndex, CellProperties>.fromEntries(cellIndexes.map((CellIndex cellIndex) {
+      return MapEntry<CellIndex, CellProperties>(cellIndex, get(cellIndex));
+    }));
+  }
+
+  List<CellProperties> getByRowRange(ColumnIndex column, RowIndex start, RowIndex end) {
+    List<CellProperties> cellProperties = <CellProperties>[];
+    for (int i = start.value; i <= end.value; i++) {
+      cellProperties.add(get(CellIndex(row: RowIndex(i), column: column)));
+    }
+    return cellProperties;
+  }
+
+  List<CellProperties> getByColumnRange(RowIndex row, ColumnIndex start, ColumnIndex end) {
+    List<CellProperties> cellProperties = <CellProperties>[];
+    for (int i = start.value; i <= end.value; i++) {
+      cellProperties.add(get(CellIndex(row: row, column: ColumnIndex(i))));
+    }
+    return cellProperties;
+  }
+
+  void set(CellIndex index, CellProperties properties) {
+    data[index] = properties;
+  }
+
+  void setAll(List<IndexedCellProperties> properties) {
+    for (IndexedCellProperties entry in properties) {
+      set(entry.index, entry.properties);
+    }
+  }
+
+  void setStyle(CellIndex cellIndex, CellStyle newCellStyle) {
+    CellProperties previousCellProperties = get(cellIndex);
+    CellProperties updatedCellProperties = previousCellProperties.copyWith(style: newCellStyle);
+    set(cellIndex, updatedCellProperties);
+  }
+
+  void setText(CellIndex cellIndex, SheetRichText text) {
+    CellProperties previousCellProperties = get(cellIndex);
+    CellProperties updatedCellProperties = previousCellProperties.copyWith(value: text);
+    set(cellIndex, updatedCellProperties);
+  }
+
+  void clear(CellIndex cellIndex) {
+    CellProperties previousCellProperties = get(cellIndex);
+    CellProperties updatedCellProperties = previousCellProperties.copyWith(
+      value: previousCellProperties.value.clear(),
+    );
+    set(cellIndex, updatedCellProperties);
+  }
+
+  void clearAll(List<CellIndex> cells) {
+    cells.forEach(clear);
+  }
+
+  void setMergeStatus(CellMergeStatus mergeStatus) {
+    for (CellIndex cellIndex in mergeStatus.mergedCells) {
+      CellProperties previousCellProperties = get(cellIndex);
+      CellMergeStatus previousMergeStatus = previousCellProperties.mergeStatus;
+      if (previousMergeStatus is MergedCell) {
+        unmerge(cellIndex);
+      }
+      CellProperties updatedCellProperties = previousCellProperties.copyWith(mergeStatus: mergeStatus);
+      set(cellIndex, updatedCellProperties);
+    }
+  }
+
+  void merge(List<CellIndex> cells, {CellStyle? style}) {
+    if (cells.length < 2) {
+      return;
+    }
+
+    CellIndex start = cells.first;
+    CellIndex end = cells.last;
+
+    cells.forEach(unmerge);
+
+    CellProperties mainCellProperties = get(start);
+    for (CellIndex cellIndex in cells) {
+      data[cellIndex] = mainCellProperties.copyWith(
+        mergeStatus: MergedCell(start: start, end: end),
+        style: style ?? mainCellProperties.style,
+      );
+    }
+  }
+
+  void unmerge(CellIndex cellIndex) {
+    CellProperties cellProperties = get(cellIndex);
+    CellMergeStatus mergeStatus = cellProperties.mergeStatus;
+    if (mergeStatus is MergedCell) {
+      CellProperties mergeCellProperties = get(mergeStatus.start);
+      for (CellIndex index in mergeStatus.mergedCells) {
+        set(index, mergeCellProperties.copyWith(mergeStatus: NoCellMerge()));
+      }
+    }
+  }
+
+  void unmergeAll(List<CellIndex> cells) {
+    cells.forEach(unmerge);
+  }
+}
+
+class WorksheetData {
+  WorksheetData({
     required this.columnCount,
     required this.rowCount,
-    Map<ColumnIndex, ColumnStyle>? customColumnStyles,
-    Map<RowIndex, RowStyle>? customRowStyles,
-    Map<CellIndex, CellProperties>? data,
-  })  : _customRowStyles = customRowStyles ?? <RowIndex, RowStyle>{},
-        _customColumnStyles = customColumnStyles ?? <ColumnIndex, ColumnStyle>{},
-        _data = data ?? <CellIndex, CellProperties>{} {
+    RowsProperties? rows,
+    ColumnsProperties? columns,
+    CellsProperties? cells,
+  }) {
+    this.rows = rows ?? RowsProperties();
+    this.columns = columns ?? ColumnsProperties();
+    this.cells = cells ?? CellsProperties();
+
     _recalculateContentSize();
   }
 
-  SheetData.dev() : this(columnCount: 100, rowCount: 100);
+  WorksheetData.dev() : this(columnCount: 100, rowCount: 100);
 
-  final Map<ColumnIndex, ColumnStyle> _customColumnStyles;
-  final Map<RowIndex, RowStyle> _customRowStyles;
-  final Map<CellIndex, CellProperties> _data;
+  late final RowsProperties rows;
+  late final ColumnsProperties columns;
+  late final CellsProperties cells;
 
   int columnCount;
   int rowCount;
@@ -46,22 +218,11 @@ class SheetData {
     if (sheetIndex is! CellIndex) {
       return sheetIndex;
     }
-    CellMergeStatus mergeStatus = getCellProperties(sheetIndex).mergeStatus;
+    CellMergeStatus mergeStatus = cells.get(sheetIndex).mergeStatus;
     if (mergeStatus is MergedCell) {
       return MergedCellIndex(start: mergeStatus.start, end: mergeStatus.end) as T;
     } else {
       return sheetIndex;
-    }
-  }
-
-  void applyMergeStatus(CellMergeStatus mergeStatus) {
-    for (CellIndex cellIndex in mergeStatus.mergedCells) {
-      CellProperties cellProperties = getCellProperties(cellIndex);
-      CellMergeStatus currentMergeStatus = cellProperties.mergeStatus;
-      if (currentMergeStatus is MergedCell) {
-        unmergeCell(cellIndex);
-      }
-      _data[cellIndex] = cellProperties.copyWith(mergeStatus: mergeStatus);
     }
   }
 
@@ -73,7 +234,7 @@ class SheetData {
   void _recalculateContentWidth() {
     double contentWidth = 0;
     for (int i = 0; i < columnCount; i++) {
-      double columnWidth = getColumnWidth(ColumnIndex(i));
+      double columnWidth = columns.getWidth(ColumnIndex(i));
       contentWidth += columnWidth + borderWidth;
     }
     contentWidth -= borderWidth; // First column left border is not visible
@@ -83,84 +244,22 @@ class SheetData {
   void _recalculateContentHeight() {
     double contentHeight = 0;
     for (int i = 0; i < rowCount; i++) {
-      double rowHeight = getRowHeight(RowIndex(i));
+      double rowHeight = rows.getHeight(RowIndex(i));
       contentHeight += rowHeight + borderWidth;
     }
     contentHeight -= borderWidth; // First row top border is not visible
     _contentHeight = contentHeight;
   }
 
-  CellProperties getCellProperties(CellIndex cellIndex) {
-    CellIndex updatedIndex = cellIndex;
-    if (cellIndex is MergedCellIndex) {
-      updatedIndex = cellIndex.start;
-    }
-    return _data[updatedIndex] ?? CellProperties();
-  }
-
-  double getColumnWidth(ColumnIndex columnIndex) {
-    return getColumnStyle(columnIndex).width;
-  }
-
-  RowStyle getRowStyle(RowIndex rowIndex) {
-    return _customRowStyles[rowIndex] ?? RowStyle.defaults();
-  }
-
-  double getRowHeight(RowIndex rowIndex) {
-    return getRowStyle(rowIndex).height;
-  }
-
-  ColumnStyle getColumnStyle(ColumnIndex columnIndex) {
-    return _customColumnStyles[columnIndex] ?? ColumnStyle.defaults();
-  }
-
-  void unmergeCells(List<CellIndex> cells) {
-    cells.forEach(unmergeCell);
-  }
-
-  void unmergeCell(CellIndex cellIndex) {
-    CellProperties cellProperties = getCellProperties(cellIndex);
-    CellMergeStatus mergeStatus = cellProperties.mergeStatus;
-    if (mergeStatus is MergedCell) {
-      CellProperties mergeCellProperties = getCellProperties(mergeStatus.start);
-      for (CellIndex index in mergeStatus.mergedCells) {
-        _data[index] = mergeCellProperties.copyWith(
-          mergeStatus: NoCellMerge(),
-        );
-      }
-    }
-  }
-
-  void mergeCells(List<CellIndex> cells, {CellStyle? style}) {
-    if (cells.length < 2) {
-      return;
-    }
-
-    CellIndex start = cells.first;
-    CellIndex end = cells.last;
-
-    cells.forEach(unmergeCell);
-
-    CellProperties mainCellProperties = getCellProperties(start);
-    for (CellIndex cellIndex in cells) {
-      _data[cellIndex] = mainCellProperties.copyWith(
-        mergeStatus: MergedCell(start: start, end: end),
-        style: style ?? mainCellProperties.style,
-      );
-    }
-  }
-
-  void formatSelection(List<CellIndex> cells, StyleFormatAction<StyleFormatIntent> formatAction) {
-    for (CellIndex cellIndex in cells) {
-      _data[cellIndex] ??= CellProperties();
-
+  void formatSelection(List<CellIndex> cellIndexes, StyleFormatAction<StyleFormatIntent> formatAction) {
+    for (CellIndex cellIndex in cellIndexes) {
       switch (formatAction) {
         case TextStyleFormatAction<TextStyleFormatIntent> formatAction:
-          CellProperties cellProperties = _data[cellIndex]!;
-          _data[cellIndex] = cellProperties.copyWith(value: cellProperties.value.updateStyle(formatAction));
+          CellProperties cellProperties = cells.get(cellIndex);
+          cells.setText(cellIndex, cellProperties.value.updateStyle(formatAction));
         case CellStyleFormatAction<CellStyleFormatIntent> formatAction:
-          CellProperties cellProperties = _data[cellIndex]!;
-          _data[cellIndex] = cellProperties.copyWith(style: formatAction.format(_data[cellIndex]!.style));
+          CellProperties cellProperties = cells.get(cellIndex);
+          cells.setStyle(cellIndex, formatAction.format(cellProperties.style));
         case SheetStyleFormatAction<SheetStyleFormatIntent> formatAction:
           formatAction.format(this);
       }
@@ -168,78 +267,29 @@ class SheetData {
     }
   }
 
-  void setText(CellIndex cellIndex, SheetRichText text) {
-    CellProperties cellProperties = _data[cellIndex] ?? CellProperties();
-    _data[cellIndex] = cellProperties.copyWith(value: text);
-  }
-
-  void setCellsProperties(List<IndexedCellProperties> properties) {
-    for (IndexedCellProperties entry in properties) {
-      setCellProperties(entry.index, entry.properties);
-    }
-  }
-
-  void setCellProperties(CellIndex index, CellProperties properties) {
-    _data[index] = properties;
-  }
-
   Size getCellSize(CellIndex cellIndex) {
-    double height = getRowStyle(cellIndex.row).height;
-    double width = getColumnStyle(cellIndex.column).width;
+    double height = rows.getHeight(cellIndex.row);
+    double width = columns.getWidth(cellIndex.column);
     return Size(width, height);
   }
 
   void setCellSize(CellIndex cellIndex, double height, double width) {
-    setRowHeight(cellIndex.row, height);
-    setColumnWidth(cellIndex.column, width);
-  }
-
-  void setCellStyle(CellIndex cellIndex, CellStyle cellStyle) {
-    _data[cellIndex] ??= CellProperties();
-    _data[cellIndex] = _data[cellIndex]!.copyWith(style: cellStyle);
-  }
-
-  void setRowHeight(RowIndex rowIndex, double height, {bool keepValue = false}) {
-    RowStyle previousRowStyle = getRowStyle(rowIndex);
-    RowStyle updatedRowStyle = previousRowStyle.copyWith(height: height, customHeight: keepValue ? height : null);
-    _customRowStyles[rowIndex] = updatedRowStyle;
-
-    if (previousRowStyle.height != updatedRowStyle.height) {
-      _recalculateContentHeight();
-    }
-  }
-
-  void setColumnWidth(ColumnIndex columnIndex, double width) {
-    ColumnStyle previousColumnStyle = getColumnStyle(columnIndex);
-    ColumnStyle updatedColumnStyle = previousColumnStyle.copyWith(width: width);
-    _customColumnStyles[columnIndex] = updatedColumnStyle;
-
-    if (previousColumnStyle.width != updatedColumnStyle.width) {
-      _recalculateContentWidth();
-    }
-  }
-
-  void clearCells(List<CellIndex> cells) {
-    cells.forEach(clearCell);
-  }
-
-  void clearCell(CellIndex cellIndex) {
-    _data[cellIndex] ??= CellProperties();
-    _data[cellIndex] = _data[cellIndex]!.copyWith(value: _data[cellIndex]!.value.clear());
+    rows.setHeight(cellIndex.row, height);
+    columns.setWidth(cellIndex.column, width);
   }
 
   void adjustCellHeight(CellIndex cellIndex) {
     double minRowHeight = getMinRowHeight(cellIndex.row);
-    setRowHeight(cellIndex.row, minRowHeight);
+    rows.setHeight(cellIndex.row, minRowHeight);
   }
 
   double getMinRowHeight(RowIndex rowIndex) {
-    List<CellIndex> cellIndexes = _data.keys.where((CellIndex cellIndex) => cellIndex.row == rowIndex).toList();
+    List<CellIndex> cellIndexes = cells.data.keys.where((CellIndex cellIndex) => cellIndex.row == rowIndex).toList();
     if (cellIndexes.isEmpty) {
       cellIndexes.add(CellIndex(row: rowIndex, column: ColumnIndex(0)));
     }
 
-    double? staticHeight = getRowStyle(rowIndex).customHeight;
+    double? staticHeight = rows.get(rowIndex).customHeight;
     double minRowHeight = cellIndexes.map(getMinCellSize).map((Size size) => size.height).reduce(max);
 
     if (staticHeight != null) {
@@ -250,14 +300,14 @@ class SheetData {
   }
 
   Size getMinCellSize(CellIndex cellIndex) {
-    CellProperties cellProperties = getCellProperties(cellIndex);
+    CellProperties cellProperties = cells.get(cellIndex);
 
     // TODO(Dominik): Magic padding. No idea where it comes from. Should be analyzed and removed.
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 3, vertical: 2);
 
     if (cellProperties.value.isEmpty) {
-      double height = getRowStyle(cellIndex.row).height;
-      double width = getColumnStyle(cellIndex.column).width;
+      double height = rows.getHeight(cellIndex.row);
+      double width = columns.getWidth(cellIndex.column);
       return Size(width, height);
     }
 
@@ -314,26 +364,4 @@ class SheetData {
   double get contentHeight => _contentHeight;
 
   Size get contentSize => Size(contentWidth, contentHeight);
-
-  Map<CellIndex, CellProperties> getMultiCellProperties(List<CellIndex> cellIndexes) {
-    return Map<CellIndex, CellProperties>.fromEntries(cellIndexes.map((CellIndex cellIndex) {
-      return MapEntry<CellIndex, CellProperties>(cellIndex, getCellProperties(cellIndex));
-    }));
-  }
-
-  List<CellProperties> getCellPropertiesByRowRange(ColumnIndex column, RowIndex start, RowIndex end) {
-    List<CellProperties> cellProperties = <CellProperties>[];
-    for (int i = start.value; i <= end.value; i++) {
-      cellProperties.add(getCellProperties(CellIndex(row: RowIndex(i), column: column)));
-    }
-    return cellProperties;
-  }
-
-  List<CellProperties> getCellPropertiesByColumnRange(RowIndex row, ColumnIndex start, ColumnIndex end) {
-    List<CellProperties> cellProperties = <CellProperties>[];
-    for (int i = start.value; i <= end.value; i++) {
-      cellProperties.add(getCellProperties(CellIndex(row: row, column: ColumnIndex(i))));
-    }
-    return cellProperties;
-  }
 }

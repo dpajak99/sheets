@@ -9,8 +9,8 @@ import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/formatters/style/sheet_style_format.dart';
 import 'package:sheets/utils/formatters/style/style_format.dart';
@@ -20,11 +20,11 @@ import 'package:sheets/widgets/text/sheet_text_field_actions.dart';
 
 abstract class SheetFormattingEvent extends SheetEvent {
   @override
-  SheetFormattingAction<SheetFormattingEvent> createAction(Worksheet controller);
+  SheetFormattingAction<SheetFormattingEvent> createAction(Worksheet worksheet);
 }
 
 abstract class SheetFormattingAction<T extends SheetFormattingEvent> extends SheetAction<T> {
-  SheetFormattingAction(super.event, super.controller);
+  SheetFormattingAction(super.event, super.worksheet);
 }
 
 // Format Selection
@@ -34,7 +34,7 @@ class FormatSelectionEvent extends SheetFormattingEvent {
   final StyleFormatIntent intent;
 
   @override
-  FormatSelectionAction createAction(Worksheet controller) => FormatSelectionAction(this, controller);
+  FormatSelectionAction createAction(Worksheet worksheet) => FormatSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -49,16 +49,16 @@ class FormatSelectionEvent extends SheetFormattingEvent {
 }
 
 class FormatSelectionAction extends SheetFormattingAction<FormatSelectionEvent> {
-  FormatSelectionAction(super.event, super.controller);
+  FormatSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    List<CellIndex> selectedCells = controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
-    SelectionStyle selectionStyle = controller.getSelectionStyle();
+    List<CellIndex> selectedCells = worksheet.selection.value.getSelectedCells(worksheet.data.columnCount, worksheet.data.rowCount);
+    SelectionStyle selectionStyle = worksheet.getSelectionStyle();
 
     StyleFormatIntent intent = event.intent;
-    if (controller.isEditingMode && intent is TextStyleFormatIntent) {
-      SheetTextEditingController editedCellController = controller.editableCellNotifier.value!.controller;
+    if (worksheet.isEditingMode && intent is TextStyleFormatIntent) {
+      SheetTextEditingController editedCellController = worksheet.editableCellNotifier.value!.controller;
       unawaited(editedCellController.handleAction(SheetTextFieldActions.format(intent)));
       return;
     }
@@ -70,7 +70,7 @@ class FormatSelectionAction extends SheetFormattingAction<FormatSelectionEvent> 
       (_) => throw UnimplementedError(),
     };
 
-    controller.data.formatSelection(selectedCells, formatAction);
+    worksheet.data.formatSelection(selectedCells, formatAction);
   }
 }
 
@@ -82,7 +82,7 @@ class ResizeColumnEvent extends SheetFormattingEvent {
   final double width;
 
   @override
-  ResizeColumnAction createAction(Worksheet controller) => ResizeColumnAction(this, controller);
+  ResizeColumnAction createAction(Worksheet worksheet) => ResizeColumnAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -99,11 +99,11 @@ class ResizeColumnEvent extends SheetFormattingEvent {
 }
 
 class ResizeColumnAction extends SheetFormattingAction<ResizeColumnEvent> {
-  ResizeColumnAction(super.event, super.controller);
+  ResizeColumnAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    controller.data.setColumnWidth(event.column, event.width);
+    worksheet.data.columns.setWidth(event.column, event.width);
   }
 }
 
@@ -115,7 +115,7 @@ class ResizeRowEvent extends SheetFormattingEvent {
   final double height;
 
   @override
-  ResizeRowAction createAction(Worksheet controller) => ResizeRowAction(this, controller);
+  ResizeRowAction createAction(Worksheet worksheet) => ResizeRowAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -132,18 +132,18 @@ class ResizeRowEvent extends SheetFormattingEvent {
 }
 
 class ResizeRowAction extends SheetFormattingAction<ResizeRowEvent> {
-  ResizeRowAction(super.event, super.controller);
+  ResizeRowAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    controller.data.setRowHeight(event.row, event.height);
+    worksheet.data.rows.setHeight(event.row, event.height);
   }
 }
 
 // Merge Selection
 class MergeSelectionEvent extends SheetFormattingEvent {
   @override
-  MergeSelectionAction createAction(Worksheet controller) => MergeSelectionAction(this, controller);
+  MergeSelectionAction createAction(Worksheet worksheet) => MergeSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -158,22 +158,22 @@ class MergeSelectionEvent extends SheetFormattingEvent {
 }
 
 class MergeSelectionAction extends SheetFormattingAction<MergeSelectionEvent> {
-  MergeSelectionAction(super.event, super.controller);
+  MergeSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    SheetSelection selection = controller.selection.value;
+    SheetSelection selection = worksheet.selection.value;
     if (selection is SheetRangeSelection) {
-      List<CellIndex> selectedCells = selection.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
-      controller.selection.update(SheetSingleSelection(MergedCellIndex(start: selectedCells.first, end: selectedCells.last)));
-      controller.data.mergeCells(selectedCells);
+      List<CellIndex> selectedCells = selection.getSelectedCells(worksheet.data.columnCount, worksheet.data.rowCount);
+      worksheet.selection.update(SheetSingleSelection(MergedCellIndex(start: selectedCells.first, end: selectedCells.last)));
+      worksheet.data.cells.merge(selectedCells);
     } else if (selection is SheetSingleSelection) {
-      CellProperties cellProperties = controller.data.getCellProperties(selection.mainCell);
+      CellProperties cellProperties = worksheet.data.cells.get(selection.mainCell);
       CellMergeStatus mergeStatus = cellProperties.mergeStatus;
       if (mergeStatus is MergedCell) {
         List<CellIndex> mergedCells = mergeStatus.mergedCells;
-        controller.data.unmergeCells(mergedCells);
-        controller.selection.update(SheetSelectionFactory.range(start: mergeStatus.start, end: mergeStatus.end, completed: true));
+        worksheet.data.cells.unmergeAll(mergedCells);
+        worksheet.selection.update(SheetSelectionFactory.range(start: mergeStatus.start, end: mergeStatus.end, completed: true));
       }
     }
   }
@@ -182,7 +182,7 @@ class MergeSelectionAction extends SheetFormattingAction<MergeSelectionEvent> {
 // Unmerge Selection
 class UnmergeSelectionEvent extends SheetFormattingEvent {
   @override
-  UnmergeSelectionAction createAction(Worksheet controller) => UnmergeSelectionAction(this, controller);
+  UnmergeSelectionAction createAction(Worksheet worksheet) => UnmergeSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -197,18 +197,18 @@ class UnmergeSelectionEvent extends SheetFormattingEvent {
 }
 
 class UnmergeSelectionAction extends SheetFormattingAction<UnmergeSelectionEvent> {
-  UnmergeSelectionAction(super.event, super.controller);
+  UnmergeSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    SheetSelection selection = controller.selection.value;
-    SelectionCellCorners? corners = selection.cellCorners?.includeMergedCells(controller.data);
+    SheetSelection selection = worksheet.selection.value;
+    SelectionCellCorners? corners = selection.cellCorners?.includeMergedCells(worksheet.data);
 
-    List<CellIndex> selectedCells = selection.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
-    selectedCells.forEach(controller.data.unmergeCell);
+    List<CellIndex> selectedCells = selection.getSelectedCells(worksheet.data.columnCount, worksheet.data.rowCount);
+    selectedCells.forEach(worksheet.data.cells.unmerge);
 
-    if(corners != null) {
-      controller.selection.update(SheetSelectionFactory.range(start: corners.topLeft, end: corners.bottomRight, completed: true));
+    if (corners != null) {
+      worksheet.selection.update(SheetSelectionFactory.range(start: corners.topLeft, end: corners.bottomRight, completed: true));
     }
   }
 }
@@ -216,7 +216,7 @@ class UnmergeSelectionAction extends SheetFormattingAction<UnmergeSelectionEvent
 // Clear Selection
 class ClearSelectionEvent extends SheetFormattingEvent {
   @override
-  ClearSelectionAction createAction(Worksheet controller) => ClearSelectionAction(this, controller);
+  ClearSelectionAction createAction(Worksheet worksheet) => ClearSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -231,12 +231,11 @@ class ClearSelectionEvent extends SheetFormattingEvent {
 }
 
 class ClearSelectionAction extends SheetFormattingAction<ClearSelectionEvent> {
-  ClearSelectionAction(super.event, super.controller);
+  ClearSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    List<CellIndex> selectedCells =
-        controller.selection.value.getSelectedCells(controller.data.columnCount, controller.data.rowCount);
-    controller.data.clearCells(selectedCells);
+    List<CellIndex> selectedCells = worksheet.selection.value.getSelectedCells(worksheet.data.columnCount, worksheet.data.rowCount);
+    worksheet.data.cells.clearAll(selectedCells);
   }
 }

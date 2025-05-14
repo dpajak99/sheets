@@ -5,11 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/utils/extensions/offset_extensions.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
 import 'package:sheets/utils/text_rotation.dart';
@@ -84,8 +84,6 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     for (ViewportCell cell in visibleCells) {
       Rect cellRect = cell.rect;
-      Border? border = cell.properties.style.border;
-
       BorderSide defaultBorder = MaterialSheetTheme.defaultBorderSide;
 
       Line topBorderLine = Line(

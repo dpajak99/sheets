@@ -7,17 +7,17 @@ import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_builder.dart';
 import 'package:sheets/core/selection/strategies/gesture_selection_strategy.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/core/worksheet.dart';
 
 abstract class SelectionEvent extends SheetEvent {
   @override
-  SelectionAction<SelectionEvent> createAction(Worksheet controller);
+  SelectionAction<SelectionEvent> createAction(Worksheet worksheet);
 }
 
 abstract class SelectionAction<T extends SelectionEvent> extends SheetAction<T> {
-  SelectionAction(super.event, super.controller);
+  SelectionAction(super.event, super.worksheet);
 }
 
 // Start Selection
@@ -27,12 +27,12 @@ class StartSelectionEvent extends SheetEvent {
   final ViewportItem selectionStart;
 
   @override
-  SheetAction<SheetEvent>? createAction(Worksheet controller) {
-    SheetSelection previousSelection = controller.selection.value;
+  SheetAction<SheetEvent>? createAction(Worksheet worksheet) {
+    SheetSelection previousSelection = worksheet.selection.value;
     if (previousSelection == SheetSelectionFactory.single(selectionStart.index)) {
       return null;
     } else {
-      return StartSelectionAction(this, controller);
+      return StartSelectionAction(this, worksheet);
     }
   }
 
@@ -46,17 +46,17 @@ class StartSelectionEvent extends SheetEvent {
 }
 
 class StartSelectionAction extends SheetAction<StartSelectionEvent> {
-  StartSelectionAction(super.event, super.controller);
+  StartSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    if (controller.isEditingMode) {
-      controller.resolve(DisableEditingEvent(save: true));
+    if (worksheet.isEditingMode) {
+      worksheet.resolve(DisableEditingEvent(save: true));
     }
 
-    SheetIndex? selectedIndex = controller.data.fillCellIndex(event.selectionStart.index);
+    SheetIndex? selectedIndex = worksheet.data.fillCellIndex(event.selectionStart.index);
 
-    SheetSelection previousSelection = controller.selection.value;
+    SheetSelection previousSelection = worksheet.selection.value;
 
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
@@ -73,7 +73,7 @@ class StartSelectionAction extends SheetAction<StartSelectionEvent> {
     }
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
-    controller.selection.update(updatedSelection);
+    worksheet.selection.update(updatedSelection);
 
     ensureFullyVisible(selectedIndex);
   }
@@ -86,11 +86,11 @@ class UpdateSelectionEvent extends SheetEvent {
   final ViewportItem selectionEnd;
 
   @override
-  SheetAction<SheetEvent>? createAction(Worksheet controller) {
-    if (controller.isEditingMode) {
+  SheetAction<SheetEvent>? createAction(Worksheet worksheet) {
+    if (worksheet.isEditingMode) {
       return null;
     } else {
-      return UpdateSelectionAction(this, controller);
+      return UpdateSelectionAction(this, worksheet);
     }
   }
 
@@ -104,18 +104,18 @@ class UpdateSelectionEvent extends SheetEvent {
 }
 
 class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
-  UpdateSelectionAction(super.event, super.controller);
+  UpdateSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
     SheetIndex selectedIndex = SelectionOverflowIndexAdapter.adaptToCellIndex(
       event.selectionEnd.index,
-      controller.viewport.firstVisibleRow,
-      controller.viewport.firstVisibleColumn,
+      worksheet.viewport.firstVisibleRow,
+      worksheet.viewport.firstVisibleColumn,
     );
-    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = worksheet.data.fillCellIndex(selectedIndex);
 
-    SheetSelection previousSelection = controller.selection.value;
+    SheetSelection previousSelection = worksheet.selection.value;
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
     HardwareKeyboard keyboard = HardwareKeyboard.instance;
@@ -135,7 +135,7 @@ class UpdateSelectionAction extends SheetAction<UpdateSelectionEvent> {
       updatedSelection = ensureMergedCellsVisible(updatedSelection);
     }
 
-    controller.selection.update(updatedSelection);
+    worksheet.selection.update(updatedSelection);
 
     ensureFullyVisible(selectedIndex);
   }
@@ -146,11 +146,11 @@ class CompleteSelectionEvent extends SheetEvent {
   CompleteSelectionEvent();
 
   @override
-  SheetAction<SheetEvent>? createAction(Worksheet controller) {
-    if (controller.selection.value.isCompleted) {
+  SheetAction<SheetEvent>? createAction(Worksheet worksheet) {
+    if (worksheet.selection.value.isCompleted) {
       return null;
     } else {
-      return CompleteSelectionAction(this, controller);
+      return CompleteSelectionAction(this, worksheet);
     }
   }
 
@@ -164,11 +164,11 @@ class CompleteSelectionEvent extends SheetEvent {
 }
 
 class CompleteSelectionAction extends SheetAction<CompleteSelectionEvent> {
-  CompleteSelectionAction(super.event, super.controller);
+  CompleteSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
-    controller.selection.complete();
+    worksheet.selection.complete();
   }
 }
 
@@ -184,7 +184,7 @@ class MoveSelectionEvent extends SheetEvent {
   final int dy;
 
   @override
-  SheetAction<SheetEvent> createAction(Worksheet controller) => MoveSelectionAction(this, controller);
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) => MoveSelectionAction(this, worksheet);
 
   @override
   SheetRebuildConfig get rebuildConfig {
@@ -196,12 +196,12 @@ class MoveSelectionEvent extends SheetEvent {
 }
 
 class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
-  MoveSelectionAction(super.event, super.controller);
+  MoveSelectionAction(super.event, super.worksheet);
 
   @override
   void execute() {
     CellIndex selectedIndex;
-    SheetSelection previousSelection = controller.selection.value;
+    SheetSelection previousSelection = worksheet.selection.value;
 
     GestureSelectionBuilder selectionBuilder = GestureSelectionBuilder(previousSelection);
 
@@ -215,12 +215,12 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
     }
 
     CellIndex maxIndex = CellIndex.max.toRealIndex(
-      columnCount: controller.data.columnCount,
-      rowCount: controller.data.rowCount,
+      columnCount: worksheet.data.columnCount,
+      rowCount: worksheet.data.rowCount,
     );
-    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = worksheet.data.fillCellIndex(selectedIndex);
     selectedIndex = selectedIndex.move(dx: event.dx, dy: event.dy).clamp(maxIndex);
-    selectedIndex = controller.data.fillCellIndex(selectedIndex);
+    selectedIndex = worksheet.data.fillCellIndex(selectedIndex);
 
     SheetSelection updatedSelection = selectionBuilder.build(selectedIndex);
 
@@ -228,8 +228,8 @@ class MoveSelectionAction extends SheetAction<MoveSelectionEvent> {
       updatedSelection = ensureMergedCellsVisible(updatedSelection);
     }
 
-    controller.selection.update(updatedSelection);
-    controller.selection.complete();
+    worksheet.selection.update(updatedSelection);
+    worksheet.selection.complete();
 
     ensureFullyVisible(selectedIndex);
   }

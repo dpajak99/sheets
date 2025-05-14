@@ -27,8 +27,8 @@ class SheetViewportContentData {
     return cells.any((ViewportCell cell) => cell.index == cellIndex);
   }
 
-  ClosestVisible<ViewportCell> findCellOrClosest(SheetData data, CellIndex cellIndex) {
-    CellMergeStatus mergeStatus = data.getCellProperties(cellIndex).mergeStatus;
+  ClosestVisible<ViewportCell> findCellOrClosest(WorksheetData data, CellIndex cellIndex) {
+    CellMergeStatus mergeStatus = data.cells.get(cellIndex).mergeStatus;
     if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
       return findCellOrClosest(data, mergeStatus.start);
     }
@@ -39,8 +39,8 @@ class SheetViewportContentData {
     return findClosestCell(data, cellIndex);
   }
 
-  ViewportCell? findCell(SheetData data, CellIndex cellIndex) {
-    CellProperties properties = data.getCellProperties(cellIndex);
+  ViewportCell? findCell(WorksheetData data, CellIndex cellIndex) {
+    CellProperties properties = data.cells.get(cellIndex);
     CellMergeStatus mergeStatus = properties.mergeStatus;
     if(mergeStatus is MergedCell && mergeStatus.start != cellIndex) {
       return findCell(data, mergeStatus.start);
@@ -59,7 +59,7 @@ class SheetViewportContentData {
     }
   }
 
-  ClosestVisible<ViewportCell> findClosestCell(SheetData data, CellIndex cellIndex) {
+  ClosestVisible<ViewportCell> findClosestCell(WorksheetData data, CellIndex cellIndex) {
     ClosestVisibleCellIndexCalculator calculator = ClosestVisibleCellIndexCalculator(visibleRows: rows, visibleColumns: columns);
     ClosestVisible<CellIndex> closestVisibleCellIndex = calculator.findFor(cellIndex);
 

@@ -14,7 +14,7 @@ class VisibleColumnsRenderer {
   });
 
   final SheetViewportRect viewportRect;
-  final SheetData data;
+  final WorksheetData data;
   final double scrollOffset;
 
   List<ViewportColumn> build() {
@@ -29,7 +29,7 @@ class VisibleColumnsRenderer {
 
     while (currentContentWidth < maxContentWidth && index < data.columnCount) {
       ColumnIndex columnIndex = ColumnIndex(index);
-      ColumnStyle columnStyle = data.getColumnStyle(columnIndex);
+      ColumnStyle columnStyle = data.columns.get(columnIndex);
 
       ViewportColumn viewportColumn = ViewportColumn(
         index: columnIndex,
@@ -53,7 +53,7 @@ class VisibleColumnsRenderer {
 
     while (firstVisibleColumnInfo == null) {
       ColumnIndex columnIndex = ColumnIndex(actualColumnIndex);
-      ColumnStyle columnStyle = data.getColumnStyle(columnIndex);
+      ColumnStyle columnStyle = data.columns.get(columnIndex);
       double columnWidthEnd = currentWidthStart + columnStyle.width + borderWidth;
 
       if (x >= currentWidthStart && x < columnWidthEnd) {

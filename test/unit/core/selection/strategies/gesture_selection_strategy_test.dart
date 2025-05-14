@@ -389,7 +389,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.top', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(WorksheetData(columnCount: 1000, rowCount: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(1, 5));
@@ -408,7 +408,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.bottom', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(WorksheetData(columnCount: 1000, rowCount: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(9, 5));
@@ -427,7 +427,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.left', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(WorksheetData(columnCount: 1000, rowCount: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(5, 1));
@@ -446,7 +446,7 @@ void main() {
     test('Should [return SheetFillSelection] with Direction.right', () {
       // Arrange
       SheetSingleSelection previousSelection = SheetSingleSelection(CellIndex.raw(5, 5));
-      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(SheetData(columnCount: 1000, rowCount: 1000));
+      GestureSelectionStrategy strategy = GestureSelectionStrategyFill(WorksheetData(columnCount: 1000, rowCount: 1000));
 
       // Act
       SheetSelection actualSelection = strategy.execute(previousSelection, CellIndex.raw(5, 9));

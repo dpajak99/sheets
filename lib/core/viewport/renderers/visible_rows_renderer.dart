@@ -15,7 +15,7 @@ class VisibleRowsRenderer {
 
   final SheetViewportRect viewportRect;
 
-  final SheetData data;
+  final WorksheetData data;
 
   final double scrollOffset;
 
@@ -31,7 +31,7 @@ class VisibleRowsRenderer {
 
     while (currentContentHeight < maxContentHeight && index < data.rowCount) {
       RowIndex rowIndex = RowIndex(index);
-      RowStyle rowStyle = data.getRowStyle(rowIndex);
+      RowStyle rowStyle = data.rows.get(rowIndex);
 
       ViewportRow viewportRow = ViewportRow(
         index: rowIndex,
@@ -55,7 +55,7 @@ class VisibleRowsRenderer {
 
     while (firstVisibleRowInfo == null) {
       RowIndex rowIndex = RowIndex(actualRowIndex);
-      RowStyle rowStyle = data.getRowStyle(rowIndex);
+      RowStyle rowStyle = data.rows.get(rowIndex);
       double rowHeightEnd = currentHeightStart + rowStyle.height + borderWidth;
 
       if (y >= currentHeightStart && y < rowHeightEnd) {

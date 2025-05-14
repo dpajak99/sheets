@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_data.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/generated/strings.g.dart';
 import 'package:sheets/sheet.dart';
 import 'package:sheets/widgets/goog/bottom_bar/goog_bottom_bar.dart';
@@ -27,7 +27,7 @@ class MaterialSheetExample extends StatefulWidget {
 
 class _MaterialSheetExampleState extends State<MaterialSheetExample> {
   final Worksheet worksheet = Worksheet(
-    data: SheetData.dev(),
+    data: WorksheetData.dev(),
   );
 
   @override

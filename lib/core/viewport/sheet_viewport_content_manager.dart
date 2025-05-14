@@ -13,7 +13,7 @@ class SheetViewportContentManager {
   SheetViewportContentManager(this._data) : _contentData = SheetViewportContentData();
 
   final SheetViewportContentData _contentData;
-  final SheetData _data;
+  final WorksheetData _data;
 
   void rebuild(SheetViewportRect viewportRect, Offset scrollOffset) {
     List<ViewportRow> rows = _calculateRows(viewportRect, scrollOffset.dy);

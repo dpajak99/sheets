@@ -18,7 +18,7 @@ class AutoFillEngine {
     this._cellsToFill,
   );
 
-  final SheetData data;
+  final WorksheetData data;
   final Direction fillDirection;
   final List<IndexedCellProperties> _patternCells;
   final List<IndexedCellProperties> _cellsToFill;
@@ -70,7 +70,7 @@ class _PatternApplier {
   final CellIndex rangeStart;
   final CellIndex rangeEnd;
   final Direction fillDirection;
-  final SheetData data;
+  final WorksheetData data;
   final bool reversed;
 
   final Set<CellIndex> completedCells = <CellIndex>{};
@@ -148,14 +148,14 @@ class _PatternApplier {
       completedCells.add(index);
     }
 
-    data.mergeCells(movedMergeStatus.mergedCells);
+    data.cells.merge(movedMergeStatus.mergedCells);
 
     String key = movedMergeStatus.id;
     templateRanges.putIfAbsent(key, () => <IndexedCellProperties>{}).add(baseCell);
     fillRanges.putIfAbsent(key, () => <IndexedCellProperties>[]).add(
           IndexedCellProperties(
             index: movedMergeStatus.start,
-            properties: data.getCellProperties(movedMergeStatus.start),
+            properties: data.cells.get(movedMergeStatus.start),
           ),
         );
 
@@ -171,7 +171,7 @@ class _PatternApplier {
       List<IndexedCellProperties> patternCells = templateRanges[key]!.toList();
       ValuePattern<dynamic, dynamic> pattern = _detectPattern(patternCells);
       List<IndexedCellProperties> filledCells = pattern.apply( patternCells, fillRangeEntry.value);
-      data.setCellsProperties(filledCells);
+      data.cells.setAll(filledCells);
     }
   }
 
