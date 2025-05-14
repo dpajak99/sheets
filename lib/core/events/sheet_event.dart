@@ -8,7 +8,7 @@ import 'package:sheets/core/events/sheet_selection_events.dart';
 import 'package:sheets/core/selection/selection_corners.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';

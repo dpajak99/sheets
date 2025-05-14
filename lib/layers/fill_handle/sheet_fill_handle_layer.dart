@@ -4,7 +4,7 @@ import 'package:sheets/core/events/sheet_fill_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
@@ -41,12 +41,12 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
     _visible = selectionRenderer.fillHandleVisible;
     _offset = selectionRenderer.fillHandleOffset;
 
-    widget.worksheet.addListener(_handleSheetControllerChanged);
+    widget.worksheet.addListener(_handleWorksheetChanged);
   }
 
   @override
   void dispose() {
-    widget.worksheet.removeListener(_handleSheetControllerChanged);
+    widget.worksheet.removeListener(_handleWorksheetChanged);
     super.dispose();
   }
 
@@ -98,7 +98,7 @@ class SheetFillHandleLayerState extends State<SheetFillHandleLayer> {
 
   SheetViewportContentManager get _visibleContent => widget.worksheet.viewport.visibleContent;
 
-  void _handleSheetControllerChanged() {
+  void _handleWorksheetChanged() {
     SheetRebuildConfig rebuildConfig = widget.worksheet.value;
     if (rebuildConfig.rebuildFillHandle) {
       _updateFillHandle();

@@ -9,7 +9,7 @@ import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/formatters/style/cell_style_format.dart';
 import 'package:sheets/utils/formatters/style/sheet_style_format.dart';

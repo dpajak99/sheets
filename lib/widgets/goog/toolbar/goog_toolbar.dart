@@ -7,7 +7,7 @@ import 'package:sheets/core/selection/selection_style.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/selection/types/sheet_single_selection.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/values/formats/sheet_value_format.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';

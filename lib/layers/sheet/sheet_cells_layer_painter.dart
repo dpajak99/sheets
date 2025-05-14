@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_style.dart';
 import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
@@ -38,52 +38,18 @@ class SheetCellsLayerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     _clipCellsLayerBox(canvas, size);
 
+    _StyleBasedPainterBuilder(
+      cells: _visibleContent.cells,
+      builder: (CellStyle style, List<ViewportCell> cells) {
+        _BackgroundColorPainter(
+          color: style.backgroundColor,
+          shapes: cells.map((ViewportCell cell) => cell.rect),
+        ).layout(canvas);
+      },
+    ).build();
 
-    List<ViewportCell> visibleCells = _visibleContent.cells;
-    visibleCells.sort((ViewportCell a, ViewportCell b) {
-      int aZIndex = a.properties.style.borderZIndex ?? 0;
-      int bZIndex = b.properties.style.borderZIndex ?? 0;
 
-      return aZIndex.compareTo(bZIndex);
-    });
-
-    Map<CellStyle, List<ViewportCell>> cellsByStyle =
-        visibleCells.fold(<CellStyle, List<ViewportCell>>{}, (Map<CellStyle, List<ViewportCell>> map, ViewportCell cell) {
-      map.putIfAbsent(cell.properties.style, () => <ViewportCell>[]).add(cell);
-      return map;
-    });
-
-    for (MapEntry<CellStyle, List<ViewportCell>> entry in cellsByStyle.entries) {
-      CellStyle cellStyle = entry.key;
-      List<ViewportCell> cells = entry.value;
-
-      List<Offset> positions = <Offset>[];
-      List<Color> colors = <Color>[];
-      List<int> indices = <int>[];
-      for (int i = 0; i < cells.length; i++) {
-        positions.addAll(<Offset>[
-          cells[i].rect.topLeft,
-          cells[i].rect.topRight,
-          cells[i].rect.bottomLeft,
-          cells[i].rect.bottomRight,
-        ]);
-        colors.addAll(List<Color>.filled(4, cellStyle.backgroundColor));
-        indices.addAll(<int>[0, 1, 2, 1, 2, 3].map((int index) => index + i * 4));
-      }
-
-      canvas.drawVertices(
-        Vertices(
-          VertexMode.triangles,
-          positions,
-          colors: colors,
-          indices: indices,
-        ),
-        BlendMode.srcOver,
-        Paint(),
-      );
-    }
-
-    for (ViewportCell cell in visibleCells) {
+    for (ViewportCell cell in _visibleContent.cells) {
       _paintCellText(canvas, cell);
     }
 
@@ -178,20 +144,19 @@ class SheetCellsLayerPainter extends CustomPainter {
         cellRect.bottomLeft,
       );
 
-      if(topBorderSide != defaultBorder) {
+      if (topBorderSide != defaultBorder) {
         mesh.addHorizontal(cellRect.top, topBorderLine, topBorderSide);
       }
-      if(rightBorderSide != defaultBorder) {
+      if (rightBorderSide != defaultBorder) {
         mesh.addVertical(cellRect.right, rightBorderLine, rightBorderSide);
       }
-      if(bottomBorderSide != defaultBorder) {
+      if (bottomBorderSide != defaultBorder) {
         mesh.addHorizontal(cellRect.bottom, bottomBorderLine, bottomBorderSide);
       }
-      if(leftBorderSide != defaultBorder) {
+      if (leftBorderSide != defaultBorder) {
         mesh.addVertical(cellRect.left, leftBorderLine, leftBorderSide);
       }
     }
-
 
     Map<BorderSide, List<Line>> linesByStyle = mesh.lines;
 
@@ -313,6 +278,62 @@ class SheetCellsLayerPainter extends CustomPainter {
     //
     // // Restore the canvas state
     // canvas.restore();
+  }
+}
+
+class _StyleBasedPainterBuilder {
+  _StyleBasedPainterBuilder({required this.cells, required this.builder});
+
+  final List<ViewportCell> cells;
+  final void Function(CellStyle style, List<ViewportCell> cells) builder;
+
+
+  void build() {
+    Map<CellStyle, List<ViewportCell>> cellsByStyle = <CellStyle, List<ViewportCell>>{};
+
+    for (ViewportCell cell in cells) {
+      CellStyle style = cell.properties.style;
+      cellsByStyle.putIfAbsent(style, () => <ViewportCell>[]).add(cell);
+    }
+
+    for (MapEntry<CellStyle, List<ViewportCell>> entry in cellsByStyle.entries) {
+      builder(entry.key, entry.value);
+    }
+  }
+}
+
+class _BackgroundColorPainter {
+  _BackgroundColorPainter({
+    required this.color,
+    required Iterable<BorderRect> shapes,
+  })  : _corners = <Offset>[],
+        _colors = <Color>[],
+        _indices = <int>[] {
+    shapes.forEach(_fillRect);
+  }
+
+  static const int _cornersCount = 4;
+
+  final Color color;
+  final List<Offset> _corners;
+  final List<Color> _colors;
+  final List<int> _indices;
+
+  void layout(Canvas canvas) {
+    canvas.drawVertices(
+      Vertices(VertexMode.triangles, _corners, colors: _colors, indices: _indices),
+      BlendMode.srcOver,
+      Paint(),
+    );
+  }
+
+  void _fillRect(BorderRect rect) {
+    int offset = _corners.length ~/ _cornersCount;
+    List<Offset> cornerPoints = rect.asOffsets;
+
+    _corners.addAll(cornerPoints);
+    _colors.addAll(List<Color>.filled(cornerPoints.length, color));
+    _indices.addAll(<int>[0, 1, 2, 1, 2, 3].map((int index) => index + offset * _cornersCount));
   }
 }
 

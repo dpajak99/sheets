@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
@@ -40,7 +40,7 @@ class _HeadersResizerLayerState extends State<HeadersResizerLayer> {
     _visibleRowsNotifier = ValueNotifier<List<ViewportRow>>(visibleRows);
     _visibleColumnsNotifier = ValueNotifier<List<ViewportColumn>>(visibleColumns);
 
-    widget.worksheet.addListener(_handleSheetControllerChanged);
+    widget.worksheet.addListener(_handleWorksheetChanged);
   }
 
   @override
@@ -86,7 +86,7 @@ class _HeadersResizerLayerState extends State<HeadersResizerLayer> {
     );
   }
 
-  void _handleSheetControllerChanged() {
+  void _handleWorksheetChanged() {
     SheetRebuildConfig rebuildConfig = widget.worksheet.value;
     if (rebuildConfig.rebuildHorizontalHeaders || rebuildConfig.rebuildVerticalHeaders) {
       _visibleRowsNotifier.value = _visibleContent.rows;

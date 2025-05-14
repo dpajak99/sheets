@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/utils/extensions/offset_extensions.dart';
 

@@ -8,7 +8,7 @@ import 'package:sheets/core/events/sheet_scroll_events.dart';
 import 'package:sheets/core/scroll/sheet_axis_direction.dart';
 import 'package:sheets/core/scroll/sheet_scroll_metrics.dart';
 import 'package:sheets/core/scroll/sheet_scroll_position.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
 import 'package:sheets/widgets/widget_state_builder.dart';
 

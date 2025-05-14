@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
@@ -69,7 +69,7 @@ class _SheetLayerState extends State<SheetLayer> {
       nextHoldDuration: const Duration(milliseconds: 50),
     );
 
-    widget.worksheet.addListener(_handleSheetControllerChanged);
+    widget.worksheet.addListener(_handleWorksheetChanged);
 
     _rebuildCells();
     _rebuildHorizontalHeaders();
@@ -80,7 +80,7 @@ class _SheetLayerState extends State<SheetLayer> {
   @override
   void dispose() {
     super.dispose();
-    widget.worksheet.removeListener(_handleSheetControllerChanged);
+    widget.worksheet.removeListener(_handleWorksheetChanged);
   }
 
   @override
@@ -172,7 +172,7 @@ class _SheetLayerState extends State<SheetLayer> {
     widget.onDragEnd();
   }
 
-  void _handleSheetControllerChanged() {
+  void _handleWorksheetChanged() {
     SheetRebuildConfig rebuildConfig = widget.worksheet.value;
     if (rebuildConfig.rebuildCellsLayer) {
       _rebuildCells();

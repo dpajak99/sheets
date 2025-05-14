@@ -31,6 +31,10 @@ class BorderRect extends Rect {
 
   static BorderRect zero = const BorderRect.fromLTWH(0, 0, 0, 0);
 
+  List<Offset> get asOffsets {
+    return <Offset>[topLeft, topRight, bottomLeft, bottomRight];
+  }
+
   Line getTopBorder(Border border) {
     double topWidth = border.top.width;
     double topCenter = topWidth <= 2 ? top - borderWidth : top - borderWidth * 2;

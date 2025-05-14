@@ -4,7 +4,7 @@ import 'package:sheets/core/events/sheet_event.dart';
 import 'package:sheets/core/events/sheet_formatting_events.dart';
 import 'package:sheets/core/events/sheet_rebuild_config.dart';
 import 'package:sheets/core/selection/sheet_selection_factory.dart';
-import 'package:sheets/core/sheet_controller.dart';
+import 'package:sheets/core/worksheet.dart';
 import 'package:sheets/core/sheet_index.dart';
 
 abstract class SheetClipboardEvent extends SheetEvent {
