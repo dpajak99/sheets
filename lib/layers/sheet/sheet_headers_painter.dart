@@ -69,13 +69,19 @@ abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPaint
 class SheetColumnHeadersPainter extends SheetHeadersPainter {
   late List<ViewportColumn> _visibleColumns;
   late SheetSelection _selection;
+  late double _pinnedWidth;
+  late int _pinnedCount;
 
   void rebuild({
     required List<ViewportColumn> visibleColumns,
     required SheetSelection selection,
+    required int pinnedCount,
+    required double pinnedWidth,
   }) {
     _visibleColumns = visibleColumns;
     _selection = selection;
+    _pinnedCount = pinnedCount;
+    _pinnedWidth = pinnedWidth;
     notifyListeners();
   }
 
@@ -94,30 +100,66 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
     canvas.clipRect(visibleRect);
     canvas.drawRect(visibleRect, backgroundPaint);
 
-    for (ViewportColumn column in _visibleColumns) {
-      SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
+    List<ViewportColumn> pinned = <ViewportColumn>[];
+    List<ViewportColumn> normal = <ViewportColumn>[];
 
+    for (ViewportColumn column in _visibleColumns) {
+      if (column.index.value < _pinnedCount) {
+        pinned.add(column);
+      } else {
+        normal.add(column);
+      }
+    }
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth + _pinnedWidth,
+      0,
+      size.width - _pinnedWidth,
+      size.height,
+    ));
+    for (ViewportColumn column in normal) {
+      SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
       paintHeadersBackground(canvas, column.rect, selectionStatus);
       paintColumnLabel(canvas, column.rect, column.value, selectionStatus);
     }
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth, 0, _pinnedWidth, size.height));
+    for (ViewportColumn column in pinned) {
+      SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
+      paintHeadersBackground(canvas, column.rect, selectionStatus);
+      paintColumnLabel(canvas, column.rect, column.value, selectionStatus);
+    }
+    canvas.restore();
   }
 
   @override
   bool shouldRepaint(covariant SheetColumnHeadersPainter oldDelegate) {
-    return oldDelegate._visibleColumns != _visibleColumns || oldDelegate._selection != _selection;
+    return oldDelegate._visibleColumns != _visibleColumns ||
+        oldDelegate._selection != _selection ||
+        oldDelegate._pinnedWidth != _pinnedWidth ||
+        oldDelegate._pinnedCount != _pinnedCount;
   }
 }
 
 class SheetRowHeadersPainter extends SheetHeadersPainter {
   late List<ViewportRow> _visibleRows;
   late SheetSelection _selection;
+  late double _pinnedHeight;
+  late int _pinnedCount;
 
   void rebuild({
     required List<ViewportRow> visibleRows,
     required SheetSelection selection,
+    required int pinnedCount,
+    required double pinnedHeight,
   }) {
     _visibleRows = visibleRows;
     _selection = selection;
+    _pinnedCount = pinnedCount;
+    _pinnedHeight = pinnedHeight;
     notifyListeners();
   }
 
@@ -137,16 +179,46 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
     canvas.clipRect(visibleRect);
     canvas.drawRect(visibleRect, backgroundPaint);
 
-    for (ViewportRow row in _visibleRows) {
-      SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
+    List<ViewportRow> pinned = <ViewportRow>[];
+    List<ViewportRow> normal = <ViewportRow>[];
 
+    for (ViewportRow row in _visibleRows) {
+      if (row.index.value < _pinnedCount) {
+        pinned.add(row);
+      } else {
+        normal.add(row);
+      }
+    }
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      0,
+      columnHeadersHeight + _pinnedHeight,
+      size.width,
+      size.height - _pinnedHeight,
+    ));
+    for (ViewportRow row in normal) {
+      SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
       paintHeadersBackground(canvas, row.rect, selectionStatus);
       paintRowLabel(canvas, row.rect, row.value, selectionStatus);
     }
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, columnHeadersHeight, size.width, _pinnedHeight));
+    for (ViewportRow row in pinned) {
+      SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
+      paintHeadersBackground(canvas, row.rect, selectionStatus);
+      paintRowLabel(canvas, row.rect, row.value, selectionStatus);
+    }
+    canvas.restore();
   }
 
   @override
   bool shouldRepaint(covariant SheetRowHeadersPainter oldDelegate) {
-    return oldDelegate._visibleRows != _visibleRows || oldDelegate._selection != _selection;
+    return oldDelegate._visibleRows != _visibleRows ||
+        oldDelegate._selection != _selection ||
+        oldDelegate._pinnedHeight != _pinnedHeight ||
+        oldDelegate._pinnedCount != _pinnedCount;
   }
 }

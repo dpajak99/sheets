@@ -134,23 +134,104 @@ class SheetCellsLayerPainter extends CustomPainter {
   }
 
   void _paintMesh(Canvas canvas, Size size) {
-    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    List<ViewportColumn> visibleColumns = _visibleContent.columns;
-    List<ViewportRow> visibleRows = _visibleContent.rows;
-    List<ViewportCell> visibleCells = _visibleContent.cells;
+    List<ViewportCell> pinnedBoth = <ViewportCell>[];
+    List<ViewportCell> pinnedRows = <ViewportCell>[];
+    List<ViewportCell> pinnedColumns = <ViewportCell>[];
+    List<ViewportCell> normal = <ViewportCell>[];
 
-    if (visibleColumns.isEmpty || visibleRows.isEmpty) {
+    for (ViewportCell cell in _visibleContent.cells) {
+      bool rowPinned = cell.index.row.value < worksheet.data.pinnedRowCount;
+      bool columnPinned = cell.index.column.value < worksheet.data.pinnedColumnCount;
+
+      if (rowPinned && columnPinned) {
+        pinnedBoth.add(cell);
+      } else if (rowPinned) {
+        pinnedRows.add(cell);
+      } else if (columnPinned) {
+        pinnedColumns.add(cell);
+      } else {
+        normal.add(cell);
+      }
+    }
+
+    _paintMeshForCells(
+      canvas,
+      normal,
+      Rect.fromLTWH(
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth,
+        columnHeadersHeight + worksheet.data.pinnedRowsHeight,
+        size.width - worksheet.data.pinnedColumnsWidth,
+        size.height - worksheet.data.pinnedRowsHeight,
+      ),
+    );
+
+    _paintMeshForCells(
+      canvas,
+      pinnedRows,
+      Rect.fromLTWH(
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth,
+        columnHeadersHeight,
+        size.width - worksheet.data.pinnedColumnsWidth,
+        worksheet.data.pinnedRowsHeight,
+      ),
+    );
+
+    _paintMeshForCells(
+      canvas,
+      pinnedColumns,
+      Rect.fromLTWH(
+        rowHeadersWidth,
+        columnHeadersHeight + worksheet.data.pinnedRowsHeight,
+        worksheet.data.pinnedColumnsWidth,
+        size.height - worksheet.data.pinnedRowsHeight,
+      ),
+    );
+
+    _paintMeshForCells(
+      canvas,
+      pinnedBoth,
+      Rect.fromLTWH(
+        rowHeadersWidth,
+        columnHeadersHeight,
+        worksheet.data.pinnedColumnsWidth,
+        worksheet.data.pinnedRowsHeight,
+      ),
+    );
+  }
+
+  void _paintMeshForCells(Canvas canvas, List<ViewportCell> cells, Rect clipRect) {
+    if (cells.isEmpty) {
       return;
     }
 
+    Mesh mesh = _buildMesh(cells);
+
+    canvas.save();
+    canvas.clipRect(clipRect);
+    _drawMesh(canvas, mesh);
+    canvas.restore();
+  }
+
+  Mesh _buildMesh(List<ViewportCell> cells) {
+    Set<double> vertical = <double>{};
+    Set<double> horizontal = <double>{};
+
+    for (ViewportCell cell in cells) {
+      vertical..add(cell.rect.left)..add(cell.rect.right);
+      horizontal..add(cell.rect.top)..add(cell.rect.bottom);
+    }
+
+    List<double> vPoints = vertical.toList()..sort();
+    List<double> hPoints = horizontal.toList()..sort();
+
     Mesh mesh = Mesh(
-      verticalPoints: visibleColumns.map((ViewportColumn column) => column.rect.left).toList(),
-      horizontalPoints: visibleRows.map((ViewportRow row) => row.rect.top).toList(),
-      maxHorizontal: visibleColumns.last.rect.right,
-      maxVertical: visibleRows.last.rect.bottom,
+      verticalPoints: vPoints,
+      horizontalPoints: hPoints,
+      maxHorizontal: vPoints.isNotEmpty ? vPoints.last : 0,
+      maxVertical: hPoints.isNotEmpty ? hPoints.last : 0,
     );
 
-    for (ViewportCell cell in visibleCells) {
+    for (ViewportCell cell in cells) {
       Rect cellRect = cell.rect;
       BorderSide defaultBorder = MaterialSheetTheme.defaultBorderSide;
 
@@ -180,7 +261,7 @@ class SheetCellsLayerPainter extends CustomPainter {
       mesh.addVertical(cellRect.left, leftBorderLine, defaultBorder);
     }
 
-    for (ViewportCell cell in visibleCells) {
+    for (ViewportCell cell in cells) {
       Rect cellRect = cell.rect;
       Border? border = cell.properties.style.border;
 
@@ -224,6 +305,10 @@ class SheetCellsLayerPainter extends CustomPainter {
       }
     }
 
+    return mesh;
+  }
+
+  void _drawMesh(Canvas canvas, Mesh mesh) {
     Map<BorderSide, List<Line>> linesByStyle = mesh.lines;
 
     for (MapEntry<BorderSide, List<Line>> entry in linesByStyle.entries) {

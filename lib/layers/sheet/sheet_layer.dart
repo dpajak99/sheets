@@ -196,6 +196,8 @@ class _SheetLayerState extends State<SheetLayer> {
     _columnHeadersPainter.rebuild(
       visibleColumns: _visibleContent.columns,
       selection: _selection,
+      pinnedCount: widget.worksheet.data.pinnedColumnCount,
+      pinnedWidth: widget.worksheet.data.pinnedColumnsWidth,
     );
   }
 
@@ -203,6 +205,8 @@ class _SheetLayerState extends State<SheetLayer> {
     _rowHeadersPainter.rebuild(
       visibleRows: _visibleContent.rows,
       selection: _selection,
+      pinnedCount: widget.worksheet.data.pinnedRowCount,
+      pinnedHeight: widget.worksheet.data.pinnedRowsHeight,
     );
   }
 
@@ -210,6 +214,8 @@ class _SheetLayerState extends State<SheetLayer> {
     _selectionPainter.rebuild(
       selection: _selection,
       viewport: _viewport,
+      pinnedColumnsWidth: widget.worksheet.data.pinnedColumnsWidth,
+      pinnedRowsHeight: widget.worksheet.data.pinnedRowsHeight,
     );
   }
 
