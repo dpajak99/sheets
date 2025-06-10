@@ -41,7 +41,7 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
     bool columnVisible = viewport.visibleContent.columns
         .any((ViewportColumn column) => selection.containsColumn(column.index));
 
-    if (!rowVisible && !columnVisible) {
+    if (!rowVisible || !columnVisible) {
       return null;
     }
 

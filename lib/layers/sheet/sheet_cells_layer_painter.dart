@@ -343,7 +343,7 @@ class SheetCellsLayerPainter extends CustomPainter {
       canvas.drawRect(
         Rect.fromLTWH(
           rowHeadersWidth + pinnedColumnsWidth,
-          columnHeadersHeight,
+          0,
           borderWidth,
           size.height,
         ),
@@ -354,7 +354,7 @@ class SheetCellsLayerPainter extends CustomPainter {
     if (pinnedRowsHeight > 0) {
       canvas.drawRect(
         Rect.fromLTWH(
-          rowHeadersWidth,
+          0,
           columnHeadersHeight + pinnedRowsHeight,
           size.width,
           borderWidth,

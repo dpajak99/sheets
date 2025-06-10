@@ -133,6 +133,22 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
       paintColumnLabel(canvas, column.rect, column.value, selectionStatus);
     }
     canvas.restore();
+
+    Paint borderPaint = Paint()
+      ..color = const Color(0xffb7b7b7)
+      ..style = PaintingStyle.fill;
+
+    if (_pinnedWidth > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          rowHeadersWidth + _pinnedWidth,
+          0,
+          borderWidth,
+          size.height,
+        ),
+        borderPaint,
+      );
+    }
   }
 
   @override
@@ -212,6 +228,22 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
       paintRowLabel(canvas, row.rect, row.value, selectionStatus);
     }
     canvas.restore();
+
+    Paint borderPaint = Paint()
+      ..color = const Color(0xffb7b7b7)
+      ..style = PaintingStyle.fill;
+
+    if (_pinnedHeight > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          0,
+          columnHeadersHeight + _pinnedHeight,
+          size.width,
+          borderWidth,
+        ),
+        borderPaint,
+      );
+    }
   }
 
   @override
