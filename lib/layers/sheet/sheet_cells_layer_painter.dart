@@ -38,20 +38,68 @@ class SheetCellsLayerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     _clipCellsLayerBox(canvas, size);
 
-    _StyleBasedPainterBuilder(
-      cells: _visibleContent.cells,
-      builder: (CellStyle style, List<ViewportCell> cells) {
-        _BackgroundColorPainter(
-          color: style.backgroundColor,
-          shapes: cells.map((ViewportCell cell) => cell.rect),
-        ).layout(canvas);
-      },
-    ).build();
+    double pinnedColumnsWidth = worksheet.data.pinnedColumnsWidth;
+    double pinnedRowsHeight = worksheet.data.pinnedRowsHeight;
 
+    List<ViewportCell> pinnedBoth = <ViewportCell>[];
+    List<ViewportCell> pinnedRows = <ViewportCell>[];
+    List<ViewportCell> pinnedColumns = <ViewportCell>[];
+    List<ViewportCell> normal = <ViewportCell>[];
 
     for (ViewportCell cell in _visibleContent.cells) {
-      _paintCellText(canvas, cell);
+      bool rowPinned = cell.index.row.value < worksheet.data.pinnedRowCount;
+      bool columnPinned = cell.index.column.value < worksheet.data.pinnedColumnCount;
+
+      if (rowPinned && columnPinned) {
+        pinnedBoth.add(cell);
+      } else if (rowPinned) {
+        pinnedRows.add(cell);
+      } else if (columnPinned) {
+        pinnedColumns.add(cell);
+      } else {
+        normal.add(cell);
+      }
     }
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth + pinnedColumnsWidth + borderWidth,
+      columnHeadersHeight + pinnedRowsHeight + borderWidth,
+      size.width - pinnedColumnsWidth,
+      size.height - pinnedRowsHeight,
+    ));
+    _paintCells(canvas, normal);
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth + pinnedColumnsWidth + borderWidth,
+      columnHeadersHeight + borderWidth,
+      size.width - pinnedColumnsWidth,
+      pinnedRowsHeight,
+    ));
+    _paintCells(canvas, pinnedRows);
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth + borderWidth,
+      columnHeadersHeight + pinnedRowsHeight + borderWidth,
+      pinnedColumnsWidth,
+      size.height - pinnedRowsHeight,
+    ));
+    _paintCells(canvas, pinnedColumns);
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth + borderWidth,
+      columnHeadersHeight + borderWidth,
+      pinnedColumnsWidth,
+      pinnedRowsHeight,
+    ));
+    _paintCells(canvas, pinnedBoth);
+    canvas.restore();
 
     _paintMesh(canvas, size);
   }
@@ -63,6 +111,26 @@ class SheetCellsLayerPainter extends CustomPainter {
 
   void _clipCellsLayerBox(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth + borderWidth, columnHeadersHeight + borderWidth, size.width, size.height));
+  }
+
+  void _paintCells(Canvas canvas, List<ViewportCell> cells) {
+    if (cells.isEmpty) {
+      return;
+    }
+
+    _StyleBasedPainterBuilder(
+      cells: cells,
+      builder: (CellStyle style, List<ViewportCell> cells) {
+        _BackgroundColorPainter(
+          color: style.backgroundColor,
+          shapes: cells.map((ViewportCell cell) => cell.rect),
+        ).layout(canvas);
+      },
+    ).build();
+
+    for (ViewportCell cell in cells) {
+      _paintCellText(canvas, cell);
+    }
   }
 
   void _paintMesh(Canvas canvas, Size size) {
