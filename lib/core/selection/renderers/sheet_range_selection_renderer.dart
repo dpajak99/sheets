@@ -76,10 +76,27 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
     ClosestVisible<ViewportCell> endCell =
         viewport.visibleContent.findCellOrClosest(selection.end.cell);
 
-    Rect selectionBounds = Rect.fromPoints(
-      startCell.value.rect.topLeft,
-      endCell.value.rect.bottomRight,
-    );
+    Rect startRect = startCell.value.rect;
+    Rect endRect = endCell.value.rect;
+    Rect selectionBounds;
+    switch (selection.direction) {
+      case SelectionDirection.bottomRight:
+        selectionBounds =
+            Rect.fromPoints(startRect.topLeft, endRect.bottomRight);
+        break;
+      case SelectionDirection.bottomLeft:
+        selectionBounds =
+            Rect.fromPoints(startRect.topRight, endRect.bottomLeft);
+        break;
+      case SelectionDirection.topRight:
+        selectionBounds =
+            Rect.fromPoints(startRect.bottomLeft, endRect.topRight);
+        break;
+      case SelectionDirection.topLeft:
+        selectionBounds =
+            Rect.fromPoints(startRect.bottomRight, endRect.topLeft);
+        break;
+    }
 
     Rect visibleAreaStart = visibleAreaFor(startCell.value.index);
     Rect visibleAreaEnd = visibleAreaFor(endCell.value.index);
