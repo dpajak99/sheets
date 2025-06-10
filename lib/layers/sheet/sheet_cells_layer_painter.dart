@@ -102,6 +102,8 @@ class SheetCellsLayerPainter extends CustomPainter {
     canvas.restore();
 
     _paintMesh(canvas, size);
+
+    _paintPinnedBorders(canvas, size);
   }
 
   @override
@@ -325,6 +327,39 @@ class SheetCellsLayerPainter extends CustomPainter {
         PointMode.lines,
         lines.expand((Line line) => <Offset>[line.start, line.end]).toList(),
         paint,
+      );
+    }
+  }
+
+  void _paintPinnedBorders(Canvas canvas, Size size) {
+    Paint borderPaint = Paint()
+      ..color = const Color(0xffb7b7b7)
+      ..style = PaintingStyle.fill;
+
+    double pinnedColumnsWidth = worksheet.data.pinnedColumnsWidth;
+    double pinnedRowsHeight = worksheet.data.pinnedRowsHeight;
+
+    if (pinnedColumnsWidth > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          rowHeadersWidth + pinnedColumnsWidth,
+          columnHeadersHeight,
+          borderWidth,
+          size.height,
+        ),
+        borderPaint,
+      );
+    }
+
+    if (pinnedRowsHeight > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          rowHeadersWidth,
+          columnHeadersHeight + pinnedRowsHeight,
+          size.width,
+          borderWidth,
+        ),
+        borderPaint,
       );
     }
   }
