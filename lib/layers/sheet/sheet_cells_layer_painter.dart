@@ -160,8 +160,8 @@ class SheetCellsLayerPainter extends CustomPainter {
       canvas,
       normal,
       Rect.fromLTWH(
-        rowHeadersWidth + worksheet.data.pinnedColumnsWidth,
-        columnHeadersHeight + worksheet.data.pinnedRowsHeight,
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + borderWidth,
+        columnHeadersHeight + worksheet.data.pinnedRowsHeight + borderWidth,
         size.width - worksheet.data.pinnedColumnsWidth,
         size.height - worksheet.data.pinnedRowsHeight,
       ),
@@ -171,7 +171,7 @@ class SheetCellsLayerPainter extends CustomPainter {
       canvas,
       pinnedRows,
       Rect.fromLTWH(
-        rowHeadersWidth + worksheet.data.pinnedColumnsWidth,
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + borderWidth,
         columnHeadersHeight,
         size.width - worksheet.data.pinnedColumnsWidth,
         worksheet.data.pinnedRowsHeight,
