@@ -35,19 +35,19 @@ class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter
       ),
       Rect.fromLTWH(
         rowHeadersWidth + _pinnedColumnsWidth + borderWidth,
-        columnHeadersHeight,
+        columnHeadersHeight + borderWidth,
         size.width - _pinnedColumnsWidth,
         _pinnedRowsHeight,
       ),
       Rect.fromLTWH(
-        rowHeadersWidth,
+        rowHeadersWidth + borderWidth,
         columnHeadersHeight + _pinnedRowsHeight + borderWidth,
         _pinnedColumnsWidth,
         size.height - _pinnedRowsHeight,
       ),
       Rect.fromLTWH(
-        rowHeadersWidth,
-        columnHeadersHeight,
+        rowHeadersWidth + borderWidth,
+        columnHeadersHeight + borderWidth,
         _pinnedColumnsWidth,
         _pinnedRowsHeight,
       ),

@@ -64,15 +64,6 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
   }
 
   SelectionRect? _calculateSelectionBounds() {
-    bool rowVisible = viewport.visibleContent.rows
-        .any((ViewportRow row) => selection.containsRow(row.index));
-    bool columnVisible = viewport.visibleContent.columns
-        .any((ViewportColumn column) => selection.containsColumn(column.index));
-
-    if (!rowVisible || !columnVisible) {
-      return null;
-    }
-
     ClosestVisible<ViewportCell> startCell =
         viewport.visibleContent.findCellOrClosest(selection.start.cell);
     ClosestVisible<ViewportCell> endCell =

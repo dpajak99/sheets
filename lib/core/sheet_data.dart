@@ -375,9 +375,6 @@ class WorksheetData {
     for (int i = 0; i < pinnedColumnCount && i < columnCount; i++) {
       width += columns.getWidth(ColumnIndex(i)) + borderWidth;
     }
-    if (width > 0) {
-      width -= borderWidth;
-    }
     return width;
   }
 
@@ -385,9 +382,6 @@ class WorksheetData {
     double height = 0;
     for (int i = 0; i < pinnedRowCount && i < rowCount; i++) {
       height += rows.getHeight(RowIndex(i)) + borderWidth;
-    }
-    if (height > 0) {
-      height -= borderWidth;
     }
     return height;
   }
