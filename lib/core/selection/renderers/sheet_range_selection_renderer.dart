@@ -6,7 +6,6 @@ import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/cached_value.dart';
 import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
 
@@ -14,11 +13,7 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
   SheetRangeSelectionRenderer({
     required super.selection,
     required super.viewport,
-  }) {
-    _selectionRect = CachedValue<SelectionRect?>(_calculateSelectionBounds);
-  }
-
-  late final CachedValue<SelectionRect?> _selectionRect;
+  });
 
   @override
   bool get fillHandleVisible => selection.isCompleted;
@@ -31,7 +26,7 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
     return SheetRangeSelectionPaint<T>(this, mainCellVisible, backgroundVisible);
   }
 
-  SelectionRect? get selectionRect => _selectionRect.value;
+  SelectionRect? get selectionRect => _calculateSelectionBounds();
 
   ViewportCell? get mainCell => viewport.visibleContent.findCell(selection.mainCell);
 
