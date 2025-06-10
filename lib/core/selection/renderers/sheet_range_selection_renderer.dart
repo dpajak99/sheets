@@ -28,7 +28,46 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
 
   SelectionRect? get selectionRect => _calculateSelectionBounds();
 
-  ViewportCell? get mainCell => viewport.visibleContent.findCell(selection.mainCell);
+  SelectionRect? get mainCellRect {
+    ViewportCell? cell = viewport.visibleContent.findCell(selection.mainCell);
+    if (cell == null) {
+      return null;
+    }
+
+    double pinnedColumnsWidth = viewport.visibleContent.data.pinnedColumnsWidth;
+    double pinnedRowsHeight = viewport.visibleContent.data.pinnedRowsHeight;
+
+    Rect visibleArea = Rect.fromLTWH(
+      rowHeadersWidth + pinnedColumnsWidth,
+      columnHeadersHeight + pinnedRowsHeight,
+      viewport.rect.width - rowHeadersWidth - pinnedColumnsWidth,
+      viewport.rect.height - columnHeadersHeight - pinnedRowsHeight,
+    );
+
+    if (!cell.rect.overlaps(visibleArea)) {
+      return null;
+    }
+
+    Rect clipped = cell.rect.intersect(visibleArea);
+    List<Direction> hiddenBorders = <Direction>[];
+    if (clipped.left > cell.rect.left) {
+      hiddenBorders.add(Direction.left);
+    }
+    if (clipped.top > cell.rect.top) {
+      hiddenBorders.add(Direction.top);
+    }
+    if (clipped.right < cell.rect.right) {
+      hiddenBorders.add(Direction.right);
+    }
+    if (clipped.bottom < cell.rect.bottom) {
+      hiddenBorders.add(Direction.bottom);
+    }
+
+    return SelectionRect.fromLTRB(
+      rect: clipped,
+      hiddenBorders: hiddenBorders,
+    );
+  }
 
   SelectionRect? _calculateSelectionBounds() {
     bool rowVisible = viewport.visibleContent.rows

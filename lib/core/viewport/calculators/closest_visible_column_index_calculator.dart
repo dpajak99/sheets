@@ -9,21 +9,55 @@ class ClosestVisibleColumnIndexCalculator {
   final List<ViewportColumn> visibleColumns;
 
   ClosestVisible<ColumnIndex> findFor(CellIndex cellIndex) {
-    ColumnIndex firstVisibleColumn = visibleColumns.first.index;
-    ColumnIndex lastVisibleColumn = visibleColumns.last.index;
     ColumnIndex cellColumn = cellIndex.column;
+    List<ColumnIndex> indices =
+        visibleColumns.map((ViewportColumn column) => column.index).toList();
 
-    if (cellColumn >= firstVisibleColumn && cellColumn <= lastVisibleColumn) {
+    if (indices.contains(cellColumn)) {
       return ClosestVisible<ColumnIndex>.fullyVisible(cellColumn);
-    } else if (cellColumn < firstVisibleColumn) {
+    }
+
+    ColumnIndex firstVisibleColumn = indices.first;
+    ColumnIndex lastVisibleColumn = indices.last;
+
+    if (cellColumn < firstVisibleColumn) {
       return ClosestVisible<ColumnIndex>.partiallyVisible(
         hiddenBorders: <Direction>[Direction.left],
         value: firstVisibleColumn,
       );
-    } else {
+    }
+
+    if (cellColumn > lastVisibleColumn) {
       return ClosestVisible<ColumnIndex>.partiallyVisible(
         hiddenBorders: <Direction>[Direction.right],
         value: lastVisibleColumn,
+      );
+    }
+
+    // Column lies between first and last but is not visible (gap).
+    ColumnIndex lower = indices.first;
+    ColumnIndex upper = indices.last;
+    for (ColumnIndex index in indices) {
+      if (index.value <= cellColumn.value) {
+        lower = index;
+      }
+      if (index.value >= cellColumn.value) {
+        upper = index;
+        break;
+      }
+    }
+
+    int distanceLeft = cellColumn.value - lower.value;
+    int distanceRight = upper.value - cellColumn.value;
+    if (distanceLeft <= distanceRight) {
+      return ClosestVisible<ColumnIndex>.partiallyVisible(
+        hiddenBorders: <Direction>[Direction.right],
+        value: lower,
+      );
+    } else {
+      return ClosestVisible<ColumnIndex>.partiallyVisible(
+        hiddenBorders: <Direction>[Direction.left],
+        value: upper,
       );
     }
   }

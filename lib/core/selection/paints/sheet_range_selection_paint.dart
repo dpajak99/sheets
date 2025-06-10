@@ -21,8 +21,12 @@ class SheetRangeSelectionPaint<T extends SheetIndex> extends SheetSelectionPaint
       return;
     }
 
-    if (mainCellVisible && renderer.mainCell != null) {
-      paintMainCell(canvas, renderer.mainCell!.rect);
+    if (mainCellVisible && renderer.mainCellRect != null) {
+      paintMainCell(
+        canvas,
+        renderer.mainCellRect!,
+        edgeVisibility: renderer.mainCellRect!.edgeVisibility,
+      );
     }
     if (backgroundVisible) {
       paintSelectionBackground(canvas, selectionRect);
