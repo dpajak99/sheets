@@ -50,7 +50,8 @@ class SheetViewportContentData {
 
   ViewportItem? findAnyByOffset(Offset mousePosition) {
     try {
-      return all.firstWhere((ViewportItem element) {
+      Iterable<ViewportItem> prioritized = <ViewportItem>[...cells, ...columns, ...rows];
+      return prioritized.firstWhere((ViewportItem element) {
         Rect itemRect = element.rect.expand(borderWidth / 2);
         return itemRect.within(mousePosition);
       });

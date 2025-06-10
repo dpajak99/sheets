@@ -35,9 +35,13 @@ abstract class SheetSelectionRenderer<T extends SheetSelection> {
 
     double left = rowHeadersWidth + (columnPinned ? 0 : data.pinnedColumnsWidth);
     double top = columnHeadersHeight + (rowPinned ? 0 : data.pinnedRowsHeight);
-    double width = viewport.rect.width - rowHeadersWidth - (columnPinned ? 0 : data.pinnedColumnsWidth);
-    double height = viewport.rect.height - columnHeadersHeight - (rowPinned ? 0 : data.pinnedRowsHeight);
+    double right = columnPinned
+        ? rowHeadersWidth + data.pinnedColumnsWidth
+        : viewport.rect.width;
+    double bottom = rowPinned
+        ? columnHeadersHeight + data.pinnedRowsHeight
+        : viewport.rect.height;
 
-    return Rect.fromLTWH(left, top, width, height);
+    return Rect.fromLTRB(left, top, right, bottom);
   }
 }
