@@ -3,6 +3,7 @@ import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 
 abstract class SheetSelectionRenderer<T extends SheetSelection> {
   SheetSelectionRenderer({
@@ -24,5 +25,19 @@ abstract class SheetSelectionRenderer<T extends SheetSelection> {
     bool columnVisible = viewport.visibleContent.columns.any((ViewportColumn column) => selection.containsColumn(column.index));
 
     return rowVisible && columnVisible;
+  }
+
+  Rect visibleAreaFor(CellIndex index) {
+    final data = viewport.visibleContent.data;
+
+    bool columnPinned = index.column.value < data.pinnedColumnCount;
+    bool rowPinned = index.row.value < data.pinnedRowCount;
+
+    double left = rowHeadersWidth + (columnPinned ? 0 : data.pinnedColumnsWidth);
+    double top = columnHeadersHeight + (rowPinned ? 0 : data.pinnedRowsHeight);
+    double width = viewport.rect.width - rowHeadersWidth - (columnPinned ? 0 : data.pinnedColumnsWidth);
+    double height = viewport.rect.height - columnHeadersHeight - (rowPinned ? 0 : data.pinnedRowsHeight);
+
+    return Rect.fromLTWH(left, top, width, height);
   }
 }

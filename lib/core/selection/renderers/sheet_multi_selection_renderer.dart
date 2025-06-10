@@ -30,15 +30,7 @@ class SheetMultiSelectionRenderer extends SheetSelectionRenderer<SheetMultiSelec
       return null;
     }
 
-    double pinnedColumnsWidth = viewport.visibleContent.data.pinnedColumnsWidth;
-    double pinnedRowsHeight = viewport.visibleContent.data.pinnedRowsHeight;
-
-    Rect visibleArea = Rect.fromLTWH(
-      rowHeadersWidth + pinnedColumnsWidth,
-      columnHeadersHeight + pinnedRowsHeight,
-      viewport.rect.width - rowHeadersWidth - pinnedColumnsWidth,
-      viewport.rect.height - columnHeadersHeight - pinnedRowsHeight,
-    );
+    Rect visibleArea = visibleAreaFor(cell.index);
 
     if (!cell.rect.overlaps(visibleArea)) {
       return null;

@@ -34,15 +34,7 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
       return null;
     }
 
-    double pinnedColumnsWidth = viewport.visibleContent.data.pinnedColumnsWidth;
-    double pinnedRowsHeight = viewport.visibleContent.data.pinnedRowsHeight;
-
-    Rect visibleArea = Rect.fromLTWH(
-      rowHeadersWidth + pinnedColumnsWidth,
-      columnHeadersHeight + pinnedRowsHeight,
-      viewport.rect.width - rowHeadersWidth - pinnedColumnsWidth,
-      viewport.rect.height - columnHeadersHeight - pinnedRowsHeight,
-    );
+    Rect visibleArea = visibleAreaFor(cell.index);
 
     if (!cell.rect.overlaps(visibleArea)) {
       return null;
@@ -89,15 +81,9 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
       endCell.value.rect.bottomRight,
     );
 
-    double pinnedColumnsWidth = viewport.visibleContent.data.pinnedColumnsWidth;
-    double pinnedRowsHeight = viewport.visibleContent.data.pinnedRowsHeight;
-
-    Rect visibleArea = Rect.fromLTWH(
-      rowHeadersWidth + pinnedColumnsWidth,
-      columnHeadersHeight + pinnedRowsHeight,
-      viewport.rect.width - rowHeadersWidth - pinnedColumnsWidth,
-      viewport.rect.height - columnHeadersHeight - pinnedRowsHeight,
-    );
+    Rect visibleAreaStart = visibleAreaFor(startCell.value.index);
+    Rect visibleAreaEnd = visibleAreaFor(endCell.value.index);
+    Rect visibleArea = visibleAreaStart.expandToInclude(visibleAreaEnd);
 
     if (!selectionBounds.overlaps(visibleArea)) {
       return null;
