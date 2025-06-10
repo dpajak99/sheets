@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:sheets/core/selection/paints/sheet_range_selection_paint.dart';
 import 'package:sheets/core/selection/selection_rect.dart';
@@ -78,25 +80,12 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
 
     Rect startRect = startCell.value.rect;
     Rect endRect = endCell.value.rect;
-    Rect selectionBounds;
-    switch (selection.direction) {
-      case SelectionDirection.bottomRight:
-        selectionBounds =
-            Rect.fromPoints(startRect.topLeft, endRect.bottomRight);
-        break;
-      case SelectionDirection.bottomLeft:
-        selectionBounds =
-            Rect.fromPoints(startRect.topRight, endRect.bottomLeft);
-        break;
-      case SelectionDirection.topRight:
-        selectionBounds =
-            Rect.fromPoints(startRect.bottomLeft, endRect.topRight);
-        break;
-      case SelectionDirection.topLeft:
-        selectionBounds =
-            Rect.fromPoints(startRect.bottomRight, endRect.topLeft);
-        break;
-    }
+    Rect selectionBounds = Rect.fromLTRB(
+      math.min(startRect.left, endRect.left),
+      math.min(startRect.top, endRect.top),
+      math.max(startRect.right, endRect.right),
+      math.max(startRect.bottom, endRect.bottom),
+    );
 
     Rect visibleAreaStart = visibleAreaFor(startCell.value.index);
     Rect visibleAreaEnd = visibleAreaFor(endCell.value.index);
