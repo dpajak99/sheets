@@ -27,10 +27,14 @@ class SheetScrollController {
   late DirectionalValues<SheetScrollPosition> position;
   late DirectionalValues<SheetScrollMetrics> metrics;
 
-  void setViewportSize(Size size) {
+  void setViewportSize(Size size, {double pinnedColumnsWidth = 0, double pinnedRowsHeight = 0}) {
     metrics = DirectionalValues<SheetScrollMetrics>(
-      horizontal: metrics.horizontal.copyWith(viewportDimension: size.width - rowHeadersWidth),
-      vertical: metrics.vertical.copyWith(viewportDimension: size.height - columnHeadersHeight),
+      horizontal: metrics.horizontal.copyWith(
+        viewportDimension: size.width - rowHeadersWidth - pinnedColumnsWidth,
+      ),
+      vertical: metrics.vertical.copyWith(
+        viewportDimension: size.height - columnHeadersHeight - pinnedRowsHeight,
+      ),
     );
   }
 

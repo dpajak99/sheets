@@ -163,5 +163,70 @@ class SetViewportSizeAction extends SheetAction<SetViewportSizeEvent> {
   @override
   void execute() {
     worksheet.viewport.setViewportRect(event.rect);
+    worksheet.scroll.setViewportSize(
+      event.rect.size,
+      pinnedColumnsWidth: worksheet.data.pinnedColumnsWidth,
+      pinnedRowsHeight: worksheet.data.pinnedRowsHeight,
+    );
+  }
+}
+
+// Set Pinned Columns Count
+class SetPinnedColumnsEvent extends SheetEvent {
+  SetPinnedColumnsEvent(this.count);
+
+  final int count;
+
+  @override
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) =>
+      SetPinnedColumnsAction(this, worksheet);
+
+  @override
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig.all();
+  }
+
+  @override
+  List<Object?> get props => <Object?>[count];
+}
+
+class SetPinnedColumnsAction extends SheetAction<SetPinnedColumnsEvent> {
+  SetPinnedColumnsAction(super.event, super.worksheet);
+
+  @override
+  void execute() {
+    worksheet.data.pinnedColumnCount = event.count;
+    worksheet.scroll.setContentSize(worksheet.data.scrollableContentSize);
+    worksheet.viewport.rebuild(worksheet.scroll.offset);
+  }
+}
+
+// Set Pinned Rows Count
+class SetPinnedRowsEvent extends SheetEvent {
+  SetPinnedRowsEvent(this.count);
+
+  final int count;
+
+  @override
+  SheetAction<SheetEvent> createAction(Worksheet worksheet) =>
+      SetPinnedRowsAction(this, worksheet);
+
+  @override
+  SheetRebuildConfig get rebuildConfig {
+    return SheetRebuildConfig.all();
+  }
+
+  @override
+  List<Object?> get props => <Object?>[count];
+}
+
+class SetPinnedRowsAction extends SheetAction<SetPinnedRowsEvent> {
+  SetPinnedRowsAction(super.event, super.worksheet);
+
+  @override
+  void execute() {
+    worksheet.data.pinnedRowCount = event.count;
+    worksheet.scroll.setContentSize(worksheet.data.scrollableContentSize);
+    worksheet.viewport.rebuild(worksheet.scroll.offset);
   }
 }

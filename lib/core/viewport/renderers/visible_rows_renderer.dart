@@ -20,74 +20,36 @@ class VisibleRowsRenderer {
   final double scrollOffset;
 
   List<ViewportRow> build() {
-    double firstVisibleCoordinate = scrollOffset;
-    _FirstVisibleRowInfo firstVisibleRowInfo = _findRowByY(firstVisibleCoordinate);
-
+    double currentHeight = 0;
     double maxContentHeight = viewportRect.height - columnHeadersHeight;
-    double currentContentHeight = -firstVisibleRowInfo.hiddenHeight;
-
     List<ViewportRow> visibleRows = <ViewportRow>[];
-    int index = firstVisibleRowInfo.index.value;
 
-    while (currentContentHeight < maxContentHeight && index < data.rowCount) {
-      RowIndex rowIndex = RowIndex(index);
+    for (int i = 0; i < data.rowCount; i++) {
+      RowIndex rowIndex = RowIndex(i);
       RowStyle rowStyle = data.rows.get(rowIndex);
+      bool pinned = i < data.pinnedRowCount;
 
-      ViewportRow viewportRow = ViewportRow(
-        index: rowIndex,
-        style: rowStyle,
-        rect: BorderRect.fromLTWH(0, currentContentHeight + columnHeadersHeight + borderWidth, rowHeadersWidth, rowStyle.height),
-      );
-      visibleRows.add(viewportRow);
-      currentContentHeight += viewportRow.style.height + borderWidth;
+      double adjustedStart = currentHeight - (pinned ? 0 : scrollOffset);
+      double end = adjustedStart + rowStyle.height + borderWidth;
 
-      index++;
+      if (end > 0 && adjustedStart < maxContentHeight) {
+        visibleRows.add(
+          ViewportRow(
+            index: rowIndex,
+            style: rowStyle,
+            rect: BorderRect.fromLTWH(
+              0,
+              columnHeadersHeight + borderWidth + adjustedStart,
+              rowHeadersWidth,
+              rowStyle.height,
+            ),
+          ),
+        );
+      }
+
+      currentHeight += rowStyle.height + borderWidth;
     }
 
     return visibleRows;
   }
-
-  _FirstVisibleRowInfo _findRowByY(double y) {
-    int actualRowIndex = 0;
-    double currentHeightStart = 0;
-
-    _FirstVisibleRowInfo? firstVisibleRowInfo;
-
-    while (firstVisibleRowInfo == null) {
-      RowIndex rowIndex = RowIndex(actualRowIndex);
-      RowStyle rowStyle = data.rows.get(rowIndex);
-      double rowHeightEnd = currentHeightStart + rowStyle.height + borderWidth;
-
-      if (y >= currentHeightStart && y < rowHeightEnd) {
-        firstVisibleRowInfo = _FirstVisibleRowInfo(
-          index: rowIndex,
-          startCoordinate: currentHeightStart,
-          visibleHeight: rowHeightEnd - y,
-          hiddenHeight: y - currentHeightStart,
-        );
-      } else {
-        actualRowIndex++;
-        currentHeightStart = rowHeightEnd;
-      }
-    }
-
-    return firstVisibleRowInfo;
-  }
-}
-
-class _FirstVisibleRowInfo with EquatableMixin {
-  const _FirstVisibleRowInfo({
-    required this.index,
-    required this.startCoordinate,
-    required this.visibleHeight,
-    required this.hiddenHeight,
-  });
-
-  final RowIndex index;
-  final double startCoordinate;
-  final double visibleHeight;
-  final double hiddenHeight;
-
-  @override
-  List<Object?> get props => <Object?>[index, startCoordinate, visibleHeight, hiddenHeight];
 }

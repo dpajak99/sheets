@@ -190,6 +190,8 @@ class WorksheetData {
     RowsProperties? rows,
     ColumnsProperties? columns,
     CellsProperties? cells,
+    this.pinnedColumnCount = 0,
+    this.pinnedRowCount = 0,
   }) {
     this.rows = rows ?? RowsProperties();
     this.columns = columns ?? ColumnsProperties();
@@ -206,6 +208,9 @@ class WorksheetData {
 
   int columnCount;
   int rowCount;
+
+  int pinnedColumnCount;
+  int pinnedRowCount;
 
   double _contentWidth = 0;
   double _contentHeight = 0;
@@ -364,4 +369,29 @@ class WorksheetData {
   double get contentHeight => _contentHeight;
 
   Size get contentSize => Size(contentWidth, contentHeight);
+
+  double get pinnedColumnsWidth {
+    double width = 0;
+    for (int i = 0; i < pinnedColumnCount && i < columnCount; i++) {
+      width += columns.getWidth(ColumnIndex(i)) + borderWidth;
+    }
+    if (width > 0) {
+      width -= borderWidth;
+    }
+    return width;
+  }
+
+  double get pinnedRowsHeight {
+    double height = 0;
+    for (int i = 0; i < pinnedRowCount && i < rowCount; i++) {
+      height += rows.getHeight(RowIndex(i)) + borderWidth;
+    }
+    if (height > 0) {
+      height -= borderWidth;
+    }
+    return height;
+  }
+
+  Size get scrollableContentSize =>
+      Size(contentWidth - pinnedColumnsWidth, contentHeight - pinnedRowsHeight);
 }
