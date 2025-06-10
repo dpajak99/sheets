@@ -21,7 +21,8 @@ class VisibleRowsRenderer {
 
   List<ViewportRow> build() {
     double currentHeight = 0;
-    double maxContentHeight = viewportRect.height - columnHeadersHeight;
+    double viewportHeight = viewportRect.height - columnHeadersHeight;
+    double pinnedHeight = data.pinnedRowsHeight;
     List<ViewportRow> visibleRows = <ViewportRow>[];
 
     for (int i = 0; i < data.rowCount; i++) {
@@ -32,7 +33,11 @@ class VisibleRowsRenderer {
       double adjustedStart = currentHeight - (pinned ? 0 : scrollOffset);
       double end = adjustedStart + rowStyle.height + borderWidth;
 
-      if (end > 0 && adjustedStart < maxContentHeight) {
+      bool visible = pinned
+          ? end > 0 && adjustedStart < viewportHeight
+          : end > pinnedHeight && adjustedStart < viewportHeight;
+
+      if (visible) {
         visibleRows.add(
           ViewportRow(
             index: rowIndex,
