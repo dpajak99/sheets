@@ -15,6 +15,8 @@ class SheetViewportContentManager {
   final SheetViewportContentData _contentData;
   final WorksheetData _data;
 
+  WorksheetData get data => _data;
+
   void rebuild(SheetViewportRect viewportRect, Offset scrollOffset) {
     List<ViewportRow> rows = _calculateRows(viewportRect, scrollOffset.dy);
     List<ViewportColumn> columns = _calculateColumns(viewportRect, scrollOffset.dx);

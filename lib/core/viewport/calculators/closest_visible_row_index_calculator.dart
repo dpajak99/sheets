@@ -9,24 +9,56 @@ class ClosestVisibleRowIndexCalculator {
   final List<ViewportRow> visibleRows;
 
   ClosestVisible<RowIndex> findFor(CellIndex cellIndex) {
-    RowIndex firstVisibleRow = visibleRows.first.index;
-    RowIndex lastVisibleRow = visibleRows.last.index;
     RowIndex cellRow = cellIndex.row;
+    List<RowIndex> indices =
+        visibleRows.map((ViewportRow row) => row.index).toList();
 
-    bool visible = cellRow >= firstVisibleRow && cellRow <= lastVisibleRow;
-    bool missingTop = cellRow < firstVisibleRow;
-
-    if (visible) {
+    if (indices.contains(cellRow)) {
       return ClosestVisible<RowIndex>.fullyVisible(cellRow);
-    } else if (missingTop) {
+    }
+
+    RowIndex firstVisibleRow = indices.first;
+    RowIndex lastVisibleRow = indices.last;
+
+    if (cellRow < firstVisibleRow) {
       return ClosestVisible<RowIndex>.partiallyVisible(
         hiddenBorders: <Direction>[Direction.top],
         value: firstVisibleRow,
       );
-    } else {
+    }
+
+    if (cellRow > lastVisibleRow) {
       return ClosestVisible<RowIndex>.partiallyVisible(
         hiddenBorders: <Direction>[Direction.bottom],
         value: lastVisibleRow,
+      );
+    }
+
+    // The row lies between first and last but is not visible (gap caused by
+    // pinned regions). Find the closest visible row.
+    RowIndex lower = indices.first;
+    RowIndex upper = indices.last;
+    for (RowIndex index in indices) {
+      if (index.value <= cellRow.value) {
+        lower = index;
+      }
+      if (index.value >= cellRow.value) {
+        upper = index;
+        break;
+      }
+    }
+
+    int distanceTop = cellRow.value - lower.value;
+    int distanceBottom = upper.value - cellRow.value;
+    if (distanceTop <= distanceBottom) {
+      return ClosestVisible<RowIndex>.partiallyVisible(
+        hiddenBorders: <Direction>[Direction.bottom],
+        value: lower,
+      );
+    } else {
+      return ClosestVisible<RowIndex>.partiallyVisible(
+        hiddenBorders: <Direction>[Direction.top],
+        value: upper,
       );
     }
   }

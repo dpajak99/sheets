@@ -37,7 +37,7 @@ class Worksheet extends SheetRebuildNotifier {
     viewport = SheetViewport(data);
     selection = SelectionState.defaultSelection();
 
-    scroll.setContentSize(data.contentSize);
+    scroll.setContentSize(data.scrollableContentSize);
   }
 
   final FocusNode sheetFocusNode = FocusNode()..requestFocus();

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/selection/paints/sheet_multi_selection_paint.dart';
+import 'package:sheets/core/selection/selection_rect.dart';
 import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/utils/direction.dart';
 
 class SheetMultiSelectionRenderer extends SheetSelectionRenderer<SheetMultiSelection> {
   SheetMultiSelectionRenderer({
@@ -22,5 +24,32 @@ class SheetMultiSelectionRenderer extends SheetSelectionRenderer<SheetMultiSelec
     return SheetMultiSelectionPaint(this, mainCellVisible, backgroundVisible);
   }
 
-  ViewportCell? get mainCell => viewport.visibleContent.findCell(selection.mainCell);
+  SelectionRect? get mainCellRect {
+    BorderRect cellRect = cellRectFor(selection.mainCell);
+    Rect visibleArea = visibleAreaFor(selection.mainCell);
+
+    if (!cellRect.overlaps(visibleArea)) {
+      return null;
+    }
+
+    Rect clipped = cellRect.intersect(visibleArea);
+    List<Direction> hiddenBorders = <Direction>[];
+    if (clipped.left > cellRect.left) {
+      hiddenBorders.add(Direction.left);
+    }
+    if (clipped.top > cellRect.top) {
+      hiddenBorders.add(Direction.top);
+    }
+    if (clipped.right < cellRect.right) {
+      hiddenBorders.add(Direction.right);
+    }
+    if (clipped.bottom < cellRect.bottom) {
+      hiddenBorders.add(Direction.bottom);
+    }
+
+    return SelectionRect.fromLTRB(
+      rect: clipped,
+      hiddenBorders: hiddenBorders,
+    );
+  }
 }

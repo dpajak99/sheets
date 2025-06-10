@@ -32,7 +32,10 @@ class VisibleCellsRenderer {
           MergedCell mergedCell = cellProperties.mergeStatus as MergedCell;
           CellProperties startCellProperties = data.cells.get(mergedCell.start);
 
-          if (mergedCell.isMainCell(cellIndex) || (y == 0 || x == 0) && !resolvedMergedCells.contains(mergedCell)) {
+          bool edgeRow = y == data.pinnedRowCount;
+          bool edgeColumn = x == data.pinnedColumnCount;
+
+          if (mergedCell.isMainCell(cellIndex) || (edgeRow || edgeColumn) && !resolvedMergedCells.contains(mergedCell)) {
             CellIndex mergeEnd = mergedCell.end;
 
             ViewportRow rowEnd = visibleRows.findByIndex(mergeEnd.row);

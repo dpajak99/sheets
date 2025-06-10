@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 double borderWidth = 1;
+// Thickness for borders separating pinned rows and columns from
+// the scrollable area. Used for both the draggable pin area and
+// drawing pinned dividers.
+double pinnedBorderWidth = 5;
 
 double scrollbarWidth = 14;
 

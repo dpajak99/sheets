@@ -8,29 +8,68 @@ import 'package:sheets/core/viewport/sheet_viewport.dart';
 class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter {
   late SheetSelection _selection;
   late SheetViewport _viewport;
+  late double _pinnedColumnsWidth;
+  late double _pinnedRowsHeight;
 
   void rebuild({
     required SheetSelection selection,
     required SheetViewport viewport,
+    required double pinnedColumnsWidth,
+    required double pinnedRowsHeight,
   }) {
     _selection = selection;
     _viewport = viewport;
+    _pinnedColumnsWidth = pinnedColumnsWidth;
+    _pinnedRowsHeight = pinnedRowsHeight;
     notifyListeners();
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth - borderWidth, columnHeadersHeight - borderWidth, size.width, size.height));
+    List<Rect> clipRegions = <Rect>[
+      Rect.fromLTWH(
+        rowHeadersWidth + _pinnedColumnsWidth,
+        columnHeadersHeight + _pinnedRowsHeight,
+        size.width - _pinnedColumnsWidth,
+        size.height - _pinnedRowsHeight,
+      ),
+      Rect.fromLTWH(
+        rowHeadersWidth + _pinnedColumnsWidth,
+        columnHeadersHeight,
+        size.width - _pinnedColumnsWidth,
+        _pinnedRowsHeight,
+      ),
+      Rect.fromLTWH(
+        rowHeadersWidth,
+        columnHeadersHeight + _pinnedRowsHeight,
+        _pinnedColumnsWidth,
+        size.height - _pinnedRowsHeight,
+      ),
+      Rect.fromLTWH(
+        rowHeadersWidth,
+        columnHeadersHeight,
+        _pinnedColumnsWidth,
+        _pinnedRowsHeight,
+      ),
+    ];
 
     SheetSelectionRenderer<SheetSelection> selectionRenderer = _selection.createRenderer(_viewport);
-
     SheetSelectionPaint selectionPaint = selectionRenderer.getPaint();
-    selectionPaint.paint(_viewport, canvas, size);
+
+    for (Rect rect in clipRegions) {
+      canvas.save();
+      canvas.clipRect(rect);
+      selectionPaint.paint(_viewport, canvas, size);
+      canvas.restore();
+    }
   }
 
   @override
   bool shouldRepaint(covariant SheetSelectionLayerPainter oldDelegate) {
-    return _selection != oldDelegate._selection || _viewport != oldDelegate._viewport;
+    return _selection != oldDelegate._selection ||
+        _viewport != oldDelegate._viewport ||
+        _pinnedColumnsWidth != oldDelegate._pinnedColumnsWidth ||
+        _pinnedRowsHeight != oldDelegate._pinnedRowsHeight;
   }
 
   @override
