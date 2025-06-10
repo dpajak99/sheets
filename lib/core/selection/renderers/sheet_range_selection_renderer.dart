@@ -64,12 +64,26 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
       return null;
     }
 
+    Rect clipped = selectionBounds.intersect(visibleArea);
+
     List<Direction> hiddenBorders =
         <Direction>[...startCell.hiddenBorders, ...endCell.hiddenBorders];
-    return SelectionRect(
-      startCell.value.rect,
-      endCell.value.rect,
-      selection.direction,
+
+    if (clipped.left > selectionBounds.left) {
+      hiddenBorders.add(Direction.left);
+    }
+    if (clipped.top > selectionBounds.top) {
+      hiddenBorders.add(Direction.top);
+    }
+    if (clipped.right < selectionBounds.right) {
+      hiddenBorders.add(Direction.right);
+    }
+    if (clipped.bottom < selectionBounds.bottom) {
+      hiddenBorders.add(Direction.bottom);
+    }
+
+    return SelectionRect.fromLTRB(
+      rect: clipped,
       hiddenBorders: hiddenBorders,
     );
   }

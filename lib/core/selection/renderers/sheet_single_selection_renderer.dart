@@ -42,6 +42,19 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSel
       return null;
     }
 
+    Rect clipped = cell.rect.intersect(visibleArea);
+
+    if (clipped != cell.rect) {
+      cell = cell.copyWith(
+        rect: BorderRect.fromLTRB(
+          clipped.left,
+          clipped.top,
+          clipped.right,
+          clipped.bottom,
+        ),
+      );
+    }
+
     return cell;
   }
 }
