@@ -10,7 +10,6 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 import 'package:sheets/core/viewport/sheet_viewport_content_manager.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/core/worksheet.dart';
-import 'package:sheets/utils/extensions/offset_extensions.dart';
 import 'package:sheets/utils/extensions/text_span_extensions.dart';
 import 'package:sheets/utils/text_rotation.dart';
 import 'package:sheets/widgets/material/material_sheet_theme.dart';
@@ -38,22 +37,74 @@ class SheetCellsLayerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     _clipCellsLayerBox(canvas, size);
 
-    _StyleBasedPainterBuilder(
-      cells: _visibleContent.cells,
-      builder: (CellStyle style, List<ViewportCell> cells) {
-        _BackgroundColorPainter(
-          color: style.backgroundColor,
-          shapes: cells.map((ViewportCell cell) => cell.rect),
-        ).layout(canvas);
-      },
-    ).build();
+    double pinnedColumnsWidth = worksheet.data.pinnedColumnsWidth;
+    double pinnedRowsHeight = worksheet.data.pinnedRowsHeight;
+    double pinnedColumnsFullWidth = worksheet.data.pinnedColumnsFullWidth;
+    double pinnedRowsFullHeight = worksheet.data.pinnedRowsFullHeight;
 
+    List<ViewportCell> pinnedBoth = <ViewportCell>[];
+    List<ViewportCell> pinnedRows = <ViewportCell>[];
+    List<ViewportCell> pinnedColumns = <ViewportCell>[];
+    List<ViewportCell> normal = <ViewportCell>[];
 
     for (ViewportCell cell in _visibleContent.cells) {
-      _paintCellText(canvas, cell);
+      bool rowPinned = cell.index.row.value < worksheet.data.pinnedRowCount;
+      bool columnPinned = cell.index.column.value < worksheet.data.pinnedColumnCount;
+
+      if (rowPinned && columnPinned) {
+        pinnedBoth.add(cell);
+      } else if (rowPinned) {
+        pinnedRows.add(cell);
+      } else if (columnPinned) {
+        pinnedColumns.add(cell);
+      } else {
+        normal.add(cell);
+      }
     }
 
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth + pinnedColumnsFullWidth,
+      columnHeadersHeight + pinnedRowsFullHeight,
+      size.width - pinnedColumnsFullWidth,
+      size.height - pinnedRowsFullHeight,
+    ));
+    _paintCells(canvas, normal);
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth + pinnedColumnsFullWidth,
+      columnHeadersHeight,
+      size.width - pinnedColumnsFullWidth,
+      pinnedRowsHeight,
+    ));
+    _paintCells(canvas, pinnedRows);
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth,
+      columnHeadersHeight + pinnedRowsFullHeight,
+      pinnedColumnsWidth,
+      size.height - pinnedRowsFullHeight,
+    ));
+    _paintCells(canvas, pinnedColumns);
+    canvas.restore();
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(
+      rowHeadersWidth,
+      columnHeadersHeight,
+      pinnedColumnsWidth,
+      pinnedRowsHeight,
+    ));
+    _paintCells(canvas, pinnedBoth);
+    canvas.restore();
+
     _paintMesh(canvas, size);
+
+    _paintPinnedBorders(canvas, size);
   }
 
   @override
@@ -65,44 +116,145 @@ class SheetCellsLayerPainter extends CustomPainter {
     canvas.clipRect(Rect.fromLTWH(rowHeadersWidth + borderWidth, columnHeadersHeight + borderWidth, size.width, size.height));
   }
 
-  void _paintMesh(Canvas canvas, Size size) {
-    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    List<ViewportColumn> visibleColumns = _visibleContent.columns;
-    List<ViewportRow> visibleRows = _visibleContent.rows;
-    List<ViewportCell> visibleCells = _visibleContent.cells;
-
-    if (visibleColumns.isEmpty || visibleRows.isEmpty) {
+  void _paintCells(Canvas canvas, List<ViewportCell> cells) {
+    if (cells.isEmpty) {
       return;
     }
 
-    Mesh mesh = Mesh(
-      verticalPoints: visibleColumns.map((ViewportColumn column) => column.rect.left).toList(),
-      horizontalPoints: visibleRows.map((ViewportRow row) => row.rect.top).toList(),
-      maxHorizontal: visibleColumns.last.rect.right,
-      maxVertical: visibleRows.last.rect.bottom,
+    _StyleBasedPainterBuilder(
+      cells: cells,
+      builder: (CellStyle style, List<ViewportCell> cells) {
+        _BackgroundColorPainter(
+          color: style.backgroundColor,
+          shapes: cells.map((ViewportCell cell) => cell.rect),
+        ).layout(canvas);
+      },
+    ).build();
+
+    for (ViewportCell cell in cells) {
+      _paintCellText(canvas, cell);
+    }
+  }
+
+  void _paintMesh(Canvas canvas, Size size) {
+    List<ViewportCell> pinnedBoth = <ViewportCell>[];
+    List<ViewportCell> pinnedRows = <ViewportCell>[];
+    List<ViewportCell> pinnedColumns = <ViewportCell>[];
+    List<ViewportCell> normal = <ViewportCell>[];
+
+    for (ViewportCell cell in _visibleContent.cells) {
+      bool rowPinned = cell.index.row.value < worksheet.data.pinnedRowCount;
+      bool columnPinned = cell.index.column.value < worksheet.data.pinnedColumnCount;
+
+      if (rowPinned && columnPinned) {
+        pinnedBoth.add(cell);
+      } else if (rowPinned) {
+        pinnedRows.add(cell);
+      } else if (columnPinned) {
+        pinnedColumns.add(cell);
+      } else {
+        normal.add(cell);
+      }
+    }
+
+    _paintMeshForCells(
+      canvas,
+      normal,
+      Rect.fromLTWH(
+        rowHeadersWidth + worksheet.data.pinnedColumnsFullWidth,
+        columnHeadersHeight + worksheet.data.pinnedRowsFullHeight,
+        size.width - worksheet.data.pinnedColumnsFullWidth,
+        size.height - worksheet.data.pinnedRowsFullHeight,
+      ),
     );
 
-    for (ViewportCell cell in visibleCells) {
+    _paintMeshForCells(
+      canvas,
+      pinnedRows,
+      Rect.fromLTWH(
+        rowHeadersWidth + worksheet.data.pinnedColumnsFullWidth,
+        columnHeadersHeight,
+        size.width - worksheet.data.pinnedColumnsFullWidth,
+        worksheet.data.pinnedRowsHeight,
+      ),
+    );
+
+    _paintMeshForCells(
+      canvas,
+      pinnedColumns,
+      Rect.fromLTWH(
+        rowHeadersWidth,
+        columnHeadersHeight + worksheet.data.pinnedRowsFullHeight,
+        worksheet.data.pinnedColumnsWidth,
+        size.height - worksheet.data.pinnedRowsFullHeight,
+      ),
+    );
+
+    _paintMeshForCells(
+      canvas,
+      pinnedBoth,
+      Rect.fromLTWH(
+        rowHeadersWidth,
+        columnHeadersHeight,
+        worksheet.data.pinnedColumnsWidth,
+        worksheet.data.pinnedRowsHeight,
+      ),
+    );
+  }
+
+  void _paintMeshForCells(Canvas canvas, List<ViewportCell> cells, Rect clipRect) {
+    if (cells.isEmpty) {
+      return;
+    }
+
+    Mesh mesh = _buildMesh(cells);
+
+    canvas.save();
+    canvas.clipRect(clipRect);
+    _drawMesh(canvas, mesh);
+    canvas.restore();
+  }
+
+  Mesh _buildMesh(List<ViewportCell> cells) {
+    Set<double> vertical = <double>{};
+    Set<double> horizontal = <double>{};
+
+    for (ViewportCell cell in cells) {
+      vertical..add(cell.rect.left)..add(cell.rect.right);
+      horizontal..add(cell.rect.top)..add(cell.rect.bottom);
+    }
+
+    List<double> vPoints = vertical.toList()..sort();
+    List<double> hPoints = horizontal.toList()..sort();
+
+    Mesh mesh = Mesh(
+      verticalPoints: vPoints,
+      horizontalPoints: hPoints,
+      maxHorizontal: vPoints.isNotEmpty ? vPoints.last : 0,
+      maxVertical: hPoints.isNotEmpty ? hPoints.last : 0,
+    );
+
+    for (ViewportCell cell in cells) {
       Rect cellRect = cell.rect;
       BorderSide defaultBorder = MaterialSheetTheme.defaultBorderSide;
 
       Line topBorderLine = Line(
-        cellRect.topLeft.moveY(-borderWidth),
-        cellRect.topRight.moveY(-borderWidth).expandEndX(borderWidth),
+        cellRect.topLeft,
+        cellRect.topRight,
       );
 
       Line rightBorderLine = Line(
-        cellRect.topRight.moveX(borderWidth).expandEndY(-1),
-        cellRect.bottomRight.moveX(borderWidth),
+        cellRect.topRight,
+        cellRect.bottomRight,
       );
 
       Line bottomBorderLine = Line(
         cellRect.bottomLeft,
-        cellRect.bottomRight.expandEndX(borderWidth),
+        cellRect.bottomRight,
       );
 
       Line leftBorderLine = Line(
-        cellRect.topLeft.expandEndY(-borderWidth),
+        cellRect.topLeft,
         cellRect.bottomLeft,
       );
 
@@ -112,7 +264,7 @@ class SheetCellsLayerPainter extends CustomPainter {
       mesh.addVertical(cellRect.left, leftBorderLine, defaultBorder);
     }
 
-    for (ViewportCell cell in visibleCells) {
+    for (ViewportCell cell in cells) {
       Rect cellRect = cell.rect;
       Border? border = cell.properties.style.border;
 
@@ -120,25 +272,25 @@ class SheetCellsLayerPainter extends CustomPainter {
 
       BorderSide topBorderSide = border?.top ?? defaultBorder;
       Line topBorderLine = Line(
-        cellRect.topLeft.moveY(-borderWidth),
-        cellRect.topRight.moveY(-borderWidth).expandEndX(borderWidth),
+        cellRect.topLeft,
+        cellRect.topRight,
       );
 
       BorderSide rightBorderSide = border?.right ?? defaultBorder;
       Line rightBorderLine = Line(
-        cellRect.topRight.moveX(borderWidth).expandEndY(-1),
-        cellRect.bottomRight.moveX(borderWidth),
+        cellRect.topRight,
+        cellRect.bottomRight,
       );
 
       BorderSide bottomBorderSide = border?.bottom ?? defaultBorder;
       Line bottomBorderLine = Line(
         cellRect.bottomLeft,
-        cellRect.bottomRight.expandEndX(borderWidth),
+        cellRect.bottomRight,
       );
 
       BorderSide leftBorderSide = border?.left ?? defaultBorder;
       Line leftBorderLine = Line(
-        cellRect.topLeft.expandEndY(-borderWidth),
+        cellRect.topLeft,
         cellRect.bottomLeft,
       );
 
@@ -156,6 +308,10 @@ class SheetCellsLayerPainter extends CustomPainter {
       }
     }
 
+    return mesh;
+  }
+
+  void _drawMesh(Canvas canvas, Mesh mesh) {
     Map<BorderSide, List<Line>> linesByStyle = mesh.lines;
 
     for (MapEntry<BorderSide, List<Line>> entry in linesByStyle.entries) {
@@ -172,6 +328,39 @@ class SheetCellsLayerPainter extends CustomPainter {
         PointMode.lines,
         lines.expand((Line line) => <Offset>[line.start, line.end]).toList(),
         paint,
+      );
+    }
+  }
+
+  void _paintPinnedBorders(Canvas canvas, Size size) {
+    Paint borderPaint = Paint()
+      ..color = const Color(0xffb7b7b7)
+      ..style = PaintingStyle.fill;
+
+    double pinnedColumnsWidth = worksheet.data.pinnedColumnsWidth;
+    double pinnedRowsHeight = worksheet.data.pinnedRowsHeight;
+
+    if (pinnedColumnsWidth > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          rowHeadersWidth + pinnedColumnsWidth,
+          0,
+          pinnedBorderWidth,
+          size.height,
+        ),
+        borderPaint,
+      );
+    }
+
+    if (pinnedRowsHeight > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          0,
+          columnHeadersHeight + pinnedRowsHeight,
+          size.width,
+          pinnedBorderWidth,
+        ),
+        borderPaint,
       );
     }
   }

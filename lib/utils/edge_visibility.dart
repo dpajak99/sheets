@@ -8,7 +8,7 @@ class EdgeVisibility with EquatableMixin {
     this.left = true,
   });
 
-  EdgeVisibility.allVisible()
+  const EdgeVisibility.allVisible()
       : top = true,
         right = true,
         bottom = true,

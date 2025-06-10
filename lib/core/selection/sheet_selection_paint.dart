@@ -17,11 +17,12 @@ abstract class SheetSelectionPaint {
 
   void paint(SheetViewport viewport, Canvas canvas, Size size);
 
-  void paintMainCell(Canvas canvas, BorderRect rect) {
+  void paintMainCell(Canvas canvas, BorderRect rect,
+      {EdgeVisibility edgeVisibility = const EdgeVisibility.allVisible()}) {
     SharedPaints.paintBorder(
       canvas: canvas,
       rect: rect,
-      edgeVisibility: EdgeVisibility.allVisible(),
+      edgeVisibility: edgeVisibility,
       border: Border.all(
         color: const Color(0xff3572e3),
         width: 2,

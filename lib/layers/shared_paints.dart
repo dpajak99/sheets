@@ -52,12 +52,24 @@ class SharedPaints {
       canvas.drawLine(rightBorderLine.start, rightBorderLine.end, rightBorderPaint);
     }
 
-    if (bottomBorderSide.width > 0 && bottomBorderSide != BorderSide.none) {
-      canvas.drawLine(bottomBorderLine.start, bottomBorderLine.end, bottomBorderPaint);
+    if (bottomBorderSide.width > 0 &&
+        bottomBorderSide != BorderSide.none &&
+        edgeVisibility.bottom) {
+      canvas.drawLine(
+        bottomBorderLine.start,
+        bottomBorderLine.end,
+        bottomBorderPaint,
+      );
     }
 
-    if (leftBorderSide.width > 0 && leftBorderSide != BorderSide.none) {
-      canvas.drawLine(leftBorderLine.start, leftBorderLine.end, leftBorderPaint);
+    if (leftBorderSide.width > 0 &&
+        leftBorderSide != BorderSide.none &&
+        edgeVisibility.left) {
+      canvas.drawLine(
+        leftBorderLine.start,
+        leftBorderLine.end,
+        leftBorderPaint,
+      );
     }
   }
 

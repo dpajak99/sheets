@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
@@ -18,74 +17,42 @@ class VisibleColumnsRenderer {
   final double scrollOffset;
 
   List<ViewportColumn> build() {
-    double firstVisibleCoordinate = scrollOffset;
-    _FirstVisibleColumnInfo firstVisibleColumnInfo = _findColumnByX(firstVisibleCoordinate);
-
-    double maxContentWidth = viewportRect.width - rowHeadersWidth;
-    double currentContentWidth = -firstVisibleColumnInfo.hiddenWidth;
-
+    double currentWidth = 0;
+    double viewportWidth = viewportRect.width - rowHeadersWidth;
+    double pinnedWidth = data.pinnedColumnsFullWidth;
+    double offset = data.pinnedColumnCount > 0 ? pinnedBorderWidth : 0;
     List<ViewportColumn> visibleColumns = <ViewportColumn>[];
-    int index = firstVisibleColumnInfo.index.value;
 
-    while (currentContentWidth < maxContentWidth && index < data.columnCount) {
-      ColumnIndex columnIndex = ColumnIndex(index);
+    for (int i = 0; i < data.columnCount; i++) {
+      ColumnIndex columnIndex = ColumnIndex(i);
       ColumnStyle columnStyle = data.columns.get(columnIndex);
+      bool pinned = i < data.pinnedColumnCount;
 
-      ViewportColumn viewportColumn = ViewportColumn(
-        index: columnIndex,
-        style: columnStyle,
-        rect: BorderRect.fromLTWH(currentContentWidth + rowHeadersWidth + borderWidth, 0, columnStyle.width, columnHeadersHeight),
-      );
-      visibleColumns.add(viewportColumn);
-      currentContentWidth += viewportColumn.style.width + borderWidth;
+      double adjustedStart = currentWidth - (pinned ? 0 : scrollOffset) + (pinned ? 0 : offset);
+      double end = adjustedStart + columnStyle.width + borderWidth;
 
-      index++;
+      bool visible = pinned
+          ? end > 0 && adjustedStart < viewportWidth
+          : end > pinnedWidth && adjustedStart < viewportWidth;
+
+      if (visible) {
+        visibleColumns.add(
+          ViewportColumn(
+            index: columnIndex,
+            style: columnStyle,
+            rect: BorderRect.fromLTWH(
+              rowHeadersWidth + borderWidth + adjustedStart,
+              0,
+              columnStyle.width,
+              columnHeadersHeight,
+            ),
+          ),
+        );
+      }
+
+      currentWidth += columnStyle.width + borderWidth;
     }
 
     return visibleColumns;
   }
-
-  _FirstVisibleColumnInfo _findColumnByX(double x) {
-    int actualColumnIndex = 0;
-    double currentWidthStart = 0;
-
-    _FirstVisibleColumnInfo? firstVisibleColumnInfo;
-
-    while (firstVisibleColumnInfo == null) {
-      ColumnIndex columnIndex = ColumnIndex(actualColumnIndex);
-      ColumnStyle columnStyle = data.columns.get(columnIndex);
-      double columnWidthEnd = currentWidthStart + columnStyle.width + borderWidth;
-
-      if (x >= currentWidthStart && x < columnWidthEnd) {
-        firstVisibleColumnInfo = _FirstVisibleColumnInfo(
-          index: columnIndex,
-          startCoordinate: currentWidthStart - borderWidth,
-          visibleWidth: columnWidthEnd - x,
-          hiddenWidth: x - currentWidthStart,
-        );
-      } else {
-        actualColumnIndex++;
-        currentWidthStart = columnWidthEnd;
-      }
-    }
-
-    return firstVisibleColumnInfo;
-  }
-}
-
-class _FirstVisibleColumnInfo with EquatableMixin {
-  const _FirstVisibleColumnInfo({
-    required this.index,
-    required this.startCoordinate,
-    required this.visibleWidth,
-    required this.hiddenWidth,
-  });
-
-  final ColumnIndex index;
-  final double startCoordinate;
-  final double visibleWidth;
-  final double hiddenWidth;
-
-  @override
-  List<Object?> get props => <Object?>[index, startCoordinate, visibleWidth, hiddenWidth];
 }

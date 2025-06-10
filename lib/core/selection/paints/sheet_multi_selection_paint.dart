@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sheets/core/selection/renderers/sheet_multi_selection_renderer.dart';
+import 'package:sheets/core/selection/selection_rect.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/viewport/sheet_viewport.dart';
-import 'package:sheets/core/viewport/viewport_item.dart';
 
 class SheetMultiSelectionPaint extends SheetSelectionPaint {
   SheetMultiSelectionPaint(
@@ -24,11 +24,15 @@ class SheetMultiSelectionPaint extends SheetSelectionPaint {
       renderer.getPaint(mainCellVisible: false, backgroundVisible: true).paint(viewport, canvas, size);
     }
 
-    ViewportCell? selectedCell = renderer.mainCell;
-    if (selectedCell == null) {
+    SelectionRect? selectedRect = renderer.mainCellRect;
+    if (selectedRect == null) {
       return;
     }
 
-    paintMainCell(canvas, selectedCell.rect);
+    paintMainCell(
+      canvas,
+      selectedRect,
+      edgeVisibility: selectedRect.edgeVisibility,
+    );
   }
 }
