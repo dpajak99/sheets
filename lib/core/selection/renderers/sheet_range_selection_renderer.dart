@@ -45,6 +45,25 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
     ClosestVisible<ViewportCell> endCell =
         viewport.visibleContent.findCellOrClosest(selection.end.cell);
 
+    Rect selectionBounds = Rect.fromPoints(
+      startCell.value.rect.topLeft,
+      endCell.value.rect.bottomRight,
+    );
+
+    double pinnedColumnsWidth = viewport.visibleContent.data.pinnedColumnsWidth;
+    double pinnedRowsHeight = viewport.visibleContent.data.pinnedRowsHeight;
+
+    Rect visibleArea = Rect.fromLTWH(
+      rowHeadersWidth + pinnedColumnsWidth,
+      columnHeadersHeight + pinnedRowsHeight,
+      viewport.rect.width - rowHeadersWidth - pinnedColumnsWidth,
+      viewport.rect.height - columnHeadersHeight - pinnedRowsHeight,
+    );
+
+    if (!selectionBounds.overlaps(visibleArea)) {
+      return null;
+    }
+
     List<Direction> hiddenBorders =
         <Direction>[...startCell.hiddenBorders, ...endCell.hiddenBorders];
     return SelectionRect(

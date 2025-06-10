@@ -22,6 +22,26 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSel
     return SheetSingleSelectionPaint(this, mainCellVisible, backgroundVisible);
   }
 
-  ViewportCell? get selectedCell =>
-      viewport.visibleContent.findCell(selection.start.cell);
+  ViewportCell? get selectedCell {
+    ViewportCell? cell = viewport.visibleContent.findCell(selection.start.cell);
+    if (cell == null) {
+      return null;
+    }
+
+    double pinnedColumnsWidth = viewport.visibleContent.data.pinnedColumnsWidth;
+    double pinnedRowsHeight = viewport.visibleContent.data.pinnedRowsHeight;
+
+    Rect visibleArea = Rect.fromLTWH(
+      rowHeadersWidth + pinnedColumnsWidth,
+      columnHeadersHeight + pinnedRowsHeight,
+      viewport.rect.width - rowHeadersWidth - pinnedColumnsWidth,
+      viewport.rect.height - columnHeadersHeight - pinnedRowsHeight,
+    );
+
+    if (!cell.rect.overlaps(visibleArea)) {
+      return null;
+    }
+
+    return cell;
+  }
 }
