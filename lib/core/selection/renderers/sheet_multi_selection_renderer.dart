@@ -4,7 +4,6 @@ import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/selection/types/sheet_multi_selection.dart';
 import 'package:sheets/core/selection/selection_rect.dart';
-import 'package:sheets/core/viewport/viewport_item.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetMultiSelectionRenderer extends SheetSelectionRenderer<SheetMultiSelection> {
@@ -25,29 +24,25 @@ class SheetMultiSelectionRenderer extends SheetSelectionRenderer<SheetMultiSelec
   }
 
   SelectionRect? get mainCellRect {
-    ViewportCell? cell = viewport.visibleContent.findCell(selection.mainCell);
-    if (cell == null) {
+    BorderRect cellRect = cellRectFor(selection.mainCell);
+    Rect visibleArea = visibleAreaFor(selection.mainCell);
+
+    if (!cellRect.overlaps(visibleArea)) {
       return null;
     }
 
-    Rect visibleArea = visibleAreaFor(cell.index);
-
-    if (!cell.rect.overlaps(visibleArea)) {
-      return null;
-    }
-
-    Rect clipped = cell.rect.intersect(visibleArea);
+    Rect clipped = cellRect.intersect(visibleArea);
     List<Direction> hiddenBorders = <Direction>[];
-    if (clipped.left > cell.rect.left) {
+    if (clipped.left > cellRect.left) {
       hiddenBorders.add(Direction.left);
     }
-    if (clipped.top > cell.rect.top) {
+    if (clipped.top > cellRect.top) {
       hiddenBorders.add(Direction.top);
     }
-    if (clipped.right < cell.rect.right) {
+    if (clipped.right < cellRect.right) {
       hiddenBorders.add(Direction.right);
     }
-    if (clipped.bottom < cell.rect.bottom) {
+    if (clipped.bottom < cellRect.bottom) {
       hiddenBorders.add(Direction.bottom);
     }
 

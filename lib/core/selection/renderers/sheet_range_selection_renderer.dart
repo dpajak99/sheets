@@ -7,8 +7,6 @@ import 'package:sheets/core/selection/sheet_selection_paint.dart';
 import 'package:sheets/core/selection/sheet_selection_renderer.dart';
 import 'package:sheets/core/selection/types/sheet_range_selection.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/viewport/viewport_item.dart';
-import 'package:sheets/utils/closest_visible.dart';
 import 'package:sheets/utils/direction.dart';
 
 class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRenderer<SheetRangeSelection<T>> {
@@ -31,29 +29,25 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
   SelectionRect? get selectionRect => _calculateSelectionBounds();
 
   SelectionRect? get mainCellRect {
-    ViewportCell? cell = viewport.visibleContent.findCell(selection.mainCell);
-    if (cell == null) {
+    BorderRect cellRect = cellRectFor(selection.mainCell);
+    Rect visibleArea = visibleAreaFor(selection.mainCell);
+
+    if (!cellRect.overlaps(visibleArea)) {
       return null;
     }
 
-    Rect visibleArea = visibleAreaFor(cell.index);
-
-    if (!cell.rect.overlaps(visibleArea)) {
-      return null;
-    }
-
-    Rect clipped = cell.rect.intersect(visibleArea);
+    Rect clipped = cellRect.intersect(visibleArea);
     List<Direction> hiddenBorders = <Direction>[];
-    if (clipped.left > cell.rect.left) {
+    if (clipped.left > cellRect.left) {
       hiddenBorders.add(Direction.left);
     }
-    if (clipped.top > cell.rect.top) {
+    if (clipped.top > cellRect.top) {
       hiddenBorders.add(Direction.top);
     }
-    if (clipped.right < cell.rect.right) {
+    if (clipped.right < cellRect.right) {
       hiddenBorders.add(Direction.right);
     }
-    if (clipped.bottom < cell.rect.bottom) {
+    if (clipped.bottom < cellRect.bottom) {
       hiddenBorders.add(Direction.bottom);
     }
 
@@ -64,13 +58,8 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
   }
 
   SelectionRect? _calculateSelectionBounds() {
-    ClosestVisible<ViewportCell> startCell =
-        viewport.visibleContent.findCellOrClosest(selection.start.cell);
-    ClosestVisible<ViewportCell> endCell =
-        viewport.visibleContent.findCellOrClosest(selection.end.cell);
-
-    Rect startRect = startCell.value.rect;
-    Rect endRect = endCell.value.rect;
+    BorderRect startRect = cellRectFor(selection.start.cell);
+    BorderRect endRect = cellRectFor(selection.end.cell);
     Rect selectionBounds = Rect.fromLTRB(
       math.min(startRect.left, endRect.left),
       math.min(startRect.top, endRect.top),
@@ -78,8 +67,8 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
       math.max(startRect.bottom, endRect.bottom),
     );
 
-    Rect visibleAreaStart = visibleAreaFor(startCell.value.index);
-    Rect visibleAreaEnd = visibleAreaFor(endCell.value.index);
+    Rect visibleAreaStart = visibleAreaFor(selection.start.cell);
+    Rect visibleAreaEnd = visibleAreaFor(selection.end.cell);
     Rect visibleArea = visibleAreaStart.expandToInclude(visibleAreaEnd);
 
     if (!selectionBounds.overlaps(visibleArea)) {
@@ -88,8 +77,7 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
 
     Rect clipped = selectionBounds.intersect(visibleArea);
 
-    List<Direction> hiddenBorders =
-        <Direction>[...startCell.hiddenBorders, ...endCell.hiddenBorders];
+    List<Direction> hiddenBorders = <Direction>[];
 
     if (clipped.left > selectionBounds.left) {
       hiddenBorders.add(Direction.left);
