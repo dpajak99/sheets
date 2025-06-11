@@ -28,26 +28,26 @@ class SheetSelectionLayerPainter extends ChangeNotifier implements CustomPainter
   void paint(Canvas canvas, Size size) {
     List<Rect> clipRegions = <Rect>[
       Rect.fromLTWH(
-        rowHeadersWidth + _pinnedColumnsWidth + pinnedBorderWidth,
-        columnHeadersHeight + _pinnedRowsHeight + pinnedBorderWidth,
+        rowHeadersWidth + _pinnedColumnsWidth,
+        columnHeadersHeight + _pinnedRowsHeight,
         size.width - _pinnedColumnsWidth,
         size.height - _pinnedRowsHeight,
       ),
       Rect.fromLTWH(
-        rowHeadersWidth + _pinnedColumnsWidth + pinnedBorderWidth,
-        columnHeadersHeight + pinnedBorderWidth,
+        rowHeadersWidth + _pinnedColumnsWidth,
+        columnHeadersHeight,
         size.width - _pinnedColumnsWidth,
         _pinnedRowsHeight,
       ),
       Rect.fromLTWH(
-        rowHeadersWidth + pinnedBorderWidth,
-        columnHeadersHeight + _pinnedRowsHeight + pinnedBorderWidth,
+        rowHeadersWidth,
+        columnHeadersHeight + _pinnedRowsHeight,
         _pinnedColumnsWidth,
         size.height - _pinnedRowsHeight,
       ),
       Rect.fromLTWH(
-        rowHeadersWidth + pinnedBorderWidth,
-        columnHeadersHeight + pinnedBorderWidth,
+        rowHeadersWidth,
+        columnHeadersHeight,
         _pinnedColumnsWidth,
         _pinnedRowsHeight,
       ),

@@ -51,7 +51,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
           top: 0,
           left: rowHeadersWidth + _data.pinnedColumnsWidth - pinnedBorderWidth,
           width: pinnedBorderWidth,
-          height: columnHeadersHeight + pinnedBorderWidth,
+          height: columnHeadersHeight,
           child: SheetMouseRegion(
             cursor: SystemMouseCursors.resizeColumn,
             onDragStart: _handleColumnDragStart,
@@ -64,7 +64,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         Positioned(
           top: columnHeadersHeight + _data.pinnedRowsHeight - pinnedBorderWidth,
           left: 0,
-          width: rowHeadersWidth + pinnedBorderWidth,
+          width: rowHeadersWidth,
           height: pinnedBorderWidth,
           child: SheetMouseRegion(
             cursor: SystemMouseCursors.resizeRow,

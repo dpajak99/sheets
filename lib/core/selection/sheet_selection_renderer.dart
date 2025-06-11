@@ -157,17 +157,13 @@ abstract class SheetSelectionRenderer<T extends SheetSelection> {
     bool rowPinned = index.row.value < data.pinnedRowCount;
 
     double left = rowHeadersWidth +
-        (columnPinned
-            ? borderWidth
-            : data.pinnedColumnsWidth + pinnedBorderWidth);
+        (columnPinned ? borderWidth : data.pinnedColumnsWidth);
     double top = columnHeadersHeight +
-        (rowPinned ? borderWidth : data.pinnedRowsHeight + pinnedBorderWidth);
-    double right = columnPinned
-        ? rowHeadersWidth + data.pinnedColumnsWidth + pinnedBorderWidth
-        : viewport.rect.width;
-    double bottom = rowPinned
-        ? columnHeadersHeight + data.pinnedRowsHeight + pinnedBorderWidth
-        : viewport.rect.height;
+        (rowPinned ? borderWidth : data.pinnedRowsHeight);
+    double right =
+        columnPinned ? rowHeadersWidth + data.pinnedColumnsWidth : viewport.rect.width;
+    double bottom =
+        rowPinned ? columnHeadersHeight + data.pinnedRowsHeight : viewport.rect.height;
 
     return Rect.fromLTRB(left, top, right, bottom);
   }

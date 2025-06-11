@@ -63,8 +63,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + pinnedColumnsWidth + pinnedBorderWidth,
-      columnHeadersHeight + pinnedRowsHeight + pinnedBorderWidth,
+      rowHeadersWidth + pinnedColumnsWidth,
+      columnHeadersHeight + pinnedRowsHeight,
       size.width - pinnedColumnsWidth,
       size.height - pinnedRowsHeight,
     ));
@@ -73,8 +73,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + pinnedColumnsWidth + pinnedBorderWidth,
-      columnHeadersHeight + pinnedBorderWidth,
+      rowHeadersWidth + pinnedColumnsWidth,
+      columnHeadersHeight,
       size.width - pinnedColumnsWidth,
       pinnedRowsHeight,
     ));
@@ -83,8 +83,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + pinnedBorderWidth,
-      columnHeadersHeight + pinnedRowsHeight + pinnedBorderWidth,
+      rowHeadersWidth,
+      columnHeadersHeight + pinnedRowsHeight,
       pinnedColumnsWidth,
       size.height - pinnedRowsHeight,
     ));
@@ -93,8 +93,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + pinnedBorderWidth,
-      columnHeadersHeight + pinnedBorderWidth,
+      rowHeadersWidth,
+      columnHeadersHeight,
       pinnedColumnsWidth,
       pinnedRowsHeight,
     ));
@@ -160,8 +160,8 @@ class SheetCellsLayerPainter extends CustomPainter {
       canvas,
       normal,
       Rect.fromLTWH(
-        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + pinnedBorderWidth,
-        columnHeadersHeight + worksheet.data.pinnedRowsHeight + pinnedBorderWidth,
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth,
+        columnHeadersHeight + worksheet.data.pinnedRowsHeight,
         size.width - worksheet.data.pinnedColumnsWidth,
         size.height - worksheet.data.pinnedRowsHeight,
       ),
@@ -171,7 +171,7 @@ class SheetCellsLayerPainter extends CustomPainter {
       canvas,
       pinnedRows,
       Rect.fromLTWH(
-        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + pinnedBorderWidth,
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth,
         columnHeadersHeight,
         size.width - worksheet.data.pinnedColumnsWidth,
         worksheet.data.pinnedRowsHeight,
@@ -238,22 +238,22 @@ class SheetCellsLayerPainter extends CustomPainter {
       BorderSide defaultBorder = MaterialSheetTheme.defaultBorderSide;
 
       Line topBorderLine = Line(
-        cellRect.topLeft.moveY(-borderWidth),
-        cellRect.topRight.moveY(-borderWidth).expandEndX(borderWidth),
+        cellRect.topLeft,
+        cellRect.topRight,
       );
 
       Line rightBorderLine = Line(
-        cellRect.topRight.moveX(borderWidth).expandEndY(-1),
-        cellRect.bottomRight.moveX(borderWidth),
+        cellRect.topRight,
+        cellRect.bottomRight,
       );
 
       Line bottomBorderLine = Line(
         cellRect.bottomLeft,
-        cellRect.bottomRight.expandEndX(borderWidth),
+        cellRect.bottomRight,
       );
 
       Line leftBorderLine = Line(
-        cellRect.topLeft.expandEndY(-borderWidth),
+        cellRect.topLeft,
         cellRect.bottomLeft,
       );
 
@@ -271,25 +271,25 @@ class SheetCellsLayerPainter extends CustomPainter {
 
       BorderSide topBorderSide = border?.top ?? defaultBorder;
       Line topBorderLine = Line(
-        cellRect.topLeft.moveY(-borderWidth),
-        cellRect.topRight.moveY(-borderWidth).expandEndX(borderWidth),
+        cellRect.topLeft,
+        cellRect.topRight,
       );
 
       BorderSide rightBorderSide = border?.right ?? defaultBorder;
       Line rightBorderLine = Line(
-        cellRect.topRight.moveX(borderWidth).expandEndY(-1),
-        cellRect.bottomRight.moveX(borderWidth),
+        cellRect.topRight,
+        cellRect.bottomRight,
       );
 
       BorderSide bottomBorderSide = border?.bottom ?? defaultBorder;
       Line bottomBorderLine = Line(
         cellRect.bottomLeft,
-        cellRect.bottomRight.expandEndX(borderWidth),
+        cellRect.bottomRight,
       );
 
       BorderSide leftBorderSide = border?.left ?? defaultBorder;
       Line leftBorderLine = Line(
-        cellRect.topLeft.expandEndY(-borderWidth),
+        cellRect.topLeft,
         cellRect.bottomLeft,
       );
 

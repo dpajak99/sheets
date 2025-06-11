@@ -113,7 +113,7 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + _pinnedWidth + pinnedBorderWidth,
+      rowHeadersWidth + _pinnedWidth,
       0,
       size.width - _pinnedWidth,
       size.height,
@@ -126,7 +126,7 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
     canvas.restore();
 
     canvas.save();
-    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth, 0, _pinnedWidth + pinnedBorderWidth, size.height));
+    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth, 0, _pinnedWidth, size.height));
     for (ViewportColumn column in pinned) {
       SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
       paintHeadersBackground(canvas, column.rect, selectionStatus);
@@ -209,7 +209,7 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
       0,
-      columnHeadersHeight + _pinnedHeight + pinnedBorderWidth,
+      columnHeadersHeight + _pinnedHeight,
       size.width,
       size.height - _pinnedHeight,
     ));
@@ -221,7 +221,7 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
     canvas.restore();
 
     canvas.save();
-    canvas.clipRect(Rect.fromLTWH(0, columnHeadersHeight, size.width, _pinnedHeight + pinnedBorderWidth));
+    canvas.clipRect(Rect.fromLTWH(0, columnHeadersHeight, size.width, _pinnedHeight));
     for (ViewportRow row in pinned) {
       SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
       paintHeadersBackground(canvas, row.rect, selectionStatus);
