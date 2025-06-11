@@ -36,8 +36,8 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
     return Stack(
       children: <Widget>[
         Positioned(
-          top: _data.pinnedRowsHeight - pinnedBorderWidth,
-          left: _data.pinnedColumnsWidth - pinnedBorderWidth,
+          top: 0,
+          left: 0,
           child: Container(
             width: rowHeadersWidth + pinnedBorderWidth,
             height: columnHeadersHeight + pinnedBorderWidth,
@@ -52,8 +52,8 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         ),
         // Vertical drag handle for columns
         Positioned(
-          top: _data.pinnedRowsHeight - pinnedBorderWidth,
-          left: rowHeadersWidth + _data.pinnedColumnsWidth - pinnedBorderWidth,
+          top: 0,
+          left: rowHeadersWidth,
           width: pinnedBorderWidth,
           height: columnHeadersHeight + pinnedBorderWidth,
           child: SheetMouseRegion(
@@ -66,8 +66,8 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         ),
         // Horizontal drag handle for rows
         Positioned(
-          top: columnHeadersHeight + _data.pinnedRowsHeight - pinnedBorderWidth,
-          left: _data.pinnedColumnsWidth - pinnedBorderWidth,
+          top: columnHeadersHeight,
+          left: 0,
           width: rowHeadersWidth + pinnedBorderWidth,
           height: pinnedBorderWidth,
           child: SheetMouseRegion(
