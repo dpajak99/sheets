@@ -6,8 +6,6 @@ import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/worksheet.dart';
-import 'package:sheets/widgets/goog/generic/goog_icon.dart';
-import 'package:sheets/core/config/app_icons/sheet_icons.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 /// Layer allowing users to pin rows and columns by dragging the top left corner
@@ -50,10 +48,9 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
               height: columnHeadersHeight,
               color: const Color(0xfff8f9fa),
               alignment: Alignment.center,
-              child: const GoogIcon(
-                SheetIcons.docs_icon_editors_ia_select_all,
-                width: 12,
-                height: 12,
+              child: const Icon(
+                Icons.pan_tool,
+                size: 12,
                 color: Color(0xff5f6368),
               ),
             ),
@@ -70,7 +67,9 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
             onDragStart: _handleColumnDragStart,
             onDragUpdate: _handleColumnDragUpdate,
             onDragEnd: _handleColumnDragEnd,
-            child: const SizedBox.expand(),
+            child: const ColoredBox(
+              color: Color(0xffb7b7b7),
+            ),
           ),
         ),
         // Horizontal drag handle for rows
@@ -84,7 +83,9 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
             onDragStart: _handleRowDragStart,
             onDragUpdate: _handleRowDragUpdate,
             onDragEnd: _handleRowDragEnd,
-            child: const SizedBox.expand(),
+            child: const ColoredBox(
+              color: Color(0xffb7b7b7),
+            ),
           ),
         ),
         if (_draggingColumns) ...<Widget>[
