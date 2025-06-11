@@ -38,6 +38,18 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   static const Color _pinnedGuideColor = Color(0xffc7c7c7); // grey
 
   @override
+  void initState() {
+    super.initState();
+    widget.worksheet.addListener(_handleWorksheetChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.worksheet.removeListener(_handleWorksheetChanged);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
@@ -193,7 +205,10 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   int _calculatePinnedColumns(double localX) {
-    double x = (localX - rowHeadersWidth).clamp(0.0, double.infinity);
+    double x = localX - rowHeadersWidth;
+    if (x <= 0) {
+      return 0;
+    }
     double width = 0;
     int count = 0;
     for (int i = 0; i < _data.columnCount; i++) {
@@ -231,7 +246,10 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   int _calculatePinnedRows(double localY) {
-    double y = (localY - columnHeadersHeight).clamp(0.0, double.infinity);
+    double y = localY - columnHeadersHeight;
+    if (y <= 0) {
+      return 0;
+    }
     double height = 0;
     int count = 0;
     for (int i = 0; i < _data.rowCount; i++) {
@@ -258,5 +276,9 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
       height += _data.rows.getHeight(RowIndex(i)) + borderWidth;
     }
     return height;
+  }
+
+  void _handleWorksheetChanged() {
+    setState(() {});
   }
 }
