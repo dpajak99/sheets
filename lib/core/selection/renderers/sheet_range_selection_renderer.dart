@@ -58,43 +58,71 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
   }
 
   SelectionRect? _calculateSelectionBounds() {
-    BorderRect startRect = cellRectFor(selection.start.cell);
-    BorderRect endRect = cellRectFor(selection.end.cell);
-    Rect selectionBounds = Rect.fromLTRB(
-      math.min(startRect.left, endRect.left),
-      math.min(startRect.top, endRect.top),
-      math.max(startRect.right, endRect.right),
-      math.max(startRect.bottom, endRect.bottom),
-    );
+    _ClippedCell? start = _clipCell(selection.start.cell);
+    _ClippedCell? end = _clipCell(selection.end.cell);
 
-    Rect visibleAreaStart = visibleAreaFor(selection.start.cell);
-    Rect visibleAreaEnd = visibleAreaFor(selection.end.cell);
-    Rect visibleArea = visibleAreaStart.expandToInclude(visibleAreaEnd);
-
-    if (!selectionBounds.overlaps(visibleArea)) {
+    if (start == null && end == null) {
       return null;
     }
 
-    Rect clipped = selectionBounds.intersect(visibleArea);
+    Rect bounds;
+    if (start != null && end != null) {
+      bounds = Rect.fromLTRB(
+        math.min(start.rect.left, end.rect.left),
+        math.min(start.rect.top, end.rect.top),
+        math.max(start.rect.right, end.rect.right),
+        math.max(start.rect.bottom, end.rect.bottom),
+      );
+    } else {
+      // Only one side is visible
+      _ClippedCell cell = start ?? end!;
+      bounds = cell.rect;
+    }
 
-    List<Direction> hiddenBorders = <Direction>[];
-
-    if (clipped.left > selectionBounds.left) {
-      hiddenBorders.add(Direction.left);
+    Set<Direction> hiddenBorders = <Direction>{};
+    if (start != null) {
+      hiddenBorders.addAll(start.hiddenBorders);
     }
-    if (clipped.top > selectionBounds.top) {
-      hiddenBorders.add(Direction.top);
-    }
-    if (clipped.right < selectionBounds.right) {
-      hiddenBorders.add(Direction.right);
-    }
-    if (clipped.bottom < selectionBounds.bottom) {
-      hiddenBorders.add(Direction.bottom);
+    if (end != null) {
+      hiddenBorders.addAll(end.hiddenBorders);
     }
 
     return SelectionRect.fromLTRB(
-      rect: clipped,
-      hiddenBorders: hiddenBorders,
+      rect: bounds,
+      hiddenBorders: hiddenBorders.toList(),
     );
   }
+
+  _ClippedCell? _clipCell(CellIndex index) {
+    BorderRect rect = cellRectFor(index);
+    Rect visible = visibleAreaFor(index);
+
+    if (!rect.overlaps(visible)) {
+      return null;
+    }
+
+    Rect clipped = rect.intersect(visible);
+    List<Direction> hiddenBorders = <Direction>[];
+    if (clipped.left > rect.left) {
+      hiddenBorders.add(Direction.left);
+    }
+    if (clipped.top > rect.top) {
+      hiddenBorders.add(Direction.top);
+    }
+    if (clipped.right < rect.right) {
+      hiddenBorders.add(Direction.right);
+    }
+    if (clipped.bottom < rect.bottom) {
+      hiddenBorders.add(Direction.bottom);
+    }
+
+    return _ClippedCell(clipped, hiddenBorders);
+  }
+}
+
+class _ClippedCell {
+  _ClippedCell(this.rect, this.hiddenBorders);
+
+  final Rect rect;
+  final List<Direction> hiddenBorders;
 }
