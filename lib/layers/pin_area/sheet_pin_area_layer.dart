@@ -32,6 +32,11 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
 
   WorksheetData get _data => widget.worksheet.data;
 
+  // Colors used for the pin area guidelines.
+  static const Color _headerGuideColor = Color(0xff1e40af); // dark blue
+  static const Color _dynamicGuideColor = Color(0xff9fa8da); // light blue
+  static const Color _pinnedGuideColor = Color(0xffc7c7c7); // grey
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -47,12 +52,6 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
               width: rowHeadersWidth,
               height: columnHeadersHeight,
               color: const Color(0xfff8f9fa),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.pan_tool,
-                size: 12,
-                color: Color(0xff5f6368),
-              ),
             ),
           ),
         ),
@@ -108,21 +107,31 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         : _data.pinnedColumnsWidth;
     double x = rowHeadersWidth + pinnedWidth - pinnedBorderWidth;
     return Positioned(
-      top: columnHeadersHeight,
+      top: 0,
       bottom: 0,
       left: x,
       width: pinnedBorderWidth,
-      child: Container(color: const Color(0xffc7c7c7)),
+      child: Column(
+        children: <Widget>[
+          Container(height: columnHeadersHeight, color: _headerGuideColor),
+          Expanded(child: Container(color: _pinnedGuideColor)),
+        ],
+      ),
     );
   }
 
   Widget _buildDynamicColumnLine() {
     return Positioned(
-      top: columnHeadersHeight,
+      top: 0,
       bottom: 0,
       left: _cursorX! - pinnedBorderWidth,
       width: pinnedBorderWidth,
-      child: Container(color: const Color(0xff9fa8da)),
+      child: Column(
+        children: <Widget>[
+          Container(height: columnHeadersHeight, color: _headerGuideColor),
+          Expanded(child: Container(color: _dynamicGuideColor)),
+        ],
+      ),
     );
   }
 
@@ -131,21 +140,31 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         _draggingRows ? _calculateRowsHeight(_targetRowCount) : _data.pinnedRowsHeight;
     double y = columnHeadersHeight + pinnedHeight - pinnedBorderWidth;
     return Positioned(
-      left: rowHeadersWidth,
+      left: 0,
       right: 0,
       top: y,
       height: pinnedBorderWidth,
-      child: Container(color: const Color(0xffc7c7c7)),
+      child: Row(
+        children: <Widget>[
+          Container(width: rowHeadersWidth, color: _headerGuideColor),
+          Expanded(child: Container(color: _pinnedGuideColor)),
+        ],
+      ),
     );
   }
 
   Widget _buildDynamicRowLine() {
     return Positioned(
-      left: rowHeadersWidth,
+      left: 0,
       right: 0,
       top: _cursorY! - pinnedBorderWidth,
       height: pinnedBorderWidth,
-      child: Container(color: const Color(0xff9fa8da)),
+      child: Row(
+        children: <Widget>[
+          Container(width: rowHeadersWidth, color: _headerGuideColor),
+          Expanded(child: Container(color: _dynamicGuideColor)),
+        ],
+      ),
     );
   }
 
