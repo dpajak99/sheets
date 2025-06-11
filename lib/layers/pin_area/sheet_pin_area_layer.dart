@@ -38,10 +38,12 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         Positioned(
           top: 0,
           left: 0,
-          child: Container(
-            width: rowHeadersWidth,
-            height: columnHeadersHeight,
-            color: const Color(0xfff8f9fa),
+          child: IgnorePointer(
+            child: Container(
+              width: rowHeadersWidth,
+              height: columnHeadersHeight,
+              color: const Color(0xfff8f9fa),
+            ),
           ),
         ),
         // Vertical drag handle for columns
@@ -85,7 +87,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   Widget _buildPinnedColumnLine() {
-    double x = rowHeadersWidth + _data.pinnedColumnsWidth;
+    double x = rowHeadersWidth + _data.pinnedColumnsWidth - pinnedBorderWidth;
     return Positioned(
       top: columnHeadersHeight,
       bottom: 0,
@@ -99,14 +101,14 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
     return Positioned(
       top: columnHeadersHeight,
       bottom: 0,
-      left: _cursorX,
+      left: _cursorX! - pinnedBorderWidth,
       width: pinnedBorderWidth,
       child: Container(color: const Color(0xff9fa8da)),
     );
   }
 
   Widget _buildPinnedRowLine() {
-    double y = columnHeadersHeight + _data.pinnedRowsHeight;
+    double y = columnHeadersHeight + _data.pinnedRowsHeight - pinnedBorderWidth;
     return Positioned(
       left: rowHeadersWidth,
       right: 0,
@@ -120,7 +122,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
     return Positioned(
       left: rowHeadersWidth,
       right: 0,
-      top: _cursorY,
+      top: _cursorY! - pinnedBorderWidth,
       height: pinnedBorderWidth,
       child: Container(color: const Color(0xff9fa8da)),
     );

@@ -141,7 +141,7 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
     if (_pinnedWidth > 0) {
       canvas.drawRect(
         Rect.fromLTWH(
-          rowHeadersWidth + _pinnedWidth,
+          rowHeadersWidth + _pinnedWidth - pinnedBorderWidth,
           0,
           pinnedBorderWidth,
           size.height,
@@ -237,7 +237,7 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
       canvas.drawRect(
         Rect.fromLTWH(
           0,
-          columnHeadersHeight + _pinnedHeight,
+          columnHeadersHeight + _pinnedHeight - pinnedBorderWidth,
           size.width,
           pinnedBorderWidth,
         ),
