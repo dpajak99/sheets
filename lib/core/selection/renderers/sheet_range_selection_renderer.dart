@@ -58,34 +58,54 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
   }
 
   SelectionRect? _calculateSelectionBounds() {
-    _ClippedCell? start = _clipCell(selection.start.cell);
-    _ClippedCell? end = _clipCell(selection.end.cell);
+    int rowStart = math.min(selection.start.row.value, selection.end.row.value);
+    int rowEnd = math.max(selection.start.row.value, selection.end.row.value);
+    int columnStart =
+        math.min(selection.start.column.value, selection.end.column.value);
+    int columnEnd =
+        math.max(selection.start.column.value, selection.end.column.value);
 
-    if (start == null && end == null) {
+    List<ViewportRow> visibleRows = viewport.visibleContent.rows
+        .where((ViewportRow row) =>
+            row.index.value >= rowStart && row.index.value <= rowEnd)
+        .toList();
+    List<ViewportColumn> visibleColumns = viewport.visibleContent.columns
+        .where((ViewportColumn column) =>
+            column.index.value >= columnStart &&
+            column.index.value <= columnEnd)
+        .toList();
+
+    if (visibleRows.isEmpty || visibleColumns.isEmpty) {
       return null;
     }
 
-    Rect bounds;
-    if (start != null && end != null) {
-      bounds = Rect.fromLTRB(
-        math.min(start.rect.left, end.rect.left),
-        math.min(start.rect.top, end.rect.top),
-        math.max(start.rect.right, end.rect.right),
-        math.max(start.rect.bottom, end.rect.bottom),
-      );
-    } else {
-      // Only one side is visible
-      _ClippedCell cell = start ?? end!;
-      bounds = cell.rect;
-    }
+    CellIndex firstVisible = CellIndex(
+      column: visibleColumns.first.index,
+      row: visibleRows.first.index,
+    );
+    CellIndex lastVisible = CellIndex(
+      column: visibleColumns.last.index,
+      row: visibleRows.last.index,
+    );
 
-    Set<Direction> hiddenBorders = <Direction>{};
-    if (start != null) {
-      hiddenBorders.addAll(start.hiddenBorders);
-    }
-    if (end != null) {
-      hiddenBorders.addAll(end.hiddenBorders);
-    }
+    _ClippedCell start = _clipCell(firstVisible)!;
+    _ClippedCell end = _clipCell(lastVisible)!;
+
+    Rect bounds = Rect.fromLTRB(
+      math.min(start.rect.left, end.rect.left),
+      math.min(start.rect.top, end.rect.top),
+      math.max(start.rect.right, end.rect.right),
+      math.max(start.rect.bottom, end.rect.bottom),
+    );
+
+    Set<Direction> hiddenBorders = <Direction>{
+      if (visibleRows.first.index.value > rowStart) Direction.top,
+      if (visibleRows.last.index.value < rowEnd) Direction.bottom,
+      if (visibleColumns.first.index.value > columnStart) Direction.left,
+      if (visibleColumns.last.index.value < columnEnd) Direction.right,
+      ...start.hiddenBorders,
+      ...end.hiddenBorders,
+    };
 
     return SelectionRect.fromLTRB(
       rect: bounds,
