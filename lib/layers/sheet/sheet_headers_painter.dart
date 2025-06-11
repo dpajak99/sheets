@@ -113,7 +113,7 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + _pinnedWidth + borderWidth,
+      rowHeadersWidth + _pinnedWidth + pinnedBorderWidth,
       0,
       size.width - _pinnedWidth,
       size.height,
@@ -126,7 +126,7 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
     canvas.restore();
 
     canvas.save();
-    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth, 0, _pinnedWidth + borderWidth, size.height));
+    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth, 0, _pinnedWidth + pinnedBorderWidth, size.height));
     for (ViewportColumn column in pinned) {
       SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
       paintHeadersBackground(canvas, column.rect, selectionStatus);
@@ -143,7 +143,7 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
         Rect.fromLTWH(
           rowHeadersWidth + _pinnedWidth,
           0,
-          borderWidth,
+          pinnedBorderWidth,
           size.height,
         ),
         borderPaint,
@@ -209,7 +209,7 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
       0,
-      columnHeadersHeight + _pinnedHeight + borderWidth,
+      columnHeadersHeight + _pinnedHeight + pinnedBorderWidth,
       size.width,
       size.height - _pinnedHeight,
     ));
@@ -221,7 +221,7 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
     canvas.restore();
 
     canvas.save();
-    canvas.clipRect(Rect.fromLTWH(0, columnHeadersHeight, size.width, _pinnedHeight + borderWidth));
+    canvas.clipRect(Rect.fromLTWH(0, columnHeadersHeight, size.width, _pinnedHeight + pinnedBorderWidth));
     for (ViewportRow row in pinned) {
       SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
       paintHeadersBackground(canvas, row.rect, selectionStatus);
@@ -239,7 +239,7 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
           0,
           columnHeadersHeight + _pinnedHeight,
           size.width,
-          borderWidth,
+          pinnedBorderWidth,
         ),
         borderPaint,
       );

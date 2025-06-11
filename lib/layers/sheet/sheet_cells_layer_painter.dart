@@ -63,8 +63,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + pinnedColumnsWidth + borderWidth,
-      columnHeadersHeight + pinnedRowsHeight + borderWidth,
+      rowHeadersWidth + pinnedColumnsWidth + pinnedBorderWidth,
+      columnHeadersHeight + pinnedRowsHeight + pinnedBorderWidth,
       size.width - pinnedColumnsWidth,
       size.height - pinnedRowsHeight,
     ));
@@ -73,8 +73,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + pinnedColumnsWidth + borderWidth,
-      columnHeadersHeight + borderWidth,
+      rowHeadersWidth + pinnedColumnsWidth + pinnedBorderWidth,
+      columnHeadersHeight + pinnedBorderWidth,
       size.width - pinnedColumnsWidth,
       pinnedRowsHeight,
     ));
@@ -83,8 +83,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + borderWidth,
-      columnHeadersHeight + pinnedRowsHeight + borderWidth,
+      rowHeadersWidth + pinnedBorderWidth,
+      columnHeadersHeight + pinnedRowsHeight + pinnedBorderWidth,
       pinnedColumnsWidth,
       size.height - pinnedRowsHeight,
     ));
@@ -93,8 +93,8 @@ class SheetCellsLayerPainter extends CustomPainter {
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
-      rowHeadersWidth + borderWidth,
-      columnHeadersHeight + borderWidth,
+      rowHeadersWidth + pinnedBorderWidth,
+      columnHeadersHeight + pinnedBorderWidth,
       pinnedColumnsWidth,
       pinnedRowsHeight,
     ));
@@ -160,8 +160,8 @@ class SheetCellsLayerPainter extends CustomPainter {
       canvas,
       normal,
       Rect.fromLTWH(
-        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + borderWidth,
-        columnHeadersHeight + worksheet.data.pinnedRowsHeight + borderWidth,
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + pinnedBorderWidth,
+        columnHeadersHeight + worksheet.data.pinnedRowsHeight + pinnedBorderWidth,
         size.width - worksheet.data.pinnedColumnsWidth,
         size.height - worksheet.data.pinnedRowsHeight,
       ),
@@ -171,7 +171,7 @@ class SheetCellsLayerPainter extends CustomPainter {
       canvas,
       pinnedRows,
       Rect.fromLTWH(
-        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + borderWidth,
+        rowHeadersWidth + worksheet.data.pinnedColumnsWidth + pinnedBorderWidth,
         columnHeadersHeight,
         size.width - worksheet.data.pinnedColumnsWidth,
         worksheet.data.pinnedRowsHeight,
@@ -344,7 +344,7 @@ class SheetCellsLayerPainter extends CustomPainter {
         Rect.fromLTWH(
           rowHeadersWidth + pinnedColumnsWidth,
           0,
-          borderWidth,
+          pinnedBorderWidth,
           size.height,
         ),
         borderPaint,
@@ -357,7 +357,7 @@ class SheetCellsLayerPainter extends CustomPainter {
           0,
           columnHeadersHeight + pinnedRowsHeight,
           size.width,
-          borderWidth,
+          pinnedBorderWidth,
         ),
         borderPaint,
       );

@@ -36,26 +36,26 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
     return Stack(
       children: <Widget>[
         Positioned(
-          top: 0,
-          left: 0,
+          top: _data.pinnedRowsHeight - pinnedBorderWidth,
+          left: _data.pinnedColumnsWidth - pinnedBorderWidth,
           child: Container(
-            width: rowHeadersWidth + borderWidth,
-            height: columnHeadersHeight + borderWidth,
+            width: rowHeadersWidth + pinnedBorderWidth,
+            height: columnHeadersHeight + pinnedBorderWidth,
             decoration: const BoxDecoration(
               color: Color(0xfff8f9fa),
               border: Border(
-                right: BorderSide(color: Color(0xffc7c7c7), width: 5),
-                bottom: BorderSide(color: Color(0xffc7c7c7), width: 5),
+                right: BorderSide(color: Color(0xffc7c7c7), width: pinnedBorderWidth),
+                bottom: BorderSide(color: Color(0xffc7c7c7), width: pinnedBorderWidth),
               ),
             ),
           ),
         ),
         // Vertical drag handle for columns
         Positioned(
-          top: 0,
-          left: rowHeadersWidth + borderWidth - 5,
-          width: 5,
-          height: columnHeadersHeight + borderWidth,
+          top: _data.pinnedRowsHeight - pinnedBorderWidth,
+          left: rowHeadersWidth + _data.pinnedColumnsWidth - pinnedBorderWidth,
+          width: pinnedBorderWidth,
+          height: columnHeadersHeight + pinnedBorderWidth,
           child: SheetMouseRegion(
             cursor: SystemMouseCursors.resizeColumn,
             onDragStart: _handleColumnDragStart,
@@ -66,10 +66,10 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         ),
         // Horizontal drag handle for rows
         Positioned(
-          top: columnHeadersHeight + borderWidth - 5,
-          left: 0,
-          width: rowHeadersWidth + borderWidth,
-          height: 5,
+          top: columnHeadersHeight + _data.pinnedRowsHeight - pinnedBorderWidth,
+          left: _data.pinnedColumnsWidth - pinnedBorderWidth,
+          width: rowHeadersWidth + pinnedBorderWidth,
+          height: pinnedBorderWidth,
           child: SheetMouseRegion(
             cursor: SystemMouseCursors.resizeRow,
             onDragStart: _handleRowDragStart,
@@ -96,7 +96,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
       top: columnHeadersHeight,
       bottom: 0,
       left: x,
-      width: 5,
+      width: pinnedBorderWidth,
       child: Container(color: const Color(0xffc7c7c7)),
     );
   }
@@ -106,7 +106,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
       top: columnHeadersHeight,
       bottom: 0,
       left: _cursorX,
-      width: 5,
+      width: pinnedBorderWidth,
       child: Container(color: const Color(0xff9fa8da)),
     );
   }
@@ -117,7 +117,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
       left: rowHeadersWidth,
       right: 0,
       top: y,
-      height: 5,
+      height: pinnedBorderWidth,
       child: Container(color: const Color(0xffc7c7c7)),
     );
   }
@@ -127,7 +127,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
       left: rowHeadersWidth,
       right: 0,
       top: _cursorY,
-      height: 5,
+      height: pinnedBorderWidth,
       child: Container(color: const Color(0xff9fa8da)),
     );
   }
