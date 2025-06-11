@@ -16,10 +16,17 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
   });
 
   @override
-  bool get fillHandleVisible => selection.isCompleted;
+  bool get fillHandleVisible {
+    SelectionRect? rect = selectionRect;
+    return selection.isCompleted &&
+        rect != null &&
+        rect.isBottomBorderVisible &&
+        rect.isRightBorderVisible;
+  }
 
   @override
-  Offset? get fillHandleOffset => selectionRect?.bottomRight;
+  Offset? get fillHandleOffset =>
+      fillHandleVisible ? selectionRect!.bottomRight : null;
 
   @override
   SheetSelectionPaint getPaint({bool? mainCellVisible, bool? backgroundVisible}) {

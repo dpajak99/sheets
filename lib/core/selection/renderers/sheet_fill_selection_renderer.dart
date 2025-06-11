@@ -15,10 +15,16 @@ class SheetFillSelectionRenderer extends SheetRangeSelectionRenderer<CellIndex> 
   SheetFillSelection get selection => super.selection as SheetFillSelection;
 
   @override
-  bool get fillHandleVisible => selection.baseSelection.isCompleted;
+  bool get fillHandleVisible {
+    final renderer = selection.baseSelection.createRenderer(viewport);
+    return renderer.fillHandleVisible && selection.baseSelection.isCompleted;
+  }
 
   @override
-  Offset? get fillHandleOffset => selection.baseSelection.createRenderer(viewport).fillHandleOffset;
+  Offset? get fillHandleOffset {
+    final renderer = selection.baseSelection.createRenderer(viewport);
+    return renderer.fillHandleVisible ? renderer.fillHandleOffset : null;
+  }
 
   @override
   SheetSelectionPaint getPaint({bool? mainCellVisible, bool? backgroundVisible}) {

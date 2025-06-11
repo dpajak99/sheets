@@ -13,10 +13,18 @@ class SheetSingleSelectionRenderer extends SheetSelectionRenderer<SheetSingleSel
   });
 
   @override
-  bool get fillHandleVisible => selection.fillHandleVisible && selection.isCompleted;
+  bool get fillHandleVisible {
+    SelectionRect? rect = selectedRect;
+    return selection.fillHandleVisible &&
+        selection.isCompleted &&
+        rect != null &&
+        rect.isBottomBorderVisible &&
+        rect.isRightBorderVisible;
+  }
 
   @override
-  Offset? get fillHandleOffset => selectedRect?.bottomRight;
+  Offset? get fillHandleOffset =>
+      fillHandleVisible ? selectedRect!.bottomRight : null;
 
   @override
   SheetSelectionPaint getPaint({bool? mainCellVisible, bool? backgroundVisible}) {
