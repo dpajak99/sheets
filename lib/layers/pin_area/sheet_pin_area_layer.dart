@@ -39,21 +39,15 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
           top: 0,
           left: 0,
           child: Container(
-            width: rowHeadersWidth + borderWidth,
-            height: columnHeadersHeight + borderWidth,
-            decoration: const BoxDecoration(
-              color: Color(0xfff8f9fa),
-              border: Border(
-                right: BorderSide(color: Color(0xffc7c7c7), width: pinnedBorderWidth),
-                bottom: BorderSide(color: Color(0xffc7c7c7), width: pinnedBorderWidth),
-              ),
-            ),
+            width: rowHeadersWidth,
+            height: columnHeadersHeight,
+            color: const Color(0xfff8f9fa),
           ),
         ),
         // Vertical drag handle for columns
         Positioned(
           top: 0,
-          left: rowHeadersWidth + borderWidth - pinnedBorderWidth,
+          left: rowHeadersWidth + _data.pinnedColumnsWidth - pinnedBorderWidth,
           width: pinnedBorderWidth,
           height: columnHeadersHeight + pinnedBorderWidth,
           child: SheetMouseRegion(
@@ -66,7 +60,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         ),
         // Horizontal drag handle for rows
         Positioned(
-          top: columnHeadersHeight + borderWidth - pinnedBorderWidth,
+          top: columnHeadersHeight + _data.pinnedRowsHeight - pinnedBorderWidth,
           left: 0,
           width: rowHeadersWidth + pinnedBorderWidth,
           height: pinnedBorderWidth,
@@ -91,7 +85,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   Widget _buildPinnedColumnLine() {
-    double x = rowHeadersWidth + borderWidth + _data.pinnedColumnsWidth;
+    double x = rowHeadersWidth + _data.pinnedColumnsWidth;
     return Positioned(
       top: columnHeadersHeight,
       bottom: 0,
@@ -112,7 +106,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   Widget _buildPinnedRowLine() {
-    double y = columnHeadersHeight + borderWidth + _data.pinnedRowsHeight;
+    double y = columnHeadersHeight + _data.pinnedRowsHeight;
     return Positioned(
       left: rowHeadersWidth,
       right: 0,
@@ -135,7 +129,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   void _handleColumnDragStart(PointerDownEvent event) {
     setState(() {
       _draggingColumns = true;
-      _cursorX = rowHeadersWidth + pinnedBorderWidth + _data.pinnedColumnsWidth;
+      _cursorX = rowHeadersWidth + _data.pinnedColumnsWidth;
       _targetColumnCount = _data.pinnedColumnCount;
     });
   }
@@ -143,8 +137,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   void _handleColumnDragUpdate(PointerMoveEvent event) {
     Offset local = widget.worksheet.viewport.globalOffsetToLocal(event.position);
     setState(() {
-      _cursorX =
-          local.dx.clamp((rowHeadersWidth + pinnedBorderWidth).toDouble(), double.infinity);
+      _cursorX = local.dx.clamp(rowHeadersWidth.toDouble(), double.infinity);
       _targetColumnCount = _calculatePinnedColumns(local.dx);
     });
   }
@@ -158,7 +151,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   int _calculatePinnedColumns(double localX) {
-    double x = (localX - rowHeadersWidth - pinnedBorderWidth).clamp(0.0, double.infinity);
+    double x = (localX - rowHeadersWidth).clamp(0.0, double.infinity);
     double width = 0;
     int count = 0;
     for (int i = 0; i < _data.columnCount; i++) {
@@ -174,7 +167,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   void _handleRowDragStart(PointerDownEvent event) {
     setState(() {
       _draggingRows = true;
-      _cursorY = columnHeadersHeight + pinnedBorderWidth + _data.pinnedRowsHeight;
+      _cursorY = columnHeadersHeight + _data.pinnedRowsHeight;
       _targetRowCount = _data.pinnedRowCount;
     });
   }
@@ -182,8 +175,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   void _handleRowDragUpdate(PointerMoveEvent event) {
     Offset local = widget.worksheet.viewport.globalOffsetToLocal(event.position);
     setState(() {
-      _cursorY =
-          local.dy.clamp((columnHeadersHeight + pinnedBorderWidth).toDouble(), double.infinity);
+      _cursorY = local.dy.clamp(columnHeadersHeight.toDouble(), double.infinity);
       _targetRowCount = _calculatePinnedRows(local.dy);
     });
   }
@@ -197,7 +189,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   int _calculatePinnedRows(double localY) {
-    double y = (localY - columnHeadersHeight - pinnedBorderWidth).clamp(0.0, double.infinity);
+    double y = (localY - columnHeadersHeight).clamp(0.0, double.infinity);
     double height = 0;
     int count = 0;
     for (int i = 0; i < _data.rowCount; i++) {
