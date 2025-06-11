@@ -63,7 +63,8 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
           width: pinnedBorderWidth,
           height: columnHeadersHeight,
           child: SheetMouseRegion(
-            cursor: SystemMouseCursors.resizeColumn,
+            cursor:
+                _draggingColumns ? SystemMouseCursors.grabbing : SystemMouseCursors.grab,
             onDragStart: _handleColumnDragStart,
             onDragUpdate: _handleColumnDragUpdate,
             onDragEnd: _handleColumnDragEnd,
@@ -79,7 +80,8 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
           width: rowHeadersWidth,
           height: pinnedBorderWidth,
           child: SheetMouseRegion(
-            cursor: SystemMouseCursors.resizeRow,
+            cursor:
+                _draggingRows ? SystemMouseCursors.grabbing : SystemMouseCursors.grab,
             onDragStart: _handleRowDragStart,
             onDragUpdate: _handleRowDragUpdate,
             onDragEnd: _handleRowDragEnd,
@@ -101,7 +103,10 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   Widget _buildPinnedColumnLine() {
-    double x = rowHeadersWidth + _data.pinnedColumnsWidth - pinnedBorderWidth;
+    double pinnedWidth = _draggingColumns
+        ? _calculateColumnsWidth(_targetColumnCount)
+        : _data.pinnedColumnsWidth;
+    double x = rowHeadersWidth + pinnedWidth - pinnedBorderWidth;
     return Positioned(
       top: columnHeadersHeight,
       bottom: 0,
@@ -122,7 +127,9 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   }
 
   Widget _buildPinnedRowLine() {
-    double y = columnHeadersHeight + _data.pinnedRowsHeight - pinnedBorderWidth;
+    double pinnedHeight =
+        _draggingRows ? _calculateRowsHeight(_targetRowCount) : _data.pinnedRowsHeight;
+    double y = columnHeadersHeight + pinnedHeight - pinnedBorderWidth;
     return Positioned(
       left: rowHeadersWidth,
       right: 0,
@@ -216,5 +223,21 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
       }
     }
     return count;
+  }
+
+  double _calculateColumnsWidth(int count) {
+    double width = 0;
+    for (int i = 0; i < count && i < _data.columnCount; i++) {
+      width += _data.columns.getWidth(ColumnIndex(i)) + borderWidth;
+    }
+    return width;
+  }
+
+  double _calculateRowsHeight(int count) {
+    double height = 0;
+    for (int i = 0; i < count && i < _data.rowCount; i++) {
+      height += _data.rows.getHeight(RowIndex(i)) + borderWidth;
+    }
+    return height;
   }
 }

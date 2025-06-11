@@ -197,6 +197,11 @@ class SetPinnedColumnsAction extends SheetAction<SetPinnedColumnsEvent> {
   void execute() {
     worksheet.data.pinnedColumnCount = event.count;
     worksheet.scroll.setContentSize(worksheet.data.scrollableContentSize);
+    worksheet.scroll.setViewportSize(
+      worksheet.viewport.rect.size,
+      pinnedColumnsWidth: worksheet.data.pinnedColumnsWidth,
+      pinnedRowsHeight: worksheet.data.pinnedRowsHeight,
+    );
     worksheet.viewport.rebuild(worksheet.scroll.offset);
   }
 }
@@ -227,6 +232,11 @@ class SetPinnedRowsAction extends SheetAction<SetPinnedRowsEvent> {
   void execute() {
     worksheet.data.pinnedRowCount = event.count;
     worksheet.scroll.setContentSize(worksheet.data.scrollableContentSize);
+    worksheet.scroll.setViewportSize(
+      worksheet.viewport.rect.size,
+      pinnedColumnsWidth: worksheet.data.pinnedColumnsWidth,
+      pinnedRowsHeight: worksheet.data.pinnedRowsHeight,
+    );
     worksheet.viewport.rebuild(worksheet.scroll.offset);
   }
 }
