@@ -2,9 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/events/sheet_event.dart';
+import 'package:sheets/core/selection/sheet_selection_factory.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/worksheet.dart';
+import 'package:sheets/widgets/goog/generic/goog_icon.dart';
+import 'package:sheets/core/config/app_icons/sheet_icons.dart';
 import 'package:sheets/widgets/sheet_mouse_region.dart';
 
 /// Layer allowing users to pin rows and columns by dragging the top left corner
@@ -38,11 +41,21 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         Positioned(
           top: 0,
           left: 0,
-          child: IgnorePointer(
+          child: SheetMouseRegion(
+            cursor: SystemMouseCursors.click,
+            onDragStart: (_) =>
+                widget.worksheet.selection.update(SheetSelectionFactory.all()),
             child: Container(
               width: rowHeadersWidth,
               height: columnHeadersHeight,
               color: const Color(0xfff8f9fa),
+              alignment: Alignment.center,
+              child: const GoogIcon(
+                SheetIcons.docs_icon_editors_ia_select_all,
+                width: 12,
+                height: 12,
+                color: Color(0xff5f6368),
+              ),
             ),
           ),
         ),
