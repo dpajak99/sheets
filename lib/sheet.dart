@@ -13,6 +13,7 @@ import 'package:sheets/layers/fill_handle/sheet_fill_handle_layer.dart';
 import 'package:sheets/layers/headers_resizer/sheet_headers_resizer_layer.dart';
 import 'package:sheets/layers/sheet/sheet_layer.dart';
 import 'package:sheets/layers/textfield/sheet_textfield_layer.dart';
+import 'package:sheets/layers/pin_area/sheet_pin_area_layer.dart';
 import 'package:sheets/utils/formatters/style/text_style_format.dart';
 import 'package:sheets/widgets/goog/menu/context/goog_cell_context_menu.dart';
 import 'package:sheets/widgets/goog/menu/context/goog_column_context_menu.dart';
@@ -224,21 +225,7 @@ class SheetGrid extends StatelessWidget {
                 worksheet.resolve(EnableEditingEvent(cell: viewportItem.index.toCellIndex())),
           ),
         ),
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: rowHeadersWidth + borderWidth,
-            height: columnHeadersHeight + borderWidth,
-            decoration: const BoxDecoration(
-              color: Color(0xfff8f9fa),
-              border: Border(
-                right: BorderSide(color: Color(0xffc7c7c7), width: 5),
-                bottom: BorderSide(color: Color(0xffc7c7c7), width: 5),
-              ),
-            ),
-          ),
-        ),
+        Positioned.fill(child: SheetPinAreaLayer(worksheet: worksheet)),
         Positioned.fill(child: HeadersResizerLayer(worksheet: worksheet)),
         Positioned.fill(child: SheetFillHandleLayer(worksheet: worksheet)),
         Positioned.fill(child: SheetTextfieldLayer(worksheet: worksheet)),
