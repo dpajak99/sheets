@@ -98,13 +98,24 @@ class SheetRangeSelectionRenderer<T extends SheetIndex> extends SheetSelectionRe
       math.max(start.rect.bottom, end.rect.bottom),
     );
 
+    bool hideLeft =
+        visibleColumns.first.index.value > columnStart ||
+            start.hiddenBorders.contains(Direction.left);
+    bool hideRight =
+        visibleColumns.last.index.value < columnEnd ||
+            end.hiddenBorders.contains(Direction.right);
+    bool hideTop =
+        visibleRows.first.index.value > rowStart ||
+            start.hiddenBorders.contains(Direction.top);
+    bool hideBottom =
+        visibleRows.last.index.value < rowEnd ||
+            end.hiddenBorders.contains(Direction.bottom);
+
     Set<Direction> hiddenBorders = <Direction>{
-      if (visibleRows.first.index.value > rowStart) Direction.top,
-      if (visibleRows.last.index.value < rowEnd) Direction.bottom,
-      if (visibleColumns.first.index.value > columnStart) Direction.left,
-      if (visibleColumns.last.index.value < columnEnd) Direction.right,
-      ...start.hiddenBorders,
-      ...end.hiddenBorders,
+      if (hideTop) Direction.top,
+      if (hideBottom) Direction.bottom,
+      if (hideLeft) Direction.left,
+      if (hideRight) Direction.right,
     };
 
     return SelectionRect.fromLTRB(
