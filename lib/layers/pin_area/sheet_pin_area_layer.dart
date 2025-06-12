@@ -104,7 +104,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         // Vertical drag handle for columns
         Positioned(
           top: 0,
-          left: rowHeadersWidth + _data.pinnedColumnsWidth - pinnedBorderWidth,
+          left: rowHeadersWidth + _data.pinnedColumnsWidth,
           width: pinnedBorderWidth,
           height: columnHeadersHeight,
           child: SheetMouseRegion(
@@ -121,7 +121,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
         ),
         // Horizontal drag handle for rows
         Positioned(
-          top: columnHeadersHeight + _data.pinnedRowsHeight - pinnedBorderWidth,
+          top: columnHeadersHeight + _data.pinnedRowsHeight,
           left: 0,
           width: rowHeadersWidth,
           height: pinnedBorderWidth,
@@ -153,7 +153,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
     double pinnedWidth = _isDraggingColumns
         ? _calculateColumnsWidth(_targetColumnCount)
         : _data.pinnedColumnsWidth;
-    double x = rowHeadersWidth + pinnedWidth - pinnedBorderWidth;
+    double x = rowHeadersWidth + pinnedWidth;
     return _buildGuideLine(
       axis: Axis.vertical,
       offset: x,
@@ -164,7 +164,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   Widget _buildDynamicColumnLine() {
     return _buildGuideLine(
       axis: Axis.vertical,
-      offset: _cursorLeft! - pinnedBorderWidth,
+      offset: _cursorLeft!,
       color: _dynamicGuideColor,
     );
   }
@@ -172,7 +172,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   Widget _buildPinnedRowLine() {
     double pinnedHeight =
         _isDraggingRows ? _calculateRowsHeight(_targetRowCount) : _data.pinnedRowsHeight;
-    double y = columnHeadersHeight + pinnedHeight - pinnedBorderWidth;
+    double y = columnHeadersHeight + pinnedHeight;
     return _buildGuideLine(
       axis: Axis.horizontal,
       offset: y,
@@ -183,7 +183,7 @@ class _SheetPinAreaLayerState extends State<SheetPinAreaLayer> {
   Widget _buildDynamicRowLine() {
     return _buildGuideLine(
       axis: Axis.horizontal,
-      offset: _cursorTop! - pinnedBorderWidth,
+      offset: _cursorTop!,
       color: _dynamicGuideColor,
     );
   }
