@@ -378,6 +378,9 @@ class WorksheetData {
     return width;
   }
 
+  double get pinnedColumnsFullWidth =>
+      pinnedColumnCount > 0 ? pinnedColumnsWidth + pinnedBorderWidth : pinnedColumnsWidth;
+
   double get pinnedRowsHeight {
     double height = 0;
     for (int i = 0; i < pinnedRowCount && i < rowCount; i++) {
@@ -385,6 +388,9 @@ class WorksheetData {
     }
     return height;
   }
+
+  double get pinnedRowsFullHeight =>
+      pinnedRowCount > 0 ? pinnedRowsHeight + pinnedBorderWidth : pinnedRowsHeight;
 
   Size get scrollableContentSize =>
       Size(contentWidth - pinnedColumnsWidth, contentHeight - pinnedRowsHeight);

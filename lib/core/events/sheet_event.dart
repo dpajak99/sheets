@@ -165,8 +165,8 @@ class SetViewportSizeAction extends SheetAction<SetViewportSizeEvent> {
     worksheet.viewport.setViewportRect(event.rect);
     worksheet.scroll.setViewportSize(
       event.rect.size,
-      pinnedColumnsWidth: worksheet.data.pinnedColumnsWidth,
-      pinnedRowsHeight: worksheet.data.pinnedRowsHeight,
+      pinnedColumnsWidth: worksheet.data.pinnedColumnsFullWidth,
+      pinnedRowsHeight: worksheet.data.pinnedRowsFullHeight,
     );
   }
 }
@@ -199,8 +199,8 @@ class SetPinnedColumnsAction extends SheetAction<SetPinnedColumnsEvent> {
     worksheet.scroll.setContentSize(worksheet.data.scrollableContentSize);
     worksheet.scroll.setViewportSize(
       worksheet.viewport.rect.size,
-      pinnedColumnsWidth: worksheet.data.pinnedColumnsWidth,
-      pinnedRowsHeight: worksheet.data.pinnedRowsHeight,
+      pinnedColumnsWidth: worksheet.data.pinnedColumnsFullWidth,
+      pinnedRowsHeight: worksheet.data.pinnedRowsFullHeight,
     );
     worksheet.viewport.rebuild(worksheet.scroll.offset);
   }
@@ -234,8 +234,8 @@ class SetPinnedRowsAction extends SheetAction<SetPinnedRowsEvent> {
     worksheet.scroll.setContentSize(worksheet.data.scrollableContentSize);
     worksheet.scroll.setViewportSize(
       worksheet.viewport.rect.size,
-      pinnedColumnsWidth: worksheet.data.pinnedColumnsWidth,
-      pinnedRowsHeight: worksheet.data.pinnedRowsHeight,
+      pinnedColumnsWidth: worksheet.data.pinnedColumnsFullWidth,
+      pinnedRowsHeight: worksheet.data.pinnedRowsFullHeight,
     );
     worksheet.viewport.rebuild(worksheet.scroll.offset);
   }

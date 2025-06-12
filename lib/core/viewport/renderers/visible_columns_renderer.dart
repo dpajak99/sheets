@@ -20,7 +20,8 @@ class VisibleColumnsRenderer {
   List<ViewportColumn> build() {
     double currentWidth = 0;
     double viewportWidth = viewportRect.width - rowHeadersWidth;
-    double pinnedWidth = data.pinnedColumnsWidth;
+    double pinnedWidth = data.pinnedColumnsFullWidth;
+    double offset = data.pinnedColumnCount > 0 ? pinnedBorderWidth : 0;
     List<ViewportColumn> visibleColumns = <ViewportColumn>[];
 
     for (int i = 0; i < data.columnCount; i++) {
@@ -28,7 +29,7 @@ class VisibleColumnsRenderer {
       ColumnStyle columnStyle = data.columns.get(columnIndex);
       bool pinned = i < data.pinnedColumnCount;
 
-      double adjustedStart = currentWidth - (pinned ? 0 : scrollOffset);
+      double adjustedStart = currentWidth - (pinned ? 0 : scrollOffset) + (pinned ? 0 : offset);
       double end = adjustedStart + columnStyle.width + borderWidth;
 
       bool visible = pinned
