@@ -1,11 +1,7 @@
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_data.dart';
 import 'package:sheets/core/sheet_index.dart';
-import 'package:sheets/core/values/patterns/linear_date_pattern.dart';
-import 'package:sheets/core/values/patterns/linear_duration_pattern.dart';
-import 'package:sheets/core/values/patterns/linear_numeric_pattern.dart';
-import 'package:sheets/core/values/patterns/linear_string_pattern.dart';
-import 'package:sheets/core/values/patterns/repeat_value_pattern.dart';
+import 'package:sheets/core/pattern_detector.dart';
 import 'package:sheets/core/values/patterns/value_pattern.dart';
 import 'package:sheets/utils/direction.dart';
 import 'package:sheets/utils/extensions/cell_properties_extensions.dart';
@@ -34,10 +30,13 @@ class AutoFillEngine {
     );
 
     if (fillDirection.isVertical) {
-      Map<ColumnIndex, List<IndexedCellProperties>> groupedPatternCells = _patternCells.groupByColumns();
-      _fillCells(groupedPatternCells, _cellsToFill.whereColumn, cellMergePattern);
+      Map<ColumnIndex, List<IndexedCellProperties>> groupedPatternCells =
+          _patternCells.groupByColumns();
+      _fillCells(
+          groupedPatternCells, _cellsToFill.whereColumn, cellMergePattern);
     } else {
-      Map<RowIndex, List<IndexedCellProperties>> groupedPatternCells = _patternCells.groupByRows();
+      Map<RowIndex, List<IndexedCellProperties>> groupedPatternCells =
+          _patternCells.groupByRows();
       _fillCells(groupedPatternCells, _cellsToFill.whereRow, cellMergePattern);
     }
   }
@@ -49,9 +48,12 @@ class AutoFillEngine {
   ) {
     bool reversed = fillDirection.isReversed;
 
-    for (MapEntry<T, List<IndexedCellProperties>> entry in groupedPatternCells.entries) {
-      List<IndexedCellProperties> patternCells = entry.value.maybeReverse(reversed);
-      List<IndexedCellProperties> fillCells = getFillCellsForKey(entry.key).maybeReverse(reversed);
+    for (MapEntry<T, List<IndexedCellProperties>> entry
+        in groupedPatternCells.entries) {
+      List<IndexedCellProperties> patternCells =
+          entry.value.maybeReverse(reversed);
+      List<IndexedCellProperties> fillCells =
+          getFillCellsForKey(entry.key).maybeReverse(reversed);
 
       patternApplier.apply(patternCells, fillCells);
     }
@@ -75,15 +77,20 @@ class _PatternApplier {
 
   final Set<CellIndex> completedCells = <CellIndex>{};
 
-  void apply(List<IndexedCellProperties> patternCells, List<IndexedCellProperties> cellsToFill) {
+  void apply(List<IndexedCellProperties> patternCells,
+      List<IndexedCellProperties> cellsToFill) {
     int templateIndex = 0;
-    List<IndexedCellProperties> unprocessedFillCells = List<IndexedCellProperties>.from(cellsToFill);
+    List<IndexedCellProperties> unprocessedFillCells =
+        List<IndexedCellProperties>.from(cellsToFill);
 
-    Map<String, Set<IndexedCellProperties>> templateRanges = <String, Set<IndexedCellProperties>>{};
-    Map<String, List<IndexedCellProperties>> fillRanges = <String, List<IndexedCellProperties>>{};
+    Map<String, Set<IndexedCellProperties>> templateRanges =
+        <String, Set<IndexedCellProperties>>{};
+    Map<String, List<IndexedCellProperties>> fillRanges =
+        <String, List<IndexedCellProperties>>{};
 
     while (unprocessedFillCells.isNotEmpty) {
-      IndexedCellProperties baseCell = patternCells[templateIndex % patternCells.length];
+      IndexedCellProperties baseCell =
+          patternCells[templateIndex % patternCells.length];
       IndexedCellProperties targetCell = unprocessedFillCells.removeAt(0);
       CellMergeStatus baseMergeStatus = baseCell.properties.mergeStatus;
 
@@ -92,7 +99,8 @@ class _PatternApplier {
       }
 
       if (baseMergeStatus is! MergedCell) {
-        _handleUnmergedTemplateCell(baseCell, targetCell, templateRanges, fillRanges);
+        _handleUnmergedTemplateCell(
+            baseCell, targetCell, templateRanges, fillRanges);
         templateIndex++;
         continue;
       }
@@ -120,8 +128,12 @@ class _PatternApplier {
     Map<String, List<IndexedCellProperties>> fillRanges,
   ) {
     const String unmergedKey = '1x1';
-    templateRanges.putIfAbsent(unmergedKey, () => <IndexedCellProperties>{}).add(baseCell);
-    fillRanges.putIfAbsent(unmergedKey, () => <IndexedCellProperties>[]).add(targetCell);
+    templateRanges
+        .putIfAbsent(unmergedKey, () => <IndexedCellProperties>{})
+        .add(baseCell);
+    fillRanges
+        .putIfAbsent(unmergedKey, () => <IndexedCellProperties>[])
+        .add(targetCell);
   }
 
   bool _handleMergedTemplateCell(
@@ -132,72 +144,87 @@ class _PatternApplier {
     Map<String, Set<IndexedCellProperties>> templateRanges,
     Map<String, List<IndexedCellProperties>> fillRanges,
   ) {
-    int dxDiff = targetCell.index.column.value - baseCell.index.column.value;
-    int dyDiff = targetCell.index.row.value - baseCell.index.row.value;
-
-    MergedCell movedMergeStatus = fillDirection.isHorizontal
-        ? baseMergeStatus.moveHorizontal(dx: dxDiff, reverse: reversed)
-        : baseMergeStatus.moveVertical(dy: dyDiff, reverse: reversed);
-
-    if (movedMergeStatus.contains(rangeStart) || movedMergeStatus.contains(rangeEnd)) {
+    MergedCell movedStatus =
+        _calculateMovedStatus(baseMergeStatus, baseCell, targetCell);
+    if (_isOverlappingRange(movedStatus)) {
       return false;
     }
 
-    for (CellIndex index in movedMergeStatus.mergedCells) {
-      unprocessedFillCells.removeWhere((IndexedCellProperties cell) => cell.index == index);
-      completedCells.add(index);
-    }
-
-    data.cells.merge(movedMergeStatus.mergedCells);
-
-    String key = movedMergeStatus.id;
-    templateRanges.putIfAbsent(key, () => <IndexedCellProperties>{}).add(baseCell);
-    fillRanges.putIfAbsent(key, () => <IndexedCellProperties>[]).add(
-          IndexedCellProperties(
-            index: movedMergeStatus.start,
-            properties: data.cells.get(movedMergeStatus.start),
-          ),
-        );
+    _markCellsProcessed(unprocessedFillCells, movedStatus.mergedCells);
+    data.cells.merge(movedStatus.mergedCells);
+    _addMergeRange(movedStatus, baseCell, templateRanges, fillRanges);
 
     return true;
+  }
+
+  MergedCell _calculateMovedStatus(
+    MergedCell baseMergeStatus,
+    IndexedCellProperties baseCell,
+    IndexedCellProperties targetCell,
+  ) {
+    int dxDiff = targetCell.index.column.value - baseCell.index.column.value;
+    int dyDiff = targetCell.index.row.value - baseCell.index.row.value;
+
+    return fillDirection.isHorizontal
+        ? baseMergeStatus.moveHorizontal(dx: dxDiff, reverse: reversed)
+        : baseMergeStatus.moveVertical(dy: dyDiff, reverse: reversed);
+  }
+
+  bool _isOverlappingRange(MergedCell movedStatus) {
+    return movedStatus.contains(rangeStart) || movedStatus.contains(rangeEnd);
+  }
+
+  void _markCellsProcessed(
+    List<IndexedCellProperties> unprocessed,
+    Iterable<CellIndex> mergedCells,
+  ) {
+    for (CellIndex index in mergedCells) {
+      unprocessed
+          .removeWhere((IndexedCellProperties cell) => cell.index == index);
+      completedCells.add(index);
+    }
+  }
+
+  void _addMergeRange(
+    MergedCell movedStatus,
+    IndexedCellProperties baseCell,
+    Map<String, Set<IndexedCellProperties>> templateRanges,
+    Map<String, List<IndexedCellProperties>> fillRanges,
+  ) {
+    String key = movedStatus.id;
+    templateRanges
+        .putIfAbsent(key, () => <IndexedCellProperties>{})
+        .add(baseCell);
+    fillRanges.putIfAbsent(key, () => <IndexedCellProperties>[]).add(
+          IndexedCellProperties(
+            index: movedStatus.start,
+            properties: data.cells.get(movedStatus.start),
+          ),
+        );
   }
 
   void _applyPatterns(
     Map<String, Set<IndexedCellProperties>> templateRanges,
     Map<String, List<IndexedCellProperties>> fillRanges,
   ) {
-    for (MapEntry<String, List<IndexedCellProperties>> fillRangeEntry in fillRanges.entries) {
+    for (MapEntry<String, List<IndexedCellProperties>> fillRangeEntry
+        in fillRanges.entries) {
       String key = fillRangeEntry.key;
       List<IndexedCellProperties> patternCells = templateRanges[key]!.toList();
       ValuePattern<dynamic, dynamic> pattern = _detectPattern(patternCells);
-      List<IndexedCellProperties> filledCells = pattern.apply( patternCells, fillRangeEntry.value);
+      List<IndexedCellProperties> filledCells =
+          pattern.apply(patternCells, fillRangeEntry.value);
       data.cells.setAll(filledCells);
     }
   }
 
-  ValuePattern<dynamic, dynamic> _detectPattern(List<IndexedCellProperties> cells) {
+  ValuePattern<dynamic, dynamic> _detectPattern(
+    List<IndexedCellProperties> patternCells,
+  ) {
     PatternDetector detector = PatternDetector();
-    List<IndexedCellProperties> propertiesToFill = reversed ? cells.reversed.toList() : cells;
+    List<IndexedCellProperties> processedCells =
+        reversed ? patternCells.reversed.toList() : patternCells;
 
-    return detector.detectPattern(propertiesToFill);
-  }
-}
-
-class PatternDetector {
-  final List<ValuePatternMatcher> matchers = <ValuePatternMatcher>[
-    LinearNumericPatternMatcher(),
-    LinearDatePatternMatcher(),
-    LinearDurationPatternMatcher(),
-    LinearStringPatternMatcher(),
-  ];
-
-  ValuePattern<dynamic, dynamic> detectPattern(List<IndexedCellProperties> patternCells) {
-    for (ValuePatternMatcher matcher in matchers) {
-      ValuePattern<dynamic, dynamic>? pattern = matcher.detect(patternCells);
-      if (pattern != null) {
-        return pattern;
-      }
-    }
-    return RepeatValuePattern();
+    return detector.detectPattern(processedCells);
   }
 }

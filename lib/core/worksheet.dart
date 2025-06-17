@@ -48,33 +48,41 @@ class Worksheet extends SheetRebuildNotifier {
 
   late SelectionState selection;
 
-  List<SheetEvent> eventsQueue = <SheetEvent>[];
+  final List<SheetEvent> _eventsQueue = <SheetEvent>[];
 
   void resolve(SheetEvent event) {
-    bool mainEvent = eventsQueue.isEmpty;
-    SheetAction<SheetEvent>? action = event.createAction(this);
-    if (action == null) {
-      return;
-    }
-    eventsQueue.add(event);
-    unawaited(_executeAction(mainEvent, action));
+    final bool isMainEvent = _eventsQueue.isEmpty;
+    final SheetAction<SheetEvent>? action = event.createAction(this);
+    if (action == null) return;
+
+    _eventsQueue.add(event);
+    unawaited(_executeAction(isMainEvent, action));
   }
 
-  Future<void> _executeAction(bool mainAction, SheetAction<SheetEvent> action) async {
+  Future<void> _executeAction(
+    bool isMainAction,
+    SheetAction<SheetEvent> action,
+  ) async {
     await action.execute();
+    if (!isMainAction) return;
 
-    if (mainAction) {
-      SheetRebuildConfig rebuildProperties = eventsQueue.fold(
-        SheetRebuildConfig(),
-        (SheetRebuildConfig previousValue, SheetEvent element) => previousValue.combine(element.rebuildConfig),
-      );
+    final SheetRebuildConfig config = _collectRebuildConfig();
+    _rebuildViewportIfNeeded(config);
+    notify(config);
+    _eventsQueue.clear();
+  }
 
-      if (rebuildProperties.rebuildViewport || rebuildProperties.rebuildCellsLayer) {
-        viewport.rebuild(scroll.offset);
-      }
+  SheetRebuildConfig _collectRebuildConfig() {
+    return _eventsQueue.fold(
+      SheetRebuildConfig(),
+      (SheetRebuildConfig value, SheetEvent event) =>
+          value.combine(event.rebuildConfig),
+    );
+  }
 
-      notify(rebuildProperties);
-      eventsQueue.clear();
+  void _rebuildViewportIfNeeded(SheetRebuildConfig config) {
+    if (config.rebuildViewport || config.rebuildCellsLayer) {
+      viewport.rebuild(scroll.offset);
     }
   }
 
@@ -102,7 +110,8 @@ class Worksheet extends SheetRebuildNotifier {
       return CellSelectionStyle(cellProperties: cellProperties);
     }
 
-    SheetTextEditingController textEditingController = editableCellNotifier.value!.controller;
+    SheetTextEditingController textEditingController =
+        editableCellNotifier.value!.controller;
     if (textEditingController.selection.isCollapsed) {
       return CursorSelectionStyle(
         cellProperties: cellProperties,

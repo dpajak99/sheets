@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sheets/core/auto_fill_engine.dart';
+import 'package:sheets/core/pattern_detector.dart';
 import 'package:sheets/core/cell_properties.dart';
 import 'package:sheets/core/sheet_index.dart';
 import 'package:sheets/core/sheet_style.dart';
@@ -10,7 +11,9 @@ import 'package:sheets/core/values/sheet_text_span.dart';
 
 void main() {
   group('Tests of PatternDetector', () {
-    test('Should [detect LinearNumericPattern] when [numeric values are provided]', () {
+    test(
+        'Should [detect LinearNumericPattern] when [numeric values are provided]',
+        () {
       // Arrange
       PatternDetector detector = PatternDetector();
       List<IndexedCellProperties> baseCells = <IndexedCellProperties>[
@@ -31,13 +34,16 @@ void main() {
       ];
 
       // Act
-      ValuePattern<dynamic, dynamic> pattern = detector.detectPattern(baseCells);
+      ValuePattern<dynamic, dynamic> pattern =
+          detector.detectPattern(baseCells);
 
       // Assert
       expect(pattern, isA<LinearNumericPattern>());
     });
 
-    test('Should [detect RepeatValuePattern] when [no specific pattern is matched]', () {
+    test(
+        'Should [detect RepeatValuePattern] when [no specific pattern is matched]',
+        () {
       // Arrange
       PatternDetector detector = PatternDetector();
       List<IndexedCellProperties> baseCells = <IndexedCellProperties>[
@@ -51,7 +57,8 @@ void main() {
       ];
 
       // Act
-      ValuePattern<dynamic, dynamic> pattern = detector.detectPattern(baseCells);
+      ValuePattern<dynamic, dynamic> pattern =
+          detector.detectPattern(baseCells);
 
       // Assert
       expect(pattern, isA<RepeatValuePattern>());
