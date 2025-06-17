@@ -47,3 +47,5 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# Generated localization
+lib/gen/

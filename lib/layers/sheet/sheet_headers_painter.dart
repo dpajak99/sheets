@@ -5,9 +5,12 @@ import 'package:sheets/core/config/sheet_constants.dart';
 import 'package:sheets/core/selection/selection_status.dart';
 import 'package:sheets/core/selection/sheet_selection.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/layers/sheet/helpers/pinned_header_groups.dart';
 
-abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPainter {
-  void paintHeadersBackground(Canvas canvas, Rect rect, SelectionStatus selectionStatus) {
+abstract class SheetHeadersPainter extends ChangeNotifier
+    implements CustomPainter {
+  void paintHeadersBackground(
+      Canvas canvas, Rect rect, SelectionStatus selectionStatus) {
     Color backgroundColor = selectionStatus.selectValue(
       fullySelected: const Color(0xff2456cb),
       selected: const Color(0xffd6e2fb),
@@ -22,7 +25,8 @@ abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPaint
     canvas.drawRect(rect, backgroundPaint);
   }
 
-  void paintRowLabel(Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
+  void paintRowLabel(
+      Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
     TextStyle textStyle = selectionStatus.selectValue(
       fullySelected: defaultHeaderTextStyleSelectedAll.copyWith(height: 1.2),
       selected: defaultHeaderTextStyleSelected.copyWith(height: 1.2),
@@ -36,10 +40,12 @@ abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPaint
     );
 
     textPainter.layout(minWidth: rect.width, maxWidth: rect.width);
-    textPainter.paint(canvas, rect.center - Offset(textPainter.width / 2, textPainter.height / 2));
+    textPainter.paint(canvas,
+        rect.center - Offset(textPainter.width / 2, textPainter.height / 2));
   }
 
-  void paintColumnLabel(Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
+  void paintColumnLabel(
+      Canvas canvas, Rect rect, String value, SelectionStatus selectionStatus) {
     TextStyle textStyle = selectionStatus.selectValue(
       fullySelected: defaultHeaderTextStyleSelectedAll.copyWith(height: 1),
       selected: defaultHeaderTextStyleSelected.copyWith(height: 1),
@@ -53,7 +59,8 @@ abstract class SheetHeadersPainter extends ChangeNotifier implements CustomPaint
     );
 
     textPainter.layout(minWidth: rect.width, maxWidth: rect.width);
-    textPainter.paint(canvas, rect.center - Offset(textPainter.width / 2, textPainter.height / 2));
+    textPainter.paint(canvas,
+        rect.center - Offset(textPainter.width / 2, textPainter.height / 2));
   }
 
   @override
@@ -95,21 +102,17 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
       ..isAntiAlias = false
       ..color = const Color(0xffc4c7c5);
 
-    double width = min(size.width, _visibleColumns.last.rect.right - rowHeadersWidth + borderWidth);
+    double width = min(size.width,
+        _visibleColumns.last.rect.right - rowHeadersWidth + borderWidth);
     Rect visibleRect = Rect.fromLTWH(rowHeadersWidth, 0, width, size.height);
     canvas.clipRect(visibleRect);
     canvas.drawRect(visibleRect, backgroundPaint);
 
-    List<ViewportColumn> pinned = <ViewportColumn>[];
-    List<ViewportColumn> normal = <ViewportColumn>[];
-
-    for (ViewportColumn column in _visibleColumns) {
-      if (column.index.value < _pinnedCount) {
-        pinned.add(column);
-      } else {
-        normal.add(column);
-      }
-    }
+    final PinnedHeaderGroups<ViewportColumn> groups = groupPinnedHeaders(
+      _visibleColumns,
+      _pinnedCount,
+      (ViewportColumn column) => column.index.value,
+    );
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
@@ -118,20 +121,13 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
       size.width - _pinnedWidth,
       size.height,
     ));
-    for (ViewportColumn column in normal) {
-      SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
-      paintHeadersBackground(canvas, column.rect, selectionStatus);
-      paintColumnLabel(canvas, column.rect, column.value, selectionStatus);
-    }
+    _paintColumns(canvas, groups.normal);
     canvas.restore();
 
     canvas.save();
-    canvas.clipRect(Rect.fromLTWH(rowHeadersWidth, 0, _pinnedWidth, size.height));
-    for (ViewportColumn column in pinned) {
-      SelectionStatus selectionStatus = _selection.isColumnSelected(column.index);
-      paintHeadersBackground(canvas, column.rect, selectionStatus);
-      paintColumnLabel(canvas, column.rect, column.value, selectionStatus);
-    }
+    canvas
+        .clipRect(Rect.fromLTWH(rowHeadersWidth, 0, _pinnedWidth, size.height));
+    _paintColumns(canvas, groups.pinned);
     canvas.restore();
 
     Paint borderPaint = Paint()
@@ -157,6 +153,14 @@ class SheetColumnHeadersPainter extends SheetHeadersPainter {
         oldDelegate._selection != _selection ||
         oldDelegate._pinnedWidth != _pinnedWidth ||
         oldDelegate._pinnedCount != _pinnedCount;
+  }
+
+  void _paintColumns(Canvas canvas, List<ViewportColumn> columns) {
+    for (final ViewportColumn column in columns) {
+      final SelectionStatus status = _selection.isColumnSelected(column.index);
+      paintHeadersBackground(canvas, column.rect, status);
+      paintColumnLabel(canvas, column.rect, column.value, status);
+    }
   }
 }
 
@@ -190,21 +194,18 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
       ..isAntiAlias = false
       ..color = const Color(0xffc4c7c5);
 
-    double height = min(size.height, _visibleRows.last.rect.bottom - columnHeadersHeight + borderWidth);
-    Rect visibleRect = Rect.fromLTWH(0, columnHeadersHeight, size.width, height);
+    double height = min(size.height,
+        _visibleRows.last.rect.bottom - columnHeadersHeight + borderWidth);
+    Rect visibleRect =
+        Rect.fromLTWH(0, columnHeadersHeight, size.width, height);
     canvas.clipRect(visibleRect);
     canvas.drawRect(visibleRect, backgroundPaint);
 
-    List<ViewportRow> pinned = <ViewportRow>[];
-    List<ViewportRow> normal = <ViewportRow>[];
-
-    for (ViewportRow row in _visibleRows) {
-      if (row.index.value < _pinnedCount) {
-        pinned.add(row);
-      } else {
-        normal.add(row);
-      }
-    }
+    final PinnedHeaderGroups<ViewportRow> groups = groupPinnedHeaders(
+      _visibleRows,
+      _pinnedCount,
+      (ViewportRow row) => row.index.value,
+    );
 
     canvas.save();
     canvas.clipRect(Rect.fromLTWH(
@@ -213,20 +214,13 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
       size.width,
       size.height - _pinnedHeight,
     ));
-    for (ViewportRow row in normal) {
-      SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
-      paintHeadersBackground(canvas, row.rect, selectionStatus);
-      paintRowLabel(canvas, row.rect, row.value, selectionStatus);
-    }
+    _paintRows(canvas, groups.normal);
     canvas.restore();
 
     canvas.save();
-    canvas.clipRect(Rect.fromLTWH(0, columnHeadersHeight, size.width, _pinnedHeight));
-    for (ViewportRow row in pinned) {
-      SelectionStatus selectionStatus = _selection.isRowSelected(row.index);
-      paintHeadersBackground(canvas, row.rect, selectionStatus);
-      paintRowLabel(canvas, row.rect, row.value, selectionStatus);
-    }
+    canvas.clipRect(
+        Rect.fromLTWH(0, columnHeadersHeight, size.width, _pinnedHeight));
+    _paintRows(canvas, groups.pinned);
     canvas.restore();
 
     Paint borderPaint = Paint()
@@ -252,5 +246,13 @@ class SheetRowHeadersPainter extends SheetHeadersPainter {
         oldDelegate._selection != _selection ||
         oldDelegate._pinnedHeight != _pinnedHeight ||
         oldDelegate._pinnedCount != _pinnedCount;
+  }
+
+  void _paintRows(Canvas canvas, List<ViewportRow> rows) {
+    for (final ViewportRow row in rows) {
+      final SelectionStatus status = _selection.isRowSelected(row.index);
+      paintHeadersBackground(canvas, row.rect, status);
+      paintRowLabel(canvas, row.rect, row.value, status);
+    }
   }
 }
