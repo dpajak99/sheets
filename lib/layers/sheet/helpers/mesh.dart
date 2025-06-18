@@ -14,48 +14,54 @@ class Mesh {
   final double maxVertical;
   final double maxHorizontal;
 
-  final Map<double, List<StyledLine>> customVertical =
-      <double, List<StyledLine>>{};
-  final Map<double, List<StyledLine>> customHorizontal =
-      <double, List<StyledLine>>{};
+  final Map<double, Set<StyledLine>> customVertical =
+      <double, Set<StyledLine>>{};
+  final Map<double, Set<StyledLine>> customHorizontal =
+      <double, Set<StyledLine>>{};
 
   void addVertical(double x, MeshLine line, BorderSide style) {
     customVertical
-        .putIfAbsent(x, () => <StyledLine>[])
+        .putIfAbsent(x, () => <StyledLine>{})
         .add(StyledLine(line, style));
   }
 
   void addHorizontal(double y, MeshLine line, BorderSide style) {
     customHorizontal
-        .putIfAbsent(y, () => <StyledLine>[])
+        .putIfAbsent(y, () => <StyledLine>{})
         .add(StyledLine(line, style));
   }
 
   Map<BorderSide, List<MeshLine>> get lines {
-    Map<BorderSide, List<MeshLine>> result = <BorderSide, List<MeshLine>>{};
-    for (MapEntry<double, List<StyledLine>> entry in customVertical.entries) {
-      for (StyledLine styledLine in entry.value) {
+    final Map<BorderSide, Set<MeshLine>> result =
+        <BorderSide, Set<MeshLine>>{};
+    for (final MapEntry<double, Set<StyledLine>> entry in customVertical.entries) {
+      for (final StyledLine styledLine in entry.value) {
         result
-            .putIfAbsent(styledLine.style, () => <MeshLine>[])
+            .putIfAbsent(styledLine.style, () => <MeshLine>{})
             .add(styledLine.line);
       }
     }
-    for (MapEntry<double, List<StyledLine>> entry in customHorizontal.entries) {
-      for (StyledLine styledLine in entry.value) {
+    for (final MapEntry<double, Set<StyledLine>> entry in
+        customHorizontal.entries) {
+      for (final StyledLine styledLine in entry.value) {
         result
-            .putIfAbsent(styledLine.style, () => <MeshLine>[])
+            .putIfAbsent(styledLine.style, () => <MeshLine>{})
             .add(styledLine.line);
       }
     }
-    return result;
+    return result.map((BorderSide key, Set<MeshLine> value) =>
+        MapEntry<BorderSide, List<MeshLine>>(key, value.toList()));
   }
 }
 
-class StyledLine {
+class StyledLine with EquatableMixin {
   StyledLine(this.line, this.style);
 
   final MeshLine line;
   final BorderSide style;
+
+  @override
+  List<Object?> get props => <Object?>[line, style];
 }
 
 class MeshLine with EquatableMixin {
