@@ -19,6 +19,14 @@ class Mesh {
   final Map<double, Set<StyledLine>> customHorizontal =
       <double, Set<StyledLine>>{};
 
+  bool hasVertical(double x, MeshLine line) {
+    return customVertical[x]?.any((StyledLine s) => s.line == line) ?? false;
+  }
+
+  bool hasHorizontal(double y, MeshLine line) {
+    return customHorizontal[y]?.any((StyledLine s) => s.line == line) ?? false;
+  }
+
   void addVertical(double x, MeshLine line, BorderSide style) {
     customVertical
         .putIfAbsent(x, () => <StyledLine>{})

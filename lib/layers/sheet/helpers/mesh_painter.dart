@@ -43,15 +43,15 @@ class MeshPainter {
     final BorderSide defaultBorder = MaterialSheetTheme.defaultBorderSide;
 
     for (final ViewportCell cell in cells) {
-      _addDefaultLines(mesh, cell.rect, defaultBorder);
-    }
-    for (final ViewportCell cell in cells) {
       _addCustomLines(
         mesh,
         cell.rect,
         cell.properties.style.border,
         defaultBorder,
       );
+    }
+    for (final ViewportCell cell in cells) {
+      _addDefaultLines(mesh, cell.rect, defaultBorder);
     }
 
     return mesh;
@@ -63,10 +63,18 @@ class MeshPainter {
     final MeshLine bottom = MeshLine(rect.bottomLeft, rect.bottomRight);
     final MeshLine left = MeshLine(rect.topLeft, rect.bottomLeft);
 
-    mesh.addHorizontal(rect.top, top, style);
-    mesh.addHorizontal(rect.bottom, bottom, style);
-    mesh.addVertical(rect.right, right, style);
-    mesh.addVertical(rect.left, left, style);
+    if (!mesh.hasHorizontal(rect.top, top)) {
+      mesh.addHorizontal(rect.top, top, style);
+    }
+    if (!mesh.hasHorizontal(rect.bottom, bottom)) {
+      mesh.addHorizontal(rect.bottom, bottom, style);
+    }
+    if (!mesh.hasVertical(rect.right, right)) {
+      mesh.addVertical(rect.right, right, style);
+    }
+    if (!mesh.hasVertical(rect.left, left)) {
+      mesh.addVertical(rect.left, left, style);
+    }
   }
 
   void _addCustomLines(
