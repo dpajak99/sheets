@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sheets/widgets/material/material_sheet_theme.dart';
 import 'package:sheets/layers/sheet/helpers/mesh.dart';
 import 'package:sheets/core/viewport/viewport_item.dart';
+import 'package:sheets/core/config/sheet_constants.dart';
 
 class MeshPainter {
   const MeshPainter();
@@ -58,22 +59,36 @@ class MeshPainter {
   }
 
   void _addDefaultLines(Mesh mesh, Rect rect, BorderSide style) {
-    final MeshLine top = MeshLine(rect.topLeft, rect.topRight);
-    final MeshLine right = MeshLine(rect.topRight, rect.bottomRight);
-    final MeshLine bottom = MeshLine(rect.bottomLeft, rect.bottomRight);
-    final MeshLine left = MeshLine(rect.topLeft, rect.bottomLeft);
+    const double shift = borderWidth / 2;
 
-    if (!mesh.hasHorizontal(rect.top, top)) {
-      mesh.addHorizontal(rect.top, top, style);
+    final MeshLine top = MeshLine(
+      rect.topLeft.translate(0, -shift),
+      rect.topRight.translate(0, -shift),
+    );
+    final MeshLine right = MeshLine(
+      rect.topRight.translate(shift, 0),
+      rect.bottomRight.translate(shift, 0),
+    );
+    final MeshLine bottom = MeshLine(
+      rect.bottomLeft.translate(0, shift),
+      rect.bottomRight.translate(0, shift),
+    );
+    final MeshLine left = MeshLine(
+      rect.topLeft.translate(-shift, 0),
+      rect.bottomLeft.translate(-shift, 0),
+    );
+
+    if (!mesh.hasHorizontal(rect.top - shift, top)) {
+      mesh.addHorizontal(rect.top - shift, top, style);
     }
-    if (!mesh.hasHorizontal(rect.bottom, bottom)) {
-      mesh.addHorizontal(rect.bottom, bottom, style);
+    if (!mesh.hasHorizontal(rect.bottom + shift, bottom)) {
+      mesh.addHorizontal(rect.bottom + shift, bottom, style);
     }
-    if (!mesh.hasVertical(rect.right, right)) {
-      mesh.addVertical(rect.right, right, style);
+    if (!mesh.hasVertical(rect.right + shift, right)) {
+      mesh.addVertical(rect.right + shift, right, style);
     }
-    if (!mesh.hasVertical(rect.left, left)) {
-      mesh.addVertical(rect.left, left, style);
+    if (!mesh.hasVertical(rect.left - shift, left)) {
+      mesh.addVertical(rect.left - shift, left, style);
     }
   }
 
@@ -83,10 +98,24 @@ class MeshPainter {
     Border? border,
     BorderSide defaultStyle,
   ) {
-    final MeshLine top = MeshLine(rect.topLeft, rect.topRight);
-    final MeshLine right = MeshLine(rect.topRight, rect.bottomRight);
-    final MeshLine bottom = MeshLine(rect.bottomLeft, rect.bottomRight);
-    final MeshLine left = MeshLine(rect.topLeft, rect.bottomLeft);
+    const double shift = borderWidth / 2;
+
+    final MeshLine top = MeshLine(
+      rect.topLeft.translate(0, -shift),
+      rect.topRight.translate(0, -shift),
+    );
+    final MeshLine right = MeshLine(
+      rect.topRight.translate(shift, 0),
+      rect.bottomRight.translate(shift, 0),
+    );
+    final MeshLine bottom = MeshLine(
+      rect.bottomLeft.translate(0, shift),
+      rect.bottomRight.translate(0, shift),
+    );
+    final MeshLine left = MeshLine(
+      rect.topLeft.translate(-shift, 0),
+      rect.bottomLeft.translate(-shift, 0),
+    );
 
     final BorderSide topSide = border?.top ?? defaultStyle;
     final BorderSide rightSide = border?.right ?? defaultStyle;
@@ -94,16 +123,16 @@ class MeshPainter {
     final BorderSide leftSide = border?.left ?? defaultStyle;
 
     if (topSide != defaultStyle) {
-      mesh.addHorizontal(rect.top, top, topSide);
+      mesh.addHorizontal(rect.top - shift, top, topSide);
     }
     if (rightSide != defaultStyle) {
-      mesh.addVertical(rect.right, right, rightSide);
+      mesh.addVertical(rect.right + shift, right, rightSide);
     }
     if (bottomSide != defaultStyle) {
-      mesh.addHorizontal(rect.bottom, bottom, bottomSide);
+      mesh.addHorizontal(rect.bottom + shift, bottom, bottomSide);
     }
     if (leftSide != defaultStyle) {
-      mesh.addVertical(rect.left, left, leftSide);
+      mesh.addVertical(rect.left - shift, left, leftSide);
     }
   }
 
